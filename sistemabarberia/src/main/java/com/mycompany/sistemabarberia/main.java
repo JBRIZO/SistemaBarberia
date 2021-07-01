@@ -29,6 +29,8 @@ public class main
              System.out.println(vendedor.getTipoPago());
              System.out.println(vendedor.isActivo());
          }
+         
+         System.out.println("QUe tal");
                    
          
         
