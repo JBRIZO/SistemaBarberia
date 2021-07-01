@@ -14,11 +14,19 @@ import java.util.List;
  */
 public class main 
 {
-
+static tipopagoJpaController tipopagodao =new tipopagoJpaController();  
     public static void main(String[] args)
     {
         
-                   
+             List<tipopago> vendedores = tipopagodao.findtipopagoEntities();
+         
+         for(tipopago vendedor : vendedores)
+         {
+             System.out.println(vendedor.getIdtipopago());
+             System.out.println(vendedor.getTipoPago());
+             System.out.println(vendedor.isActivo());
+         }
+    
          
         
         
