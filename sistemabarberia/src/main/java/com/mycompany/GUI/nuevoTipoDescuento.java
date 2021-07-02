@@ -6,15 +6,19 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import javax.swing.text.PlainDocument;
+import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
 
 /**
  *
@@ -23,9 +27,7 @@ import javax.swing.border.Border;
 public class nuevoTipoDescuento extends javax.swing.JFrame {
     
     tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController();
-    
     Validaciones validar = new Validaciones();
-    
     List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
    
 
@@ -34,7 +36,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
      */
     public nuevoTipoDescuento() {
         initComponents();
-        
+        List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
         if (descuentosEnBd.size() > 0)
         {
             idTipoDescuento.setText("ID Tipo de Documento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
@@ -48,13 +50,16 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     
     public void Reiniciar()
     {
-       if (descuentosEnBd.size() >= 0)
-        {
-            idTipoDescuento.setText("ID Tipo de Documento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
-        }else
+        List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
+        if (descuentosEnBd.isEmpty())
         {
             idTipoDescuento.setText("ID Tipo de Documento: 1");
-        }
+        }else
+        {
+            idTipoDescuento.setText("ID Tipo de Documento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
+        } 
+        
+
     }
 
     /**
@@ -70,7 +75,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         idTipoDescuento = new javax.swing.JTextField();
         tipoDescuento = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        botonAceptar = new javax.swing.JButton();
         formatoInvalido = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -90,6 +95,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         });
 
         tipoDescuento.setText("Nuevo Tipo de Descuento");
+        tipoDescuento.setToolTipText("Ingrese un tipo de descuento válido.");
         tipoDescuento.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 tipoDescuentoFocusLost(evt);
@@ -100,13 +106,18 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
                 tipoDescuentoActionPerformed(evt);
             }
         });
+        tipoDescuento.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tipoDescuentoKeyTyped(evt);
+            }
+        });
 
-        jButton1.setBackground(new java.awt.Color(189, 158, 76));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton1.setText("ACEPTAR");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
+        botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonAceptar.setText("ACEPTAR");
+        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                botonAceptarActionPerformed(evt);
             }
         });
 
@@ -121,7 +132,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(formatoInvalido)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tipoDescuento)
                         .addComponent(idTipoDescuento)
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -139,7 +150,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(botonAceptar)
                 .addGap(28, 28, 28))
         );
 
@@ -157,25 +168,33 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
         String txt = tipoDescuento.getText();
-        tipodescuento tipopagonuevo = new tipodescuento();
-        tipopagonuevo.setNomDescuento(tipoDescuento.getText());
-        tipopagonuevo.setActivo(true);
+        tipodescuento tipoDescuentoNuevo = new tipodescuento();
+        tipoDescuentoNuevo.setNomDescuento(tipoDescuento.getText());
+        tipoDescuentoNuevo.setActivo(true);
+        
+       
+        for(int i=0; i < descuentosEnBd.size();i++)
+        {
+            if(tipoDescuentoNuevo.getNomDescuento().equalsIgnoreCase(descuentosEnBd.get(i).getNomDescuento()))
+            {
+               //existe = true; 
+                JOptionPane.showMessageDialog(null,"Ese descuento ya existe.");
+                return;
+            }
+        }
         
         if(validar.validacionCadenaPalabras(txt)){
             try {
-            tipodescuentoDAO.create(tipopagonuevo);
+            tipodescuentoDAO.create(tipoDescuentoNuevo);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
         } catch (Exception ex) {
-            //Logger.getLogger(FrmnuevoTipoDescuento.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
         }
-        }else{
-            JOptionPane.showMessageDialog(null,"Favor introduzca un tipo de descuento valido");
         }
         Reiniciar();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     
@@ -196,11 +215,29 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             tipoDescuento.setBorder(border);
             formatoInvalido.setEnabled(false);
         }
+        for(int i=0; i < descuentosEnBd.size();i++)
+        {
+            if(tipoDescuento.getText().equalsIgnoreCase(descuentosEnBd.get(i).getNomDescuento()))
+            {
+                Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            tipoDescuento.setBorder(border);
+            formatoInvalido.setText("Ese tipo de descuento ya existe.");
+            formatoInvalido.setEnabled(false);
+            }
+        }
+        
     }//GEN-LAST:event_tipoDescuentoFocusLost
 
     private void tipoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoDescuentoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tipoDescuentoActionPerformed
+
+    private void tipoDescuentoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tipoDescuentoKeyTyped
+        // TODO add your handling code here:
+        if ((tipoDescuento.getText() + evt.getKeyChar()).length() > 20) {
+        evt.consume();
+    }
+    }//GEN-LAST:event_tipoDescuentoKeyTyped
 
     /**
      * @param args the command line arguments
@@ -240,9 +277,9 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
     private javax.swing.JTextField idTipoDescuento;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField tipoDescuento;

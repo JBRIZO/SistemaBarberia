@@ -132,7 +132,6 @@ public class Validaciones {
           }
           for (int i = 0; i < palabras.length; i++)
           {
-              System.out.println(palabras[i]);
               if(!validacionLetrasRepetidas(palabras[i]))
               {
                   palabraValida = true;

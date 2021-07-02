@@ -48,7 +48,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="formatoInvalido" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="jButton1" max="32767" attributes="0"/>
+                          <Component id="botonAceptar" max="32767" attributes="0"/>
                           <Component id="tipoDescuento" max="32767" attributes="0"/>
                           <Component id="idTipoDescuento" max="32767" attributes="0"/>
                           <Component id="jLabel1" max="32767" attributes="0"/>
@@ -70,7 +70,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="tipoDescuento" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="46" max="32767" attributes="0"/>
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                  <Component id="botonAceptar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -100,13 +100,15 @@
         <Component class="javax.swing.JTextField" name="tipoDescuento">
           <Properties>
             <Property name="text" type="java.lang.String" value="Nuevo Tipo de Descuento"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ingrese un tipo de descuento v&#xe1;lido."/>
           </Properties>
           <Events>
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="tipoDescuentoFocusLost"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tipoDescuentoActionPerformed"/>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tipoDescuentoKeyTyped"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="botonAceptar">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="4c" green="9e" red="bd" type="rgb"/>
@@ -117,7 +119,7 @@
             <Property name="text" type="java.lang.String" value="ACEPTAR"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonAceptarActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="formatoInvalido">
