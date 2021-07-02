@@ -67,10 +67,10 @@ public class Validaciones {
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
-            return false;
+            return true;
         }else
         {
-            return true;
+            return false;
         }
     }
     
@@ -125,7 +125,8 @@ public class Validaciones {
           boolean mayusculaInicial = false;
           boolean palabraValida = false;
           
-          if(validacionMayusculaInicial(palabras[0]))
+          
+         if(validacionMayusculaInicial(palabras[0]))
           {
               mayusculaInicial = true;
           }
