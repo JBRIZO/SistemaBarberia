@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
  */
 //Clase que contiene las diferentes validaciones para campos con Regex
 public class Validaciones {
+    
     //Valida el periodo, que debe tener el formato mm-AAAA 
     public boolean validacionPeriodo(String cadena)
     {
@@ -42,7 +43,22 @@ public class Validaciones {
         
         
     }
+    
    
+    //Valida el formato de la fecha (dd/mm/aaaa)
+    public boolean validacionFecha(String cadena)
+    {
+        String patron = "^((0[1-9])|(1[0-9])|(2[0-9])|(3[0-1]))[\\/-]((0[1-9])|(1[0-2]))[\\/-](\\d{4})";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(cadena);
+         if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        } 
+    }
+    
     
     //Devuelve TRUE si una cadena de texto tiene letras repetidas, sino false.
     public boolean validacionLetrasRepetidas(String cadena)
@@ -87,6 +103,8 @@ public class Validaciones {
         }  
     }
     
+    
+    
     //Compara el resultado de dos validaciones, y devuelve TRUE si ambas son ciertas, sino FALSE.
     public boolean validar(boolean validacion1, boolean validacion2)
     {
@@ -100,5 +118,35 @@ public class Validaciones {
         
     }
     
+    //Valida si una oracion tiene mayuscula inicial y las palabras son validas.
+    public boolean validacionCadenaPalabras(String cadena)
+    {
+          String[] palabras  = cadena.split("\\s+");
+          boolean mayusculaInicial = false;
+          boolean palabraValida = false;
+          
+          if(validacionMayusculaInicial(palabras[0]))
+          {
+              mayusculaInicial = true;
+          }
+          for (int i = 0; i < palabras.length; i++)
+          {
+              System.out.println(palabras[i]);
+              if(!validacionLetrasRepetidas(palabras[i]))
+              {
+                  palabraValida = true;
+              }else
+              {
+                  return false;
+              }
+          }
+          if(mayusculaInicial && palabraValida)
+          {
+              return true;
+          }else
+          {
+              return false;
+          }
+    }
     
 }
