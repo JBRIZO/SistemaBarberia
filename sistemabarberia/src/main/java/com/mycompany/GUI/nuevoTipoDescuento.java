@@ -201,7 +201,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     private void idTipoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuentoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_idTipoDescuentoActionPerformed
-
+//a;adir validaciones botonaceptar
     private void tipoDescuentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusLost
 
         if(validar.validacionCadenaPalabras(tipoDescuento.getText()))
