@@ -6,22 +6,21 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
-import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
-import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.JOptionPane;
-import javax.swing.border.Border;
-import javax.swing.text.PlainDocument;
-import java.awt.*;
+import java.awt.Image;
+import static java.awt.Image.SCALE_DEFAULT;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.border.Border;
 
 /**
  *
@@ -29,23 +28,27 @@ import javax.swing.*;
  */
 public class nuevoTipoDescuento extends javax.swing.JFrame {
     
-    tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController();
-    Validaciones validar = new Validaciones();
-    List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
-   
+    private tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController();
+    private Validaciones validar = new Validaciones();
+    private List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
+    private ImageIcon imagen;
+    private Icon icono;
 
     /**
      * Creates new form nuevoTipoDescuento
      */
     public nuevoTipoDescuento() {
         initComponents();
+        formatoInvalido.setVisible(false);
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+
         List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
         if (descuentosEnBd.size() > 0)
         {
-            idTipoDescuento.setText("ID Tipo de Documento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
+            idTipoDescuento.setText("  ID Tipo de Descuento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
         }else
         {
-            idTipoDescuento.setText("ID Tipo de Documento: 1");
+            idTipoDescuento.setText("  ID Tipo de Descuento: 1");
         }
        
         
@@ -56,13 +59,16 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
         if (descuentosEnBd.isEmpty())
         {
-            idTipoDescuento.setText("ID Tipo de Documento: 1");
+            idTipoDescuento.setText("  ID Tipo de Descuento: 1");
         }else
         {
-            idTipoDescuento.setText("ID Tipo de Documento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
+            idTipoDescuento.setText("  ID Tipo de Descuento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
         } 
         
-        tipoDescuento.setText("Nombre del Tipo de Descuento");
+        tipoDescuento.setText("  Nombre del Tipo de Descuento");
+        Border border = BorderFactory.createLineBorder(Color.RED, 0);
+            tipoDescuento.setBorder(border);
+            formatoInvalido.setVisible(false);
 
     }
 
@@ -76,34 +82,71 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        idTipoDescuento = new javax.swing.JTextField();
-        tipoDescuento = new javax.swing.JTextField();
+        tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
+        logo = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        idTipoDescuento = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
+        tipoDescuento = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
+        jPanel1.setBackground(new java.awt.Color(20, 17, 17));
+        jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
 
-        jLabel1.setFont(new java.awt.Font("Gadugi", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("NUEVO TIPO DESCUENTO");
+        tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
+        tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
+        tituloPantalla.setText("NUEVO TIPO DESCUENTO");
+
+        botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
+        botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        botonAceptar.setText("ACEPTAR");
+        botonAceptar.setRequestFocusEnabled(false);
+        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAceptarActionPerformed(evt);
+            }
+        });
+
+        logo.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setText("jLabel1");
+
+        jPanel2.setBackground(new java.awt.Color(55, 53, 53));
+        jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
+        jPanel2.setMaximumSize(new java.awt.Dimension(421, 280));
+        jPanel2.setMinimumSize(new java.awt.Dimension(421, 280));
+
+        jPanel3.setBackground(new java.awt.Color(55, 53, 53));
+        jPanel3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
+        jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
+        jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
         idTipoDescuento.setEditable(false);
         idTipoDescuento.setBackground(new java.awt.Color(30, 33, 34));
+        idTipoDescuento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         idTipoDescuento.setForeground(new java.awt.Color(255, 255, 255));
         idTipoDescuento.setText("ID Tipo de Descuento");
+        idTipoDescuento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        idTipoDescuento.setSelectionColor(new java.awt.Color(55, 53, 53));
         idTipoDescuento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 idTipoDescuentoActionPerformed(evt);
             }
         });
 
+        formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalido.setText("Formato no valido.");
+
         tipoDescuento.setBackground(new java.awt.Color(30, 33, 34));
+        tipoDescuento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tipoDescuento.setForeground(new java.awt.Color(255, 255, 255));
-        tipoDescuento.setText("Nombre del Tipo de Descuento");
+        tipoDescuento.setText("  Nombre del Tipo de Descuento");
         tipoDescuento.setToolTipText("Ingrese un tipo de descuento válido.");
+        tipoDescuento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         tipoDescuento.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 tipoDescuentoFocusGained(evt);
@@ -123,57 +166,94 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             }
         });
 
-        botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
-        botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonAceptar.setText("ACEPTAR");
-        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAceptarActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(formatoInvalido)
+                    .addComponent(tipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 42, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(formatoInvalido)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
 
-        formatoInvalido.setText("Formato no valido.");
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(78, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatoInvalido)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(tipoDescuento)
-                        .addComponent(idTipoDescuento)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(101, 101, 101))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tituloPantalla))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(405, 405, 405)
+                .addComponent(jLabel1))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(110, 110, 110)
+                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addComponent(jLabel1)
-                .addGap(31, 31, 31)
-                .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(formatoInvalido)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                .addComponent(botonAceptar)
-                .addGap(28, 28, 28))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(74, 74, 74)
+                        .addComponent(tituloPantalla))
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -193,7 +273,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             {
                 Border border = BorderFactory.createLineBorder(Color.RED, 1);
                 tipoDescuento.setBorder(border);
-                formatoInvalido.setEnabled(false);
+                formatoInvalido.setVisible(true);
                 formatoInvalido.setText("Ese tipo de descuento ya existe.");
                 return;
             }
@@ -218,32 +298,25 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
 //a;adir validaciones botonaceptar
     private void tipoDescuentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusLost
 
-        if(validar.validacionCadenaPalabras(tipoDescuento.getText()))
-        {
-            Border border = BorderFactory.createLineBorder(Color.GREEN, 1);
-            tipoDescuento.setBorder(border);
-            formatoInvalido.setEnabled(true);
-            formatoInvalido.setText("Formato válido");
-
-            
-        }else
-        {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            tipoDescuento.setBorder(border);
-            formatoInvalido.setEnabled(false);
-            formatoInvalido.setText("Formato inválido");
-
-        }
-        for(int i=0; i < descuentosEnBd.size();i++)
+         for(int i=0; i < descuentosEnBd.size();i++)
         {
             if(tipoDescuento.getText().equalsIgnoreCase(descuentosEnBd.get(i).getNomDescuento()))
             {
-                Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
             tipoDescuento.setBorder(border);
-            formatoInvalido.setEnabled(false);
+            formatoInvalido.setVisible(true);
             formatoInvalido.setText("Ese tipo de descuento ya existe.");
             }
         }
+        if(!validar.validacionCadenaPalabras(tipoDescuento.getText()))
+        {    
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            tipoDescuento.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+        }
+        
+       
         
     }//GEN-LAST:event_tipoDescuentoFocusLost
 
@@ -299,6 +372,19 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         
         
     }
+    
+    private void insertarImagen(JLabel lbl,String ruta)
+    {
+        this.imagen = new ImageIcon(ruta);
+        this.icono = new ImageIcon(
+                this.imagen.getImage().getScaledInstance(
+                        lbl.getWidth(), 
+                        lbl.getHeight(),
+                        Image.SCALE_DEFAULT)
+        );
+        lbl.setIcon(this.icono);
+        this.repaint();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
@@ -306,6 +392,10 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     private javax.swing.JTextField idTipoDescuento;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel logo;
     private javax.swing.JTextField tipoDescuento;
+    private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }
