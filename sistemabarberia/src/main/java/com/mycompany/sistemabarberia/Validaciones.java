@@ -77,7 +77,7 @@ public class Validaciones {
     //Devuelve TRUE si una cadena de texto empieza con mayuscula, sino devuelve FALSE.
     public boolean validacionMayusculaInicial(String cadena)
     {
-      String patron = "^[A-Z]\\w+";
+      String patron = "^[A-Z]{1}[a-z]+$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
