@@ -16,8 +16,11 @@ import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -59,6 +62,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             idTipoDescuento.setText("ID Tipo de Documento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
         } 
         
+        tipoDescuento.setText("Nombre del Tipo de Descuento");
 
     }
 
@@ -87,6 +91,8 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         jLabel1.setText("NUEVO TIPO DESCUENTO");
 
         idTipoDescuento.setEditable(false);
+        idTipoDescuento.setBackground(new java.awt.Color(30, 33, 34));
+        idTipoDescuento.setForeground(new java.awt.Color(255, 255, 255));
         idTipoDescuento.setText("ID Tipo de Descuento");
         idTipoDescuento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -94,9 +100,14 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             }
         });
 
-        tipoDescuento.setText("Nuevo Tipo de Descuento");
+        tipoDescuento.setBackground(new java.awt.Color(30, 33, 34));
+        tipoDescuento.setForeground(new java.awt.Color(255, 255, 255));
+        tipoDescuento.setText("Nombre del Tipo de Descuento");
         tipoDescuento.setToolTipText("Ingrese un tipo de descuento válido.");
         tipoDescuento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tipoDescuentoFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 tipoDescuentoFocusLost(evt);
             }
@@ -143,13 +154,13 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addComponent(jLabel1)
-                .addGap(42, 42, 42)
-                .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addComponent(tipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addComponent(botonAceptar)
                 .addGap(28, 28, 28))
         );
@@ -169,6 +180,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
         String txt = tipoDescuento.getText();
         tipodescuento tipoDescuentoNuevo = new tipodescuento();
         tipoDescuentoNuevo.setNomDescuento(tipoDescuento.getText());
@@ -179,8 +191,10 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         {
             if(tipoDescuentoNuevo.getNomDescuento().equalsIgnoreCase(descuentosEnBd.get(i).getNomDescuento()))
             {
-               //existe = true; 
-                JOptionPane.showMessageDialog(null,"Ese descuento ya existe.");
+                Border border = BorderFactory.createLineBorder(Color.RED, 1);
+                tipoDescuento.setBorder(border);
+                formatoInvalido.setEnabled(false);
+                formatoInvalido.setText("Ese tipo de descuento ya existe.");
                 return;
             }
         }
@@ -189,11 +203,11 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             try {
             tipodescuentoDAO.create(tipoDescuentoNuevo);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+                    Reiniciar();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
         }
         }
-        Reiniciar();
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -209,11 +223,16 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             Border border = BorderFactory.createLineBorder(Color.GREEN, 1);
             tipoDescuento.setBorder(border);
             formatoInvalido.setEnabled(true);
+            formatoInvalido.setText("Formato válido");
+
+            
         }else
         {
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
             tipoDescuento.setBorder(border);
             formatoInvalido.setEnabled(false);
+            formatoInvalido.setText("Formato inválido");
+
         }
         for(int i=0; i < descuentosEnBd.size();i++)
         {
@@ -221,8 +240,8 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             {
                 Border border = BorderFactory.createLineBorder(Color.RED, 1);
             tipoDescuento.setBorder(border);
-            formatoInvalido.setText("Ese tipo de descuento ya existe.");
             formatoInvalido.setEnabled(false);
+            formatoInvalido.setText("Ese tipo de descuento ya existe.");
             }
         }
         
@@ -238,6 +257,11 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         evt.consume();
     }
     }//GEN-LAST:event_tipoDescuentoKeyTyped
+
+    private void tipoDescuentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusGained
+        // TODO add your handling code here:
+        tipoDescuento.setText("");
+    }//GEN-LAST:event_tipoDescuentoFocusGained
 
     /**
      * @param args the command line arguments
