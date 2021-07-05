@@ -7,7 +7,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipodeduccion;
+import com.mycompany.sistemabarberia.puesto;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,9 +22,9 @@ import javax.persistence.criteria.Root;
  *
  * @author Jonathan Laux
  */
-public class tipodeduccionJpaController implements Serializable {
+public class puestoJpaController implements Serializable {
 
-    public tipodeduccionJpaController() {
+    public puestoJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
@@ -33,16 +33,16 @@ public class tipodeduccionJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipodeduccion tipodeduccion) throws PreexistingEntityException, Exception {
+    public void create(puesto puesto) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipodeduccion);
+            em.persist(puesto);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipodeduccion(tipodeduccion.getIdtipodeduccion()) != null) {
-                throw new PreexistingEntityException("tipodeduccion " + tipodeduccion + " already exists.", ex);
+            if (findpuesto(puesto.getIdpuesto()) != null) {
+                throw new PreexistingEntityException("puesto " + puesto + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +52,19 @@ public class tipodeduccionJpaController implements Serializable {
         }
     }
 
-    public void edit(tipodeduccion tipodeduccion) throws NonexistentEntityException, Exception {
+    public void edit(puesto puesto) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodeduccion = em.merge(tipodeduccion);
+            puesto = em.merge(puesto);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipodeduccion.getIdtipodeduccion();
-                if (findtipodeduccion(id) == null) {
-                    throw new NonexistentEntityException("The tipodeduccion with id " + id + " no longer exists.");
+                int id = puesto.getIdpuesto();
+                if (findpuesto(id) == null) {
+                    throw new NonexistentEntityException("The puesto with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +80,14 @@ public class tipodeduccionJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodeduccion tipodeduccion;
+            puesto puesto;
             try {
-                tipodeduccion = em.getReference(tipodeduccion.class, id);
-                tipodeduccion.getIdtipodeduccion();
+                puesto = em.getReference(puesto.class, id);
+                puesto.getIdpuesto();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipodeduccion with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The puesto with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipodeduccion);
+            em.remove(puesto);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +96,19 @@ public class tipodeduccionJpaController implements Serializable {
         }
     }
 
-    public List<tipodeduccion> findtipodeduccionEntities() {
-        return findtipodeduccionEntities(true, -1, -1);
+    public List<puesto> findpuestoEntities() {
+        return findpuestoEntities(true, -1, -1);
     }
 
-    public List<tipodeduccion> findtipodeduccionEntities(int maxResults, int firstResult) {
-        return findtipodeduccionEntities(false, maxResults, firstResult);
+    public List<puesto> findpuestoEntities(int maxResults, int firstResult) {
+        return findpuestoEntities(false, maxResults, firstResult);
     }
 
-    private List<tipodeduccion> findtipodeduccionEntities(boolean all, int maxResults, int firstResult) {
+    private List<puesto> findpuestoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipodeduccion.class));
+            cq.select(cq.from(puesto.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +120,20 @@ public class tipodeduccionJpaController implements Serializable {
         }
     }
 
-    public tipodeduccion findtipodeduccion(int id) {
+    public puesto findpuesto(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipodeduccion.class, id);
+            return em.find(puesto.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipodeduccionCount() {
+    public int getpuestoCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipodeduccion> rt = cq.from(tipodeduccion.class);
+            Root<puesto> rt = cq.from(puesto.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

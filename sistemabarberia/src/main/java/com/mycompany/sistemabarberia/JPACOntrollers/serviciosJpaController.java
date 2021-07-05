@@ -7,7 +7,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipodeduccion;
+import com.mycompany.sistemabarberia.servicios;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,10 +22,11 @@ import javax.persistence.criteria.Root;
  *
  * @author Jonathan Laux
  */
-public class tipodeduccionJpaController implements Serializable {
+public class serviciosJpaController implements Serializable {
 
-    public tipodeduccionJpaController() {
+    public serviciosJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
+
     }
     private EntityManagerFactory emf = null;
 
@@ -33,16 +34,16 @@ public class tipodeduccionJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipodeduccion tipodeduccion) throws PreexistingEntityException, Exception {
+    public void create(servicios servicios) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipodeduccion);
+            em.persist(servicios);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipodeduccion(tipodeduccion.getIdtipodeduccion()) != null) {
-                throw new PreexistingEntityException("tipodeduccion " + tipodeduccion + " already exists.", ex);
+            if (findservicios(servicios.getIdservicio()) != null) {
+                throw new PreexistingEntityException("servicios " + servicios + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +53,19 @@ public class tipodeduccionJpaController implements Serializable {
         }
     }
 
-    public void edit(tipodeduccion tipodeduccion) throws NonexistentEntityException, Exception {
+    public void edit(servicios servicios) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodeduccion = em.merge(tipodeduccion);
+            servicios = em.merge(servicios);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipodeduccion.getIdtipodeduccion();
-                if (findtipodeduccion(id) == null) {
-                    throw new NonexistentEntityException("The tipodeduccion with id " + id + " no longer exists.");
+                int id = servicios.getIdservicio();
+                if (findservicios(id) == null) {
+                    throw new NonexistentEntityException("The servicios with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +81,14 @@ public class tipodeduccionJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodeduccion tipodeduccion;
+            servicios servicios;
             try {
-                tipodeduccion = em.getReference(tipodeduccion.class, id);
-                tipodeduccion.getIdtipodeduccion();
+                servicios = em.getReference(servicios.class, id);
+                servicios.getIdservicio();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipodeduccion with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The servicios with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipodeduccion);
+            em.remove(servicios);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +97,19 @@ public class tipodeduccionJpaController implements Serializable {
         }
     }
 
-    public List<tipodeduccion> findtipodeduccionEntities() {
-        return findtipodeduccionEntities(true, -1, -1);
+    public List<servicios> findserviciosEntities() {
+        return findserviciosEntities(true, -1, -1);
     }
 
-    public List<tipodeduccion> findtipodeduccionEntities(int maxResults, int firstResult) {
-        return findtipodeduccionEntities(false, maxResults, firstResult);
+    public List<servicios> findserviciosEntities(int maxResults, int firstResult) {
+        return findserviciosEntities(false, maxResults, firstResult);
     }
 
-    private List<tipodeduccion> findtipodeduccionEntities(boolean all, int maxResults, int firstResult) {
+    private List<servicios> findserviciosEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipodeduccion.class));
+            cq.select(cq.from(servicios.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +121,20 @@ public class tipodeduccionJpaController implements Serializable {
         }
     }
 
-    public tipodeduccion findtipodeduccion(int id) {
+    public servicios findservicios(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipodeduccion.class, id);
+            return em.find(servicios.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipodeduccionCount() {
+    public int getserviciosCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipodeduccion> rt = cq.from(tipodeduccion.class);
+            Root<servicios> rt = cq.from(servicios.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

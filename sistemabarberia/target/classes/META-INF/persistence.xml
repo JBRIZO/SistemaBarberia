@@ -4,6 +4,10 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>com.mycompany.sistemabarberia.tipopago</class>
     <class>com.mycompany.sistemabarberia.tipodeduccion</class>
+    <class>com.mycompany.sistemabarberia.tipodescuento</class>
+    <class>com.mycompany.sistemabarberia.puesto</class>
+    <class>com.mycompany.sistemabarberia.servicios</class>
+    <class>com.mycompany.sistemabarberia.precioshistoricoservicios</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://remotemysql.com:3306/mqW9X0QO2X?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="mqW9X0QO2X"/>
