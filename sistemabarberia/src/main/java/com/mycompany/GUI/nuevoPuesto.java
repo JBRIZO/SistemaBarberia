@@ -142,7 +142,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         nombrePuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombrePuesto.setForeground(new java.awt.Color(255, 255, 255));
         nombrePuesto.setText("  Nombre del nuevo puesto.");
-        nombrePuesto.setToolTipText("Ingrese un tipo de descuento válido.");
+        nombrePuesto.setToolTipText("Ingrese un puesto válido.");
         nombrePuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         nombrePuesto.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {

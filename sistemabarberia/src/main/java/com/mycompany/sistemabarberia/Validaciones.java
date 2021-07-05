@@ -16,6 +16,19 @@ import java.util.regex.Pattern;
 public class Validaciones {
     
     //Valida el periodo, que debe tener el formato mm-AAAA 
+    
+    public boolean validacionDecimal(String numero)
+    {
+        String patron = "^[0-9]{1,4}.[0-9]{2}$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(numero);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }
+    }
     public boolean validacionPeriodo(String cadena)
     {
         String mes = "";
