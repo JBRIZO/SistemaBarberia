@@ -7,11 +7,10 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.tipodepagoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tipopagoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.puesto;
 import com.mycompany.sistemabarberia.tipodeduccion;
-import com.mycompany.sistemabarberia.tipodepago;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
@@ -27,26 +26,26 @@ import javax.swing.border.Border;
  *
  * @author Jonathan Laux
  */
-public class tipodePago extends javax.swing.JFrame {
+public class tipopago extends javax.swing.JFrame {
     
-    private tipodepagoJpaController tipodepagoDAO = new tipodepagoJpaController();
+    private tipopagoJpaController tipopagoDAO = new tipopagoJpaController();
     private Validaciones validar = new Validaciones();
-    private List<tipodepago> tipodepagoEnBd = tipodepagoDAO.findtipodepagoEntities();
+    private List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
     private ImageIcon imagen;
     private Icon icono;
 
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public tipodePago() {
+    public tipopago() {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
 
-        List<tipodepago> tipodepagoEnBd = tipodepagoDAO.findtipodepagoEntities();
-        if (tipodepagoEnBd.size() > 0)
+        List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
+        if (tipopagoEnBd.size() > 0)
         {
-            idtipopago.setText("  ID de tipo de pago : " + Integer.toString(tipodepagoEnBd.get(tipodepagoEnBd.size()-1).getIdtipopago()+1));
+            idtipopago.setText("  ID de tipo de pago : " + Integer.toString(tipopagoEnBd.get(tipopagoEnBd.size()-1).getIdtipopago()+1));
         }else
         {
             idtipopago.setText("  ID de tipo de pago: 1");
@@ -57,13 +56,13 @@ public class tipodePago extends javax.swing.JFrame {
     
     public void Reiniciar()
     {
-        List<tipodepago> tipodepagoEnBd = tipodepagoDAO.findtipodepagoEntities();
-        if (tipodepagoEnBd.isEmpty())
+        List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
+        if (tipopagoEnBd.isEmpty())
         {
             idtipopago.setText("  ID de tipo de pago: 1");
         }else
         {
-            idtipopago.setText("  ID de tipo de pago: " + Integer.toString(tipodepagoEnBd.get(tipodepagoEnBd.size()-1).getIdtipopago()+1));
+            idtipopago.setText("  ID de tipo de pago: " + Integer.toString(tipopagoEnBd.get(tipopagoEnBd.size()-1).getIdtipopago()+1));
         } 
         
         TipoPago.setText("  Nombre del tipo de pago");
@@ -261,16 +260,16 @@ public class tipodePago extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        List<tipodepago> tipodepagoEnBd = tipodepagoDAO.findtipodepagoEntities();
+        List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
         String txt = TipoPago.getText();
-        tipodepago tipodePago = new tipodepago();
-        tipodePago.setTipoPago(TipoPago.getText());
-        tipodePago.setActivo(true);
+        com.mycompany.sistemabarberia.tipopago tipoPago = new com.mycompany.sistemabarberia.tipopago();
+        tipoPago.setTipoPago(TipoPago.getText());
+        tipoPago.setActivo(true);
         
        
-        for(int i=0; i < tipodepagoEnBd.size();i++)
+        for(int i=0; i < tipopagoEnBd.size();i++)
         {
-            if(tipodePago.getTipoPago().equalsIgnoreCase(tipodepagoEnBd.get(i).getTipoPago()))
+            if(tipoPago.getTipoPago().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
             {
                 Border border = BorderFactory.createLineBorder(Color.RED, 1);
                 TipoPago.setBorder(border);
@@ -283,7 +282,7 @@ public class tipodePago extends javax.swing.JFrame {
         
         if(validar.validacionCadenaPalabras(txt)){
             try {
-            tipodepagoDAO.create(tipodePago);
+            tipopagoDAO.create(tipoPago);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
@@ -300,9 +299,9 @@ public class tipodePago extends javax.swing.JFrame {
 //a;adir validaciones botonaceptar
     private void TipoPagoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoPagoFocusLost
 
-         for(int i=0; i < tipodepagoEnBd.size();i++)
+         for(int i=0; i < tipopagoEnBd.size();i++)
         {
-            if(TipoPago.getText().equalsIgnoreCase(tipodepagoEnBd.get(i).getTipoPago()))
+            if(TipoPago.getText().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
             {
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
             TipoPago.setBorder(border);
@@ -355,14 +354,22 @@ public class tipodePago extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(tipodePago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(tipodePago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(tipodePago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(tipodePago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -375,7 +382,7 @@ public class tipodePago extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new tipodePago().setVisible(true);
+                new tipopago().setVisible(true);
             }
         });
         

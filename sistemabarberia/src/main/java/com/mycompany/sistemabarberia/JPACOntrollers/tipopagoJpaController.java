@@ -7,7 +7,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.GUI.exceptions.NonexistentEntityException;
 import com.mycompany.GUI.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipodepago;
+import com.mycompany.sistemabarberia.tipopago;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,9 +22,9 @@ import javax.persistence.criteria.Root;
  *
  * @author flore
  */
-public class tipodepagoJpaController implements Serializable {
+public class tipopagoJpaController implements Serializable {
 
-    public tipodepagoJpaController() {
+    public tipopagoJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
@@ -33,16 +33,16 @@ public class tipodepagoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipodepago tipodepago) throws PreexistingEntityException, Exception {
+    public void create(tipopago tipopago) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipodepago);
+            em.persist(tipopago);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipodepago(tipodepago.getIdtipopago()) != null) {
-                throw new PreexistingEntityException("tipodepago " + tipodepago + " already exists.", ex);
+            if (findtipopago(tipopago.getIdtipopago()) != null) {
+                throw new PreexistingEntityException("tipopago " + tipopago + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +52,19 @@ public class tipodepagoJpaController implements Serializable {
         }
     }
 
-    public void edit(tipodepago tipodepago) throws NonexistentEntityException, Exception {
+    public void edit(tipopago tipopago) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodepago = em.merge(tipodepago);
+            tipopago = em.merge(tipopago);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipodepago.getIdtipopago();
-                if (findtipodepago(id) == null) {
-                    throw new NonexistentEntityException("The tipodepago with id " + id + " no longer exists.");
+                int id = tipopago.getIdtipopago();
+                if (findtipopago(id) == null) {
+                    throw new NonexistentEntityException("The tipopago with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +80,14 @@ public class tipodepagoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodepago tipodepago;
+            tipopago tipopago;
             try {
-                tipodepago = em.getReference(tipodepago.class, id);
-                tipodepago.getIdtipopago();
+                tipopago = em.getReference(tipopago.class, id);
+                tipopago.getIdtipopago();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipodepago with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The tipopago with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipodepago);
+            em.remove(tipopago);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +96,19 @@ public class tipodepagoJpaController implements Serializable {
         }
     }
 
-    public List<tipodepago> findtipodepagoEntities() {
-        return findtipodepagoEntities(true, -1, -1);
+    public List<tipopago> findtipopagoEntities() {
+        return findtipopagoEntities(true, -1, -1);
     }
 
-    public List<tipodepago> findtipodepagoEntities(int maxResults, int firstResult) {
-        return findtipodepagoEntities(false, maxResults, firstResult);
+    public List<tipopago> findtipopagoEntities(int maxResults, int firstResult) {
+        return findtipopagoEntities(false, maxResults, firstResult);
     }
 
-    private List<tipodepago> findtipodepagoEntities(boolean all, int maxResults, int firstResult) {
+    private List<tipopago> findtipopagoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipodepago.class));
+            cq.select(cq.from(tipopago.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +120,20 @@ public class tipodepagoJpaController implements Serializable {
         }
     }
 
-    public tipodepago findtipodepago(int id) {
+    public tipopago findtipopago(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipodepago.class, id);
+            return em.find(tipopago.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipodepagoCount() {
+    public int gettipopagoCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipodepago> rt = cq.from(tipodepago.class);
+            Root<tipopago> rt = cq.from(tipopago.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
