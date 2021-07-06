@@ -14,7 +14,7 @@ import javax.persistence.Id;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil
  */
 @Entity
 public class tipodocumento implements Serializable {

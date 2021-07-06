@@ -6,11 +6,9 @@
 package com.mycompany.sistemabarberia;
 
 import java.io.Serializable;
-import static javassist.CtMethod.ConstParameter.string;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import static org.hibernate.type.TypeFactory.serializable;
 
 /**
  *
@@ -20,7 +18,7 @@ import static org.hibernate.type.TypeFactory.serializable;
 public class estadofactura implements Serializable {
     
     @Id
-    private int idestado; 
+    private int idestado;
     
     @Column
     private String NombreEstado;
@@ -51,6 +49,5 @@ public class estadofactura implements Serializable {
     public void setActivo(boolean Activo) {
         this.Activo = Activo;
     }
-    
-    
+
 }

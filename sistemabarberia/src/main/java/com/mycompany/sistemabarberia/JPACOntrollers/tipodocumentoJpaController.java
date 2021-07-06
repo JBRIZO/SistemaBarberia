@@ -20,7 +20,7 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil
  */
 public class tipodocumentoJpaController implements Serializable {
 
