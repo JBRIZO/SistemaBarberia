@@ -322,10 +322,10 @@ public class nuevoServicio extends javax.swing.JFrame {
             List<servicios> servicios = servicioDAO.findserviciosEntities();
             precioUno.setIDServicio((servicios.get(servicios.size()-1)).getIdservicio());  
             preciosDAO.create(precioUno);    
-            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+            JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
@@ -362,7 +362,7 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     private void precioInicialKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precioInicialKeyTyped
         // TODO add your handling code here:
-        if ((precioInicial.getText() + evt.getKeyChar()).length() > 6) {
+        if ((precioInicial.getText() + evt.getKeyChar()).length() > 7) {
         evt.consume();
     }
     }//GEN-LAST:event_precioInicialKeyTyped

@@ -349,7 +349,7 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonPuestoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonPuestoMouseClicked
         // TODO add your handling code here:
-java.awt.EventQueue.invokeLater(new Runnable() {
+    java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoPuesto().setVisible(true);
             }
