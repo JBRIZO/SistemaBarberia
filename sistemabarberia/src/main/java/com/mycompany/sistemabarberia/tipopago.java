@@ -15,7 +15,7 @@ import javax.persistence.Id;
  * @author flore
  */
 @Entity
-public class tipodepago implements Serializable {
+public class tipopago implements Serializable {
     @Id
     private int idtipopago;
     
