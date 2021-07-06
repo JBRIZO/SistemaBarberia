@@ -7,7 +7,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipodocumento;
+import com.mycompany.sistemabarberia.tipodescuento;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,9 +22,9 @@ import javax.persistence.criteria.Root;
  *
  * @author Jonathan Laux
  */
-public class tipodocumentoJpaController implements Serializable {
+public class tipodescuentoJpaController implements Serializable {
 
-    public tipodocumentoJpaController() {
+    public tipodescuentoJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
@@ -33,16 +33,16 @@ public class tipodocumentoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipodocumento tipodocumento) throws PreexistingEntityException, Exception {
+    public void create(tipodescuento tipodescuento) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipodocumento);
+            em.persist(tipodescuento);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipodocumento(tipodocumento.getIdtipodocumento()) != null) {
-                throw new PreexistingEntityException("tipodocumento " + tipodocumento + " already exists.", ex);
+            if (findtipodescuento(tipodescuento.getIdtipodescuento()) != null) {
+                throw new PreexistingEntityException("tipodescuento " + tipodescuento + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +52,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public void edit(tipodocumento tipodocumento) throws NonexistentEntityException, Exception {
+    public void edit(tipodescuento tipodescuento) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento = em.merge(tipodocumento);
+            tipodescuento = em.merge(tipodescuento);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipodocumento.getIdtipodocumento();
-                if (findtipodocumento(id) == null) {
-                    throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.");
+                int id = tipodescuento.getIdtipodescuento();
+                if (findtipodescuento(id) == null) {
+                    throw new NonexistentEntityException("The tipodescuento with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +80,14 @@ public class tipodocumentoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento tipodocumento;
+            tipodescuento tipodescuento;
             try {
-                tipodocumento = em.getReference(tipodocumento.class, id);
-                tipodocumento.getIdtipodocumento();
+                tipodescuento = em.getReference(tipodescuento.class, id);
+                tipodescuento.getIdtipodescuento();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The tipodescuento with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipodocumento);
+            em.remove(tipodescuento);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +96,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public List<tipodocumento> findtipodocumentoEntities() {
-        return findtipodocumentoEntities(true, -1, -1);
+    public List<tipodescuento> findtipodescuentoEntities() {
+        return findtipodescuentoEntities(true, -1, -1);
     }
 
-    public List<tipodocumento> findtipodocumentoEntities(int maxResults, int firstResult) {
-        return findtipodocumentoEntities(false, maxResults, firstResult);
+    public List<tipodescuento> findtipodescuentoEntities(int maxResults, int firstResult) {
+        return findtipodescuentoEntities(false, maxResults, firstResult);
     }
 
-    private List<tipodocumento> findtipodocumentoEntities(boolean all, int maxResults, int firstResult) {
+    private List<tipodescuento> findtipodescuentoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipodocumento.class));
+            cq.select(cq.from(tipodescuento.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +120,20 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public tipodocumento findtipodocumento(int id) {
+    public tipodescuento findtipodescuento(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipodocumento.class, id);
+            return em.find(tipodescuento.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipodocumentoCount() {
+    public int gettipodescuentoCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipodocumento> rt = cq.from(tipodocumento.class);
+            Root<tipodescuento> rt = cq.from(tipodescuento.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

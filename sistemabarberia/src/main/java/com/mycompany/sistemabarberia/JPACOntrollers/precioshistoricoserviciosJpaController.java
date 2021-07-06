@@ -7,7 +7,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipodocumento;
+import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,9 +22,9 @@ import javax.persistence.criteria.Root;
  *
  * @author Jonathan Laux
  */
-public class tipodocumentoJpaController implements Serializable {
+public class precioshistoricoserviciosJpaController implements Serializable {
 
-    public tipodocumentoJpaController() {
+    public precioshistoricoserviciosJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
@@ -33,16 +33,16 @@ public class tipodocumentoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipodocumento tipodocumento) throws PreexistingEntityException, Exception {
+    public void create(precioshistoricoservicios precioshistoricoservicios) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipodocumento);
+            em.persist(precioshistoricoservicios);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipodocumento(tipodocumento.getIdtipodocumento()) != null) {
-                throw new PreexistingEntityException("tipodocumento " + tipodocumento + " already exists.", ex);
+            if (findprecioshistoricoservicios(precioshistoricoservicios.getNumprecioservicio()) != null) {
+                throw new PreexistingEntityException("precioshistoricoservicios " + precioshistoricoservicios + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +52,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public void edit(tipodocumento tipodocumento) throws NonexistentEntityException, Exception {
+    public void edit(precioshistoricoservicios precioshistoricoservicios) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento = em.merge(tipodocumento);
+            precioshistoricoservicios = em.merge(precioshistoricoservicios);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipodocumento.getIdtipodocumento();
-                if (findtipodocumento(id) == null) {
-                    throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.");
+                int id = precioshistoricoservicios.getNumprecioservicio();
+                if (findprecioshistoricoservicios(id) == null) {
+                    throw new NonexistentEntityException("The precioshistoricoservicios with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +80,14 @@ public class tipodocumentoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento tipodocumento;
+            precioshistoricoservicios precioshistoricoservicios;
             try {
-                tipodocumento = em.getReference(tipodocumento.class, id);
-                tipodocumento.getIdtipodocumento();
+                precioshistoricoservicios = em.getReference(precioshistoricoservicios.class, id);
+                precioshistoricoservicios.getNumprecioservicio();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The precioshistoricoservicios with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipodocumento);
+            em.remove(precioshistoricoservicios);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +96,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public List<tipodocumento> findtipodocumentoEntities() {
-        return findtipodocumentoEntities(true, -1, -1);
+    public List<precioshistoricoservicios> findprecioshistoricoserviciosEntities() {
+        return findprecioshistoricoserviciosEntities(true, -1, -1);
     }
 
-    public List<tipodocumento> findtipodocumentoEntities(int maxResults, int firstResult) {
-        return findtipodocumentoEntities(false, maxResults, firstResult);
+    public List<precioshistoricoservicios> findprecioshistoricoserviciosEntities(int maxResults, int firstResult) {
+        return findprecioshistoricoserviciosEntities(false, maxResults, firstResult);
     }
 
-    private List<tipodocumento> findtipodocumentoEntities(boolean all, int maxResults, int firstResult) {
+    private List<precioshistoricoservicios> findprecioshistoricoserviciosEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipodocumento.class));
+            cq.select(cq.from(precioshistoricoservicios.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +120,20 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public tipodocumento findtipodocumento(int id) {
+    public precioshistoricoservicios findprecioshistoricoservicios(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipodocumento.class, id);
+            return em.find(precioshistoricoservicios.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipodocumentoCount() {
+    public int getprecioshistoricoserviciosCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipodocumento> rt = cq.from(tipodocumento.class);
+            Root<precioshistoricoservicios> rt = cq.from(precioshistoricoservicios.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

@@ -7,7 +7,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipodocumento;
+import com.mycompany.sistemabarberia.servicios;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,10 +22,11 @@ import javax.persistence.criteria.Root;
  *
  * @author Jonathan Laux
  */
-public class tipodocumentoJpaController implements Serializable {
+public class serviciosJpaController implements Serializable {
 
-    public tipodocumentoJpaController() {
+    public serviciosJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
+
     }
     private EntityManagerFactory emf = null;
 
@@ -33,16 +34,16 @@ public class tipodocumentoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipodocumento tipodocumento) throws PreexistingEntityException, Exception {
+    public void create(servicios servicios) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipodocumento);
+            em.persist(servicios);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipodocumento(tipodocumento.getIdtipodocumento()) != null) {
-                throw new PreexistingEntityException("tipodocumento " + tipodocumento + " already exists.", ex);
+            if (findservicios(servicios.getIdservicio()) != null) {
+                throw new PreexistingEntityException("servicios " + servicios + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +53,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public void edit(tipodocumento tipodocumento) throws NonexistentEntityException, Exception {
+    public void edit(servicios servicios) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento = em.merge(tipodocumento);
+            servicios = em.merge(servicios);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipodocumento.getIdtipodocumento();
-                if (findtipodocumento(id) == null) {
-                    throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.");
+                int id = servicios.getIdservicio();
+                if (findservicios(id) == null) {
+                    throw new NonexistentEntityException("The servicios with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +81,14 @@ public class tipodocumentoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento tipodocumento;
+            servicios servicios;
             try {
-                tipodocumento = em.getReference(tipodocumento.class, id);
-                tipodocumento.getIdtipodocumento();
+                servicios = em.getReference(servicios.class, id);
+                servicios.getIdservicio();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The servicios with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipodocumento);
+            em.remove(servicios);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +97,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public List<tipodocumento> findtipodocumentoEntities() {
-        return findtipodocumentoEntities(true, -1, -1);
+    public List<servicios> findserviciosEntities() {
+        return findserviciosEntities(true, -1, -1);
     }
 
-    public List<tipodocumento> findtipodocumentoEntities(int maxResults, int firstResult) {
-        return findtipodocumentoEntities(false, maxResults, firstResult);
+    public List<servicios> findserviciosEntities(int maxResults, int firstResult) {
+        return findserviciosEntities(false, maxResults, firstResult);
     }
 
-    private List<tipodocumento> findtipodocumentoEntities(boolean all, int maxResults, int firstResult) {
+    private List<servicios> findserviciosEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipodocumento.class));
+            cq.select(cq.from(servicios.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +121,20 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public tipodocumento findtipodocumento(int id) {
+    public servicios findservicios(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipodocumento.class, id);
+            return em.find(servicios.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipodocumentoCount() {
+    public int getserviciosCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipodocumento> rt = cq.from(tipodocumento.class);
+            Root<servicios> rt = cq.from(servicios.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
