@@ -5,9 +5,9 @@
  */
 package com.mycompany.sistemabarberia.JPACOntrollers;
 
+import com.mycompany.sistemabarberia.estadofactura;
 import com.mycompany.sistemabarberia.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipodocumento;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -20,11 +20,11 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil
  */
-public class tipodocumentoJpaController implements Serializable {
+public class estadofacturaJpaController implements Serializable {
 
-    public tipodocumentoJpaController() {
+    public estadofacturaJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
@@ -33,16 +33,16 @@ public class tipodocumentoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipodocumento tipodocumento) throws PreexistingEntityException, Exception {
+    public void create(estadofactura estadofactura) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipodocumento);
+            em.persist(estadofactura);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipodocumento(tipodocumento.getIdtipodocumento()) != null) {
-                throw new PreexistingEntityException("tipodocumento " + tipodocumento + " already exists.", ex);
+            if (findestadofactura(estadofactura.getIdestado()) != null) {
+                throw new PreexistingEntityException("estadofactura " + estadofactura + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +52,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public void edit(tipodocumento tipodocumento) throws NonexistentEntityException, Exception {
+    public void edit(estadofactura estadofactura) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento = em.merge(tipodocumento);
+            estadofactura = em.merge(estadofactura);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipodocumento.getIdtipodocumento();
-                if (findtipodocumento(id) == null) {
-                    throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.");
+                int id = estadofactura.getIdestado();
+                if (findestadofactura(id) == null) {
+                    throw new NonexistentEntityException("The estadofactura with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +80,14 @@ public class tipodocumentoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipodocumento tipodocumento;
+            estadofactura estadofactura;
             try {
-                tipodocumento = em.getReference(tipodocumento.class, id);
-                tipodocumento.getIdtipodocumento();
+                estadofactura = em.getReference(estadofactura.class, id);
+                estadofactura.getIdestado();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The estadofactura with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipodocumento);
+            em.remove(estadofactura);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +96,19 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public List<tipodocumento> findtipodocumentoEntities() {
-        return findtipodocumentoEntities(true, -1, -1);
+    public List<estadofactura> findestadofacturaEntities() {
+        return findestadofacturaEntities(true, -1, -1);
     }
 
-    public List<tipodocumento> findtipodocumentoEntities(int maxResults, int firstResult) {
-        return findtipodocumentoEntities(false, maxResults, firstResult);
+    public List<estadofactura> findestadofacturaEntities(int maxResults, int firstResult) {
+        return findestadofacturaEntities(false, maxResults, firstResult);
     }
 
-    private List<tipodocumento> findtipodocumentoEntities(boolean all, int maxResults, int firstResult) {
+    private List<estadofactura> findestadofacturaEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipodocumento.class));
+            cq.select(cq.from(estadofactura.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +120,20 @@ public class tipodocumentoJpaController implements Serializable {
         }
     }
 
-    public tipodocumento findtipodocumento(int id) {
+    public estadofactura findestadofactura(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipodocumento.class, id);
+            return em.find(estadofactura.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipodocumentoCount() {
+    public int getestadofacturaCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipodocumento> rt = cq.from(tipodocumento.class);
+            Root<estadofactura> rt = cq.from(estadofactura.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
