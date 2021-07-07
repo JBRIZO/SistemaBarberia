@@ -99,6 +99,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonProductos.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonProductos.setText("PRODUCTOS");
         botonProductos.setRequestFocusEnabled(false);
+        botonProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonProductosMouseClicked(evt);
+            }
+        });
         botonProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonProductosActionPerformed(evt);
@@ -169,6 +174,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonBonos.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonBonos.setText("BONOS");
         botonBonos.setRequestFocusEnabled(false);
+        botonBonos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonBonosMouseClicked(evt);
+            }
+        });
         botonBonos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBonosActionPerformed(evt);
@@ -408,6 +418,26 @@ public class menuGerente extends javax.swing.JFrame {
         // TODO add your handling code here:
 
     }//GEN-LAST:event_botonNuevoEmpleadoMouseClicked
+
+    private void botonProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonProductosMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoProducto().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+    }//GEN-LAST:event_botonProductosMouseClicked
+
+    private void botonBonosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonBonosMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoTipoBono().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+    }//GEN-LAST:event_botonBonosMouseClicked
 
     
     /**
