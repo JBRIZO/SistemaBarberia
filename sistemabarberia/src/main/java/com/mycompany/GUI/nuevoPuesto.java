@@ -37,7 +37,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
         if (puestosEnBd.size() > 0)
         {
@@ -81,12 +81,13 @@ public class nuevoPuesto extends javax.swing.JFrame {
         tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         idPuesto = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
         nombrePuesto = new javax.swing.JTextField();
+        jPanel9 = new javax.swing.JPanel();
+        salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,8 +109,6 @@ public class nuevoPuesto extends javax.swing.JFrame {
         });
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setText("jLabel1");
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -203,35 +202,63 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
+        jPanel9.setBackground(new java.awt.Color(20, 17, 17));
+
+        salir.setText("jLabel2");
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salirMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
-                .addComponent(tituloPantalla))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(405, 405, 405)
-                .addComponent(jLabel1))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(110, 110, 110)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(347, 347, 347)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                         .addComponent(tituloPantalla))
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41))
@@ -242,7 +269,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -303,10 +330,13 @@ public class nuevoPuesto extends javax.swing.JFrame {
 //a;adir validaciones botonaceptar
     private void nombrePuestoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusLost
 
+        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);            
+        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+
+
         if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
             return;
@@ -316,16 +346,20 @@ public class nuevoPuesto extends javax.swing.JFrame {
         {
             if(nombrePuesto.getText().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Ese puesto ya existe.");
             }
         }
-        if(!validar.validacionCadenaPalabras(nombrePuesto.getText()))
+        if(validar.validacionCadenaPalabras(nombrePuesto.getText()))
         {    
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            nombrePuesto.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Formato inválido");
         }
@@ -349,6 +383,16 @@ public class nuevoPuesto extends javax.swing.JFrame {
         // TODO add your handling code here:
         nombrePuesto.setText("");
     }//GEN-LAST:event_nombrePuestoFocusGained
+
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+    }//GEN-LAST:event_salirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -405,12 +449,13 @@ public class nuevoPuesto extends javax.swing.JFrame {
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
     private javax.swing.JTextField idPuesto;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombrePuesto;
+    private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

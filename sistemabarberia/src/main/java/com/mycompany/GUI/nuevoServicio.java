@@ -45,6 +45,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     public nuevoServicio() {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();    
     }
     
@@ -90,6 +91,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         precioInicial = new javax.swing.JTextField();
         nombreServicio = new javax.swing.JTextField();
         formatoInvalido2 = new javax.swing.JLabel();
+        salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -240,14 +242,26 @@ public class nuevoServicio extends javax.swing.JFrame {
                 .addContainerGap(36, Short.MAX_VALUE))
         );
 
+        salir.setText("jLabel2");
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salirMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(349, 349, 349)
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -262,7 +276,11 @@ public class nuevoServicio extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(25, 25, 25)
+                        .addComponent(tituloPantalla)))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
@@ -435,6 +453,16 @@ public class nuevoServicio extends javax.swing.JFrame {
         evt.consume();}
     }//GEN-LAST:event_nombreServicioKeyTyped
 
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+    }//GEN-LAST:event_salirMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -502,6 +530,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreServicio;
     private javax.swing.JTextField precioInicial;
+    private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

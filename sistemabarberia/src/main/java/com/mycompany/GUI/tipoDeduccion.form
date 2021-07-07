@@ -54,8 +54,16 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="logo" min="-2" pref="92" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
-                  <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                          <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="356" max="-2" attributes="0"/>
+                          <Component id="salir" min="-2" pref="33" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
               </Group>
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
@@ -74,7 +82,9 @@
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="salir" min="-2" pref="25" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                           <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="logo" alignment="0" min="-2" pref="98" max="-2" attributes="0"/>
@@ -280,6 +290,14 @@
             </Container>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JLabel" name="salir">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="jLabel2"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="salirMouseClicked"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

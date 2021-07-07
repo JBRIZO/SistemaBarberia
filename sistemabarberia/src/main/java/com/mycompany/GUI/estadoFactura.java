@@ -6,17 +6,11 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.estadofacturaJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.estadofactura;
-import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
-import static java.awt.Image.SCALE_DEFAULT;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -35,6 +29,8 @@ public class estadoFactura extends javax.swing.JFrame {
     private List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
     private ImageIcon imagen;
     private Icon icono;
+    
+
 
     /**
      * Creates new form nuevoestadofactura
@@ -43,6 +39,7 @@ public class estadoFactura extends javax.swing.JFrame {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
 
         List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
         if (estadofacturaEnBd.size() > 0)
@@ -83,6 +80,7 @@ public class estadoFactura extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
@@ -93,6 +91,19 @@ public class estadoFactura extends javax.swing.JFrame {
         idestado = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
         NombreEstado = new javax.swing.JTextField();
+        jPanel5 = new javax.swing.JPanel();
+        salir = new javax.swing.JLabel();
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -146,8 +157,8 @@ public class estadoFactura extends javax.swing.JFrame {
         NombreEstado.setBackground(new java.awt.Color(30, 33, 34));
         NombreEstado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         NombreEstado.setForeground(new java.awt.Color(255, 255, 255));
-        NombreEstado.setText(" Estado");
-        NombreEstado.setToolTipText("Ingrese un tipo de descuento válido.");
+        NombreEstado.setText("  Nuevo Estado de Factura");
+        NombreEstado.setToolTipText("Ingrese un nuevo Estado de Factura.");
         NombreEstado.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         NombreEstado.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -205,8 +216,34 @@ public class estadoFactura extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel5.setBackground(new java.awt.Color(20, 17, 17));
+
+        salir.setText("jLabel2");
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salirMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -215,47 +252,53 @@ public class estadoFactura extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(348, 348, 348)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(405, 405, 405)
                 .addComponent(jLabel1))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
+                .addGap(111, 111, 111)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tituloPantalla)
+                        .addGap(18, 18, 18)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
-                        .addComponent(tituloPantalla))
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(0, 248, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 264, Short.MAX_VALUE))
+                .addGap(29, 29, 29)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addGap(30, 30, 30))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -267,21 +310,28 @@ public class estadoFactura extends javax.swing.JFrame {
         estadofactura estadoFacturaNuevo = new estadofactura();
         estadoFacturaNuevo.setNombreEstado(NombreEstado.getText());
         estadoFacturaNuevo.setActivo(true);
-        
+        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+
        
         for(int i=0; i < estadofacturaEnBd.size();i++)
         {
             if(estadoFacturaNuevo.getNombreEstado().equalsIgnoreCase(estadofacturaEnBd.get(i).getNombreEstado()))
             {
-                Border border = BorderFactory.createLineBorder(Color.RED, 1);
-                NombreEstado.setBorder(border);
+                NombreEstado.setBorder(redBorder);
                 formatoInvalido.setVisible(true);
                 formatoInvalido.setText("Este estado de factura ya existe.");
                 return;
             }
         }
         
-        if(validar.validacionCadenaPalabras(txt)){
+        if(!validar.validacionCantidadMinima(NombreEstado.getText(), 4))
+            {
+            NombreEstado.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            }
+        
+        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(NombreEstado.getText(), 4)){
             try {
             estadofacturaDAO.create(estadoFacturaNuevo);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
@@ -300,23 +350,41 @@ public class estadoFactura extends javax.swing.JFrame {
 //a;adir validaciones botonaceptar
     private void NombreEstadoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_NombreEstadoFocusLost
 
+        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+        
+       
+        
          for(int i=0; i < estadofacturaEnBd.size();i++)
         {
             if(NombreEstado.getText().equalsIgnoreCase(estadofacturaEnBd.get(i).getNombreEstado()))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            NombreEstado.setBorder(border);
+            NombreEstado.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Este estado de factura ya existe.");
             }
         }
-        if(!validar.validacionCadenaPalabras(NombreEstado.getText()))
+       
+        if(validar.validacionCadenaPalabras(NombreEstado.getText()))
         {    
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            NombreEstado.setBorder(border);
+            NombreEstado.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            NombreEstado.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Formato inválido");
         }
+        
+         if(!validar.validacionCantidadMinima(NombreEstado.getText(), 4))
+            {
+            NombreEstado.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            }
+        
         
        
         
@@ -337,6 +405,16 @@ public class estadoFactura extends javax.swing.JFrame {
         // TODO add your handling code here:
         NombreEstado.setText("");
     }//GEN-LAST:event_NombreEstadoFocusGained
+
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new atributosFactura().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+    }//GEN-LAST:event_salirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -398,7 +476,10 @@ public class estadoFactura extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JLabel logo;
+    private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

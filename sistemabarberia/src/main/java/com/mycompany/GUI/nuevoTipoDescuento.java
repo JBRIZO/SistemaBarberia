@@ -37,6 +37,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
 
         List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
         if (descuentosEnBd.size() > 0)
@@ -87,6 +88,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         idTipoDescuento = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
         tipoDescuento = new javax.swing.JTextField();
+        salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -203,14 +205,26 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
+        salir.setText("jLabel2");
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salirMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(365, 365, 365)
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -223,9 +237,11 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tituloPantalla))
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -302,10 +318,13 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
 //a;adir validaciones botonaceptar
     private void tipoDescuentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusLost
 
+        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);           
+        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+
+
         if(!validar.validacionCantidadMinima(tipoDescuento.getText(),5))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            tipoDescuento.setBorder(border);
+            tipoDescuento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de descuento debe ser de minimo 5 letras.");
             }
@@ -313,18 +332,22 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         {
             if(tipoDescuento.getText().equalsIgnoreCase(descuentosEnBd.get(i).getNomDescuento()))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            tipoDescuento.setBorder(border);
+            tipoDescuento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Ese tipo de descuento ya existe.");
             }
         }
-        if(!validar.validacionCadenaPalabras(tipoDescuento.getText()))
+        if(validar.validacionCadenaPalabras(tipoDescuento.getText()))
         {    
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            tipoDescuento.setBorder(border);
+            tipoDescuento.setBorder(greenBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido.");
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            tipoDescuento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
         }
         
        
@@ -346,6 +369,16 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         // TODO add your handling code here:
         tipoDescuento.setText("");
     }//GEN-LAST:event_tipoDescuentoFocusGained
+
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+    }//GEN-LAST:event_salirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -406,6 +439,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
+    private javax.swing.JLabel salir;
     private javax.swing.JTextField tipoDescuento;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

@@ -36,6 +36,7 @@ public class tipopago extends javax.swing.JFrame {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
 
         List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
         if (tipopagoEnBd.size() > 0)
@@ -86,6 +87,7 @@ public class tipopago extends javax.swing.JFrame {
         idtipopago = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
         TipoPago = new javax.swing.JTextField();
+        salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -202,14 +204,26 @@ public class tipopago extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
+        salir.setText("jLabel2");
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salirMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(354, 354, 354)
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -224,7 +238,9 @@ public class tipopago extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
+                        .addContainerGap()
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
                         .addComponent(tituloPantalla))
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -299,11 +315,11 @@ public class tipopago extends javax.swing.JFrame {
     }//GEN-LAST:event_idtipopagoActionPerformed
 //a;adir validaciones botonaceptar
     private void TipoPagoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoPagoFocusLost
-        
+        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
         if(!validar.validacionCantidadMinima(TipoPago.getText(), 4))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            TipoPago.setBorder(border);
+            TipoPago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
             }
@@ -311,23 +327,23 @@ public class tipopago extends javax.swing.JFrame {
         {
             if(TipoPago.getText().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            TipoPago.setBorder(border);
+            TipoPago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Ese tipo de pago ya existe.");
             }
         }
-        if(!validar.validacionCadenaPalabras(TipoPago.getText()))
+       if(validar.validacionCadenaPalabras(TipoPago.getText()))
         {    
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            TipoPago.setBorder(border);
+            TipoPago.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            TipoPago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Formato inválido");
-        }
-        
-        
-       
-        
+        }      
     }//GEN-LAST:event_TipoPagoFocusLost
 
     private void TipoPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoPagoActionPerformed
@@ -345,6 +361,16 @@ public class tipopago extends javax.swing.JFrame {
         // TODO add your handling code here:
         TipoPago.setText("");
     }//GEN-LAST:event_TipoPagoFocusGained
+
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new atributosFactura().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+    }//GEN-LAST:event_salirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -421,6 +447,7 @@ public class tipopago extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
+    private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

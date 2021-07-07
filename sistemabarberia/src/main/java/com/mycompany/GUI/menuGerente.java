@@ -5,19 +5,10 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
-import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.puesto;
-import com.mycompany.sistemabarberia.tipodescuento;
-import java.awt.Color;
 import java.awt.Image;
-import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.border.Border;
 
 /**
  *
@@ -369,7 +360,7 @@ public class menuGerente extends javax.swing.JFrame {
                 new nuevoPuesto().setVisible(true);
             }
         });
-
+    this.setVisible(false);
     }//GEN-LAST:event_botonPuestoMouseClicked
 
     private void botonServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonServiciosMouseClicked
@@ -379,6 +370,7 @@ public class menuGerente extends javax.swing.JFrame {
                 new nuevoServicio().setVisible(true);
             }
         });
+        this.setVisible(false);
     }//GEN-LAST:event_botonServiciosMouseClicked
 
     private void botonDescuentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDescuentosMouseClicked
@@ -388,6 +380,7 @@ public class menuGerente extends javax.swing.JFrame {
                 new nuevoTipoDescuento().setVisible(true);
             }
         });
+        this.setVisible(false);
     }//GEN-LAST:event_botonDescuentosMouseClicked
 
     private void botonDeduccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDeduccionesMouseClicked
@@ -397,15 +390,18 @@ public class menuGerente extends javax.swing.JFrame {
                 new tipoDeduccion().setVisible(true);
             }
         });
+        this.setVisible(false);
     }//GEN-LAST:event_botonDeduccionesMouseClicked
 
     private void botonAtributosFacturaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAtributosFacturaMouseClicked
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new estadoFactura().setVisible(true);
+                new atributosFactura().setVisible(true);
             }
         });
+        this.setVisible(false);
+        
     }//GEN-LAST:event_botonAtributosFacturaMouseClicked
 
     private void botonNuevoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoEmpleadoMouseClicked
