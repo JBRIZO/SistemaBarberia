@@ -321,7 +321,7 @@ public class nuevoProducto extends javax.swing.JFrame {
                                 .addComponent(stockMaximo, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                             .addComponent(Stock)
-                            .addGap(62, 62, 62)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(formatoInvalido3))))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
@@ -393,10 +393,13 @@ public class nuevoProducto extends javax.swing.JFrame {
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
-                .addComponent(tituloPantalla)
-                .addGap(95, 95, 95)
-                .addComponent(salir))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(349, 349, 349)
+                        .addComponent(salir))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(tituloPantalla))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -406,9 +409,7 @@ public class nuevoProducto extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(tituloPantalla)))
+                    .addComponent(tituloPantalla, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
@@ -630,6 +631,20 @@ public class nuevoProducto extends javax.swing.JFrame {
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("Formato inválido");
         }
+        if(!validacionStock())
+        {
+            stockInicial.setBorder(redBorder);
+            stockMinimo.setBorder(redBorder);
+            stockMaximo.setBorder(redBorder);
+            formatoInvalido3.setText("Stocks invalidos.");
+            formatoInvalido3.setVisible(true);
+            
+        }else
+        {
+            stockInicial.setBorder(greenBorder);
+            stockMinimo.setBorder(greenBorder);
+            stockMaximo.setBorder(greenBorder);
+        }
     }//GEN-LAST:event_stockInicialFocusLost
 
     private void stockInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockInicialActionPerformed
@@ -662,6 +677,20 @@ public class nuevoProducto extends javax.swing.JFrame {
             stockMinimo.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("Formato inválido");
+        }
+        if(!validacionStock())
+        {
+            stockInicial.setBorder(redBorder);
+            stockMinimo.setBorder(redBorder);
+            stockMaximo.setBorder(redBorder);
+            formatoInvalido3.setText("Stocks invalidos.");
+            formatoInvalido3.setVisible(true);
+            
+        }else
+        {
+            stockInicial.setBorder(greenBorder);
+            stockMinimo.setBorder(greenBorder);
+            stockMaximo.setBorder(greenBorder);
         }
         
     }//GEN-LAST:event_stockMinimoFocusLost
@@ -696,6 +725,20 @@ public class nuevoProducto extends javax.swing.JFrame {
             stockMaximo.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("Formato inválido");
+        }
+        if(!validacionStock())
+        {
+            stockInicial.setBorder(redBorder);
+            stockMinimo.setBorder(redBorder);
+            stockMaximo.setBorder(redBorder);
+            formatoInvalido3.setText("Stocks invalidos.");
+            formatoInvalido3.setVisible(true);
+            
+        }else
+        {
+            stockInicial.setBorder(greenBorder);
+            stockMinimo.setBorder(greenBorder);
+            stockMaximo.setBorder(greenBorder);
         }
         
         
