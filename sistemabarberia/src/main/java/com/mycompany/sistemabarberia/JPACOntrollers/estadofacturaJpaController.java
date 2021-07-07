@@ -5,8 +5,8 @@
  */
 package com.mycompany.sistemabarberia.JPACOntrollers;
 
-import com.mycompany.GUI.exceptions.NonexistentEntityException;
-import com.mycompany.GUI.exceptions.PreexistingEntityException;
+import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
+import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
 import com.mycompany.sistemabarberia.estadofactura;
 import java.io.Serializable;
 import java.util.List;

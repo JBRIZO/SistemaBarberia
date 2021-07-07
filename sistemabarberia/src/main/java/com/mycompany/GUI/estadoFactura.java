@@ -8,7 +8,7 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.estadofacturaJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.estadofactura;import static com.mycompany.sistemabarberia.estadofactura_.idestado;
+import com.mycompany.sistemabarberia.estadofactura;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
