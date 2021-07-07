@@ -283,6 +283,10 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+
+
         List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
         String txt = nombrePuesto.getText();
         puesto puestoNuevo = new puesto();
@@ -294,8 +298,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         {
             if(puestoNuevo.getNomPuesto().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
             {
-                Border border = BorderFactory.createLineBorder(Color.RED, 1);
-                nombrePuesto.setBorder(border);
+                nombrePuesto.setBorder(redBorder);
                 formatoInvalido.setVisible(true);
                 formatoInvalido.setText("Ese puesto ya existe.");
                 return;
@@ -303,12 +306,24 @@ public class nuevoPuesto extends javax.swing.JFrame {
         }
         if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
             return;
             }
+        
+        if(validar.validacionCadenaPalabras(nombrePuesto.getText()))
+        {    
+            nombrePuesto.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            nombrePuesto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+        }
         
         
         if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt,4)){

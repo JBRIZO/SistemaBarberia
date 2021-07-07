@@ -57,7 +57,7 @@ public class nuevoProducto extends javax.swing.JFrame {
             idProducto.setText("  ID de Producto: 1");
         }else
         {
-            idProducto.setText("  ID de Produto: " + Integer.toString(productosEnBd.get(productosEnBd.size()-1).getIdproducto()+1));
+            idProducto.setText("  ID de Producto: " + Integer.toString(productosEnBd.get(productosEnBd.size()-1).getIdproducto()+1));
         } 
         
         nombreProducto.setText("  Nombre del Nuevo Producto");
@@ -489,6 +489,20 @@ public class nuevoProducto extends javax.swing.JFrame {
             stockMinimo.setBorder(greenBorder);
             stockMaximo.setBorder(greenBorder);
         }
+        
+        
+        if(validar.validacionDecimal(precioInicial.getText()))
+        {
+            precioInicial.setBorder(greenBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Formato válido");
+        }else
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Formato inválido");
+        }
+     
            
         if(validar.validacionCadenaPalabras(txt) && validar.validacionDecimal(precioInicial.getText()) && validacionStock()){
             
@@ -528,6 +542,8 @@ public class nuevoProducto extends javax.swing.JFrame {
             formatoInvalido2.setVisible(true);
             formatoInvalido2.setText("Formato inválido");
         }
+        
+        
       
     }//GEN-LAST:event_precioInicialFocusLost
 
@@ -621,29 +637,35 @@ public class nuevoProducto extends javax.swing.JFrame {
         Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
         Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
         
-        if(validar.validacionEntero(stockInicial.getText()))
-        {    
-            stockInicial.setBorder(greenBorder);
-            
-        }else
-        {
-            stockInicial.setBorder(redBorder);
-            formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("Formato inválido");
-        }
-        if(!validacionStock())
-        {
-            stockInicial.setBorder(redBorder);
-            stockMinimo.setBorder(redBorder);
-            stockMaximo.setBorder(redBorder);
-            formatoInvalido3.setText("Stocks invalidos.");
-            formatoInvalido3.setVisible(true);
-            
-        }else
+        
+        if(stockInicial.getText().equals("0"))
         {
             stockInicial.setBorder(greenBorder);
-            stockMinimo.setBorder(greenBorder);
-            stockMaximo.setBorder(greenBorder);
+        }else{
+            if(validar.validacionEntero(stockInicial.getText()))
+            {    
+                stockInicial.setBorder(greenBorder);
+
+            }else
+            {
+                stockInicial.setBorder(redBorder);
+                formatoInvalido3.setVisible(true);
+                formatoInvalido3.setText("Formato inválido");
+            }
+            if(!validacionStock())
+            {
+                stockInicial.setBorder(redBorder);
+                stockMinimo.setBorder(redBorder);
+                stockMaximo.setBorder(redBorder);
+                formatoInvalido3.setText("Stocks invalidos.");
+                formatoInvalido3.setVisible(true);
+
+            }else
+            {
+                stockInicial.setBorder(greenBorder);
+                stockMinimo.setBorder(greenBorder);
+                stockMaximo.setBorder(greenBorder);
+            }
         }
     }//GEN-LAST:event_stockInicialFocusLost
 
@@ -667,11 +689,10 @@ public class nuevoProducto extends javax.swing.JFrame {
         Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
         Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
         
+        
         if(validar.validacionEntero(stockMinimo.getText()))
         {    
-            stockMinimo.setBorder(greenBorder);
-
-            
+            stockMinimo.setBorder(greenBorder);   
         }else
         {
             stockMinimo.setBorder(redBorder);
@@ -763,7 +784,8 @@ public class nuevoProducto extends javax.swing.JFrame {
         int minimo = Integer.parseInt(stockMinimo.getText());
         int maximo = Integer.parseInt(stockMaximo.getText());
         
-        if( minimo < maximo && inicial < maximo && minimo>0 && inicial>0 && maximo>0)
+        
+        if( minimo < maximo && inicial < maximo && minimo>0 && inicial>=0 && maximo>0)
         {
             return true;   
         }else{return false;}

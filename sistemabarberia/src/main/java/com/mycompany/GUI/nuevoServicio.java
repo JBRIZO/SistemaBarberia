@@ -435,8 +435,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         
         if(!validar.validacionCantidadMinima(nombreServicio.getText(),5))
             {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombreServicio.setBorder(border);
+            nombreServicio.setBorder(redBorder);
             formatoInvalido1.setVisible(true);
             formatoInvalido1.setText("El nombre de servicio debe ser de minimo 5 letras.");
             }
