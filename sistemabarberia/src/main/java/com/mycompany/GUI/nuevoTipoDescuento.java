@@ -10,11 +10,7 @@ import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
-import static java.awt.Image.SCALE_DEFAULT;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -266,6 +262,13 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         tipoDescuentoNuevo.setNomDescuento(tipoDescuento.getText());
         tipoDescuentoNuevo.setActivo(true);
         
+         if(!validar.validacionCantidadMinima(tipoDescuento.getText(),5))
+            {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            tipoDescuento.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 5 letras.");
+            }
        
         for(int i=0; i < descuentosEnBd.size();i++)
         {
@@ -278,14 +281,15 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
                 return;
             }
         }
+       
         
-        if(validar.validacionCadenaPalabras(txt)){
+        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt,5)){
             try {
             tipodescuentoDAO.create(tipoDescuentoNuevo);
-            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+            JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
@@ -298,6 +302,13 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
 //a;adir validaciones botonaceptar
     private void tipoDescuentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusLost
 
+        if(!validar.validacionCantidadMinima(tipoDescuento.getText(),5))
+            {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            tipoDescuento.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de descuento debe ser de minimo 5 letras.");
+            }
          for(int i=0; i < descuentosEnBd.size();i++)
         {
             if(tipoDescuento.getText().equalsIgnoreCase(descuentosEnBd.get(i).getNomDescuento()))
@@ -313,7 +324,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
             tipoDescuento.setBorder(border);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
+            formatoInvalido.setText("Formato inválido.");
         }
         
        

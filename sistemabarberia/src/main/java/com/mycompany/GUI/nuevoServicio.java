@@ -302,6 +302,13 @@ public class nuevoServicio extends javax.swing.JFrame {
         precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
         precioUno.setActivo(true);  
         
+        if(!validar.validacionCantidadMinima(nombreServicio.getText(),5))
+            {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            nombreServicio.setBorder(border);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("El nombre del servicio debe ser de minimo 5 letras.");
+            }
        
         for(int i=0; i < serviciosEnBd.size();i++)
         {
@@ -322,7 +329,7 @@ public class nuevoServicio extends javax.swing.JFrame {
             List<servicios> servicios = servicioDAO.findserviciosEntities();
             precioUno.setIDServicio((servicios.get(servicios.size()-1)).getIdservicio());  
             preciosDAO.create(precioUno);    
-            JOptionPane.showMessageDialog(null,"Operación Exitosa");
+            JOptionPane.showMessageDialog(null,"Operación Exitosa.");
                     Reiniciar();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
@@ -340,6 +347,8 @@ public class nuevoServicio extends javax.swing.JFrame {
 
         Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
         Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+        
+        
         if(validar.validacionDecimal(precioInicial.getText()))
         {
             precioInicial.setBorder(greenBorder);
@@ -381,6 +390,9 @@ public class nuevoServicio extends javax.swing.JFrame {
         // TODO add your handling code here:
         Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
         Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+        
+        
+        
         for(int i=0; i < serviciosEnBd.size();i++)
         {
             if(nombreServicio.getText().equalsIgnoreCase(serviciosEnBd.get(i).getNomServicio()))
@@ -402,6 +414,14 @@ public class nuevoServicio extends javax.swing.JFrame {
             formatoInvalido1.setVisible(true);
             formatoInvalido1.setText("Formato inválido");
         }
+        
+        if(!validar.validacionCantidadMinima(nombreServicio.getText(),5))
+            {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            nombreServicio.setBorder(border);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("El nombre de servicio debe ser de minimo 5 letras.");
+            }
         
     }//GEN-LAST:event_nombreServicioFocusLost
 

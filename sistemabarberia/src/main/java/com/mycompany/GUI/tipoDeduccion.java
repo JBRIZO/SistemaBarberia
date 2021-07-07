@@ -5,12 +5,9 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.puesto;
 import com.mycompany.sistemabarberia.tipodeduccion;
-import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
 import java.util.List;
@@ -44,10 +41,10 @@ public class tipoDeduccion extends javax.swing.JFrame {
         List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
         if (tipodeduccionEnBd.size() > 0)
         {
-            idDescuento.setText("  ID de tipo deduccion : " + Integer.toString(tipodeduccionEnBd.get(tipodeduccionEnBd.size()-1).getIdtipodeduccion()+1));
+            idDeduccion.setText("  ID de tipo deducción : " + Integer.toString(tipodeduccionEnBd.get(tipodeduccionEnBd.size()-1).getIdtipodeduccion()+1));
         }else
         {
-            idDescuento.setText("  ID de tipo deduccion: 1");
+            idDeduccion.setText("  ID de tipo deducción: 1");
         }
        
         
@@ -58,15 +55,15 @@ public class tipoDeduccion extends javax.swing.JFrame {
         List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
         if (tipodeduccionEnBd.isEmpty())
         {
-            idDescuento.setText("  ID de tipo deduccion: 1");
+            idDeduccion.setText("  ID de tipo deducción: 1");
         }else
         {
-            idDescuento.setText("  ID de tipo deduccion: " + Integer.toString(tipodeduccionEnBd.get(tipodeduccionEnBd.size()-1).getIdtipodeduccion()+1));
+            idDeduccion.setText("  ID de tipo deducción: " + Integer.toString(tipodeduccionEnBd.get(tipodeduccionEnBd.size()-1).getIdtipodeduccion()+1));
         } 
         
-        nombreDescuento.setText("  Nombre del tipo deduccion");
+        nombreDeduccion.setText("  Nombre del tipo deducción");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            nombreDescuento.setBorder(border);
+            nombreDeduccion.setBorder(border);
             formatoInvalido.setVisible(false);
 
     }
@@ -87,9 +84,9 @@ public class tipoDeduccion extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        idDescuento = new javax.swing.JTextField();
+        idDeduccion = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
-        nombreDescuento = new javax.swing.JTextField();
+        nombreDeduccion = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -124,44 +121,44 @@ public class tipoDeduccion extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        idDescuento.setEditable(false);
-        idDescuento.setBackground(new java.awt.Color(30, 33, 34));
-        idDescuento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idDescuento.setForeground(new java.awt.Color(255, 255, 255));
-        idDescuento.setText("ID de tipo de deduccion");
-        idDescuento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idDescuento.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idDescuento.addActionListener(new java.awt.event.ActionListener() {
+        idDeduccion.setEditable(false);
+        idDeduccion.setBackground(new java.awt.Color(30, 33, 34));
+        idDeduccion.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        idDeduccion.setForeground(new java.awt.Color(255, 255, 255));
+        idDeduccion.setText("ID de tipo de deduccion");
+        idDeduccion.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        idDeduccion.setSelectionColor(new java.awt.Color(55, 53, 53));
+        idDeduccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idDescuentoActionPerformed(evt);
+                idDeduccionActionPerformed(evt);
             }
         });
 
         formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido.setText("Formato no valido.");
 
-        nombreDescuento.setBackground(new java.awt.Color(30, 33, 34));
-        nombreDescuento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nombreDescuento.setForeground(new java.awt.Color(255, 255, 255));
-        nombreDescuento.setText("  Nombre del tipo de deduccion.");
-        nombreDescuento.setToolTipText("Ingrese un puesto válido.");
-        nombreDescuento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        nombreDescuento.addFocusListener(new java.awt.event.FocusAdapter() {
+        nombreDeduccion.setBackground(new java.awt.Color(30, 33, 34));
+        nombreDeduccion.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        nombreDeduccion.setForeground(new java.awt.Color(255, 255, 255));
+        nombreDeduccion.setText("  Nombre del tipo de deduccion.");
+        nombreDeduccion.setToolTipText("Ingrese un tipo de deducción válido.");
+        nombreDeduccion.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        nombreDeduccion.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                nombreDescuentoFocusGained(evt);
+                nombreDeduccionFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                nombreDescuentoFocusLost(evt);
+                nombreDeduccionFocusLost(evt);
             }
         });
-        nombreDescuento.addActionListener(new java.awt.event.ActionListener() {
+        nombreDeduccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nombreDescuentoActionPerformed(evt);
+                nombreDeduccionActionPerformed(evt);
             }
         });
-        nombreDescuento.addKeyListener(new java.awt.event.KeyAdapter() {
+        nombreDeduccion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                nombreDescuentoKeyTyped(evt);
+                nombreDeduccionKeyTyped(evt);
             }
         });
 
@@ -173,19 +170,19 @@ public class tipoDeduccion extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(formatoInvalido)
-                    .addComponent(nombreDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nombreDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(idDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addComponent(idDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(idDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nombreDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nombreDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
@@ -260,81 +257,96 @@ public class tipoDeduccion extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
         List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
-        String txt = nombreDescuento.getText();
+        String txt = nombreDeduccion.getText();
         tipodeduccion tipoDeduccion = new tipodeduccion();
-        tipoDeduccion.setNombre(nombreDescuento.getText());
+        tipoDeduccion.setNombre(nombreDeduccion.getText());
         tipoDeduccion.setActivo(true);
         
+       if(!validar.validacionCantidadMinima(nombreDeduccion.getText(),3))
+            {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            nombreDeduccion.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de deducción debe ser de mínimo 3 letras.");
+            }
        
         for(int i=0; i < tipodeduccionEnBd.size();i++)
         {
             if(tipoDeduccion.getNombre().equalsIgnoreCase(tipodeduccionEnBd.get(i).getNombre()))
             {
                 Border border = BorderFactory.createLineBorder(Color.RED, 1);
-                nombreDescuento.setBorder(border);
+                nombreDeduccion.setBorder(border);
                 formatoInvalido.setVisible(true);
-                formatoInvalido.setText("Ese tipo de deduccion ya existe.");
+                formatoInvalido.setText("Ese tipo de deducción ya existe.");
                 return;
             }
         }
         
         
-        if(validar.validacionCadenaPalabras(txt)){
+ 
+        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(nombreDeduccion.getText(),3)){
             try {
             tipodeduccionDAO.create(tipoDeduccion);
-            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+            JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     
-    private void idDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idDescuentoActionPerformed
+    private void idDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idDeduccionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idDescuentoActionPerformed
+    }//GEN-LAST:event_idDeduccionActionPerformed
 //a;adir validaciones botonaceptar
-    private void nombreDescuentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDescuentoFocusLost
+    private void nombreDeduccionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDeduccionFocusLost
 
+        if(!validar.validacionCantidadMinima(nombreDeduccion.getText(), 3))
+                {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            nombreDeduccion.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de deducción debe ser de mínimo 3 letras.");
+                }
          for(int i=0; i < tipodeduccionEnBd.size();i++)
         {
-            if(nombreDescuento.getText().equalsIgnoreCase(tipodeduccionEnBd.get(i).getNombre()))
+            if(nombreDeduccion.getText().equalsIgnoreCase(tipodeduccionEnBd.get(i).getNombre()))
             {
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombreDescuento.setBorder(border);
+            nombreDeduccion.setBorder(border);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese puesto ya existe.");
+            formatoInvalido.setText("Ese tipo de deducción ya existe.");
             }
         }
-        if(!validar.validacionCadenaPalabras(nombreDescuento.getText()))
+        if(!validar.validacionCadenaPalabras(nombreDeduccion.getText()))
         {    
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombreDescuento.setBorder(border);
+            nombreDeduccion.setBorder(border);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Formato inválido");
         }
         
        
         
-    }//GEN-LAST:event_nombreDescuentoFocusLost
+    }//GEN-LAST:event_nombreDeduccionFocusLost
 
-    private void nombreDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreDescuentoActionPerformed
+    private void nombreDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreDeduccionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_nombreDescuentoActionPerformed
+    }//GEN-LAST:event_nombreDeduccionActionPerformed
 
-    private void nombreDescuentoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreDescuentoKeyTyped
+    private void nombreDeduccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreDeduccionKeyTyped
         // TODO add your handling code here:
-        if ((nombreDescuento.getText() + evt.getKeyChar()).length() > 15) {
+        if ((nombreDeduccion.getText() + evt.getKeyChar()).length() > 15) {
         evt.consume();
     }
-    }//GEN-LAST:event_nombreDescuentoKeyTyped
+    }//GEN-LAST:event_nombreDeduccionKeyTyped
 
-    private void nombreDescuentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDescuentoFocusGained
+    private void nombreDeduccionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDeduccionFocusGained
         // TODO add your handling code here:
-        nombreDescuento.setText("");
-    }//GEN-LAST:event_nombreDescuentoFocusGained
+        nombreDeduccion.setText("");
+    }//GEN-LAST:event_nombreDeduccionFocusGained
 
     /**
      * @param args the command line arguments
@@ -392,13 +404,13 @@ public class tipoDeduccion extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
-    private javax.swing.JTextField idDescuento;
+    private javax.swing.JTextField idDeduccion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField nombreDescuento;
+    private javax.swing.JTextField nombreDeduccion;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

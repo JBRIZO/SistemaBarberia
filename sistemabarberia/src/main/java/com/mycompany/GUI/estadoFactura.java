@@ -5,12 +5,18 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.estadofacturaJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.puesto;
+import com.mycompany.sistemabarberia.estadofactura;
+import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
+import static java.awt.Image.SCALE_DEFAULT;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -20,31 +26,31 @@ import javax.swing.border.Border;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil
  */
-public class nuevoPuesto extends javax.swing.JFrame {
+public class estadoFactura extends javax.swing.JFrame {
     
-    private puestoJpaController puestoDAO = new puestoJpaController();
+    private estadofacturaJpaController estadofacturaDAO = new estadofacturaJpaController();
     private Validaciones validar = new Validaciones();
-    private List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
+    private List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
     private ImageIcon imagen;
     private Icon icono;
 
     /**
-     * Creates new form nuevoTipoDescuento
+     * Creates new form nuevoestadofactura
      */
-    public nuevoPuesto() {
+    public estadoFactura() {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
 
-        List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
-        if (puestosEnBd.size() > 0)
+        List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
+        if (estadofacturaEnBd.size() > 0)
         {
-            idPuesto.setText("  ID de Puesto : " + Integer.toString(puestosEnBd.get(puestosEnBd.size()-1).getIdpuesto()+1));
+            idestado.setText("  ID Estado: " + Integer.toString(estadofacturaEnBd.get(estadofacturaEnBd.size()-1).getIdestado()+1));
         }else
         {
-            idPuesto.setText("  ID de Puesto: 1");
+           idestado.setText("  ID Estado de Factura: 1");
         }
        
         
@@ -52,18 +58,18 @@ public class nuevoPuesto extends javax.swing.JFrame {
     
     public void Reiniciar()
     {
-        List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
-        if (puestosEnBd.isEmpty())
+        List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
+        if (estadofacturaEnBd.isEmpty())
         {
-            idPuesto.setText("  ID de Puesto: 1");
+            idestado.setText("  ID Estado de Factura: 1");
         }else
         {
-            idPuesto.setText("  ID de Puesto: " + Integer.toString(puestosEnBd.get(puestosEnBd.size()-1).getIdpuesto()+1));
+            idestado.setText("  ID Estado de Factura: " + Integer.toString(estadofacturaEnBd.get(estadofacturaEnBd.size()-1).getIdestado()+1));
         } 
         
-        nombrePuesto.setText("  Nombre del Nuevo Puesto");
+        NombreEstado.setText("  Nombre de Estado Factura  ");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            nombrePuesto.setBorder(border);
+            NombreEstado.setBorder(border);
             formatoInvalido.setVisible(false);
 
     }
@@ -84,9 +90,9 @@ public class nuevoPuesto extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        idPuesto = new javax.swing.JTextField();
+        idestado = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
-        nombrePuesto = new javax.swing.JTextField();
+        NombreEstado = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -95,7 +101,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("NUEVO PUESTO");
+        tituloPantalla.setText("NUEVO ESTADO DE FACTURA");
 
         botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
         botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -121,44 +127,44 @@ public class nuevoPuesto extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        idPuesto.setEditable(false);
-        idPuesto.setBackground(new java.awt.Color(30, 33, 34));
-        idPuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idPuesto.setForeground(new java.awt.Color(255, 255, 255));
-        idPuesto.setText("ID de Puesto");
-        idPuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idPuesto.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idPuesto.addActionListener(new java.awt.event.ActionListener() {
+        idestado.setEditable(false);
+        idestado.setBackground(new java.awt.Color(30, 33, 34));
+        idestado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        idestado.setForeground(new java.awt.Color(255, 255, 255));
+        idestado.setText("  ID Estado");
+        idestado.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        idestado.setSelectionColor(new java.awt.Color(55, 53, 53));
+        idestado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idPuestoActionPerformed(evt);
+                idestadoActionPerformed(evt);
             }
         });
 
         formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido.setText("Formato no valido.");
 
-        nombrePuesto.setBackground(new java.awt.Color(30, 33, 34));
-        nombrePuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nombrePuesto.setForeground(new java.awt.Color(255, 255, 255));
-        nombrePuesto.setText("  Nombre del nuevo puesto.");
-        nombrePuesto.setToolTipText("Ingrese un puesto válido.");
-        nombrePuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        nombrePuesto.addFocusListener(new java.awt.event.FocusAdapter() {
+        NombreEstado.setBackground(new java.awt.Color(30, 33, 34));
+        NombreEstado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        NombreEstado.setForeground(new java.awt.Color(255, 255, 255));
+        NombreEstado.setText(" Estado");
+        NombreEstado.setToolTipText("Ingrese un tipo de descuento válido.");
+        NombreEstado.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        NombreEstado.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                nombrePuestoFocusGained(evt);
+                NombreEstadoFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                nombrePuestoFocusLost(evt);
+                NombreEstadoFocusLost(evt);
             }
         });
-        nombrePuesto.addActionListener(new java.awt.event.ActionListener() {
+        NombreEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nombrePuestoActionPerformed(evt);
+                NombreEstadoActionPerformed(evt);
             }
         });
-        nombrePuesto.addKeyListener(new java.awt.event.KeyAdapter() {
+        NombreEstado.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                nombrePuestoKeyTyped(evt);
+                NombreEstadoKeyTyped(evt);
             }
         });
 
@@ -170,20 +176,20 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(formatoInvalido)
-                    .addComponent(nombrePuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(NombreEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(idestado, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addComponent(idPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(idestado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nombrePuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addComponent(NombreEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -200,7 +206,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -209,7 +215,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tituloPantalla))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
@@ -256,99 +262,81 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
-        String txt = nombrePuesto.getText();
-        puesto puestoNuevo = new puesto();
-        puestoNuevo.setNomPuesto(nombrePuesto.getText());
-        puestoNuevo.setActivo(true);
+        List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
+        String txt = NombreEstado.getText();
+        estadofactura estadoFacturaNuevo = new estadofactura();
+        estadoFacturaNuevo.setNombreEstado(NombreEstado.getText());
+        estadoFacturaNuevo.setActivo(true);
         
        
-        for(int i=0; i < puestosEnBd.size();i++)
+        for(int i=0; i < estadofacturaEnBd.size();i++)
         {
-            if(puestoNuevo.getNomPuesto().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
+            if(estadoFacturaNuevo.getNombreEstado().equalsIgnoreCase(estadofacturaEnBd.get(i).getNombreEstado()))
             {
                 Border border = BorderFactory.createLineBorder(Color.RED, 1);
-                nombrePuesto.setBorder(border);
+                NombreEstado.setBorder(border);
                 formatoInvalido.setVisible(true);
-                formatoInvalido.setText("Ese puesto ya existe.");
+                formatoInvalido.setText("Este estado de factura ya existe.");
                 return;
             }
         }
-        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
-            {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
-            return;
-            }
         
-        
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt,4)){
+        if(validar.validacionCadenaPalabras(txt)){
             try {
-            puestoDAO.create(puestoNuevo);
-            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+            estadofacturaDAO.create(estadoFacturaNuevo);
+            JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     
-    private void idPuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idPuestoActionPerformed
+    private void idestadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idestadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idPuestoActionPerformed
+    }//GEN-LAST:event_idestadoActionPerformed
 //a;adir validaciones botonaceptar
-    private void nombrePuestoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusLost
+    private void NombreEstadoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_NombreEstadoFocusLost
 
-        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
-            {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
-            return;
-            }
-        
-         for(int i=0; i < puestosEnBd.size();i++)
+         for(int i=0; i < estadofacturaEnBd.size();i++)
         {
-            if(nombrePuesto.getText().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
+            if(NombreEstado.getText().equalsIgnoreCase(estadofacturaEnBd.get(i).getNombreEstado()))
             {
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            NombreEstado.setBorder(border);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese puesto ya existe.");
+            formatoInvalido.setText("Este estado de factura ya existe.");
             }
         }
-        if(!validar.validacionCadenaPalabras(nombrePuesto.getText()))
+        if(!validar.validacionCadenaPalabras(NombreEstado.getText()))
         {    
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            NombreEstado.setBorder(border);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Formato inválido");
         }
         
        
         
-    }//GEN-LAST:event_nombrePuestoFocusLost
+    }//GEN-LAST:event_NombreEstadoFocusLost
 
-    private void nombrePuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombrePuestoActionPerformed
+    private void NombreEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NombreEstadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_nombrePuestoActionPerformed
+    }//GEN-LAST:event_NombreEstadoActionPerformed
 
-    private void nombrePuestoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombrePuestoKeyTyped
+    private void NombreEstadoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_NombreEstadoKeyTyped
         // TODO add your handling code here:
-        if ((nombrePuesto.getText() + evt.getKeyChar()).length() > 15) {
+        if ((NombreEstado.getText() + evt.getKeyChar()).length() > 15) {
         evt.consume();
     }
-    }//GEN-LAST:event_nombrePuestoKeyTyped
+    }//GEN-LAST:event_NombreEstadoKeyTyped
 
-    private void nombrePuestoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusGained
+    private void NombreEstadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_NombreEstadoFocusGained
         // TODO add your handling code here:
-        nombrePuesto.setText("");
-    }//GEN-LAST:event_nombrePuestoFocusGained
+        NombreEstado.setText("");
+    }//GEN-LAST:event_NombreEstadoFocusGained
 
     /**
      * @param args the command line arguments
@@ -367,13 +355,13 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(estadoFactura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(estadoFactura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(estadoFactura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(estadoFactura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -381,7 +369,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoPuesto().setVisible(true);
+                new estadoFactura().setVisible(true);
             }
         });
         
@@ -402,15 +390,15 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField NombreEstado;
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
-    private javax.swing.JTextField idPuesto;
+    private javax.swing.JTextField idestado;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField nombrePuesto;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,9 +5,9 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tipodocumentoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.puesto;
+import com.mycompany.sistemabarberia.tipodocumento;
 import java.awt.Color;
 import java.awt.Image;
 import java.util.List;
@@ -20,31 +20,31 @@ import javax.swing.border.Border;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil
  */
-public class nuevoPuesto extends javax.swing.JFrame {
+public class tipoDocumento extends javax.swing.JFrame {
     
-    private puestoJpaController puestoDAO = new puestoJpaController();
+    private tipodocumentoJpaController tipodocumentoDAO = new tipodocumentoJpaController();
     private Validaciones validar = new Validaciones();
-    private List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
+    private List<tipodocumento> tipodocumentoEnBd = tipodocumentoDAO.findtipodocumentoEntities();
     private ImageIcon imagen;
     private Icon icono;
 
     /**
-     * Creates new form nuevoTipoDescuento
+     * Creates new form nuevoTipoDocumento
      */
-    public nuevoPuesto() {
+    public tipoDocumento() {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
 
-        List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
-        if (puestosEnBd.size() > 0)
+        List<tipodocumento> tipodocumentoEnBd = tipodocumentoDAO.findtipodocumentoEntities();
+        if (tipodocumentoEnBd.size() > 0)
         {
-            idPuesto.setText("  ID de Puesto : " + Integer.toString(puestosEnBd.get(puestosEnBd.size()-1).getIdpuesto()+1));
+            idtipodocumento.setText("  ID Tipo de Documento: " + Integer.toString(tipodocumentoEnBd.get(tipodocumentoEnBd.size()-1).getIdtipodocumento()+1));
         }else
         {
-            idPuesto.setText("  ID de Puesto: 1");
+            idtipodocumento.setText("  ID Tipo de Documento: 1");
         }
        
         
@@ -52,18 +52,18 @@ public class nuevoPuesto extends javax.swing.JFrame {
     
     public void Reiniciar()
     {
-        List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
-        if (puestosEnBd.isEmpty())
+        List<tipodocumento> tipodocumentoEnBd = tipodocumentoDAO.findtipodocumentoEntities();
+        if (tipodocumentoEnBd.isEmpty())
         {
-            idPuesto.setText("  ID de Puesto: 1");
+            idtipodocumento.setText("  ID Tipo de Documento: 1");
         }else
         {
-            idPuesto.setText("  ID de Puesto: " + Integer.toString(puestosEnBd.get(puestosEnBd.size()-1).getIdpuesto()+1));
+            idtipodocumento.setText("  ID Tipo de Documento: " + Integer.toString(tipodocumentoEnBd.get(tipodocumentoEnBd.size()-1).getIdtipodocumento()+1));
         } 
         
-        nombrePuesto.setText("  Nombre del Nuevo Puesto");
+        TipoDocumento.setText("  Nombre del Tipo de Documento   ");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            nombrePuesto.setBorder(border);
+            TipoDocumento.setBorder(border);
             formatoInvalido.setVisible(false);
 
     }
@@ -84,9 +84,9 @@ public class nuevoPuesto extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        idPuesto = new javax.swing.JTextField();
+        idtipodocumento = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
-        nombrePuesto = new javax.swing.JTextField();
+        TipoDocumento = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -95,7 +95,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("NUEVO PUESTO");
+        tituloPantalla.setText("TIPO DE DOCUMENTO");
 
         botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
         botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -121,44 +121,44 @@ public class nuevoPuesto extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        idPuesto.setEditable(false);
-        idPuesto.setBackground(new java.awt.Color(30, 33, 34));
-        idPuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idPuesto.setForeground(new java.awt.Color(255, 255, 255));
-        idPuesto.setText("ID de Puesto");
-        idPuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idPuesto.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idPuesto.addActionListener(new java.awt.event.ActionListener() {
+        idtipodocumento.setEditable(false);
+        idtipodocumento.setBackground(new java.awt.Color(30, 33, 34));
+        idtipodocumento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        idtipodocumento.setForeground(new java.awt.Color(255, 255, 255));
+        idtipodocumento.setText("   ID Tipo de Documento");
+        idtipodocumento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        idtipodocumento.setSelectionColor(new java.awt.Color(55, 53, 53));
+        idtipodocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idPuestoActionPerformed(evt);
+                idtipodocumentoActionPerformed(evt);
             }
         });
 
         formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido.setText("Formato no valido.");
 
-        nombrePuesto.setBackground(new java.awt.Color(30, 33, 34));
-        nombrePuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nombrePuesto.setForeground(new java.awt.Color(255, 255, 255));
-        nombrePuesto.setText("  Nombre del nuevo puesto.");
-        nombrePuesto.setToolTipText("Ingrese un puesto válido.");
-        nombrePuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        nombrePuesto.addFocusListener(new java.awt.event.FocusAdapter() {
+        TipoDocumento.setBackground(new java.awt.Color(30, 33, 34));
+        TipoDocumento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        TipoDocumento.setForeground(new java.awt.Color(255, 255, 255));
+        TipoDocumento.setText("   Nombre del Tipo de Documento");
+        TipoDocumento.setToolTipText("Ingrese un tipo de documento válido.");
+        TipoDocumento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        TipoDocumento.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                nombrePuestoFocusGained(evt);
+                TipoDocumentoFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                nombrePuestoFocusLost(evt);
+                TipoDocumentoFocusLost(evt);
             }
         });
-        nombrePuesto.addActionListener(new java.awt.event.ActionListener() {
+        TipoDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nombrePuestoActionPerformed(evt);
+                TipoDocumentoActionPerformed(evt);
             }
         });
-        nombrePuesto.addKeyListener(new java.awt.event.KeyAdapter() {
+        TipoDocumento.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                nombrePuestoKeyTyped(evt);
+                TipoDocumentoKeyTyped(evt);
             }
         });
 
@@ -170,19 +170,19 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(formatoInvalido)
-                    .addComponent(nombrePuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(idtipodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addComponent(idPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(idtipodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nombrePuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(TipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
@@ -209,7 +209,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tituloPantalla))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
@@ -232,7 +232,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41))
         );
@@ -256,99 +256,96 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
-        String txt = nombrePuesto.getText();
-        puesto puestoNuevo = new puesto();
-        puestoNuevo.setNomPuesto(nombrePuesto.getText());
-        puestoNuevo.setActivo(true);
+        List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntities();
+        String txt = TipoDocumento.getText();
+        tipodocumento tipoDocumentoNuevo = new tipodocumento();
+        tipoDocumentoNuevo.setTipoDocumento(TipoDocumento.getText());
+        tipoDocumentoNuevo.setActivo(true);
         
+       if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 4))
+                {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            TipoDocumento.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de documento debe ser de mínimo 4 letras.");
+                }
        
-        for(int i=0; i < puestosEnBd.size();i++)
+        for(int i=0; i < tipodocumentosEnBd.size();i++)
         {
-            if(puestoNuevo.getNomPuesto().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
+            if(tipoDocumentoNuevo.getTipoDocumento().equalsIgnoreCase(tipodocumentosEnBd.get(i).getTipoDocumento()))
             {
                 Border border = BorderFactory.createLineBorder(Color.RED, 1);
-                nombrePuesto.setBorder(border);
+                TipoDocumento.setBorder(border);
                 formatoInvalido.setVisible(true);
-                formatoInvalido.setText("Ese puesto ya existe.");
+                formatoInvalido.setText("Ese tipo de documento ya existe.");
                 return;
             }
         }
-        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
-            {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
-            return;
-            }
         
-        
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt,4)){
+        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(TipoDocumento.getText(),4)){
             try {
-            puestoDAO.create(puestoNuevo);
-            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+            tipodocumentoDAO.create(tipoDocumentoNuevo);
+            JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     
-    private void idPuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idPuestoActionPerformed
+    private void idtipodocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idtipodocumentoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idPuestoActionPerformed
+    }//GEN-LAST:event_idtipodocumentoActionPerformed
 //a;adir validaciones botonaceptar
-    private void nombrePuestoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusLost
+    private void TipoDocumentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoDocumentoFocusLost
 
-        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
+        if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 4))
             {
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            TipoDocumento.setBorder(border);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
-            return;
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
             }
         
-         for(int i=0; i < puestosEnBd.size();i++)
+         for(int i=0; i < tipodocumentoEnBd.size();i++)
         {
-            if(nombrePuesto.getText().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
+            if(TipoDocumento.getText().equalsIgnoreCase(tipodocumentoEnBd.get(i).getTipoDocumento()))
             {
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            TipoDocumento.setBorder(border);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese puesto ya existe.");
+            formatoInvalido.setText("Ese tipo de documento ya existe.");
             }
         }
-        if(!validar.validacionCadenaPalabras(nombrePuesto.getText()))
+        if(!validar.validacionCadenaPalabras(TipoDocumento.getText()))
         {    
             Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombrePuesto.setBorder(border);
+            TipoDocumento.setBorder(border);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Formato inválido");
         }
         
        
         
-    }//GEN-LAST:event_nombrePuestoFocusLost
+    }//GEN-LAST:event_TipoDocumentoFocusLost
 
-    private void nombrePuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombrePuestoActionPerformed
+    private void TipoDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoDocumentoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_nombrePuestoActionPerformed
+    }//GEN-LAST:event_TipoDocumentoActionPerformed
 
-    private void nombrePuestoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombrePuestoKeyTyped
+    private void TipoDocumentoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TipoDocumentoKeyTyped
         // TODO add your handling code here:
-        if ((nombrePuesto.getText() + evt.getKeyChar()).length() > 15) {
+        if ((TipoDocumento.getText() + evt.getKeyChar()).length() > 15) {
         evt.consume();
     }
-    }//GEN-LAST:event_nombrePuestoKeyTyped
+    }//GEN-LAST:event_TipoDocumentoKeyTyped
 
-    private void nombrePuestoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusGained
+    private void TipoDocumentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoDocumentoFocusGained
         // TODO add your handling code here:
-        nombrePuesto.setText("");
-    }//GEN-LAST:event_nombrePuestoFocusGained
+        TipoDocumento.setText("");
+    }//GEN-LAST:event_TipoDocumentoFocusGained
 
     /**
      * @param args the command line arguments
@@ -367,13 +364,13 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipoDocumento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipoDocumento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipoDocumento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(nuevoPuesto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(tipoDocumento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -381,7 +378,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoPuesto().setVisible(true);
+                new tipoDocumento().setVisible(true);
             }
         });
         
@@ -402,15 +399,15 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField TipoDocumento;
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
-    private javax.swing.JTextField idPuesto;
+    private javax.swing.JTextField idtipodocumento;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField nombrePuesto;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

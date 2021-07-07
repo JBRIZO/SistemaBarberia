@@ -5,13 +5,8 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipopagoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.puesto;
-import com.mycompany.sistemabarberia.tipodeduccion;
-import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
 import java.util.List;
@@ -145,7 +140,7 @@ public class tipopago extends javax.swing.JFrame {
         TipoPago.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         TipoPago.setForeground(new java.awt.Color(255, 255, 255));
         TipoPago.setText("  Nombre del tipo de pago.");
-        TipoPago.setToolTipText("Ingrese un puesto válido.");
+        TipoPago.setToolTipText("Ingrese un tipo de pago válido.");
         TipoPago.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         TipoPago.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -266,7 +261,13 @@ public class tipopago extends javax.swing.JFrame {
         tipoPago.setTipoPago(TipoPago.getText());
         tipoPago.setActivo(true);
         
-       
+       if(!validar.validacionCantidadMinima(TipoPago.getText(),4))
+        {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            TipoPago.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+        }
         for(int i=0; i < tipopagoEnBd.size();i++)
         {
             if(tipoPago.getTipoPago().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
@@ -280,13 +281,13 @@ public class tipopago extends javax.swing.JFrame {
         }
         
         
-        if(validar.validacionCadenaPalabras(txt)){
+        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt, 4)){
             try {
             tipopagoDAO.create(tipoPago);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
@@ -298,7 +299,14 @@ public class tipopago extends javax.swing.JFrame {
     }//GEN-LAST:event_idtipopagoActionPerformed
 //a;adir validaciones botonaceptar
     private void TipoPagoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoPagoFocusLost
-
+        
+        if(!validar.validacionCantidadMinima(TipoPago.getText(), 4))
+            {
+            Border border = BorderFactory.createLineBorder(Color.RED, 1);
+            TipoPago.setBorder(border);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            }
          for(int i=0; i < tipopagoEnBd.size();i++)
         {
             if(TipoPago.getText().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
@@ -317,6 +325,7 @@ public class tipopago extends javax.swing.JFrame {
             formatoInvalido.setText("Formato inválido");
         }
         
+        
        
         
     }//GEN-LAST:event_TipoPagoFocusLost
@@ -328,8 +337,8 @@ public class tipopago extends javax.swing.JFrame {
     private void TipoPagoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TipoPagoKeyTyped
         // TODO add your handling code here:
         if ((TipoPago.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();
-    }
+        evt.consume();      
+        }
     }//GEN-LAST:event_TipoPagoKeyTyped
 
     private void TipoPagoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoPagoFocusGained

@@ -7,7 +7,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.tipopago;
+import com.mycompany.sistemabarberia.tipodocumento;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -20,11 +20,11 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author flore
+ * @author Kesil
  */
-public class tipopagoJpaController implements Serializable {
+public class tipodocumentoJpaController implements Serializable {
 
-    public tipopagoJpaController() {
+    public tipodocumentoJpaController() {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
@@ -33,16 +33,16 @@ public class tipopagoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(tipopago tipopago) throws PreexistingEntityException, Exception {
+    public void create(tipodocumento tipodocumento) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(tipopago);
+            em.persist(tipodocumento);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findtipopago(tipopago.getIdtipopago()) != null) {
-                throw new PreexistingEntityException("tipopago " + tipopago + " already exists.", ex);
+            if (findtipodocumento(tipodocumento.getIdtipodocumento()) != null) {
+                throw new PreexistingEntityException("tipodocumento " + tipodocumento + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -52,19 +52,19 @@ public class tipopagoJpaController implements Serializable {
         }
     }
 
-    public void edit(tipopago tipopago) throws NonexistentEntityException, Exception {
+    public void edit(tipodocumento tipodocumento) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipopago = em.merge(tipopago);
+            tipodocumento = em.merge(tipodocumento);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                int id = tipopago.getIdtipopago();
-                if (findtipopago(id) == null) {
-                    throw new NonexistentEntityException("The tipopago with id " + id + " no longer exists.");
+                int id = tipodocumento.getIdtipodocumento();
+                if (findtipodocumento(id) == null) {
+                    throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -80,14 +80,14 @@ public class tipopagoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            tipopago tipopago;
+            tipodocumento tipodocumento;
             try {
-                tipopago = em.getReference(tipopago.class, id);
-                tipopago.getIdtipopago();
+                tipodocumento = em.getReference(tipodocumento.class, id);
+                tipodocumento.getIdtipodocumento();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipopago with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The tipodocumento with id " + id + " no longer exists.", enfe);
             }
-            em.remove(tipopago);
+            em.remove(tipodocumento);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -96,19 +96,19 @@ public class tipopagoJpaController implements Serializable {
         }
     }
 
-    public List<tipopago> findtipopagoEntities() {
-        return findtipopagoEntities(true, -1, -1);
+    public List<tipodocumento> findtipodocumentoEntities() {
+        return findtipodocumentoEntities(true, -1, -1);
     }
 
-    public List<tipopago> findtipopagoEntities(int maxResults, int firstResult) {
-        return findtipopagoEntities(false, maxResults, firstResult);
+    public List<tipodocumento> findtipodocumentoEntities(int maxResults, int firstResult) {
+        return findtipodocumentoEntities(false, maxResults, firstResult);
     }
 
-    private List<tipopago> findtipopagoEntities(boolean all, int maxResults, int firstResult) {
+    private List<tipodocumento> findtipodocumentoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(tipopago.class));
+            cq.select(cq.from(tipodocumento.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,20 +120,20 @@ public class tipopagoJpaController implements Serializable {
         }
     }
 
-    public tipopago findtipopago(int id) {
+    public tipodocumento findtipodocumento(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(tipopago.class, id);
+            return em.find(tipodocumento.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int gettipopagoCount() {
+    public int gettipodocumentoCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<tipopago> rt = cq.from(tipopago.class);
+            Root<tipodocumento> rt = cq.from(tipodocumento.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

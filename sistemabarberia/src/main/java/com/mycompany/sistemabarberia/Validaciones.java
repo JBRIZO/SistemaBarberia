@@ -90,7 +90,7 @@ public class Validaciones {
     //Devuelve TRUE si una cadena de texto empieza con mayuscula, sino devuelve FALSE.
     public boolean validacionMayusculaInicial(String cadena)
     {
-      String patron = "^[A-Z]{1}[a-z]+$";
+        String patron = "^[A-Z]{1}[a-z]+$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
@@ -161,5 +161,20 @@ public class Validaciones {
               return false;
           }
     }
+    
+    public boolean validacionCantidadMinima(String palabra, int cantidadMinima)
+    {
+        String patron = String.format("^[\\w]{%d,}$",cantidadMinima);
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(palabra);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }  
+        
+    }
+    
     
 }

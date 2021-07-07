@@ -194,8 +194,8 @@
                           <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="formatoInvalido" min="-2" max="-2" attributes="0"/>
-                              <Component id="nombreDescuento" min="-2" pref="270" max="-2" attributes="0"/>
-                              <Component id="idDescuento" min="-2" pref="270" max="-2" attributes="0"/>
+                              <Component id="nombreDeduccion" min="-2" pref="270" max="-2" attributes="0"/>
+                              <Component id="idDeduccion" min="-2" pref="270" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
                       </Group>
@@ -205,18 +205,18 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                          <Component id="idDescuento" min="-2" pref="42" max="-2" attributes="0"/>
+                          <Component id="idDeduccion" min="-2" pref="42" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
                           <Component id="formatoInvalido" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="nombreDescuento" min="-2" pref="42" max="-2" attributes="0"/>
+                          <Component id="nombreDeduccion" min="-2" pref="42" max="-2" attributes="0"/>
                           <EmptySpace pref="37" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JTextField" name="idDescuento">
+                <Component class="javax.swing.JTextField" name="idDeduccion">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -239,7 +239,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="idDescuentoActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="idDeduccionActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="formatoInvalido">
@@ -250,7 +250,7 @@
                     <Property name="text" type="java.lang.String" value="Formato no valido."/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="nombreDescuento">
+                <Component class="javax.swing.JTextField" name="nombreDeduccion">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="22" green="21" red="1e" type="rgb"/>
@@ -262,7 +262,7 @@
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="  Nombre del tipo de deduccion."/>
-                    <Property name="toolTipText" type="java.lang.String" value="Ingrese un puesto v&#xe1;lido."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Ingrese un tipo de deducci&#xf3;n v&#xe1;lido."/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                         <LineBorder roundedCorners="true"/>
@@ -270,10 +270,10 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="nombreDescuentoFocusGained"/>
-                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="nombreDescuentoFocusLost"/>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nombreDescuentoActionPerformed"/>
-                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="nombreDescuentoKeyTyped"/>
+                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="nombreDeduccionFocusGained"/>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="nombreDeduccionFocusLost"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nombreDeduccionActionPerformed"/>
+                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="nombreDeduccionKeyTyped"/>
                   </Events>
                 </Component>
               </SubComponents>

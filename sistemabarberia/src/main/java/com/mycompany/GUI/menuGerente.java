@@ -118,6 +118,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonAtributosFactura.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         botonAtributosFactura.setText("ATRIBUTOS FACTURA");
         botonAtributosFactura.setRequestFocusEnabled(false);
+        botonAtributosFactura.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonAtributosFacturaMouseClicked(evt);
+            }
+        });
         botonAtributosFactura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAtributosFacturaActionPerformed(evt);
@@ -143,6 +148,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonDeducciones.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonDeducciones.setText("DEDUCCIONES");
         botonDeducciones.setRequestFocusEnabled(false);
+        botonDeducciones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonDeduccionesMouseClicked(evt);
+            }
+        });
         botonDeducciones.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonDeduccionesActionPerformed(evt);
@@ -153,6 +163,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonNuevoEmpleado.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         botonNuevoEmpleado.setText("NUEVO EMPLEADO");
         botonNuevoEmpleado.setRequestFocusEnabled(false);
+        botonNuevoEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonNuevoEmpleadoMouseClicked(evt);
+            }
+        });
         botonNuevoEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonNuevoEmpleadoActionPerformed(evt);
@@ -374,6 +389,29 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
     }//GEN-LAST:event_botonDescuentosMouseClicked
+
+    private void botonDeduccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDeduccionesMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new tipoDeduccion().setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_botonDeduccionesMouseClicked
+
+    private void botonAtributosFacturaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAtributosFacturaMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new estadoFactura().setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_botonAtributosFacturaMouseClicked
+
+    private void botonNuevoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoEmpleadoMouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_botonNuevoEmpleadoMouseClicked
 
     
     /**
