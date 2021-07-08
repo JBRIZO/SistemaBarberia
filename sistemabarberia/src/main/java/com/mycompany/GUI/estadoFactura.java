@@ -26,9 +26,10 @@ public class estadoFactura extends javax.swing.JFrame {
     
     private estadofacturaJpaController estadofacturaDAO = new estadofacturaJpaController();
     private Validaciones validar = new Validaciones();
-    private List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
     
 
 
@@ -40,17 +41,7 @@ public class estadoFactura extends javax.swing.JFrame {
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-
-        List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
-        if (estadofacturaEnBd.size() > 0)
-        {
-            idestado.setText("  ID Estado: " + Integer.toString(estadofacturaEnBd.get(estadofacturaEnBd.size()-1).getIdestado()+1));
-        }else
-        {
-           idestado.setText("  ID Estado de Factura: 1");
-        }
-       
-        
+        Reiniciar();  
     }
     
     public void Reiniciar()
@@ -305,33 +296,25 @@ public class estadoFactura extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+       
         List<estadofactura> estadofacturaEnBd = estadofacturaDAO.findestadofacturaEntities();
-        String txt = NombreEstado.getText();
         estadofactura estadoFacturaNuevo = new estadofactura();
         estadoFacturaNuevo.setNombreEstado(NombreEstado.getText());
         estadoFacturaNuevo.setActivo(true);
         Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
 
-       
-        for(int i=0; i < estadofacturaEnBd.size();i++)
+       validacionCampos();
+       for(int i=0; i < estadofacturaEnBd.size();i++)
         {
-            if(estadoFacturaNuevo.getNombreEstado().equalsIgnoreCase(estadofacturaEnBd.get(i).getNombreEstado()))
-            {
-                NombreEstado.setBorder(redBorder);
-                formatoInvalido.setVisible(true);
-                formatoInvalido.setText("Este estado de factura ya existe.");
-                return;
-            }
-        }
-        
-        if(!validar.validacionCantidadMinima(NombreEstado.getText(), 4))
+            if(NombreEstado.getText().equalsIgnoreCase(estadofacturaEnBd.get(i).getNombreEstado()))
             {
             NombreEstado.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            formatoInvalido.setText("Este estado de factura ya existe.");
+            return;
             }
-        
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(NombreEstado.getText(), 4)){
+        }
+        if(validar.validacionCadenaPalabras(NombreEstado.getText()) && validar.validacionCantidadMinima(NombreEstado.getText(), 4)){
             try {
             estadofacturaDAO.create(estadoFacturaNuevo);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
@@ -349,45 +332,7 @@ public class estadoFactura extends javax.swing.JFrame {
     }//GEN-LAST:event_idestadoActionPerformed
 //a;adir validaciones botonaceptar
     private void NombreEstadoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_NombreEstadoFocusLost
-
-        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-        
-       
-        
-         for(int i=0; i < estadofacturaEnBd.size();i++)
-        {
-            if(NombreEstado.getText().equalsIgnoreCase(estadofacturaEnBd.get(i).getNombreEstado()))
-            {
-            NombreEstado.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Este estado de factura ya existe.");
-            }
-        }
-       
-        if(validar.validacionCadenaPalabras(NombreEstado.getText()))
-        {    
-            NombreEstado.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
-            NombreEstado.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
-        }
-        
-         if(!validar.validacionCantidadMinima(NombreEstado.getText(), 4))
-            {
-            NombreEstado.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
-            }
-        
-        
-       
-        
+           validacionCampos();
     }//GEN-LAST:event_NombreEstadoFocusLost
 
     private void NombreEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NombreEstadoActionPerformed
@@ -403,7 +348,7 @@ public class estadoFactura extends javax.swing.JFrame {
 
     private void NombreEstadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_NombreEstadoFocusGained
         // TODO add your handling code here:
-        NombreEstado.setText("");
+        NombreEstado.selectAll();
     }//GEN-LAST:event_NombreEstadoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -467,6 +412,31 @@ public class estadoFactura extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    public void validacionCampos()
+    {
+        if(validar.validacionCadenaPalabras(NombreEstado.getText()))
+        {    
+            NombreEstado.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            NombreEstado.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+            return;
+        }
+
+         if(!validar.validacionCantidadMinima(NombreEstado.getText(), 4))
+            {
+            NombreEstado.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            return;
+            }      
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

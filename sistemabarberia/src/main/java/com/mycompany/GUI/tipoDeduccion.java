@@ -26,29 +26,19 @@ public class tipoDeduccion extends javax.swing.JFrame {
     
     private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController();
     private Validaciones validar = new Validaciones();
-    private List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
 
     /**
      * Creates new form nuevoTipoDescuento
      */
     public tipoDeduccion() {
         initComponents();
-        formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-
-        List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
-        if (tipodeduccionEnBd.size() > 0)
-        {
-            idDeduccion.setText("  ID de tipo deducción : " + Integer.toString(tipodeduccionEnBd.get(tipodeduccionEnBd.size()-1).getIdtipodeduccion()+1));
-        }else
-        {
-            idDeduccion.setText("  ID de tipo deducción: 1");
-        }
-       
-        
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        Reiniciar();  
     }
     
     public void Reiniciar()
@@ -64,9 +54,8 @@ public class tipoDeduccion extends javax.swing.JFrame {
         
         nombreDeduccion.setText("  Nombre del tipo deducción");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            nombreDeduccion.setBorder(border);
-            formatoInvalido.setVisible(false);
-
+        nombreDeduccion.setBorder(border);
+        formatoInvalido.setVisible(false);
     }
 
     /**
@@ -272,19 +261,13 @@ public class tipoDeduccion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+       
         List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
-        String txt = nombreDeduccion.getText();
         tipodeduccion tipoDeduccion = new tipodeduccion();
         tipoDeduccion.setNombre(nombreDeduccion.getText());
         tipoDeduccion.setActivo(true);
         
-       if(!validar.validacionCantidadMinima(nombreDeduccion.getText(),3))
-            {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombreDeduccion.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de deducción debe ser de mínimo 3 letras.");
-            }
+       validarCampos();
        
         for(int i=0; i < tipodeduccionEnBd.size();i++)
         {
@@ -297,10 +280,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
                 return;
             }
         }
-        
-        
- 
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(nombreDeduccion.getText(),3)){
+        if(validar.validacionCadenaPalabras(nombreDeduccion.getText()) && validar.validacionCantidadMinima(nombreDeduccion.getText(),3)){
             try {
             tipodeduccionDAO.create(tipoDeduccion);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
@@ -318,42 +298,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
     }//GEN-LAST:event_idDeduccionActionPerformed
 //a;adir validaciones botonaceptar
     private void nombreDeduccionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDeduccionFocusLost
-
-         Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
-          Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-        if(!validar.validacionCantidadMinima(nombreDeduccion.getText(), 3))
-                {
-           
-            nombreDeduccion.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de deducción debe ser de mínimo 3 letras.");
-                }
-         for(int i=0; i < tipodeduccionEnBd.size();i++)
-        {
-            if(nombreDeduccion.getText().equalsIgnoreCase(tipodeduccionEnBd.get(i).getNombre()))
-            {
-            nombreDeduccion.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese tipo de deducción ya existe.");
-            }
-        }
-
-        
-        if(validar.validacionCadenaPalabras(nombreDeduccion.getText()))
-        {    
-            nombreDeduccion.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
-            nombreDeduccion.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
-        }
-        
-       
-        
+        validarCampos();
     }//GEN-LAST:event_nombreDeduccionFocusLost
 
     private void nombreDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreDeduccionActionPerformed
@@ -369,7 +314,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
 
     private void nombreDeduccionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDeduccionFocusGained
         // TODO add your handling code here:
-        nombreDeduccion.setText("");
+        nombreDeduccion.selectAll();
     }//GEN-LAST:event_nombreDeduccionFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -421,6 +366,30 @@ public class tipoDeduccion extends javax.swing.JFrame {
             }
         });
         
+        
+    }
+    private void validarCampos()
+    {
+        
+        if(validar.validacionCadenaPalabras(nombreDeduccion.getText()))
+        {    
+            nombreDeduccion.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            nombreDeduccion.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+            return;
+        }
+        if(!validar.validacionCantidadMinima(nombreDeduccion.getText(), 3))
+        {
+            nombreDeduccion.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de deducción debe ser de mínimo 3 letras.");
+        }
         
     }
     

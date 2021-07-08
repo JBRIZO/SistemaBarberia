@@ -29,25 +29,17 @@ public class nuevoPuesto extends javax.swing.JFrame {
     private List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);            
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
 
     /**
      * Creates new form nuevoTipoDescuento
      */
     public nuevoPuesto() {
         initComponents();
-        formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-        List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
-        if (puestosEnBd.size() > 0)
-        {
-            idPuesto.setText("  ID de Puesto : " + Integer.toString(puestosEnBd.get(puestosEnBd.size()-1).getIdpuesto()+1));
-        }else
-        {
-            idPuesto.setText("  ID de Puesto: 1");
-        }
-       
-        
+        Reiniciar();  
     }
     
     public void Reiniciar()
@@ -63,9 +55,8 @@ public class nuevoPuesto extends javax.swing.JFrame {
         
         nombrePuesto.setText("  Nombre del Nuevo Puesto");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            nombrePuesto.setBorder(border);
-            formatoInvalido.setVisible(false);
-
+        nombrePuesto.setBorder(border);
+        formatoInvalido.setVisible(false);
     }
 
     /**
@@ -90,9 +81,13 @@ public class nuevoPuesto extends javax.swing.JFrame {
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(496, 547));
+        setMinimumSize(new java.awt.Dimension(496, 547));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-        jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
+        jPanel1.setMaximumSize(new java.awt.Dimension(496, 547));
+        jPanel1.setMinimumSize(new java.awt.Dimension(496, 547));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -242,22 +237,20 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(tituloPantalla))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(347, 347, 347)
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(54, 54, 54)
+                        .addComponent(tituloPantalla))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
-                        .addComponent(tituloPantalla))
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tituloPantalla, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 30, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -268,24 +261,17 @@ public class nuevoPuesto extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-
 
         List<puesto> puestosEnBd = puestoDAO.findpuestoEntities();
         String txt = nombrePuesto.getText();
@@ -293,38 +279,17 @@ public class nuevoPuesto extends javax.swing.JFrame {
         puestoNuevo.setNomPuesto(nombrePuesto.getText());
         puestoNuevo.setActivo(true);
         
-       
+        validacionCampos();
         for(int i=0; i < puestosEnBd.size();i++)
         {
-            if(puestoNuevo.getNomPuesto().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
-            {
-                nombrePuesto.setBorder(redBorder);
-                formatoInvalido.setVisible(true);
-                formatoInvalido.setText("Ese puesto ya existe.");
-                return;
-            }
-        }
-        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
+            if(nombrePuesto.getText().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
             {
             nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
+            formatoInvalido.setText("Ese puesto ya existe.");
             return;
             }
-        
-        if(validar.validacionCadenaPalabras(nombrePuesto.getText()))
-        {    
-            nombrePuesto.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
-            nombrePuesto.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
         }
-        
         
         if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt,4)){
             try {
@@ -334,7 +299,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
         }
-        }
+    }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -344,43 +309,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }//GEN-LAST:event_idPuestoActionPerformed
 //a;adir validaciones botonaceptar
     private void nombrePuestoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusLost
-
-        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);            
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-
-
-        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
-            {
-            nombrePuesto.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
-            return;
-            }
-        
-         for(int i=0; i < puestosEnBd.size();i++)
-        {
-            if(nombrePuesto.getText().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
-            {
-            nombrePuesto.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese puesto ya existe.");
-            }
-        }
-        if(validar.validacionCadenaPalabras(nombrePuesto.getText()))
-        {    
-            nombrePuesto.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
-            nombrePuesto.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
-        }
-        
-       
-        
+        validacionCampos();     
     }//GEN-LAST:event_nombrePuestoFocusLost
 
     private void nombrePuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombrePuestoActionPerformed
@@ -396,7 +325,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
 
     private void nombrePuestoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusGained
         // TODO add your handling code here:
-        nombrePuesto.setText("");
+        nombrePuesto.selectAll();
     }//GEN-LAST:event_nombrePuestoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -460,6 +389,33 @@ public class nuevoPuesto extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    private void validacionCampos()
+    {
+        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
+            {
+            nombrePuesto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
+            return;
+            }
+        
+         
+        if(validar.validacionCadenaPalabras(nombrePuesto.getText()))
+        {    
+            nombrePuesto.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            nombrePuesto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+        }
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

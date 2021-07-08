@@ -5,10 +5,8 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.tipodescuento;
 import com.mycompany.sistemabarberia.tiposbono;
 import java.awt.Color;
 import java.awt.Image;
@@ -31,6 +29,8 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     private List<tiposbono> descuentosEnBd = tipoBonoDAO.findtiposbonoEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);    
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -39,18 +39,8 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         initComponents();
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-
-        List<tiposbono> bonosEnBd = tipoBonoDAO.findtiposbonoEntities();
-        if (bonosEnBd.size() > 0)
-        {
-            idTipoBono.setText("  ID Tipo de Bono: " + Integer.toString(bonosEnBd.get(bonosEnBd.size()-1).getIdtipobono()+1));
-        }else
-        {
-            idTipoBono.setText("  ID Tipo de Bono: 1");
-        }
-       
-        
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        Reiniciar();    
     }
     
     public void Reiniciar()
@@ -66,8 +56,8 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         
         tipoBono.setText("  Nombre del Tipo de Bono");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            tipoBono.setBorder(border);
-            formatoInvalido.setVisible(false);
+        tipoBono.setBorder(border);
+        formatoInvalido.setVisible(false);
 
     }
 
@@ -275,22 +265,12 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);    
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-
-
         List<tiposbono> bonosEnBD = tipoBonoDAO.findtiposbonoEntities();
-        String txt = tipoBono.getText();
         tiposbono tipoBonoNuevo = new tiposbono();
         tipoBonoNuevo.setNomBono(tipoBono.getText());
         tipoBonoNuevo.setActivo(true);
         
-         if(!validar.validacionCantidadMinima(tipoBono.getText(),4))
-            {
-            tipoBono.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de bono debe ser de minimo 4 letras.");
-            }
+         validacionCampos();
        
         for(int i=0; i < bonosEnBD.size();i++)
         {
@@ -304,7 +284,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         }
        
         
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt,5)){
+        if(validar.validacionCadenaPalabras(tipoBono.getText()) && validar.validacionCantidadMinima(tipoBono.getText(),4)){
             try {
             tipoBonoDAO.create(tipoBonoNuevo);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
@@ -322,41 +302,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_idTipoBonoActionPerformed
 //a;adir validaciones botonaceptar
     private void tipoBonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusLost
-
-        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);           
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-
-
-        if(!validar.validacionCantidadMinima(tipoBono.getText(),4))
-            {
-            tipoBono.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de descuento debe ser de minimo 4 letras.");
-            }
-         for(int i=0; i < descuentosEnBd.size();i++)
-        {
-            if(tipoBono.getText().equalsIgnoreCase(descuentosEnBd.get(i).getNomBono()))
-            {
-            tipoBono.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese tipo de descuento ya existe.");
-            }
-        }
-        if(validar.validacionCadenaPalabras(tipoBono.getText()))
-        {    
-            tipoBono.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
-            tipoBono.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
-        }
-        
-       
-        
+        validacionCampos();  
     }//GEN-LAST:event_tipoBonoFocusLost
 
     private void tipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoBonoActionPerformed
@@ -372,7 +318,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
 
     private void tipoBonoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusGained
         // TODO add your handling code here:
-        tipoBono.setText("");
+        tipoBono.selectAll();
     }//GEN-LAST:event_tipoBonoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -424,7 +370,30 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         
         
     }
-    
+    private void validacionCampos()
+    {
+
+        if(validar.validacionCadenaPalabras(tipoBono.getText()))
+        {    
+            tipoBono.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            tipoBono.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+            return;
+        }
+         if(!validar.validacionCantidadMinima(tipoBono.getText(),4))
+            {
+            tipoBono.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de descuento debe ser de minimo 4 letras.");
+            return;
+            }
+    }
     private void insertarImagen(JLabel lbl,String ruta)
     {
         this.imagen = new ImageIcon(ruta);

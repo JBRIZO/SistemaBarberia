@@ -178,7 +178,7 @@ public class Validaciones {
     
     public boolean validacionCantidadMinima(String palabra, int cantidadMinima)
     {
-        String patron = String.format("^[\\w]{%d,}$",cantidadMinima);
+        String patron = String.format("^[\\w|\\s]{%d,}$",cantidadMinima);
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(palabra);
         if(comparador.matches()){

@@ -28,26 +28,17 @@ public class tipopago extends javax.swing.JFrame {
     private List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
 
     /**
      * Creates new form nuevoTipoDescuento
      */
     public tipopago() {
         initComponents();
-        formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-
-        List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
-        if (tipopagoEnBd.size() > 0)
-        {
-            idtipopago.setText("  ID de tipo de pago : " + Integer.toString(tipopagoEnBd.get(tipopagoEnBd.size()-1).getIdtipopago()+1));
-        }else
-        {
-            idtipopago.setText("  ID de tipo de pago: 1");
-        }
-       
-        
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        Reiniciar();   
     }
     
     public void Reiniciar()
@@ -63,9 +54,8 @@ public class tipopago extends javax.swing.JFrame {
         
         TipoPago.setText("  Nombre del tipo de pago");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            TipoPago.setBorder(border);
-            formatoInvalido.setVisible(false);
-
+        TipoPago.setBorder(border);
+        formatoInvalido.setVisible(false);
     }
 
     /**
@@ -90,9 +80,14 @@ public class tipopago extends javax.swing.JFrame {
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(498, 359));
+        setMinimumSize(new java.awt.Dimension(498, 359));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-        jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
+        jPanel1.setMaximumSize(new java.awt.Dimension(498, 539));
+        jPanel1.setMinimumSize(new java.awt.Dimension(498, 539));
+        jPanel1.setPreferredSize(new java.awt.Dimension(498, 539));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -178,13 +173,13 @@ public class tipopago extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(55, 55, 55)
                 .addComponent(idtipopago, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                 .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(TipoPago, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addGap(40, 40, 40))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -201,7 +196,7 @@ public class tipopago extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         salir.setText("jLabel2");
@@ -230,7 +225,7 @@ public class tipopago extends javax.swing.JFrame {
                 .addGap(405, 405, 405)
                 .addComponent(jLabel1))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
+                .addGap(113, 113, 113)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -245,26 +240,24 @@ public class tipopago extends javax.swing.JFrame {
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -272,18 +265,11 @@ public class tipopago extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
         List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
-        String txt = TipoPago.getText();
         com.mycompany.sistemabarberia.tipopago tipoPago = new com.mycompany.sistemabarberia.tipopago();
         tipoPago.setTipoPago(TipoPago.getText());
         tipoPago.setActivo(true);
         
-       if(!validar.validacionCantidadMinima(TipoPago.getText(),4))
-        {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            TipoPago.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
-        }
+       validacionCampos();
         for(int i=0; i < tipopagoEnBd.size();i++)
         {
             if(tipoPago.getTipoPago().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
@@ -295,9 +281,7 @@ public class tipopago extends javax.swing.JFrame {
                 return;
             }
         }
-        
-        
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt, 4)){
+        if(validar.validacionCadenaPalabras(TipoPago.getText()) && validar.validacionCantidadMinima(TipoPago.getText(), 4)){
             try {
             tipopagoDAO.create(tipoPago);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
@@ -315,35 +299,7 @@ public class tipopago extends javax.swing.JFrame {
     }//GEN-LAST:event_idtipopagoActionPerformed
 //a;adir validaciones botonaceptar
     private void TipoPagoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoPagoFocusLost
-        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-        if(!validar.validacionCantidadMinima(TipoPago.getText(), 4))
-            {
-            TipoPago.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
-            }
-         for(int i=0; i < tipopagoEnBd.size();i++)
-        {
-            if(TipoPago.getText().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
-            {
-            TipoPago.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese tipo de pago ya existe.");
-            }
-        }
-       if(validar.validacionCadenaPalabras(TipoPago.getText()))
-        {    
-            TipoPago.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
-            TipoPago.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
-        }      
+        validacionCampos();
     }//GEN-LAST:event_TipoPagoFocusLost
 
     private void TipoPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoPagoActionPerformed
@@ -359,7 +315,7 @@ public class tipopago extends javax.swing.JFrame {
 
     private void TipoPagoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoPagoFocusGained
         // TODO add your handling code here:
-        TipoPago.setText("");
+        TipoPago.selectAll();
     }//GEN-LAST:event_TipoPagoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -379,43 +335,7 @@ public class tipopago extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(tipopago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
+       
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -424,6 +344,30 @@ public class tipopago extends javax.swing.JFrame {
         });
         
         
+    }
+    
+    private void validacionCampos()
+    {
+        
+       if(validar.validacionCadenaPalabras(TipoPago.getText()))
+        {    
+            TipoPago.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            TipoPago.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+            return;
+        }   
+       if(!validar.validacionCantidadMinima(TipoPago.getText(), 4))
+            {
+            TipoPago.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            }
     }
     
     private void insertarImagen(JLabel lbl,String ruta)

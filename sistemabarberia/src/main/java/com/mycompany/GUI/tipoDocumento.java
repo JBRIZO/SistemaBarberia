@@ -29,26 +29,17 @@ public class tipoDocumento extends javax.swing.JFrame {
     private List<tipodocumento> tipodocumentoEnBd = tipodocumentoDAO.findtipodocumentoEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
 
     /**
      * Creates new form nuevoTipoDocumento
      */
     public tipoDocumento() {
         initComponents();
-        formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-
-        List<tipodocumento> tipodocumentoEnBd = tipodocumentoDAO.findtipodocumentoEntities();
-        if (tipodocumentoEnBd.size() > 0)
-        {
-            idtipodocumento.setText("  ID Tipo de Documento: " + Integer.toString(tipodocumentoEnBd.get(tipodocumentoEnBd.size()-1).getIdtipodocumento()+1));
-        }else
-        {
-            idtipodocumento.setText("  ID Tipo de Documento: 1");
-        }
-       
-        
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        Reiniciar();
     }
     
     public void Reiniciar()
@@ -64,8 +55,8 @@ public class tipoDocumento extends javax.swing.JFrame {
         
         TipoDocumento.setText("  Nombre del Tipo de Documento   ");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            TipoDocumento.setBorder(border);
-            formatoInvalido.setVisible(false);
+        TipoDocumento.setBorder(border);
+        formatoInvalido.setVisible(false);
 
     }
 
@@ -91,6 +82,9 @@ public class tipoDocumento extends javax.swing.JFrame {
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(498, 533));
+        setMinimumSize(new java.awt.Dimension(498, 533));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
@@ -263,9 +257,7 @@ public class tipoDocumento extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -273,18 +265,11 @@ public class tipoDocumento extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
         List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntities();
-        String txt = TipoDocumento.getText();
         tipodocumento tipoDocumentoNuevo = new tipodocumento();
         tipoDocumentoNuevo.setTipoDocumento(TipoDocumento.getText());
         tipoDocumentoNuevo.setActivo(true);
         
-       if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 4))
-                {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            TipoDocumento.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de documento debe ser de mínimo 4 letras.");
-                }
+        validarCampos();
        
         for(int i=0; i < tipodocumentosEnBd.size();i++)
         {
@@ -298,7 +283,7 @@ public class tipoDocumento extends javax.swing.JFrame {
             }
         }
         
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(TipoDocumento.getText(),4)){
+        if(validar.validacionCadenaPalabras(TipoDocumento.getText()) && validar.validacionCantidadMinima(TipoDocumento.getText(),4)){
             try {
             tipodocumentoDAO.create(tipoDocumentoNuevo);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
@@ -316,42 +301,7 @@ public class tipoDocumento extends javax.swing.JFrame {
     }//GEN-LAST:event_idtipodocumentoActionPerformed
 //a;adir validaciones botonaceptar
     private void TipoDocumentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoDocumentoFocusLost
-
-        Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
-        
-        if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 4))
-            {
-            TipoDocumento.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
-            }
-        
-         for(int i=0; i < tipodocumentoEnBd.size();i++)
-        {
-            if(TipoDocumento.getText().equalsIgnoreCase(tipodocumentoEnBd.get(i).getTipoDocumento()))
-            {
-            TipoDocumento.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese tipo de documento ya existe.");
-            }
-        }
-         
-        if(validar.validacionCadenaPalabras(TipoDocumento.getText()))
-        {    
-            TipoDocumento.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
-            TipoDocumento.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
-        }
-        
-       
-        
+        validarCampos();
     }//GEN-LAST:event_TipoDocumentoFocusLost
 
     private void TipoDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoDocumentoActionPerformed
@@ -418,6 +368,28 @@ public class tipoDocumento extends javax.swing.JFrame {
         });
         
         
+    }
+    private void validarCampos()
+    {
+        if(validar.validacionCadenaPalabras(TipoDocumento.getText()))
+        {    
+            TipoDocumento.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            TipoDocumento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+            return;
+        }
+        if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 4))
+            {
+            TipoDocumento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            }
     }
     
     private void insertarImagen(JLabel lbl,String ruta)

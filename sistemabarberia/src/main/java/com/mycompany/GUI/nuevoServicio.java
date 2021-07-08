@@ -38,6 +38,8 @@ public class nuevoServicio extends javax.swing.JFrame {
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     String currentTime = sdf.format(dt);
     private LocalDate fecha ;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -320,13 +322,8 @@ public class nuevoServicio extends javax.swing.JFrame {
         precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
         precioUno.setActivo(true);  
         
-        if(!validar.validacionCantidadMinima(nombreServicio.getText(),5))
-            {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            nombreServicio.setBorder(border);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("El nombre del servicio debe ser de minimo 5 letras.");
-            }
+        validacionCamposTexto();
+        validacionNumerica();
        
         for(int i=0; i < serviciosEnBd.size();i++)
         {
@@ -340,8 +337,7 @@ public class nuevoServicio extends javax.swing.JFrame {
             }
         }
            
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionDecimal(precioInicial.getText())){
-            
+        if(validar.validacionCadenaPalabras(txt) && validar.validacionDecimal(precioInicial.getText()) && validar.validacionCantidadMinima(nombreServicio.getText(),5)){
             try {
             servicioDAO.create(servicioNuevo); 
             List<servicios> servicios = servicioDAO.findserviciosEntities();
@@ -362,23 +358,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     }//GEN-LAST:event_idServicioActionPerformed
 //a;adir validaciones botonaceptar
     private void precioInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioInicialFocusLost
-
-        Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
-        
-        
-        if(validar.validacionDecimal(precioInicial.getText()))
-        {
-            precioInicial.setBorder(greenBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato válido");
-        }else
-        {
-            precioInicial.setBorder(redBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato inválido");
-        }
-      
+        validacionNumerica();
     }//GEN-LAST:event_precioInicialFocusLost
 
     
@@ -396,50 +376,17 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     private void precioInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioInicialFocusGained
         // TODO add your handling code here:
-        precioInicial.setText("");
+        precioInicial.selectAll();
     }//GEN-LAST:event_precioInicialFocusGained
 
     private void nombreServicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreServicioFocusGained
         // TODO add your handling code here:
-        nombreServicio.setText("");
+        nombreServicio.selectAll();
     }//GEN-LAST:event_nombreServicioFocusGained
 
     private void nombreServicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreServicioFocusLost
-        // TODO add your handling code here:
-        Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
-        
-        
-        
-        for(int i=0; i < serviciosEnBd.size();i++)
-        {
-            if(nombreServicio.getText().equalsIgnoreCase(serviciosEnBd.get(i).getNomServicio()))
-            {
-            nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Ese servicio ya existe.");
-            }
-        }
-        if(validar.validacionCadenaPalabras(nombreServicio.getText()))
-        {    
-            nombreServicio.setBorder(greenBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato válido");
-            
-        }else
-        {
-            nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato inválido");
-        }
-        
-        if(!validar.validacionCantidadMinima(nombreServicio.getText(),5))
-            {
-            nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("El nombre de servicio debe ser de minimo 5 letras.");
-            }
-        
+        // TODO add your handling code here
+        validacionCamposTexto();    
     }//GEN-LAST:event_nombreServicioFocusLost
 
     private void nombreServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreServicioActionPerformed
@@ -462,8 +409,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         this.setVisible(false);
         this.dispose(); 
         preciosDAO.close();
-        servicioDAO.close();
-               
+        servicioDAO.close();        
     }//GEN-LAST:event_salirMouseClicked
 
     /**
@@ -506,7 +452,46 @@ public class nuevoServicio extends javax.swing.JFrame {
         
     }
     
+    private void validacionNumerica()
+    {
+         if(validar.validacionDecimal(precioInicial.getText()))
+        {
+            precioInicial.setBorder(greenBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Formato válido");
+        }else
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Formato inválido");
+        }
+        
+    }
     
+    private void validacionCamposTexto()
+    {
+         if(validar.validacionCadenaPalabras(nombreServicio.getText()))
+        {    
+            nombreServicio.setBorder(greenBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("Formato válido");   
+        }else
+        {
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("Formato inválido");
+            return;
+        }
+        if(!validar.validacionCantidadMinima(nombreServicio.getText(),4))
+            {
+            System.out.println(nombreServicio.getText());
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("El nombre de servicio debe ser de minimo 5 letras.");
+            return;
+            }
+      
+    }
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
