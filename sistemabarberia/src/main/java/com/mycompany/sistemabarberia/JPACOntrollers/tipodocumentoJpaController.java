@@ -28,6 +28,11 @@ public class tipodocumentoJpaController implements Serializable {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
+    
+    public void close()
+    {
+        this.emf.close();
+    }
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();

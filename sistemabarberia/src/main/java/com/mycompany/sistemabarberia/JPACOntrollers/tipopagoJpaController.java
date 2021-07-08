@@ -20,7 +20,7 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author flore
+ * @author Jonathan Laux
  */
 public class tipopagoJpaController implements Serializable {
 
@@ -28,6 +28,11 @@ public class tipopagoJpaController implements Serializable {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
+    
+    public void close()
+    {
+        this.emf.close();
+    }
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();

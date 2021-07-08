@@ -380,6 +380,8 @@ public class tipoDeduccion extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        tipodeduccionDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     /**

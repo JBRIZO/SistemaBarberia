@@ -371,6 +371,7 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
     this.setVisible(false);
+    this.dispose(); 
     }//GEN-LAST:event_botonPuestoMouseClicked
 
     private void botonServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonServiciosMouseClicked
@@ -381,6 +382,7 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonServiciosMouseClicked
 
     private void botonDescuentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDescuentosMouseClicked
@@ -391,6 +393,7 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonDescuentosMouseClicked
 
     private void botonDeduccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDeduccionesMouseClicked
@@ -401,6 +404,7 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonDeduccionesMouseClicked
 
     private void botonAtributosFacturaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAtributosFacturaMouseClicked
@@ -411,6 +415,7 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
         
     }//GEN-LAST:event_botonAtributosFacturaMouseClicked
 
@@ -427,6 +432,7 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonProductosMouseClicked
 
     private void botonBonosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonBonosMouseClicked
@@ -437,6 +443,7 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonBonosMouseClicked
 
     

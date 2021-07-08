@@ -32,6 +32,11 @@ public class precioshistoricosproductosJpaController implements Serializable {
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
+    
+    public void close()
+    {
+        this.emf.close();
+    }
 
     public void create(precioshistoricosproductos precioshistoricosproductos) throws PreexistingEntityException, Exception {
         EntityManager em = null;

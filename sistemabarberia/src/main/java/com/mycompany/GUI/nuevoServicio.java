@@ -460,6 +460,10 @@ public class nuevoServicio extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        preciosDAO.close();
+        servicioDAO.close();
+               
     }//GEN-LAST:event_salirMouseClicked
 
     /**

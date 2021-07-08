@@ -29,6 +29,11 @@ public class precioshistoricoserviciosJpaController implements Serializable {
     }
     private EntityManagerFactory emf = null;
 
+    public void close()
+    {
+        this.emf.close();
+    }
+    
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }

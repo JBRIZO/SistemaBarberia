@@ -378,6 +378,8 @@ public class tipoDocumento extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        tipodocumentoDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     /**

@@ -414,6 +414,8 @@ public class estadoFactura extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        estadofacturaDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     /**

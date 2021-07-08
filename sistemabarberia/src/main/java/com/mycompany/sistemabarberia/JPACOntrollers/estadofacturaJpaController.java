@@ -20,7 +20,7 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author Kesil
+ * @author Jonathan Laux
  */
 public class estadofacturaJpaController implements Serializable {
 
@@ -29,6 +29,10 @@ public class estadofacturaJpaController implements Serializable {
     }
     private EntityManagerFactory emf = null;
 
+    public void close()
+    {
+        this.emf.close();
+    }
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }

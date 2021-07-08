@@ -378,6 +378,8 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        tipodescuentoDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     /**

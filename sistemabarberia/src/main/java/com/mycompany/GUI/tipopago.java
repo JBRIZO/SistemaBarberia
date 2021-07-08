@@ -370,6 +370,8 @@ public class tipopago extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        tipopagoDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     /**

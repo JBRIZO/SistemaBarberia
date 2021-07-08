@@ -626,6 +626,9 @@ public class nuevoProducto extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        preciosDAO.close();
+        productoDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     private void stockInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockInicialFocusGained

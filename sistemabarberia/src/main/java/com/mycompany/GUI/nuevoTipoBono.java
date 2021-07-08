@@ -383,6 +383,8 @@ public class nuevoTipoBono extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);
+        this.dispose(); 
+        tipoBonoDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     /**
