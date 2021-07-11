@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
@@ -40,6 +41,8 @@ public class nuevoProducto extends javax.swing.JFrame {
     private LocalDate fecha ;
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -48,6 +51,8 @@ public class nuevoProducto extends javax.swing.JFrame {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+                nombreProducto.setText("  Nombre del Nuevo Producto");
+
         Reiniciar();    
     }
     
@@ -62,14 +67,14 @@ public class nuevoProducto extends javax.swing.JFrame {
             idProducto.setText("  ID de Producto: " + Integer.toString(productosEnBd.get(productosEnBd.size()-1).getIdproducto()+1));
         } 
         
-        nombreProducto.setText("  Nombre del Nuevo Producto");
-        precioInicial.setText("   Precio Inicial");
+        nombreProducto.setText("  Nuevo Producto");
+        precioInicial.setText(" Precio");
         Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        nombreProducto.setBorder(border);
-        precioInicial.setBorder(border);
-        stockInicial.setBorder(border);
-        stockMinimo.setBorder(border);
-        stockMaximo.setBorder(border);
+        nombreProducto.setBorder(defaultBorder);
+        precioInicial.setBorder(defaultBorder);
+        stockInicial.setBorder(defaultBorder);
+        stockMinimo.setBorder(defaultBorder);
+        stockMaximo.setBorder(defaultBorder);
         formatoInvalido1.setVisible(false);
         formatoInvalido2.setVisible(false);
         formatoInvalido3.setVisible(false);
@@ -112,9 +117,9 @@ public class nuevoProducto extends javax.swing.JFrame {
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-        jPanel1.setMaximumSize(new java.awt.Dimension(486, 696));
-        jPanel1.setMinimumSize(new java.awt.Dimension(486, 696));
-        jPanel1.setPreferredSize(new java.awt.Dimension(486, 696));
+        jPanel1.setMaximumSize(new java.awt.Dimension(486, 680));
+        jPanel1.setMinimumSize(new java.awt.Dimension(486, 680));
+        jPanel1.setPreferredSize(new java.awt.Dimension(486, 680));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -161,6 +166,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         formatoInvalido1.setText("Formato no valido.");
 
         precioInicial.setBackground(new java.awt.Color(30, 33, 34));
+        precioInicial.setDocument(new JTextFieldLimit(7));
         precioInicial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         precioInicial.setForeground(new java.awt.Color(255, 255, 255));
         precioInicial.setText("  Precio Inicial");
@@ -186,6 +192,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         });
 
         nombreProducto.setBackground(new java.awt.Color(30, 33, 34));
+        nombreProducto.setDocument(new JTextFieldLimit(25));
         nombreProducto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombreProducto.setForeground(new java.awt.Color(255, 255, 255));
         nombreProducto.setText("   Nombre del Nuevo Producto");
@@ -402,7 +409,7 @@ public class nuevoProducto extends javax.swing.JFrame {
                         .addGap(31, 31, 31)
                         .addComponent(tituloPantalla))))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(102, 102, 102)
+                .addGap(100, 100, 100)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -420,10 +427,8 @@ public class nuevoProducto extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -436,7 +441,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 702, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();

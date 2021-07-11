@@ -6,6 +6,7 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.estadofacturaJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.estadofactura;
 import java.awt.Color;
@@ -30,6 +31,8 @@ public class estadoFactura extends javax.swing.JFrame {
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
     
 
 
@@ -55,10 +58,9 @@ public class estadoFactura extends javax.swing.JFrame {
             idestado.setText("  ID Estado de Factura: " + Integer.toString(estadofacturaEnBd.get(estadofacturaEnBd.size()-1).getIdestado()+1));
         } 
         
-        NombreEstado.setText("  Nombre de Estado Factura  ");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            NombreEstado.setBorder(border);
-            formatoInvalido.setVisible(false);
+        NombreEstado.setText("  Estado Factura");
+        NombreEstado.setBorder(defaultBorder);
+        formatoInvalido.setVisible(false);
 
     }
 
@@ -146,6 +148,7 @@ public class estadoFactura extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         NombreEstado.setBackground(new java.awt.Color(30, 33, 34));
+        NombreEstado.setDocument(new JTextFieldLimit(25));
         NombreEstado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         NombreEstado.setForeground(new java.awt.Color(255, 255, 255));
         NombreEstado.setText("  Nuevo Estado de Factura");

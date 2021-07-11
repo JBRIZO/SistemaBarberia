@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.servicios;
@@ -40,6 +41,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     private LocalDate fecha ;
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -62,11 +64,10 @@ public class nuevoServicio extends javax.swing.JFrame {
             idServicio.setText("  ID de Servicio: " + Integer.toString(serviciosEnBd.get(serviciosEnBd.size()-1).getIdservicio()+1));
         } 
         
-        nombreServicio.setText("  Nombre del Nuevo Servicio");
-        precioInicial.setText("   Precio Inicial");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        nombreServicio.setBorder(border);
-        precioInicial.setBorder(border);
+        nombreServicio.setText("  Nombre Servicio");
+        precioInicial.setText(" Precio");
+        nombreServicio.setBorder(defaultBorder);
+        precioInicial.setBorder(defaultBorder);
         formatoInvalido1.setVisible(false);
         formatoInvalido2.setVisible(false);
 
@@ -145,6 +146,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         formatoInvalido1.setText("Formato no valido.");
 
         precioInicial.setBackground(new java.awt.Color(30, 33, 34));
+        precioInicial.setDocument(new JTextFieldLimit(7));
         precioInicial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         precioInicial.setForeground(new java.awt.Color(255, 255, 255));
         precioInicial.setText("   Precio Inicial");
@@ -170,6 +172,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         });
 
         nombreServicio.setBackground(new java.awt.Color(30, 33, 34));
+        nombreServicio.setDocument(new JTextFieldLimit(25));
         nombreServicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombreServicio.setForeground(new java.awt.Color(255, 255, 255));
         nombreServicio.setText("   Nombre del Nuevo Servicio");

@@ -6,6 +6,7 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodocumentoJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.tipodocumento;
 import java.awt.Color;
@@ -14,6 +15,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
@@ -31,6 +33,8 @@ public class tipoDocumento extends javax.swing.JFrame {
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
 
     /**
      * Creates new form nuevoTipoDocumento
@@ -39,6 +43,7 @@ public class tipoDocumento extends javax.swing.JFrame {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        
         Reiniciar();
     }
     
@@ -52,10 +57,8 @@ public class tipoDocumento extends javax.swing.JFrame {
         {
             idtipodocumento.setText("  ID Tipo de Documento: " + Integer.toString(tipodocumentoEnBd.get(tipodocumentoEnBd.size()-1).getIdtipodocumento()+1));
         } 
-        
-        TipoDocumento.setText("  Nombre del Tipo de Documento   ");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        TipoDocumento.setBorder(border);
+        TipoDocumento.setBorder(defaultBorder);
+        TipoDocumento.setText("  Nombre de Documento");
         formatoInvalido.setVisible(false);
 
     }
@@ -82,7 +85,6 @@ public class tipoDocumento extends javax.swing.JFrame {
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(498, 533));
         setMinimumSize(new java.awt.Dimension(498, 533));
         setResizable(false);
 
@@ -134,27 +136,14 @@ public class tipoDocumento extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         TipoDocumento.setBackground(new java.awt.Color(30, 33, 34));
+        TipoDocumento.setDocument(new JTextFieldLimit(25));
         TipoDocumento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         TipoDocumento.setForeground(new java.awt.Color(255, 255, 255));
-        TipoDocumento.setText("   Nombre del Tipo de Documento");
-        TipoDocumento.setToolTipText("Ingrese un tipo de documento válido.");
+        TipoDocumento.setText("  Nombre de Documento");
         TipoDocumento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         TipoDocumento.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                TipoDocumentoFocusGained(evt);
-            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 TipoDocumentoFocusLost(evt);
-            }
-        });
-        TipoDocumento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TipoDocumentoActionPerformed(evt);
-            }
-        });
-        TipoDocumento.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                TipoDocumentoKeyTyped(evt);
             }
         });
 
@@ -164,10 +153,10 @@ public class tipoDocumento extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatoInvalido)
-                    .addComponent(TipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idtipodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(TipoDocumento)
+                    .addComponent(idtipodocumento, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                    .addComponent(formatoInvalido))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -175,7 +164,7 @@ public class tipoDocumento extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(idtipodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
+                .addGap(48, 48, 48)
                 .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(TipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -222,7 +211,7 @@ public class tipoDocumento extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(405, 405, 405)
+                .addGap(363, 363, 363)
                 .addComponent(jLabel1))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(110, 110, 110)
@@ -242,7 +231,7 @@ public class tipoDocumento extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41))
         );
@@ -299,26 +288,6 @@ public class tipoDocumento extends javax.swing.JFrame {
     private void idtipodocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idtipodocumentoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_idtipodocumentoActionPerformed
-//a;adir validaciones botonaceptar
-    private void TipoDocumentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoDocumentoFocusLost
-        validarCampos();
-    }//GEN-LAST:event_TipoDocumentoFocusLost
-
-    private void TipoDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoDocumentoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TipoDocumentoActionPerformed
-
-    private void TipoDocumentoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TipoDocumentoKeyTyped
-        // TODO add your handling code here:
-        if ((TipoDocumento.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();
-    }
-    }//GEN-LAST:event_TipoDocumentoKeyTyped
-
-    private void TipoDocumentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoDocumentoFocusGained
-        // TODO add your handling code here:
-        TipoDocumento.setText("");
-    }//GEN-LAST:event_TipoDocumentoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
@@ -331,6 +300,11 @@ public class tipoDocumento extends javax.swing.JFrame {
         this.dispose(); 
         tipodocumentoDAO.close();
     }//GEN-LAST:event_salirMouseClicked
+
+    private void TipoDocumentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoDocumentoFocusLost
+        // TODO add your handling code here:
+        validarCampos();
+    }//GEN-LAST:event_TipoDocumentoFocusLost
 
     /**
      * @param args the command line arguments

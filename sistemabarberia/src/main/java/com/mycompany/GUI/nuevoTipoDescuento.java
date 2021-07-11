@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
@@ -31,6 +32,8 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);           
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -53,9 +56,8 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             idTipoDescuento.setText("  ID Tipo de Descuento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
         } 
         
-        tipoDescuento.setText("  Nombre del Tipo de Descuento");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        tipoDescuento.setBorder(border);
+        tipoDescuento.setBorder(defaultBorder);        
+        tipoDescuento.setText(" Nombre Tipo de Descuento");
         formatoInvalido.setVisible(false);
 
     }
@@ -134,6 +136,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         tipoDescuento.setBackground(new java.awt.Color(30, 33, 34));
+        tipoDescuento.setDocument(new JTextFieldLimit(25));
         tipoDescuento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tipoDescuento.setForeground(new java.awt.Color(255, 255, 255));
         tipoDescuento.setText("  Nombre del Tipo de Descuento");
@@ -251,7 +254,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

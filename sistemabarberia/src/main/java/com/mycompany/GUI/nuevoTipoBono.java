@@ -8,6 +8,7 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.tiposbono;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import java.awt.Color;
 import java.awt.Image;
 import java.util.List;
@@ -31,6 +32,8 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);    
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -54,9 +57,8 @@ public class nuevoTipoBono extends javax.swing.JFrame {
             idTipoBono.setText("  ID Tipo de Bono: " + Integer.toString(bonosEnBd.get(bonosEnBd.size()-1).getIdtipobono()+1));
         } 
         
-        tipoBono.setText("  Nombre del Tipo de Bono");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        tipoBono.setBorder(border);
+        tipoBono.setBorder(defaultBorder);
+        tipoBono.setText("  Nuevo Tipo de Bono");        
         formatoInvalido.setVisible(false);
 
     }
@@ -133,6 +135,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         tipoBono.setBackground(new java.awt.Color(30, 33, 34));
+        tipoBono.setDocument(new JTextFieldLimit(25));
         tipoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tipoBono.setForeground(new java.awt.Color(255, 255, 255));
         tipoBono.setText("  Nombre del Tipo de Bono");

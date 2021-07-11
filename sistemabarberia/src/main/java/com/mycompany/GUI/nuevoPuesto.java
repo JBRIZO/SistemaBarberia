@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.puesto;
 import java.awt.Color;
 import java.awt.Image;
@@ -31,6 +32,8 @@ public class nuevoPuesto extends javax.swing.JFrame {
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);            
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -54,8 +57,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         } 
         
         nombrePuesto.setText("  Nombre del Nuevo Puesto");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        nombrePuesto.setBorder(border);
+        nombrePuesto.setBorder(defaultBorder);
         formatoInvalido.setVisible(false);
     }
 
@@ -132,6 +134,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         nombrePuesto.setBackground(new java.awt.Color(30, 33, 34));
+        nombrePuesto.setDocument(new JTextFieldLimit(25));
         nombrePuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombrePuesto.setForeground(new java.awt.Color(255, 255, 255));
         nombrePuesto.setText("  Nombre del nuevo puesto.");

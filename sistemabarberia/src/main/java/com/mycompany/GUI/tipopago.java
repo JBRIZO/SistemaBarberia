@@ -6,6 +6,7 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.tipopagoJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import java.awt.Color;
 import java.awt.Image;
@@ -30,6 +31,7 @@ public class tipopago extends javax.swing.JFrame {
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -38,6 +40,7 @@ public class tipopago extends javax.swing.JFrame {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+      
         Reiniciar();   
     }
     
@@ -52,9 +55,9 @@ public class tipopago extends javax.swing.JFrame {
             idtipopago.setText("  ID de tipo de pago: " + Integer.toString(tipopagoEnBd.get(tipopagoEnBd.size()-1).getIdtipopago()+1));
         } 
         
-        TipoPago.setText("  Nombre del tipo de pago");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        TipoPago.setBorder(border);
+        
+        TipoPago.setBorder(defaultBorder);
+        TipoPago.setText("  Nombre del Tipo de Pago");
         formatoInvalido.setVisible(false);
     }
 
@@ -134,9 +137,10 @@ public class tipopago extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         TipoPago.setBackground(new java.awt.Color(30, 33, 34));
+        TipoPago.setDocument(new JTextFieldLimit(25));
         TipoPago.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         TipoPago.setForeground(new java.awt.Color(255, 255, 255));
-        TipoPago.setText("  Nombre del tipo de pago.");
+        TipoPago.setText("  Nombre de Tipo de Pago");
         TipoPago.setToolTipText("Ingrese un tipo de pago válido.");
         TipoPago.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         TipoPago.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -289,7 +293,7 @@ public class tipopago extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
-        }
+     }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -308,9 +312,6 @@ public class tipopago extends javax.swing.JFrame {
 
     private void TipoPagoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TipoPagoKeyTyped
         // TODO add your handling code here:
-        if ((TipoPago.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();      
-        }
     }//GEN-LAST:event_TipoPagoKeyTyped
 
     private void TipoPagoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoPagoFocusGained
