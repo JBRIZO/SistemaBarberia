@@ -2,16 +2,24 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="servidorbd" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>com.mycompany.sistemabarberia.tipopago</class>
+    <class>com.mycompany.sistemabarberia.tipodocumento</class>
     <class>com.mycompany.sistemabarberia.tipodescuento</class>
     <class>com.mycompany.sistemabarberia.puesto</class>
     <class>com.mycompany.sistemabarberia.servicios</class>
     <class>com.mycompany.sistemabarberia.precioshistoricoservicios</class>
     <class>com.mycompany.sistemabarberia.tipopago</class>
+    <class>com.mycompany.sistemabarberia.estadofactura</class>
+    <class>com.mycompany.sistemabarberia.precioshistoricosproductos</class>
+    <class>com.mycompany.sistemabarberia.productos</class>
+    <class>com.mycompany.sistemabarberia.tipodeduccion</class>
+    <class>com.mycompany.sistemabarberia.tiposbono</class>
+    <class>com.mycompany.sistemabarberia.usuarios</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://remotemysql.com:3306/mqW9X0QO2X?zeroDateTimeBehavior=convertToNull"/>
-      <property name="javax.persistence.jdbc.user" value="mqW9X0QO2X"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="YURmSUbz4y"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
     </properties>
   </persistence-unit>
