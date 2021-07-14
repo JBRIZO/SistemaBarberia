@@ -60,6 +60,7 @@ public class registrarClientes extends javax.swing.JFrame {
         Cancelar.setBackground(new java.awt.Color(189, 158, 76));
         Cancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         Cancelar.setText("Cancelar");
+        Cancelar.setPreferredSize(new java.awt.Dimension(135, 31));
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -182,7 +183,7 @@ public class registrarClientes extends javax.swing.JFrame {
                         .addGap(162, 162, 162)
                         .addComponent(crearPerfil)
                         .addGap(182, 182, 182)
-                        .addComponent(Cancelar)))
+                        .addComponent(Cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -198,7 +199,7 @@ public class registrarClientes extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(crearPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(Cancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(Cancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
                 .addGap(43, 43, 43))
         );
 
