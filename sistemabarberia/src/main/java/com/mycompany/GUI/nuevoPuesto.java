@@ -321,9 +321,6 @@ public class nuevoPuesto extends javax.swing.JFrame {
 
     private void nombrePuestoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombrePuestoKeyTyped
         // TODO add your handling code here:
-        if ((nombrePuesto.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();
-    }
     }//GEN-LAST:event_nombrePuestoKeyTyped
 
     private void nombrePuestoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusGained

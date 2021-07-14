@@ -50,5 +50,11 @@ public class puesto implements Serializable{
         this.Activo = Activo;
     }
     
+    @Override
+    public String toString()
+    {
+        return idpuesto + ". " +NomPuesto;
+    }
+    
    
 }

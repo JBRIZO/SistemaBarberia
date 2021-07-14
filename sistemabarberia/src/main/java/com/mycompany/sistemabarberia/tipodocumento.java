@@ -51,4 +51,11 @@ public class tipodocumento implements Serializable {
     public void setActivo(boolean Activo) {
         this.Activo = Activo;
     }  
+    
+    @Override
+    public String toString()
+    {
+        return Integer.toString(idtipodocumento);
+    }
+    
 }

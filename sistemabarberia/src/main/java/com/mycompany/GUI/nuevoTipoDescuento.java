@@ -312,10 +312,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoDescuentoActionPerformed
 
     private void tipoDescuentoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tipoDescuentoKeyTyped
-        // TODO add your handling code here:
-        if ((tipoDescuento.getText() + evt.getKeyChar()).length() > 20) {
-        evt.consume();
-    }
+ 
     }//GEN-LAST:event_tipoDescuentoKeyTyped
 
     private void tipoDescuentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusGained

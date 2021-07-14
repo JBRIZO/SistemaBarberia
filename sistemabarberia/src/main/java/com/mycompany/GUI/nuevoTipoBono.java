@@ -313,10 +313,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoBonoActionPerformed
 
     private void tipoBonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tipoBonoKeyTyped
-        // TODO add your handling code here:
-        if ((tipoBono.getText() + evt.getKeyChar()).length() > 10) {
-        evt.consume();
-    }
+   
     }//GEN-LAST:event_tipoBonoKeyTyped
 
     private void tipoBonoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusGained

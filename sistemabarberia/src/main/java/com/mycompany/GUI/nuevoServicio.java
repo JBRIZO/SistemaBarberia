@@ -371,10 +371,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     }//GEN-LAST:event_precioInicialActionPerformed
 
     private void precioInicialKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precioInicialKeyTyped
-        // TODO add your handling code here:
-        if ((precioInicial.getText() + evt.getKeyChar()).length() > 7) {
-        evt.consume();
-    }
+        // TODO add your handling code here
     }//GEN-LAST:event_precioInicialKeyTyped
 
     private void precioInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioInicialFocusGained
@@ -398,8 +395,6 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     private void nombreServicioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreServicioKeyTyped
         // TODO add your handling code here:
-        if ((nombreServicio.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();}
     }//GEN-LAST:event_nombreServicioKeyTyped
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked

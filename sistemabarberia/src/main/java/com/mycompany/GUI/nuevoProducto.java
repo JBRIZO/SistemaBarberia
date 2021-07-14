@@ -38,7 +38,6 @@ public class nuevoProducto extends javax.swing.JFrame {
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     String currentTime = sdf.format(dt);
-    private LocalDate fecha ;
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
@@ -51,7 +50,6 @@ public class nuevoProducto extends javax.swing.JFrame {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-                nombreProducto.setText("  Nombre del Nuevo Producto");
 
         Reiniciar();    
     }
@@ -69,7 +67,6 @@ public class nuevoProducto extends javax.swing.JFrame {
         
         nombreProducto.setText("  Nuevo Producto");
         precioInicial.setText(" Precio");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
         nombreProducto.setBorder(defaultBorder);
         precioInicial.setBorder(defaultBorder);
         stockInicial.setBorder(defaultBorder);
@@ -224,6 +221,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         Stock.setText("Stock");
 
         stockInicial.setBackground(new java.awt.Color(30, 33, 34));
+        stockInicial.setDocument(new JTextFieldLimit(4));
         stockInicial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         stockInicial.setForeground(new java.awt.Color(255, 255, 255));
         stockInicial.setToolTipText("Stock inicial.");
@@ -248,6 +246,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         });
 
         stockMinimo.setBackground(new java.awt.Color(30, 33, 34));
+        stockMinimo.setDocument(new JTextFieldLimit(4));
         stockMinimo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         stockMinimo.setForeground(new java.awt.Color(255, 255, 255));
         stockMinimo.setToolTipText("Stock mínimo.");
@@ -272,6 +271,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         });
 
         stockMaximo.setBackground(new java.awt.Color(30, 33, 34));
+        stockMaximo.setDocument(new JTextFieldLimit(4));
         stockMaximo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         stockMaximo.setForeground(new java.awt.Color(255, 255, 255));
         stockMaximo.setToolTipText("Stock máximo.");
@@ -510,9 +510,6 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void precioInicialKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precioInicialKeyTyped
         // TODO add your handling code here:
-        if ((precioInicial.getText() + evt.getKeyChar()).length() > 7) {
-        evt.consume();
-    }
     }//GEN-LAST:event_precioInicialKeyTyped
 
     private void precioInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioInicialFocusGained
@@ -535,9 +532,7 @@ public class nuevoProducto extends javax.swing.JFrame {
     }//GEN-LAST:event_nombreProductoActionPerformed
 
     private void nombreProductoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreProductoKeyTyped
-        // TODO add your handling code here:
-        if ((nombreProducto.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();}
+
     }//GEN-LAST:event_nombreProductoKeyTyped
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -567,10 +562,7 @@ public class nuevoProducto extends javax.swing.JFrame {
     }//GEN-LAST:event_stockInicialActionPerformed
 
     private void stockInicialKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_stockInicialKeyTyped
-        // TODO add your handling code here:
-        if ((stockInicial.getText() + evt.getKeyChar()).length() > 4) {
-        evt.consume();
-        }
+
     }//GEN-LAST:event_stockInicialKeyTyped
 
     private void stockMinimoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockMinimoFocusGained
@@ -587,11 +579,7 @@ public class nuevoProducto extends javax.swing.JFrame {
     }//GEN-LAST:event_stockMinimoActionPerformed
 
     private void stockMinimoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_stockMinimoKeyTyped
-        // TODO add your handling code here:
-        if ((stockMinimo.getText() + evt.getKeyChar()).length() > 4) {
-        evt.consume();
-        }
-        
+    
     }//GEN-LAST:event_stockMinimoKeyTyped
 
     private void stockMaximoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockMaximoFocusGained
@@ -608,11 +596,7 @@ public class nuevoProducto extends javax.swing.JFrame {
     }//GEN-LAST:event_stockMaximoActionPerformed
 
     private void stockMaximoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_stockMaximoKeyTyped
-        // TODO add your handling code here:
-         if ((stockMaximo.getText() + evt.getKeyChar()).length() > 4) {
-        evt.consume();
-        }
-        
+        // TODO add your handling code here      
     }//GEN-LAST:event_stockMaximoKeyTyped
 
     public void validacionCampos()
