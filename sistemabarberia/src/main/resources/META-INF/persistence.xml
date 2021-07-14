@@ -8,12 +8,19 @@
     <class>com.mycompany.sistemabarberia.puesto</class>
     <class>com.mycompany.sistemabarberia.servicios</class>
     <class>com.mycompany.sistemabarberia.precioshistoricoservicios</class>
+    <class>com.mycompany.sistemabarberia.tipopago</class>
     <class>com.mycompany.sistemabarberia.estadofactura</class>
+    <class>com.mycompany.sistemabarberia.precioshistoricosproductos</class>
+    <class>com.mycompany.sistemabarberia.productos</class>
+    <class>com.mycompany.sistemabarberia.tipodeduccion</class>
+    <class>com.mycompany.sistemabarberia.tiposbono</class>
+    <class>com.mycompany.sistemabarberia.descuentos</class>
+    <class>com.mycompany.sistemabarberia.parametros</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://remotemysql.com:3306/mqW9X0QO2X?zeroDateTimeBehavior=convertToNull"/>
-      <property name="javax.persistence.jdbc.user" value="mqW9X0QO2X"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="YURmSUbz4y"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
     </properties>
   </persistence-unit>
