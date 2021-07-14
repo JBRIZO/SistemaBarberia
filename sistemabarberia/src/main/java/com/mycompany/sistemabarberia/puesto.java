@@ -12,7 +12,7 @@ import javax.persistence.Id;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil 
  */
 @Entity
 public class puesto implements Serializable{
