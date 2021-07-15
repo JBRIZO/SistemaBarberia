@@ -5,19 +5,10 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
-import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.puesto;
-import com.mycompany.sistemabarberia.tipodescuento;
-import java.awt.Color;
 import java.awt.Image;
-import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.border.Border;
 
 /**
  *
@@ -108,6 +99,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonProductos.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonProductos.setText("PRODUCTOS");
         botonProductos.setRequestFocusEnabled(false);
+        botonProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonProductosMouseClicked(evt);
+            }
+        });
         botonProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonProductosActionPerformed(evt);
@@ -118,6 +114,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonAtributosFactura.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         botonAtributosFactura.setText("ATRIBUTOS FACTURA");
         botonAtributosFactura.setRequestFocusEnabled(false);
+        botonAtributosFactura.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonAtributosFacturaMouseClicked(evt);
+            }
+        });
         botonAtributosFactura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAtributosFacturaActionPerformed(evt);
@@ -143,6 +144,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonDeducciones.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonDeducciones.setText("DEDUCCIONES");
         botonDeducciones.setRequestFocusEnabled(false);
+        botonDeducciones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonDeduccionesMouseClicked(evt);
+            }
+        });
         botonDeducciones.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonDeduccionesActionPerformed(evt);
@@ -153,6 +159,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonNuevoEmpleado.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         botonNuevoEmpleado.setText("NUEVO EMPLEADO");
         botonNuevoEmpleado.setRequestFocusEnabled(false);
+        botonNuevoEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonNuevoEmpleadoMouseClicked(evt);
+            }
+        });
         botonNuevoEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonNuevoEmpleadoActionPerformed(evt);
@@ -163,6 +174,11 @@ public class menuGerente extends javax.swing.JFrame {
         botonBonos.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonBonos.setText("BONOS");
         botonBonos.setRequestFocusEnabled(false);
+        botonBonos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonBonosMouseClicked(evt);
+            }
+        });
         botonBonos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBonosActionPerformed(evt);
@@ -349,12 +365,13 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonPuestoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonPuestoMouseClicked
         // TODO add your handling code here:
-java.awt.EventQueue.invokeLater(new Runnable() {
+    java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoPuesto().setVisible(true);
             }
         });
-
+    this.setVisible(false);
+    this.dispose(); 
     }//GEN-LAST:event_botonPuestoMouseClicked
 
     private void botonServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonServiciosMouseClicked
@@ -364,6 +381,8 @@ java.awt.EventQueue.invokeLater(new Runnable() {
                 new nuevoServicio().setVisible(true);
             }
         });
+        this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonServiciosMouseClicked
 
     private void botonDescuentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDescuentosMouseClicked
@@ -373,7 +392,59 @@ java.awt.EventQueue.invokeLater(new Runnable() {
                 new nuevoTipoDescuento().setVisible(true);
             }
         });
+        this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonDescuentosMouseClicked
+
+    private void botonDeduccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDeduccionesMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new tipoDeduccion().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+    }//GEN-LAST:event_botonDeduccionesMouseClicked
+
+    private void botonAtributosFacturaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAtributosFacturaMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new atributosFactura().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        
+    }//GEN-LAST:event_botonAtributosFacturaMouseClicked
+
+    private void botonNuevoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoEmpleadoMouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_botonNuevoEmpleadoMouseClicked
+
+    private void botonProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonProductosMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoProducto().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+    }//GEN-LAST:event_botonProductosMouseClicked
+
+    private void botonBonosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonBonosMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoTipoBono().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+    }//GEN-LAST:event_botonBonosMouseClicked
 
     
     /**

@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.servicios;
@@ -38,6 +39,9 @@ public class nuevoServicio extends javax.swing.JFrame {
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     String currentTime = sdf.format(dt);
     private LocalDate fecha ;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -45,6 +49,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     public nuevoServicio() {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();    
     }
     
@@ -59,11 +64,10 @@ public class nuevoServicio extends javax.swing.JFrame {
             idServicio.setText("  ID de Servicio: " + Integer.toString(serviciosEnBd.get(serviciosEnBd.size()-1).getIdservicio()+1));
         } 
         
-        nombreServicio.setText("  Nombre del Nuevo Servicio");
-        precioInicial.setText("   Precio Inicial");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        nombreServicio.setBorder(border);
-        precioInicial.setBorder(border);
+        nombreServicio.setText("  Nombre Servicio");
+        precioInicial.setText(" Precio");
+        nombreServicio.setBorder(defaultBorder);
+        precioInicial.setBorder(defaultBorder);
         formatoInvalido1.setVisible(false);
         formatoInvalido2.setVisible(false);
 
@@ -90,6 +94,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         precioInicial = new javax.swing.JTextField();
         nombreServicio = new javax.swing.JTextField();
         formatoInvalido2 = new javax.swing.JLabel();
+        salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -141,6 +146,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         formatoInvalido1.setText("Formato no valido.");
 
         precioInicial.setBackground(new java.awt.Color(30, 33, 34));
+        precioInicial.setDocument(new JTextFieldLimit(7));
         precioInicial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         precioInicial.setForeground(new java.awt.Color(255, 255, 255));
         precioInicial.setText("   Precio Inicial");
@@ -166,6 +172,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         });
 
         nombreServicio.setBackground(new java.awt.Color(30, 33, 34));
+        nombreServicio.setDocument(new JTextFieldLimit(25));
         nombreServicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombreServicio.setForeground(new java.awt.Color(255, 255, 255));
         nombreServicio.setText("   Nombre del Nuevo Servicio");
@@ -240,14 +247,26 @@ public class nuevoServicio extends javax.swing.JFrame {
                 .addContainerGap(36, Short.MAX_VALUE))
         );
 
+        salir.setText("jLabel2");
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salirMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(349, 349, 349)
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -262,7 +281,11 @@ public class nuevoServicio extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(25, 25, 25)
+                        .addComponent(tituloPantalla)))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
@@ -302,6 +325,8 @@ public class nuevoServicio extends javax.swing.JFrame {
         precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
         precioUno.setActivo(true);  
         
+        validacionCamposTexto();
+        validacionNumerica();
        
         for(int i=0; i < serviciosEnBd.size();i++)
         {
@@ -315,17 +340,16 @@ public class nuevoServicio extends javax.swing.JFrame {
             }
         }
            
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionDecimal(precioInicial.getText())){
-            
+        if(validar.validacionCadenaPalabras(txt) && validar.validacionDecimal(precioInicial.getText()) && validar.validacionCantidadMinima(nombreServicio.getText(),5)){
             try {
             servicioDAO.create(servicioNuevo); 
             List<servicios> servicios = servicioDAO.findserviciosEntities();
             precioUno.setIDServicio((servicios.get(servicios.size()-1)).getIdservicio());  
             preciosDAO.create(precioUno);    
-            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+            JOptionPane.showMessageDialog(null,"Operación Exitosa.");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
@@ -337,21 +361,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     }//GEN-LAST:event_idServicioActionPerformed
 //a;adir validaciones botonaceptar
     private void precioInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioInicialFocusLost
-
-        Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
-        if(validar.validacionDecimal(precioInicial.getText()))
-        {
-            precioInicial.setBorder(greenBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato válido");
-        }else
-        {
-            precioInicial.setBorder(redBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato inválido");
-        }
-      
+        validacionNumerica();
     }//GEN-LAST:event_precioInicialFocusLost
 
     
@@ -361,48 +371,22 @@ public class nuevoServicio extends javax.swing.JFrame {
     }//GEN-LAST:event_precioInicialActionPerformed
 
     private void precioInicialKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precioInicialKeyTyped
-        // TODO add your handling code here:
-        if ((precioInicial.getText() + evt.getKeyChar()).length() > 6) {
-        evt.consume();
-    }
+        // TODO add your handling code here
     }//GEN-LAST:event_precioInicialKeyTyped
 
     private void precioInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioInicialFocusGained
         // TODO add your handling code here:
-        precioInicial.setText("");
+        precioInicial.selectAll();
     }//GEN-LAST:event_precioInicialFocusGained
 
     private void nombreServicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreServicioFocusGained
         // TODO add your handling code here:
-        nombreServicio.setText("");
+        nombreServicio.selectAll();
     }//GEN-LAST:event_nombreServicioFocusGained
 
     private void nombreServicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreServicioFocusLost
-        // TODO add your handling code here:
-        Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
-        for(int i=0; i < serviciosEnBd.size();i++)
-        {
-            if(nombreServicio.getText().equalsIgnoreCase(serviciosEnBd.get(i).getNomServicio()))
-            {
-            nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Ese servicio ya existe.");
-            }
-        }
-        if(validar.validacionCadenaPalabras(nombreServicio.getText()))
-        {    
-            nombreServicio.setBorder(greenBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato válido");
-            
-        }else
-        {
-            nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato inválido");
-        }
-        
+        // TODO add your handling code here
+        validacionCamposTexto();    
     }//GEN-LAST:event_nombreServicioFocusLost
 
     private void nombreServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreServicioActionPerformed
@@ -411,9 +395,20 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     private void nombreServicioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreServicioKeyTyped
         // TODO add your handling code here:
-        if ((nombreServicio.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();}
     }//GEN-LAST:event_nombreServicioKeyTyped
+
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        preciosDAO.close();
+        servicioDAO.close();        
+    }//GEN-LAST:event_salirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -455,7 +450,46 @@ public class nuevoServicio extends javax.swing.JFrame {
         
     }
     
+    private void validacionNumerica()
+    {
+         if(validar.validacionDecimal(precioInicial.getText()))
+        {
+            precioInicial.setBorder(greenBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Formato válido");
+        }else
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Formato inválido");
+        }
+        
+    }
     
+    private void validacionCamposTexto()
+    {
+         if(validar.validacionCadenaPalabras(nombreServicio.getText()))
+        {    
+            nombreServicio.setBorder(greenBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("Formato válido");   
+        }else
+        {
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("Formato inválido");
+            return;
+        }
+        if(!validar.validacionCantidadMinima(nombreServicio.getText(),4))
+            {
+            System.out.println(nombreServicio.getText());
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("El nombre de servicio debe ser de minimo 5 letras.");
+            return;
+            }
+      
+    }
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
@@ -482,6 +516,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreServicio;
     private javax.swing.JTextField precioInicial;
+    private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

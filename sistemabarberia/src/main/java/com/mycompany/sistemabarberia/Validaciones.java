@@ -14,8 +14,49 @@ import java.util.regex.Pattern;
  */
 //Clase que contiene las diferentes validaciones para campos con Regex
 public class Validaciones {
-    
+    //valida un nombre o un apellido, cada nombre y apellido debe iniciar en mayusculas
+    public boolean validacionNombres(String Nombre)
+    {   
+        String[] dosNombres = Nombre.split("\\s");
+        if(dosNombres.length == 2)
+        {
+               for(int i = 0; i < dosNombres.length ; i++)
+               {
+                    String patron ="^[A-Z]\\w+";
+                    Pattern patt = Pattern.compile(patron);
+                    Matcher comparador = patt.matcher(dosNombres[i].trim());
+                    if(!comparador.matches()){
+                        return false;
+                    }
+               }
+               return true;
+        }
+        String patron ="^[A-Z]\\w+";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(Nombre.trim());
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }
+        
+    }
     //Valida el periodo, que debe tener el formato mm-AAAA 
+    
+    
+     public boolean validacionEntero(String numero)
+    {
+        String patron = "^[1-9][0-9]+$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(numero);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }
+    }
     
     public boolean validacionDecimal(String numero)
     {
@@ -90,7 +131,7 @@ public class Validaciones {
     //Devuelve TRUE si una cadena de texto empieza con mayuscula, sino devuelve FALSE.
     public boolean validacionMayusculaInicial(String cadena)
     {
-      String patron = "^[A-Z]{1}[a-z]+$";
+        String patron = "^[A-Z]{1}[a-z]+$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
@@ -161,5 +202,34 @@ public class Validaciones {
               return false;
           }
     }
+    
+    public boolean validacionCantidadMinima(String palabra, int cantidadMinima)
+    {
+        String patron = String.format("^[\\w|\\s]{%d,}$",cantidadMinima);
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(palabra);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }  
+        
+    }
+    
+    //valida si el usuario ingresa un numero de celular valido
+    public boolean validarNumCelular(String cadena)
+    {
+        String patron = "^[23789]\\d{7}$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(cadena);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }  
+    }
+    
     
 }

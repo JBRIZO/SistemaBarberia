@@ -1,6 +1,0 @@
-com\mycompany\sistemabarberia\tipopago.class
-com\mycompany\sistemabarberia\exceptions\NonexistentEntityException.class
-com\mycompany\sistemabarberia\exceptions\IllegalOrphanException.class
-com\mycompany\sistemabarberia\tipopago_.class
-com\mycompany\sistemabarberia\exceptions\PreexistingEntityException.class
-com\mycompany\sistemabarberia\main.class

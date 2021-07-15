@@ -12,7 +12,7 @@ import javax.persistence.Id;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil 
  */
 @Entity
 public class puesto implements Serializable{
@@ -48,6 +48,12 @@ public class puesto implements Serializable{
 
     public void setActivo(boolean Activo) {
         this.Activo = Activo;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return idpuesto + ". " +NomPuesto;
     }
     
    

@@ -7,14 +7,11 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
-import static java.awt.Image.SCALE_DEFAULT;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -33,25 +30,19 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     private List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);           
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
 
     /**
      * Creates new form nuevoTipoDescuento
      */
     public nuevoTipoDescuento() {
         initComponents();
-        formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-
-        List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
-        if (descuentosEnBd.size() > 0)
-        {
-            idTipoDescuento.setText("  ID Tipo de Descuento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
-        }else
-        {
-            idTipoDescuento.setText("  ID Tipo de Descuento: 1");
-        }
-       
-        
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        Reiniciar();    
     }
     
     public void Reiniciar()
@@ -65,10 +56,9 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             idTipoDescuento.setText("  ID Tipo de Descuento: " + Integer.toString(descuentosEnBd.get(descuentosEnBd.size()-1).getIdtipodescuento()+1));
         } 
         
-        tipoDescuento.setText("  Nombre del Tipo de Descuento");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-            tipoDescuento.setBorder(border);
-            formatoInvalido.setVisible(false);
+        tipoDescuento.setBorder(defaultBorder);        
+        tipoDescuento.setText(" Nombre Tipo de Descuento");
+        formatoInvalido.setVisible(false);
 
     }
 
@@ -91,11 +81,15 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         idTipoDescuento = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
         tipoDescuento = new javax.swing.JTextField();
+        salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(498, 531));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
+        jPanel1.setPreferredSize(new java.awt.Dimension(498, 531));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -142,6 +136,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         tipoDescuento.setBackground(new java.awt.Color(30, 33, 34));
+        tipoDescuento.setDocument(new JTextFieldLimit(25));
         tipoDescuento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tipoDescuento.setForeground(new java.awt.Color(255, 255, 255));
         tipoDescuento.setText("  Nombre del Tipo de Descuento");
@@ -183,11 +178,11 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
+                .addGap(66, 66, 66)
                 .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -204,8 +199,15 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
+
+        salir.setText("jLabel2");
+        salir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salirMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -213,47 +215,50 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(365, 365, 365)
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(405, 405, 405)
                 .addComponent(jLabel1))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
+                .addGap(109, 109, 109)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tituloPantalla))
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addGap(27, 27, 27))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -261,11 +266,13 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
         List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
-        String txt = tipoDescuento.getText();
         tipodescuento tipoDescuentoNuevo = new tipodescuento();
         tipoDescuentoNuevo.setNomDescuento(tipoDescuento.getText());
         tipoDescuentoNuevo.setActivo(true);
         
+         
+       validacionCampos();
+       
        
         for(int i=0; i < descuentosEnBd.size();i++)
         {
@@ -278,14 +285,14 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
                 return;
             }
         }
-        
-        if(validar.validacionCadenaPalabras(txt)){
+       
+        if(validar.validacionCadenaPalabras(tipoDescuento.getText()) && validar.validacionCantidadMinima(tipoDescuento.getText(),5)){
             try {
             tipodescuentoDAO.create(tipoDescuentoNuevo);
-            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+            JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
@@ -297,27 +304,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }//GEN-LAST:event_idTipoDescuentoActionPerformed
 //a;adir validaciones botonaceptar
     private void tipoDescuentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusLost
-
-         for(int i=0; i < descuentosEnBd.size();i++)
-        {
-            if(tipoDescuento.getText().equalsIgnoreCase(descuentosEnBd.get(i).getNomDescuento()))
-            {
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            tipoDescuento.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese tipo de descuento ya existe.");
-            }
-        }
-        if(!validar.validacionCadenaPalabras(tipoDescuento.getText()))
-        {    
-            Border border = BorderFactory.createLineBorder(Color.RED, 1);
-            tipoDescuento.setBorder(border);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
-        }
-        
-       
-        
+        validacionCampos();
     }//GEN-LAST:event_tipoDescuentoFocusLost
 
     private void tipoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoDescuentoActionPerformed
@@ -325,16 +312,25 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoDescuentoActionPerformed
 
     private void tipoDescuentoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tipoDescuentoKeyTyped
-        // TODO add your handling code here:
-        if ((tipoDescuento.getText() + evt.getKeyChar()).length() > 20) {
-        evt.consume();
-    }
+ 
     }//GEN-LAST:event_tipoDescuentoKeyTyped
 
     private void tipoDescuentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusGained
         // TODO add your handling code here:
-        tipoDescuento.setText("");
+        tipoDescuento.selectAll();
     }//GEN-LAST:event_tipoDescuentoFocusGained
+
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        tipodescuentoDAO.close();
+    }//GEN-LAST:event_salirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -372,6 +368,30 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         
         
     }
+    private void validacionCampos()
+    {
+        if(validar.validacionCadenaPalabras(tipoDescuento.getText()))
+        {    
+            tipoDescuento.setBorder(greenBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato válido");
+            
+        }else
+        {
+            tipoDescuento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Formato inválido");
+            return;
+        }
+        if(!validar.validacionCantidadMinima(tipoDescuento.getText(),5))
+            {
+            tipoDescuento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de descuento debe ser de minimo 5 letras.");
+            return;
+            }
+        
+    }
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
@@ -395,6 +415,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
+    private javax.swing.JLabel salir;
     private javax.swing.JTextField tipoDescuento;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

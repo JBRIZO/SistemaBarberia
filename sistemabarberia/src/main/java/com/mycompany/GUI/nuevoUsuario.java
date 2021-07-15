@@ -35,8 +35,8 @@ public class nuevoUsuario extends javax.swing.JFrame {
     private List<usuarios> usuariosEnBd = usuariosDAO.findusuariosEntities();
     private ImageIcon imagen;
     private Icon icono;
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
-    private List<empleado> empleadoEnBd = empleadoDAO.findempleadoEntities();
+    //private empleadoJpaController empleadoDAO = new empleadoJpaController();
+   // private List<empleado> empleadoEnBd = empleadoDAO.findempleadoEntities();
     
 
     /**
@@ -50,14 +50,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
     
     public void Reiniciar()
     {
-        List<usuarios> usuariosEnBd = usuariosDAO.findusuariosEntities();
-        if (usuariosEnBd.isEmpty())
-        {
-            idUsuario.setText("  ID Empleado: 1");
-        }else
-        {
-            idUsuario.setText("  ID Nombre de Usuario: " + Integer.toString(usuariosEnBd.get(usuariosEnBd.size()-1).getUsuarios()+1));
-        } 
+ 
     
         
         nombreUsuario.setText("  Nombre de Usuario ");
@@ -285,7 +278,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
         usuarios usuarioNuevo = new usuarios();
         usuarioNuevo.setNomCuenta(nombreUsuario.getText());
         usuarioNuevo.setContraseña(Contraseña.getText());
-        usuarioNuevo.setIDEmpleado();
+        //usuarioNuevo.setIDEmpleado();
         usuarioNuevo.setActivo(true);
         
         //anadir precio 1

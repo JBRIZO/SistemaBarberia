@@ -5,8 +5,8 @@
  */
 package com.mycompany.sistemabarberia.JPACOntrollers;
 
-import com.mycompany.GUI.exceptions.NonexistentEntityException;
-import com.mycompany.GUI.exceptions.PreexistingEntityException;
+import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
+import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
 import com.mycompany.sistemabarberia.tipopago;
 import java.io.Serializable;
 import java.util.List;
@@ -20,7 +20,7 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author flore
+ * @author Jonathan Laux
  */
 public class tipopagoJpaController implements Serializable {
 
@@ -28,6 +28,11 @@ public class tipopagoJpaController implements Serializable {
         this.emf = Persistence.createEntityManagerFactory("servidorbd");
     }
     private EntityManagerFactory emf = null;
+    
+    public void close()
+    {
+        this.emf.close();
+    }
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
