@@ -17,6 +17,8 @@
     <class>com.mycompany.sistemabarberia.empleado</class>
     <class>com.mycompany.sistemabarberia.puestohistoricoempleado</class>
     <class>com.mycompany.sistemabarberia.salariohistoricoempleados</class>
+    <class>com.mycompany.sistemabarberia.descuentos</class>
+    <class>com.mycompany.sistemabarberia.parametros</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
