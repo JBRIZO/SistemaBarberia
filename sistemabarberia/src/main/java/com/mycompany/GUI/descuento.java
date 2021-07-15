@@ -7,8 +7,12 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.puesto;
 import java.awt.Color;
+import java.awt.Image;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.border.Border;
 
 /**
@@ -16,12 +20,17 @@ import javax.swing.border.Border;
  * @author flore
  */
 public class descuento extends javax.swing.JFrame {
+     private ImageIcon imagen;
+    private Icon icono;
+
 
     /**
      * Creates new form descuento
      */
     public descuento() {
         initComponents();
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        
     }
 
     /**
@@ -35,7 +44,6 @@ public class descuento extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         Valor = new javax.swing.JTextField();
@@ -43,6 +51,7 @@ public class descuento extends javax.swing.JFrame {
         fechaInicio = new javax.swing.JTextField();
         fechaFinal = new javax.swing.JTextField();
         Aceptar = new javax.swing.JButton();
+        logo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,13 +66,6 @@ public class descuento extends javax.swing.JFrame {
         jLabel1.setMaximumSize(new java.awt.Dimension(197, 32));
         jLabel1.setMinimumSize(new java.awt.Dimension(197, 32));
         jLabel1.setPreferredSize(new java.awt.Dimension(197, 32));
-
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/logoBarberia.png"))); // NOI18N
-        jLabel2.setText("jLabel2");
-        jLabel2.setMaximumSize(new java.awt.Dimension(0, 0));
-        jLabel2.setMinimumSize(new java.awt.Dimension(0, 0));
-        jLabel2.setPreferredSize(new java.awt.Dimension(0, 0));
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -170,6 +172,8 @@ public class descuento extends javax.swing.JFrame {
             }
         });
 
+        logo.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -177,7 +181,7 @@ public class descuento extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(39, 39, 39)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -192,10 +196,10 @@ public class descuento extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(79, 79, 79)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -269,7 +273,21 @@ public class descuento extends javax.swing.JFrame {
             }
         });
     }
-
+    
+    private void insertarImagen(JLabel lbl,String ruta)
+    {
+        this.imagen = new ImageIcon(ruta);
+        this.icono = new ImageIcon(
+                this.imagen.getImage().getScaledInstance(
+                        lbl.getWidth(), 
+                        lbl.getHeight(),
+                        Image.SCALE_DEFAULT)
+        );
+        lbl.setIcon(this.icono);
+        this.repaint();
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Aceptar;
     private javax.swing.JTextField Valor;
@@ -277,9 +295,9 @@ public class descuento extends javax.swing.JFrame {
     private javax.swing.JTextField fechaInicio;
     private javax.swing.JComboBox<String> idDescuento;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel logo;
     // End of variables declaration//GEN-END:variables
 }
