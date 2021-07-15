@@ -5,6 +5,12 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.puesto;
+import java.awt.Color;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
 /**
  *
  * @author flore
@@ -157,10 +163,12 @@ public class descuento extends javax.swing.JFrame {
         Aceptar.setBackground(new java.awt.Color(189, 158, 76));
         Aceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         Aceptar.setText("ACEPTAR");
-        Aceptar.setMaximumSize(new java.awt.Dimension(143, 37));
-        Aceptar.setMinimumSize(new java.awt.Dimension(143, 37));
-        Aceptar.setPreferredSize(new java.awt.Dimension(143, 37));
         Aceptar.setRequestFocusEnabled(false);
+        Aceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AceptarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -210,7 +218,8 @@ public class descuento extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValorActionPerformed
-        // TODO add your handling code here:
+        
+     
     }//GEN-LAST:event_ValorActionPerformed
 
     private void fechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaInicioActionPerformed
@@ -220,6 +229,11 @@ public class descuento extends javax.swing.JFrame {
     private void fechaFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaFinalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fechaFinalActionPerformed
+
+    private void AceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_AceptarActionPerformed
 
     /**
      * @param args the command line arguments

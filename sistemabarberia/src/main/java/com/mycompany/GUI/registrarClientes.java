@@ -5,17 +5,33 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.Validaciones;
+import com.mycompany.sistemabarberia.clientes;
+import java.awt.Image;
+import java.util.List;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 /**
  *
  * @author flore
  */
 public class registrarClientes extends javax.swing.JFrame {
+    
+    private clientesJpaController clientesDAO = new clientesJpaController();
+    private Validaciones validar = new Validaciones();
+    private List<clientes> clientesEnBd = clientesDAO.findclientesEntities();
+    private ImageIcon imagen;
+    private Icon icono;
 
     /**
      * Creates new form registrarClientes
      */
     public registrarClientes() {
         initComponents();
+       this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
     }
 
     /**
@@ -28,7 +44,6 @@ public class registrarClientes extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         tituloPantalla = new javax.swing.JLabel();
         Cancelar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -42,13 +57,11 @@ public class registrarClientes extends javax.swing.JFrame {
         tipoidDocumento = new javax.swing.JComboBox<>();
         datosPersonales = new javax.swing.JLabel();
         crearPerfil = new javax.swing.JButton();
+        logo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/logoBarberia.png"))); // NOI18N
-        jLabel1.setText("jLabel1");
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -163,12 +176,14 @@ public class registrarClientes extends javax.swing.JFrame {
         crearPerfil.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         crearPerfil.setText("Crear Perfil");
 
+        logo.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(138, 138, 138)
                 .addComponent(tituloPantalla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -189,9 +204,10 @@ public class registrarClientes extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tituloPantalla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tituloPantalla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
                 .addComponent(datosPersonales)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -250,6 +266,21 @@ public class registrarClientes extends javax.swing.JFrame {
                 new registrarClientes().setVisible(true);
             }
         });
+        
+        
+    }
+    
+    private void insertarImagen(JLabel lbl,String ruta)
+    {
+        this.imagen = new ImageIcon(ruta);
+        this.icono = new ImageIcon(
+                this.imagen.getImage().getScaledInstance(
+                        lbl.getWidth(), 
+                        lbl.getHeight(),
+                        Image.SCALE_DEFAULT)
+        );
+        lbl.setIcon(this.icono);
+        this.repaint();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -260,10 +291,10 @@ public class registrarClientes extends javax.swing.JFrame {
     private javax.swing.JButton crearPerfil;
     private javax.swing.JLabel datosPersonales;
     private javax.swing.JTextField fechaNacimiento;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel logo;
     private javax.swing.JTextField numeroidDocumento;
     private javax.swing.JComboBox<String> servicioProducto;
     private javax.swing.JComboBox<String> tipoidDocumento;
