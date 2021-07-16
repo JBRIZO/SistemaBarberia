@@ -6,13 +6,25 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tipodocumentoJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.clientes;
+import com.mycompany.sistemabarberia.productos;
+import com.mycompany.sistemabarberia.servicios;
+import com.mycompany.sistemabarberia.tipodocumento;
+import java.awt.Color;
 import java.awt.Image;
+import java.sql.Date;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.border.Border;
 
 /**
  *
@@ -21,10 +33,17 @@ import javax.swing.JLabel;
 public class registrarClientes extends javax.swing.JFrame {
     
     private clientesJpaController clientesDAO = new clientesJpaController();
+    private tipodocumentoJpaController tipodocumentoDAO = new tipodocumentoJpaController();
+    private List<tipodocumento> documentosBD = tipodocumentoDAO.findtipodocumentoEntities();
+    private serviciosJpaController serviciosDAO = new serviciosJpaController();
+    private List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
+    private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     private Validaciones validar = new Validaciones();
-    private List<clientes> clientesEnBd = clientesDAO.findclientesEntities();
     private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
 
     /**
      * Creates new form registrarClientes
@@ -32,6 +51,30 @@ public class registrarClientes extends javax.swing.JFrame {
     public registrarClientes() {
         initComponents();
        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+       
+       Reiniciar();
+        for(int i = 0; i < documentosBD.size(); i++)
+        {
+            tipoidDocumento.addItem(documentosBD.get(i).toString());
+        }
+        
+        
+        
+        for(int i = 0; i < serviciosBD.size(); i++)
+        {
+            servicioProducto.addItem(serviciosBD.get(i).toString());
+        }
+        
+    }
+    
+    public void Reiniciar()
+    {
+        formatoInvalidoNombre.setText("");
+        formatoInvalidoApellido.setText("");
+        formatoInvalidoTelefono.setText("");
+        formatoInvalidoFechaNac.setText("");
+        formatoInvalidoIdDocumento.setText("");
+        
     }
 
     /**
@@ -48,13 +91,18 @@ public class registrarClientes extends javax.swing.JFrame {
         Cancelar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        Nombres = new javax.swing.JTextField();
-        Telefono = new javax.swing.JTextField();
+        nombreCliente = new javax.swing.JTextField();
+        telefonoCliente = new javax.swing.JTextField();
         fechaNacimiento = new javax.swing.JTextField();
-        Apellidos = new javax.swing.JTextField();
+        apellidosCliente = new javax.swing.JTextField();
         numeroidDocumento = new javax.swing.JTextField();
         servicioProducto = new javax.swing.JComboBox<>();
         tipoidDocumento = new javax.swing.JComboBox<>();
+        formatoInvalidoNombre = new javax.swing.JLabel();
+        formatoInvalidoApellido = new javax.swing.JLabel();
+        formatoInvalidoTelefono = new javax.swing.JLabel();
+        formatoInvalidoFechaNac = new javax.swing.JLabel();
+        formatoInvalidoIdDocumento = new javax.swing.JLabel();
         datosPersonales = new javax.swing.JLabel();
         crearPerfil = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
@@ -85,21 +133,49 @@ public class registrarClientes extends javax.swing.JFrame {
         jPanel3.setMinimumSize(new java.awt.Dimension(0, 0));
         jPanel3.setPreferredSize(new java.awt.Dimension(794, 301));
 
-        Nombres.setBackground(new java.awt.Color(30, 33, 34));
-        Nombres.setForeground(new java.awt.Color(255, 255, 255));
-        Nombres.setText("Nombres");
+        nombreCliente.setBackground(new java.awt.Color(30, 33, 34));
+        nombreCliente.setDocument(new JTextFieldLimit(25));
+        nombreCliente.setForeground(new java.awt.Color(255, 255, 255));
+        nombreCliente.setText("Nombres");
+        nombreCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nombreClienteActionPerformed(evt);
+            }
+        });
 
-        Telefono.setBackground(new java.awt.Color(30, 33, 34));
-        Telefono.setForeground(new java.awt.Color(255, 255, 255));
-        Telefono.setText("Telefono");
+        telefonoCliente.setBackground(new java.awt.Color(30, 33, 34));
+        telefonoCliente.setDocument(new JTextFieldLimit(8));
+        telefonoCliente.setForeground(new java.awt.Color(255, 255, 255));
+        telefonoCliente.setText("Telefono");
+        telefonoCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                telefonoClienteActionPerformed(evt);
+            }
+        });
 
         fechaNacimiento.setBackground(new java.awt.Color(30, 33, 34));
         fechaNacimiento.setForeground(new java.awt.Color(255, 255, 255));
         fechaNacimiento.setText("Fecha de Nacimiento");
+        fechaNacimiento.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fechaNacimientoMouseClicked(evt);
+            }
+        });
+        fechaNacimiento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fechaNacimientoActionPerformed(evt);
+            }
+        });
 
-        Apellidos.setBackground(new java.awt.Color(30, 33, 34));
-        Apellidos.setForeground(new java.awt.Color(255, 255, 255));
-        Apellidos.setText("Apellidos");
+        apellidosCliente.setBackground(new java.awt.Color(30, 33, 34));
+        apellidosCliente.setDocument(new JTextFieldLimit(25));
+        apellidosCliente.setForeground(new java.awt.Color(255, 255, 255));
+        apellidosCliente.setText("Apellidos");
+        apellidosCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                apellidosClienteActionPerformed(evt);
+            }
+        });
 
         numeroidDocumento.setBackground(new java.awt.Color(30, 33, 34));
         numeroidDocumento.setForeground(new java.awt.Color(255, 255, 255));
@@ -109,46 +185,86 @@ public class registrarClientes extends javax.swing.JFrame {
 
         tipoidDocumento.setBackground(new java.awt.Color(30, 33, 34));
 
+        formatoInvalidoNombre.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoNombre.setText("Formato invalido.");
+
+        formatoInvalidoApellido.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoApellido.setText("Formato invalido.");
+
+        formatoInvalidoTelefono.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoTelefono.setText("Formato invalido.");
+
+        formatoInvalidoFechaNac.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoFechaNac.setText("Formato invalido.");
+
+        formatoInvalidoIdDocumento.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoIdDocumento.setText("Formato invalido.");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(174, 174, 174))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(Nombres, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                            .addComponent(Telefono))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(tipoidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Apellidos, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
-                    .addComponent(numeroidDocumento)
-                    .addComponent(servicioProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(47, 47, 47))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(174, 174, 174))
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(nombreCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                                .addComponent(telefonoCliente))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(tipoidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(formatoInvalidoNombre)
+                            .addComponent(formatoInvalidoTelefono)
+                            .addComponent(formatoInvalidoFechaNac))
+                        .addGap(338, 338, 338)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(formatoInvalidoIdDocumento)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(apellidosCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                            .addComponent(numeroidDocumento)
+                            .addComponent(servicioProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(47, 47, 47))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(formatoInvalidoApellido)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Nombres, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Apellidos, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(56, 56, 56)
+                    .addComponent(nombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(apellidosCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Telefono, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(formatoInvalidoNombre)
+                    .addComponent(formatoInvalidoApellido))
+                .addGap(33, 33, 33)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(telefonoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(numeroidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tipoidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(49, 49, 49)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(formatoInvalidoTelefono)
+                    .addComponent(formatoInvalidoIdDocumento))
+                .addGap(26, 26, 26)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(servicioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(40, 40, 40))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(formatoInvalidoFechaNac)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -175,6 +291,11 @@ public class registrarClientes extends javax.swing.JFrame {
         crearPerfil.setBackground(new java.awt.Color(189, 158, 76));
         crearPerfil.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         crearPerfil.setText("Crear Perfil");
+        crearPerfil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearPerfilActionPerformed(evt);
+            }
+        });
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -233,6 +354,64 @@ public class registrarClientes extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void telefonoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_telefonoClienteActionPerformed
+        // TODO add your handling code here:
+        validarCamposNumero();
+        
+    }//GEN-LAST:event_telefonoClienteActionPerformed
+
+    private void fechaNacimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaNacimientoActionPerformed
+        // TODO add your handling code here:
+        validarFecha(fechaNacimiento,formatoInvalidoFechaNac);
+    }//GEN-LAST:event_fechaNacimientoActionPerformed
+
+    private void nombreClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreClienteActionPerformed
+        // TODO add your handling code here:
+        validarNombre();
+        nombreCliente.selectAll();
+    }//GEN-LAST:event_nombreClienteActionPerformed
+
+    private void apellidosClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosClienteActionPerformed
+        // TODO add your handling code here:
+        validarApellido();
+        apellidosCliente.selectAll();
+    }//GEN-LAST:event_apellidosClienteActionPerformed
+
+    private void fechaNacimientoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fechaNacimientoMouseClicked
+        // TODO add your handling code here:
+        fechaNacimiento.setDocument(new JTextFieldLimit(10));
+    }//GEN-LAST:event_fechaNacimientoMouseClicked
+
+    private void crearPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearPerfilActionPerformed
+        // TODO add your handling code here:
+        String fechaNac = "00-00-0000";
+        clientes registrarClientes = new clientes();
+        registrarClientes.setNomCliente(nombreCliente.getText());
+        registrarClientes.setApeCliente(apellidosCliente.getText());
+        registrarClientes.setNumTelefono(telefonoCliente.getText());
+        
+        
+        
+        registrarClientes.setIDTipoDocumento(Integer.parseInt(tipoidDocumento.getSelectedItem().toString()));
+       
+        registrarClientes.setActivo(true);
+        
+        
+        validarCamposNumero();
+
+        if(validarNombre() && validarApellido() &&  
+           validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validar.validarNumCelular(telefonoCliente.getText()))
+        {   
+            try {
+            clientesDAO.create(registrarClientes); 
+            JOptionPane.showMessageDialog(null,"Operación Exitosa.");
+                    Reiniciar();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,"No se pudo guardar el cliente, excepción: " + ex.getMessage());
+        }
+        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.");}
+    }//GEN-LAST:event_crearPerfilActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -282,21 +461,131 @@ public class registrarClientes extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
+    
+    private void validarCamposNumero()
+    {
+        if(!validar.validacionFecha(telefonoCliente.getText()))
+            {
+            telefonoCliente.setBorder(redBorder);
+            formatoInvalidoTelefono.setVisible(true);
+            formatoInvalidoTelefono.setText("El telefono minimo debe contener 8 digitos");
+            return;
+            }else
+        {
+            telefonoCliente.setBorder(greenBorder);
+            formatoInvalidoTelefono.setText("");
+        }
+    }
+    
+    private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
+    {
+        if(!validar.validacionFecha(fecha.getText()))
+            {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("El formato de fecha es: dd-mm-aaaa");
+            return false;
+            }else
+        {
+            fecha.setBorder(greenBorder);
+            label.setText("");
+            return true;
+        }
+        
+    }
+    
+     private boolean validarApellido()
+    {
+        if(!validar.validacionCantidadMinima(apellidosCliente.getText(),8))
+            {
+            apellidosCliente.setBorder(redBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("El apellido debe ser de minimo 8 letras.");
+            return false;
+            }
+        if (!validar.validacionNombres(apellidosCliente.getText()))
+        {
+            apellidosCliente.setBorder(redBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("Cada apellido debe empezar en mayuscula.");
+            return false;
+        }
+        if(validar.validacionCadenaPalabras(apellidosCliente.getText()))
+        {    
+            apellidosCliente.setBorder(greenBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("Formato válido");
+            return true;
+            
+        }else
+        {
+            apellidosCliente.setBorder(redBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("No puedes repetir letras.");
+            return false;
+        }
+     
+    }
+     
+     private boolean validarNombre()
+    {
+        if(!validar.validacionCantidadMinima(nombreCliente.getText(),8))
+            {
+            nombreCliente.setBorder(redBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("El nombre debe ser de minimo 8 letras.");
+            return false;
+            }
+        if (!validar.validacionNombres(nombreCliente.getText()))
+        {
+            nombreCliente.setBorder(redBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("Cada nombre debe empezar en mayuscula.");
+            return false;
+        }
+        if(validar.validacionCadenaPalabras(nombreCliente.getText()))
+        {    
+            nombreCliente.setBorder(greenBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("Formato válido");
+            return true;
+            
+        }else
+        {
+            nombreCliente.setBorder(redBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("No puedes repetir letras.");
+            return false;
+        }
+    }
+     
+     private String convertirFecha(String Fecha)
+    {
+        String[] palabras  = Fecha.split("-");
+       
+        return palabras[2] + "-" + palabras[1] + "-" + palabras[0];
+    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Apellidos;
     private javax.swing.JButton Cancelar;
-    private javax.swing.JTextField Nombres;
-    private javax.swing.JTextField Telefono;
+    private javax.swing.JTextField apellidosCliente;
     private javax.swing.JButton crearPerfil;
     private javax.swing.JLabel datosPersonales;
     private javax.swing.JTextField fechaNacimiento;
+    private javax.swing.JLabel formatoInvalidoApellido;
+    private javax.swing.JLabel formatoInvalidoFechaNac;
+    private javax.swing.JLabel formatoInvalidoIdDocumento;
+    private javax.swing.JLabel formatoInvalidoNombre;
+    private javax.swing.JLabel formatoInvalidoTelefono;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
+    private javax.swing.JTextField nombreCliente;
     private javax.swing.JTextField numeroidDocumento;
     private javax.swing.JComboBox<String> servicioProducto;
+    private javax.swing.JTextField telefonoCliente;
     private javax.swing.JComboBox<String> tipoidDocumento;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
