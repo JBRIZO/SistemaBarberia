@@ -421,7 +421,13 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonNuevoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoEmpleadoMouseClicked
         // TODO add your handling code here:
-
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new agregarEmpleado().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonNuevoEmpleadoMouseClicked
 
     private void botonProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonProductosMouseClicked

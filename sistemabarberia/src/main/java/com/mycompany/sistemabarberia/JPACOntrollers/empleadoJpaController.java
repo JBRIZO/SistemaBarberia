@@ -33,6 +33,11 @@ public class empleadoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
+    public void close()
+    {
+        this.emf.close();
+    }
+    
     public void create(empleado empleado) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {

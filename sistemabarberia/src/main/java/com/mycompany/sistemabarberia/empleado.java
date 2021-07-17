@@ -22,6 +22,8 @@ public class empleado implements Serializable {
     @Column
     private int IDTipoDocumento;
     @Column
+    private String NumDoc;
+    @Column
     private String NomEmpleado;
     @Column
     private String ApeEmpleado;
@@ -128,6 +130,21 @@ public class empleado implements Serializable {
         this.FechaNacimiento = FechaNacimiento;
     }
 
+    public String getNumDoc() {
+        return NumDoc;
+    }
+
+    public void setNumDoc(String NumDoc) {
+        this.NumDoc = NumDoc;
+    }
+
+
+    @Override
+    public String toString() {
+        return Integer.toString(idempleado);
+    }
+
+    
 
     
    

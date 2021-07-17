@@ -7,11 +7,15 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.puestohistoricoempleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodocumentoJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.puesto;
+import com.mycompany.sistemabarberia.puestohistoricoempleado;
+import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import com.mycompany.sistemabarberia.tipodocumento;
 import java.awt.Color;
 import java.awt.Image;
@@ -31,11 +35,13 @@ import javax.swing.border.Border;
  */
 public class agregarEmpleado extends javax.swing.JFrame {
 
+    private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController();
     private puestoJpaController puestoDAO = new puestoJpaController();
     private List<puesto> puestosBD = puestoDAO.findpuestoEntities();
     private tipodocumentoJpaController tipodocumentoDAO = new tipodocumentoJpaController();
     private List<tipodocumento> documentosBD = tipodocumentoDAO.findtipodocumentoEntities();
     private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     private Validaciones validar = new Validaciones();
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
@@ -51,6 +57,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
      */
     public agregarEmpleado() {
         initComponents();
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
         Reiniciar();
         for(int i = 0; i < documentosBD.size(); i++)
         {
@@ -60,10 +67,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
         {
             cbPuestos.addItem(puestosBD.get(i).toString());
         }
-        
-        
-
-
     }
     
     public void Reiniciar()
@@ -74,7 +77,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         formatoInvalidoFechaIni.setText("");
         formatoInvalidoFechaNac.setText("");
         formatoInvalidoNumDoc.setText("");
-        
+        formatoInvalidoSalario.setText("");
     }
 
     /**
@@ -117,9 +120,12 @@ public class agregarEmpleado extends javax.swing.JFrame {
         botonCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
+        setMaximumSize(new java.awt.Dimension(911, 716));
+        setMinimumSize(new java.awt.Dimension(911, 716));
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
+        jPanel1.setMaximumSize(new java.awt.Dimension(911, 716));
+        jPanel1.setMinimumSize(new java.awt.Dimension(911, 716));
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -420,14 +426,19 @@ public class agregarEmpleado extends javax.swing.JFrame {
         botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonCancelar.setText("CANCELAR");
         botonCancelar.setRequestFocusEnabled(false);
+        botonCancelar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonCancelarMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(201, 201, 201)
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(185, 185, 185)
                 .addComponent(jLabel4)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -502,6 +513,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
     } catch (ParseException ex) {
        ex.printStackTrace();
     }
+        //nuevo empleado
         empleado nuevoEmpleado = new empleado();
         nuevoEmpleado.setNomEmpleado(nombreEmpleado.getText());
         nuevoEmpleado.setApeEmpleado(apellidosEmpleado.getText());
@@ -513,6 +525,22 @@ public class agregarEmpleado extends javax.swing.JFrame {
         nuevoEmpleado.setGenEmpleado(cbGenero.getSelectedItem().toString().charAt(0));
         nuevoEmpleado.setActivo(true);
         nuevoEmpleado.setDireccion(direccion.getText());
+        nuevoEmpleado.setNumDoc(numDoc.getText());
+        
+        //primer salario
+        salariohistoricoempleados primerSalario = new salariohistoricoempleados();
+        primerSalario.setFechaInicial(Date.valueOf(fechaIni));
+        primerSalario.setFechaFinal(Date.valueOf(fechaIni));
+        primerSalario.setSalario(Double.parseDouble(salarioInicial.getText()));
+        primerSalario.setActivo(true);
+        
+        //primer puesto
+        puestohistoricoempleado primerPuesto = new puestohistoricoempleado();
+        primerPuesto.setIDPuesto(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)));
+        primerPuesto.setFechaInicial(Date.valueOf(fechaIni));
+        primerPuesto.setFechaFinal(Date.valueOf(fechaIni));
+        primerPuesto.setActivo(true);
+       
         
         validarCamposNumero();
 
@@ -521,7 +549,12 @@ public class agregarEmpleado extends javax.swing.JFrame {
            validar.validacionDecimal(salarioInicial.getText()))
         {   
             try {
-            empleadoDAO.create(nuevoEmpleado); 
+            empleadoDAO.create(nuevoEmpleado);
+            List<empleado> empleados = empleadoDAO.findempleadoEntities();
+             primerSalario.setIDEmpleado(empleados.get(empleados.size()-1).getIdempleado());
+             primerPuesto.setIDEmpleado(empleados.get(empleados.size()-1).getIdempleado());
+             salarioDAO.create(primerSalario);
+             puestoHistoricoDAO.create(primerPuesto);
             JOptionPane.showMessageDialog(null,"Operación Exitosa.");
                     Reiniciar();
         } catch (Exception ex) {
@@ -584,6 +617,18 @@ public class agregarEmpleado extends javax.swing.JFrame {
         // TODO add your handling code here:
         apellidosEmpleado.selectAll();
     }//GEN-LAST:event_apellidosEmpleadoFocusGained
+
+    private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        puestoDAO.close();    
+    }//GEN-LAST:event_botonCancelarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -707,11 +752,18 @@ public class agregarEmpleado extends javax.swing.JFrame {
     
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
+        if(!validar.validacionFormatoFecha(fecha.getText()) )
+        {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("El formato de fecha es: dd-mm-aaaa");
+            return false;
+        }
         if(!validar.validacionFecha(fecha.getText()))
             {
             fecha.setBorder(redBorder);
             label.setVisible(true);
-            label.setText("El formato de fecha es: dd-mm-aaaa");
+            label.setText("La fecha introducida es invalida.");
             return false;
             }else
         {
@@ -724,12 +776,18 @@ public class agregarEmpleado extends javax.swing.JFrame {
     
     private void validarCamposNumero()
     {
-        if(!validar.validacionFecha(telefonoEmpleado.getText()))
+        if(!validar.validacionCampoNumerico(telefonoEmpleado.getText()))
+        {
+            telefonoEmpleado.setBorder(redBorder);
+            formatoInvalidoTelefono.setVisible(true);
+            formatoInvalidoTelefono.setText("Solo puedes ingresar numeros en este campo.");
+            return;
+        }
+        if(!validar.validarNumCelular(telefonoEmpleado.getText()))
             {
             telefonoEmpleado.setBorder(redBorder);
             formatoInvalidoTelefono.setVisible(true);
-            formatoInvalidoTelefono.setText("El formato de fecha es: dd-mm-aaaa");
-            return;
+            formatoInvalidoTelefono.setText("El numero de teléfono es inválido.");
             }else
         {
             telefonoEmpleado.setBorder(greenBorder);

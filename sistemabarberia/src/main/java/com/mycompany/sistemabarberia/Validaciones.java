@@ -14,6 +14,20 @@ import java.util.regex.Pattern;
  */
 //Clase que contiene las diferentes validaciones para campos con Regex
 public class Validaciones {
+    
+   //valida que el formato de una cadena sea un numero de identidad valido
+    public boolean validacionIdentidad(String Identidad)
+    {
+        String patron = "^[01][1-9][0-2][0-9][1-3][0-9][0-9][0-9][\\d]{5}$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(Identidad);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }
+    }
     //valida un nombre o un apellido, cada nombre y apellido debe iniciar en mayusculas
     public boolean validacionNombres(String Nombre)
     {   
@@ -42,9 +56,8 @@ public class Validaciones {
         }
         
     }
+    
     //Valida el periodo, que debe tener el formato mm-AAAA 
-    
-    
      public boolean validacionEntero(String numero)
     {
         String patron = "^[1-9][0-9]+$";
@@ -58,9 +71,10 @@ public class Validaciones {
         }
     }
     
+     // valida que se introdruzca un numero decimal valido
     public boolean validacionDecimal(String numero)
     {
-        String patron = "^[0-9]{1,4}.[0-9]{2}$";
+        String patron = "^[0-9]{1,6}.[0-9]{2}$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(numero);
         if(comparador.matches()){
@@ -70,6 +84,8 @@ public class Validaciones {
             return false;
         }
     }
+    
+    //valida un periodo valido con formato MM-aaaa
     public boolean validacionPeriodo(String cadena)
     {
         String mes = "";
@@ -99,7 +115,7 @@ public class Validaciones {
     }
     
    
-    //Valida el formato de la fecha (dd/mm/aaaa)
+    //Valida una fecha valida, que el usuario ingrese el numero apropiado de dias y de meses.
     public boolean validacionFecha(String cadena)
     {
         String patron = "^((0[1-9])|(1[0-9])|(2[0-9])|(3[0-1]))[\\/-]((0[1-9])|(1[0-2]))[\\/-](\\d{4})";
@@ -112,6 +128,21 @@ public class Validaciones {
             return false;
         } 
     }
+    
+    //Valida que el formato sea el correcto
+    public boolean validacionFormatoFecha(String cadena)
+    {
+        String patron = "^[\\d]{2}-[\\d]{2}-[\\d]{4}$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(cadena);
+         if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        } 
+    }
+    
     
     
     //Devuelve TRUE si una cadena de texto tiene letras repetidas, sino false.
@@ -146,7 +177,7 @@ public class Validaciones {
     //Si un campo es solo de numeros devuelve TRUE, sino FALSE.
     public boolean validacionCampoNumerico(String cadena)
     {
-        String patron = "^\\d+";
+        String patron = "^[\\d.]+$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
@@ -203,6 +234,7 @@ public class Validaciones {
           }
     }
     
+    //valida que una cadena tenga la cantidad minima de caracteres necesarios
     public boolean validacionCantidadMinima(String palabra, int cantidadMinima)
     {
         String patron = String.format("^[\\w|\\s]{%d,}$",cantidadMinima);
@@ -217,7 +249,7 @@ public class Validaciones {
         
     }
     
-    //valida si el usuario ingresa un numero de celular valido
+    //valida si el usuario ingresa un numero de celular o telefono valido en Honduras
     public boolean validarNumCelular(String cadena)
     {
         String patron = "^[23789]\\d{7}$";
@@ -230,6 +262,19 @@ public class Validaciones {
             return false;
         }  
     }
+    
+    /*public boolean validarPalabra(String cadena)
+    {
+        String patron = "^[23789]\\d{7}$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(cadena);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }  
+    }*/
     
     
 }

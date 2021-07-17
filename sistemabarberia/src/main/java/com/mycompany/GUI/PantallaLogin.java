@@ -44,7 +44,8 @@ public class PantallaLogin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         nombreUsuario = new javax.swing.JTextField();
         iniciarSesion = new javax.swing.JButton();
-        contrasena = new javax.swing.JTextField();
+        jPasswordField1 = new javax.swing.JPasswordField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,6 +62,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         nombreUsuario.setBackground(new java.awt.Color(30, 33, 34));
         nombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
         nombreUsuario.setText("   Ingresar Usuario");
+        nombreUsuario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         iniciarSesion.setBackground(new java.awt.Color(189, 158, 76));
         iniciarSesion.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -77,9 +79,12 @@ public class PantallaLogin extends javax.swing.JFrame {
             }
         });
 
-        contrasena.setBackground(new java.awt.Color(30, 33, 34));
-        contrasena.setForeground(new java.awt.Color(255, 255, 255));
-        contrasena.setText("  Ingresar Contraseña");
+        jPasswordField1.setBackground(new java.awt.Color(30, 33, 34));
+        jPasswordField1.setForeground(new java.awt.Color(255, 255, 255));
+        jPasswordField1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Contraseña:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -100,8 +105,9 @@ public class PantallaLogin extends javax.swing.JFrame {
                         .addGap(53, 53, 53))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(contrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(iniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(iniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
                         .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
@@ -113,9 +119,11 @@ public class PantallaLogin extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addComponent(nombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addComponent(contrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(52, 52, 52)
+                .addGap(20, 20, 20)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(68, 68, 68)
                 .addComponent(iniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(84, Short.MAX_VALUE))
             .addComponent(imgLogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -202,11 +210,12 @@ public class PantallaLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField contrasena;
     private javax.swing.JLabel imgLogin;
     private javax.swing.JButton iniciarSesion;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreUsuario;
     // End of variables declaration//GEN-END:variables

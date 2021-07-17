@@ -34,6 +34,11 @@ public class salariohistoricoempleadosJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
+    public void close()
+    {
+        this.emf.close();
+    }
+    
     public void create(salariohistoricoempleados salariohistoricoempleados) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
