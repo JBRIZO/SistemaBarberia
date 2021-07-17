@@ -49,7 +49,8 @@ public class atributosFactura extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         estadoFactura = new javax.swing.JButton();
         tipoPago = new javax.swing.JButton();
-        botonTipoDocumento = new javax.swing.JButton();
+        botonParametros = new javax.swing.JButton();
+        botonTipoDocumento1 = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -105,18 +106,33 @@ public class atributosFactura extends javax.swing.JFrame {
             }
         });
 
-        botonTipoDocumento.setBackground(new java.awt.Color(189, 158, 76));
-        botonTipoDocumento.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonTipoDocumento.setText("TIPO DE DOCUMENTO");
-        botonTipoDocumento.setRequestFocusEnabled(false);
-        botonTipoDocumento.addMouseListener(new java.awt.event.MouseAdapter() {
+        botonParametros.setBackground(new java.awt.Color(189, 158, 76));
+        botonParametros.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonParametros.setText("PARAMETROS");
+        botonParametros.setRequestFocusEnabled(false);
+        botonParametros.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                botonTipoDocumentoMouseClicked(evt);
+                botonParametrosMouseClicked(evt);
             }
         });
-        botonTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
+        botonParametros.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonTipoDocumentoActionPerformed(evt);
+                botonParametrosActionPerformed(evt);
+            }
+        });
+
+        botonTipoDocumento1.setBackground(new java.awt.Color(189, 158, 76));
+        botonTipoDocumento1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonTipoDocumento1.setText("TIPO DE DOCUMENTO");
+        botonTipoDocumento1.setRequestFocusEnabled(false);
+        botonTipoDocumento1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonTipoDocumento1MouseClicked(evt);
+            }
+        });
+        botonTipoDocumento1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonTipoDocumento1ActionPerformed(evt);
             }
         });
 
@@ -127,7 +143,8 @@ public class atributosFactura extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botonTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonTipoDocumento1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tipoPago, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(estadoFactura))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -137,11 +154,13 @@ public class atributosFactura extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(estadoFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addGap(18, 18, 18)
                 .addComponent(tipoPago, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                .addComponent(botonTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(botonParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(botonTipoDocumento1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -156,9 +175,9 @@ public class atributosFactura extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addGap(23, 23, 23)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         botonRegresar.setBackground(new java.awt.Color(189, 158, 76));
@@ -207,9 +226,7 @@ public class atributosFactura extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
                 .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(33, Short.MAX_VALUE))
@@ -273,7 +290,7 @@ public class atributosFactura extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_botonRegresarMouseClicked
 
-    private void botonTipoDocumentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonTipoDocumentoMouseClicked
+    private void botonParametrosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonParametrosMouseClicked
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -281,11 +298,21 @@ public class atributosFactura extends javax.swing.JFrame {
             }
         });
         this.setVisible(false);                                
-    }//GEN-LAST:event_botonTipoDocumentoMouseClicked
+    }//GEN-LAST:event_botonParametrosMouseClicked
 
-    private void botonTipoDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonTipoDocumentoActionPerformed
+    private void botonParametrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonParametrosActionPerformed
+       parametrosFactura pf = new parametrosFactura();
+       pf.setVisible(true);
+       this.dispose();
+    }//GEN-LAST:event_botonParametrosActionPerformed
+
+    private void botonTipoDocumento1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonTipoDocumento1MouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_botonTipoDocumentoActionPerformed
+    }//GEN-LAST:event_botonTipoDocumento1MouseClicked
+
+    private void botonTipoDocumento1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonTipoDocumento1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botonTipoDocumento1ActionPerformed
 
     
     /**
@@ -346,8 +373,9 @@ public class atributosFactura extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonParametros;
     private javax.swing.JButton botonRegresar;
-    private javax.swing.JButton botonTipoDocumento;
+    private javax.swing.JButton botonTipoDocumento1;
     private javax.swing.JButton estadoFactura;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

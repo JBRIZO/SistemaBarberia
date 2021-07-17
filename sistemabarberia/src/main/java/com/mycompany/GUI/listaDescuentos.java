@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil
  */
 public class listaDescuentos extends javax.swing.JFrame {
     

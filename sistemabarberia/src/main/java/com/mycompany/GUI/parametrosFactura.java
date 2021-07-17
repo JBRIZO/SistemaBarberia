@@ -5,31 +5,36 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.parametrosJpaController;
+import com.mycompany.sistemabarberia.parametros;
+import java.awt.Color;
 import java.awt.Image;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
- * @author Jonathan Laux
+ * @author Kesil
  */
 public class parametrosFactura extends javax.swing.JFrame {
-    
 
     private ImageIcon imagen;
     private Icon icono;
+
+    parametrosJpaController parametros = new parametrosJpaController();
 
     /**
      * Creates new form nuevoTipoDescuento
      */
     public parametrosFactura() {
         initComponents();
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
+        txtIdParametro.setEditable(false);
     }
-    
-    public void Reiniciar()
-    {
+
+    public void Reiniciar() {
     }
 
     /**
@@ -47,12 +52,12 @@ public class parametrosFactura extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        idTipoDescuento = new javax.swing.JTextField();
-        idTipoDescuento1 = new javax.swing.JTextField();
-        idTipoDescuento2 = new javax.swing.JTextField();
-        idTipoDescuento3 = new javax.swing.JTextField();
-        idTipoDescuento4 = new javax.swing.JTextField();
-        botonAceptar = new javax.swing.JButton();
+        txtFechaFinal = new javax.swing.JTextField();
+        txtIdParametro = new javax.swing.JTextField();
+        txtValor = new javax.swing.JTextField();
+        txtLlave = new javax.swing.JTextField();
+        txtFechaInicio = new javax.swing.JTextField();
+        botonGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -77,68 +82,95 @@ public class parametrosFactura extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        idTipoDescuento.setEditable(false);
-        idTipoDescuento.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento.setText("Fecha Final");
-        idTipoDescuento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento.addActionListener(new java.awt.event.ActionListener() {
+        txtFechaFinal.setBackground(new java.awt.Color(30, 33, 34));
+        txtFechaFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtFechaFinal.setForeground(new java.awt.Color(153, 153, 153));
+        txtFechaFinal.setText("Fecha Final");
+        txtFechaFinal.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        txtFechaFinal.setSelectionColor(new java.awt.Color(55, 53, 53));
+        txtFechaFinal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtFechaFinalFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtFechaFinalFocusLost(evt);
+            }
+        });
+        txtFechaFinal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuentoActionPerformed(evt);
+                txtFechaFinalActionPerformed(evt);
             }
         });
 
-        idTipoDescuento1.setEditable(false);
-        idTipoDescuento1.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento1.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento1.setText("ID Parametro");
-        idTipoDescuento1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento1.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento1.addActionListener(new java.awt.event.ActionListener() {
+        txtIdParametro.setBackground(new java.awt.Color(30, 33, 34));
+        txtIdParametro.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIdParametro.setForeground(new java.awt.Color(153, 153, 153));
+        txtIdParametro.setText("ID Parametro");
+        txtIdParametro.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        txtIdParametro.setSelectionColor(new java.awt.Color(55, 53, 53));
+        txtIdParametro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuento1ActionPerformed(evt);
+                txtIdParametroActionPerformed(evt);
             }
         });
 
-        idTipoDescuento2.setEditable(false);
-        idTipoDescuento2.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento2.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento2.setText("Valor");
-        idTipoDescuento2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento2.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento2.addActionListener(new java.awt.event.ActionListener() {
+        txtValor.setBackground(new java.awt.Color(30, 33, 34));
+        txtValor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtValor.setForeground(new java.awt.Color(153, 153, 153));
+        txtValor.setText("Valor");
+        txtValor.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        txtValor.setSelectionColor(new java.awt.Color(55, 53, 53));
+        txtValor.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtValorFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtValorFocusLost(evt);
+            }
+        });
+        txtValor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuento2ActionPerformed(evt);
+                txtValorActionPerformed(evt);
             }
         });
 
-        idTipoDescuento3.setEditable(false);
-        idTipoDescuento3.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento3.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento3.setText("Llave");
-        idTipoDescuento3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento3.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento3.addActionListener(new java.awt.event.ActionListener() {
+        txtLlave.setBackground(new java.awt.Color(30, 33, 34));
+        txtLlave.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtLlave.setForeground(new java.awt.Color(153, 153, 153));
+        txtLlave.setText("Llave");
+        txtLlave.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        txtLlave.setSelectionColor(new java.awt.Color(55, 53, 53));
+        txtLlave.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtLlaveFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtLlaveFocusLost(evt);
+            }
+        });
+        txtLlave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuento3ActionPerformed(evt);
+                txtLlaveActionPerformed(evt);
             }
         });
 
-        idTipoDescuento4.setEditable(false);
-        idTipoDescuento4.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento4.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento4.setText("Fecha de Inicio");
-        idTipoDescuento4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento4.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento4.addActionListener(new java.awt.event.ActionListener() {
+        txtFechaInicio.setBackground(new java.awt.Color(30, 33, 34));
+        txtFechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtFechaInicio.setForeground(new java.awt.Color(153, 153, 153));
+        txtFechaInicio.setText("Fecha de Inicio");
+        txtFechaInicio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        txtFechaInicio.setSelectionColor(new java.awt.Color(55, 53, 53));
+        txtFechaInicio.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtFechaInicioFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtFechaInicioFocusLost(evt);
+            }
+        });
+        txtFechaInicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuento4ActionPerformed(evt);
+                txtFechaInicioActionPerformed(evt);
             }
         });
 
@@ -149,26 +181,26 @@ public class parametrosFactura extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idTipoDescuento2, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idTipoDescuento3, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idTipoDescuento4, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idTipoDescuento1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtLlave, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdParametro, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(idTipoDescuento1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtIdParametro, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
-                .addComponent(idTipoDescuento4, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
-                .addComponent(idTipoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
-                .addComponent(idTipoDescuento2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
-                .addComponent(idTipoDescuento3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtLlave, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(38, Short.MAX_VALUE))
         );
 
@@ -189,18 +221,18 @@ public class parametrosFactura extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
-        botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
-        botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonAceptar.setText("ACEPTAR");
-        botonAceptar.setRequestFocusEnabled(false);
-        botonAceptar.addMouseListener(new java.awt.event.MouseAdapter() {
+        botonGuardar.setBackground(new java.awt.Color(189, 158, 76));
+        botonGuardar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonGuardar.setText("GUARDAR");
+        botonGuardar.setRequestFocusEnabled(false);
+        botonGuardar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                botonAceptarMouseClicked(evt);
+                botonGuardarMouseClicked(evt);
             }
         });
-        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
+        botonGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAceptarActionPerformed(evt);
+                botonGuardarActionPerformed(evt);
             }
         });
 
@@ -221,7 +253,7 @@ public class parametrosFactura extends javax.swing.JFrame {
                 .addComponent(jLabel1))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(130, 130, 130)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,7 +272,7 @@ public class parametrosFactura extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)))
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48))
         );
 
@@ -256,43 +288,122 @@ public class parametrosFactura extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_botonAceptarActionPerformed
+    private void botonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGuardarActionPerformed
+        if (txtFechaInicio.getText().isEmpty() || txtFechaFinal.getText().isEmpty() || txtValor.getText().isEmpty() || txtLlave.getText().isEmpty()) {
+            JOptionPane.showConfirmDialog(null, "Debes de llenar todos los campos", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        } else if (!txtFechaInicio.getText().matches("^\\d{2}[/]{1}\\d{2}[/]{1}\\d{4}$")) {
+            JOptionPane.showConfirmDialog(null, "Formato de fecha inicio inválido\nFormato correcto: dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (!txtFechaFinal.getText().matches("^\\d{2}[/]{1}\\d{2}[/]{1}\\d{4}$")) {
+            JOptionPane.showConfirmDialog(null, "Formato de fecha final inválido\nFormato correcto: dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (!txtValor.getText().equals("CAI")) {
+            JOptionPane.showConfirmDialog(null, "En este campo se debe escribir: CAI ", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (!txtLlave.getText().matches("^[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{2}$")) {
+            JOptionPane.showConfirmDialog(null, "El CAI debe contener 26 caracteres\nDeben ser numeros y letras\nFormato correcto: XXXXXX-XXXXXX-XXXXXX-XXXXXX-XX ", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            parametros pm = new parametros();
 
-    private void botonAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAceptarMouseClicked
+            pm.setFechaInicio(txtFechaInicio.getText());
+            pm.setFechaFinal(txtFechaFinal.getText());
+            pm.setValor(txtValor.getText());
+            pm.setLlave(txtLlave.getText());
+            try {
+                parametros.create(pm);
+                JOptionPane.showConfirmDialog(null, "El registro se ha almacenado correctamente", "Notificación", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showConfirmDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_botonGuardarActionPerformed
+
+    private void botonGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonGuardarMouseClicked
         // TODO add your handling code here:
-         java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
+
             }
         });
         this.setVisible(false);
-    }//GEN-LAST:event_botonAceptarMouseClicked
+    }//GEN-LAST:event_botonGuardarMouseClicked
 
-    private void idTipoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuentoActionPerformed
+    private void txtFechaFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaFinalActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuentoActionPerformed
+    }//GEN-LAST:event_txtFechaFinalActionPerformed
 
-    private void idTipoDescuento1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento1ActionPerformed
+    private void txtValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtValorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuento1ActionPerformed
+    }//GEN-LAST:event_txtValorActionPerformed
 
-    private void idTipoDescuento2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento2ActionPerformed
+    private void txtLlaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLlaveActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuento2ActionPerformed
+    }//GEN-LAST:event_txtLlaveActionPerformed
 
-    private void idTipoDescuento3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento3ActionPerformed
+    private void txtFechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaInicioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuento3ActionPerformed
+    }//GEN-LAST:event_txtFechaInicioActionPerformed
 
-    private void idTipoDescuento4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento4ActionPerformed
+    private void txtIdParametroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdParametroActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuento4ActionPerformed
+    }//GEN-LAST:event_txtIdParametroActionPerformed
 
-    
+    private void txtFechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaInicioFocusGained
+        if (txtFechaInicio.getText().equals("Fecha de Inicio")) {
+            txtFechaInicio.setText("");
+            txtFechaInicio.setForeground(new Color(255, 255, 255));
+        }
+    }//GEN-LAST:event_txtFechaInicioFocusGained
+
+    private void txtFechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaInicioFocusLost
+        if (txtFechaInicio.getText().equals("")) {
+            txtFechaInicio.setText("Fecha de Inicio");
+            txtFechaInicio.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_txtFechaInicioFocusLost
+
+    private void txtFechaFinalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaFinalFocusGained
+        if (txtFechaFinal.getText().equals("Fecha Final")) {
+            txtFechaFinal.setText("");
+            txtFechaFinal.setForeground(new Color(255, 255, 255));
+        }
+    }//GEN-LAST:event_txtFechaFinalFocusGained
+
+    private void txtFechaFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaFinalFocusLost
+        if (txtFechaFinal.getText().equals("")) {
+            txtFechaFinal.setText("Fecha Final");
+            txtFechaFinal.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_txtFechaFinalFocusLost
+
+    private void txtValorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorFocusGained
+        if (txtValor.getText().equals("Valor")) {
+            txtValor.setText("");
+            txtValor.setForeground(new Color(255, 255, 255));
+        }
+    }//GEN-LAST:event_txtValorFocusGained
+
+    private void txtValorFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorFocusLost
+        if (txtValor.getText().equals("")) {
+            txtValor.setText("Valor");
+            txtValor.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_txtValorFocusLost
+
+    private void txtLlaveFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtLlaveFocusGained
+        if (txtLlave.getText().equals("Llave")) {
+            txtLlave.setText("");
+            txtLlave.setForeground(new Color(255, 255, 255));
+        }
+    }//GEN-LAST:event_txtLlaveFocusGained
+
+    private void txtLlaveFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtLlaveFocusLost
+        if (txtLlave.getText().equals("")) {
+            txtLlave.setText("Llave");
+            txtLlave.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_txtLlaveFocusLost
+
     /**
      * @param args the command line arguments
      */
@@ -389,16 +500,14 @@ public class parametrosFactura extends javax.swing.JFrame {
                 new parametrosFactura().setVisible(true);
             }
         });
-        
-        
+
     }
-    
-    private void insertarImagen(JLabel lbl,String ruta)
-    {
+
+    private void insertarImagen(JLabel lbl, String ruta) {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
-                        lbl.getWidth(), 
+                        lbl.getWidth(),
                         lbl.getHeight(),
                         Image.SCALE_DEFAULT)
         );
@@ -407,17 +516,17 @@ public class parametrosFactura extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botonAceptar;
-    private javax.swing.JTextField idTipoDescuento;
-    private javax.swing.JTextField idTipoDescuento1;
-    private javax.swing.JTextField idTipoDescuento2;
-    private javax.swing.JTextField idTipoDescuento3;
-    private javax.swing.JTextField idTipoDescuento4;
+    private javax.swing.JButton botonGuardar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
     private javax.swing.JLabel tituloPantalla;
+    private javax.swing.JTextField txtFechaFinal;
+    private javax.swing.JTextField txtFechaInicio;
+    private javax.swing.JTextField txtIdParametro;
+    private javax.swing.JTextField txtLlave;
+    private javax.swing.JTextField txtValor;
     // End of variables declaration//GEN-END:variables
 }

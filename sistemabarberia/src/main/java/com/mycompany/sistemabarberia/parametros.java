@@ -31,8 +31,7 @@ public class parametros implements Serializable {
         @Column
         private String Valor;
         
-        @Column
-        private boolean Activo;
+       
 
     public int getIdparametro() {
         return idparametro;
@@ -74,13 +73,7 @@ public class parametros implements Serializable {
         this.Valor = Valor;
     }
 
-    public boolean isActivo() {
-        return Activo;
-    }
 
-    public void setActivo(boolean Activo) {
-        this.Activo = Activo;
-    }
         
         
 }
