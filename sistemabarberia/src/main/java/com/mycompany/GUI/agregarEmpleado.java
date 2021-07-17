@@ -153,6 +153,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
                 nombreEmpleadoFocusLost(evt);
             }
         });
+        nombreEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nombreEmpleadoActionPerformed(evt);
+            }
+        });
 
         telefonoEmpleado.setBackground(new java.awt.Color(30, 33, 34));
         telefonoEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -167,6 +172,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         telefonoEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 telefonoEmpleadoMouseClicked(evt);
+            }
+        });
+        telefonoEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                telefonoEmpleadoActionPerformed(evt);
             }
         });
 
@@ -188,6 +198,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
                 fechaNacimientoMouseClicked(evt);
             }
         });
+        fechaNacimiento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fechaNacimientoActionPerformed(evt);
+            }
+        });
         fechaNacimiento.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 fechaNacimientoKeyTyped(evt);
@@ -198,6 +213,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         cbTipoDoc.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cbTipoDoc.setForeground(new java.awt.Color(255, 255, 255));
         cbTipoDoc.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        cbTipoDoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTipoDocActionPerformed(evt);
+            }
+        });
 
         numDoc.setBackground(new java.awt.Color(30, 33, 34));
         numDoc.setDocument(new JTextFieldLimit(10));
@@ -220,6 +240,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         salarioInicial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         salarioInicial.setForeground(new java.awt.Color(255, 255, 255));
         salarioInicial.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        salarioInicial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salarioInicialActionPerformed(evt);
+            }
+        });
 
         apellidosEmpleado.setBackground(new java.awt.Color(30, 33, 34));
         apellidosEmpleado.setDocument(new JTextFieldLimit(25));
@@ -235,6 +260,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
                 apellidosEmpleadoFocusLost(evt);
             }
         });
+        apellidosEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                apellidosEmpleadoActionPerformed(evt);
+            }
+        });
 
         fechaInicio.setBackground(new java.awt.Color(30, 33, 34));
         fechaInicio.setDocument(new JTextFieldLimit(25));
@@ -248,6 +278,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 fechaInicioFocusLost(evt);
+            }
+        });
+        fechaInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fechaInicioActionPerformed(evt);
             }
         });
 
@@ -267,10 +302,20 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
         cbPuestos.setBackground(new java.awt.Color(30, 33, 34));
         cbPuestos.setForeground(new java.awt.Color(255, 255, 255));
+        cbPuestos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbPuestosActionPerformed(evt);
+            }
+        });
 
         cbGenero.setBackground(new java.awt.Color(30, 33, 34));
         cbGenero.setForeground(new java.awt.Color(255, 255, 255));
         cbGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "M", "F" }));
+        cbGenero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbGeneroActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -419,6 +464,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         botonAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 botonAgregarMouseClicked(evt);
+            }
+        });
+        botonAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAgregarActionPerformed(evt);
             }
         });
 
@@ -629,6 +679,46 @@ public class agregarEmpleado extends javax.swing.JFrame {
         this.dispose(); 
         puestoDAO.close();    
     }//GEN-LAST:event_botonCancelarMouseClicked
+
+    private void nombreEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreEmpleadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nombreEmpleadoActionPerformed
+
+    private void fechaNacimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaNacimientoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fechaNacimientoActionPerformed
+
+    private void telefonoEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_telefonoEmpleadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_telefonoEmpleadoActionPerformed
+
+    private void salarioInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salarioInicialActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_salarioInicialActionPerformed
+
+    private void apellidosEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosEmpleadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_apellidosEmpleadoActionPerformed
+
+    private void fechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaInicioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fechaInicioActionPerformed
+
+    private void cbPuestosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPuestosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbPuestosActionPerformed
+
+    private void cbGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbGeneroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbGeneroActionPerformed
+
+    private void cbTipoDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoDocActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbTipoDocActionPerformed
+
+    private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botonAgregarActionPerformed
 
     /**
      * @param args the command line arguments

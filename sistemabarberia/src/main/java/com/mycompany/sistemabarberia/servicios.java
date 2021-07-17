@@ -50,6 +50,10 @@ public class servicios implements Serializable {
         this.Activo = Activo;
     }
     
-    
+    @Override
+    public String toString()
+    {
+        return Integer.toString(idservicio);
+    }
     
 }
