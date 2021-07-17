@@ -351,7 +351,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
         }
-        }
+        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -452,6 +452,20 @@ public class nuevoServicio extends javax.swing.JFrame {
     
     private void validacionNumerica()
     {
+        if(!validar.validacionCampoNumerico(precioInicial.getText()))
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Solo se permiten numeros en este campo.");
+            return;
+        }
+        if(Double.parseDouble(precioInicial.getText()) <= 0)
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("El precio debe ser mayor a 0.");
+            return;
+        }
          if(validar.validacionDecimal(precioInicial.getText()))
         {
             precioInicial.setBorder(greenBorder);
@@ -461,13 +475,28 @@ public class nuevoServicio extends javax.swing.JFrame {
         {
             precioInicial.setBorder(redBorder);
             formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato inválido");
+            formatoInvalido2.setText("El formato debe de ser 0000.00");
         }
         
     }
     
     private void validacionCamposTexto()
     {
+        if(validar.validacionCampoNumerico(nombreServicio.getText()))
+        {
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("Solo se permite texto en este campo.");
+            return;
+        }
+        
+        if(!validar.validacionMayusculaInicial(nombreServicio.getText()))
+        {
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("El servicio debe iniciar con mayuscula.");
+            return;
+        }
          if(validar.validacionCadenaPalabras(nombreServicio.getText()))
         {    
             nombreServicio.setBorder(greenBorder);
@@ -477,7 +506,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         {
             nombreServicio.setBorder(redBorder);
             formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato inválido");
+            formatoInvalido1.setText("No puedes repetir tantas letras;");
             return;
         }
         if(!validar.validacionCantidadMinima(nombreServicio.getText(),4))

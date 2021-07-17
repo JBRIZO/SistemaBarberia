@@ -325,7 +325,7 @@ public class estadoFactura extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
-        }
+        }else{JOptionPane.showMessageDialog(null, "Por favor corrige los campos necesarios", "Error",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -419,6 +419,22 @@ public class estadoFactura extends javax.swing.JFrame {
     
     public void validacionCampos()
     {
+        if(validar.validacionCampoNumerico(NombreEstado.getText()))
+        {
+            NombreEstado.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return;
+            
+        }
+        
+        if(!validar.validacionMayusculaInicial(NombreEstado.getText()))
+        {
+             NombreEstado.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El nombre debe empezar con mayúscula.");
+            return;
+        }
         if(validar.validacionCadenaPalabras(NombreEstado.getText()))
         {    
             NombreEstado.setBorder(greenBorder);
@@ -429,7 +445,7 @@ public class estadoFactura extends javax.swing.JFrame {
         {
             NombreEstado.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
+            formatoInvalido.setText("No puedes repetir tantas letras.");
             return;
         }
 
@@ -438,7 +454,6 @@ public class estadoFactura extends javax.swing.JFrame {
             NombreEstado.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
-            return;
             }      
     }
 

@@ -302,7 +302,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepcion: " + ex.getMessage());
         }
-    }
+    }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -393,6 +393,21 @@ public class nuevoPuesto extends javax.swing.JFrame {
     
     private void validacionCampos()
     {
+        if(validar.validacionCampoNumerico(nombrePuesto.getText()))
+        {
+            nombrePuesto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return;
+        }
+        
+        if(!validar.validacionMayusculaInicial(nombrePuesto.getText()))
+        {
+            nombrePuesto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El puesto debe iniciar con mayuscula.");
+            return;
+        }
         if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
             {
             nombrePuesto.setBorder(redBorder);
@@ -412,7 +427,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         {
             nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
+            formatoInvalido.setText("No puedes repetir tantas letras.");
         }
         
         

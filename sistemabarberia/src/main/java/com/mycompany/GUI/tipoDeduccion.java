@@ -281,7 +281,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
-        }
+        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -353,7 +353,20 @@ public class tipoDeduccion extends javax.swing.JFrame {
     }
     private void validarCampos()
     {
-        
+        if(validar.validacionCampoNumerico(nombreDeduccion.getText()))
+        {
+            nombreDeduccion.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return;
+        }
+        if(!validar.validacionMayusculaInicial(nombreDeduccion.getText()))
+        {
+            nombreDeduccion.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de deduccion debe iniciar con mayuscula.");
+            return;
+        }
         if(validar.validacionCadenaPalabras(nombreDeduccion.getText()))
         {    
             nombreDeduccion.setBorder(greenBorder);
@@ -364,7 +377,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
         {
             nombreDeduccion.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Debe de iniciar con mayuscula y no contener letras repetidas.");
+            formatoInvalido.setText("No puedes repetir tantas letras.");
             return;
         }
         if(!validar.validacionCantidadMinima(nombreDeduccion.getText(), 3))

@@ -293,7 +293,7 @@ public class tipopago extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
-     }
+     }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -349,7 +349,20 @@ public class tipopago extends javax.swing.JFrame {
     
     private void validacionCampos()
     {
-        
+        if(validar.validacionCampoNumerico(TipoPago.getText()))
+        {
+            TipoPago.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return;
+        }
+        if(!validar.validacionMayusculaInicial(TipoPago.getText()))
+        {
+            TipoPago.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de pago debe iniciar con mayuscula.");
+            return;
+        }
        if(validar.validacionCadenaPalabras(TipoPago.getText()))
         {    
             TipoPago.setBorder(greenBorder);
@@ -360,7 +373,7 @@ public class tipopago extends javax.swing.JFrame {
         {
             TipoPago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
+            formatoInvalido.setText("No puedes repetir tantas letras.");
             return;
         }   
        if(!validar.validacionCantidadMinima(TipoPago.getText(), 4))

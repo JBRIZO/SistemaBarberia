@@ -277,7 +277,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
         String txt = nombreUsuario.getText();
         usuarios usuarioNuevo = new usuarios();
         usuarioNuevo.setNomCuenta(nombreUsuario.getText());
-        usuarioNuevo.setContraseña(Contraseña.getText());
+        usuarioNuevo.setContrasena(Contraseña.getText());
         //usuarioNuevo.setIDEmpleado();
         usuarioNuevo.setActivo(true);
         

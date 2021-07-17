@@ -479,6 +479,14 @@ public class nuevoProducto extends javax.swing.JFrame {
             return;
             }
         } 
+        
+        if(Double.parseDouble(precioInicial.getText()) <= 0.00)
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("El precio debe ser mayor a 0.");
+            return;
+        }
         if(validar.validacionCadenaPalabras(nombreProducto.getText()) && validar.validacionDecimal(precioInicial.getText()) && validacionStock())
         {   
             try {
@@ -491,7 +499,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el producto, excepción: " + ex.getMessage());
         }
-        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.");}
+        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -601,6 +609,20 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     public void validacionCampos()
     {
+        if(validar.validacionCampoNumerico(nombreProducto.getText()))
+        {
+            nombreProducto.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("Solo se permite texto en este campo.");
+            return;
+        }
+        if(!validar.validacionMayusculaInicial(nombreProducto.getText()))
+        {
+            nombreProducto.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("El nombre debe iniciar con mayuscula.");
+            return;
+        }
        
         if(validar.validacionCadenaPalabras(nombreProducto.getText()))
         {    
@@ -612,7 +634,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         {
             nombreProducto.setBorder(redBorder);
             formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato inválido");
+            formatoInvalido1.setText("No puedes repetir tantas letras");
             return;
         }
         if(!validar.validacionCantidadMinima(nombreProducto.getText(),4))
@@ -672,7 +694,22 @@ public class nuevoProducto extends javax.swing.JFrame {
     }
     
     public void validarCampoNumerico()
-    {
+    {  
+        if (!validar.validacionCampoNumerico(precioInicial.getText()))
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("Solo se permiten numeros en esta campo.");
+            return;
+        }
+        if(Double.parseDouble(precioInicial.getText()) <= 0.00)
+        {
+            precioInicial.setBorder(redBorder);
+            formatoInvalido2.setVisible(true);
+            formatoInvalido2.setText("El precio debe ser mayor a 0.");
+            return;
+        }
+        
         if(validar.validacionDecimal(precioInicial.getText()))
         {
             precioInicial.setBorder(greenBorder);
@@ -682,7 +719,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         {
             precioInicial.setBorder(redBorder);
             formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato inválido");
+            formatoInvalido2.setText("El formato debe ser 0000.00");
         }
     }
     
@@ -744,14 +781,7 @@ public class nuevoProducto extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(nuevoProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

@@ -294,7 +294,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
-        }
+        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -370,6 +370,20 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }
     private void validacionCampos()
     {
+        if(validar.validacionCampoNumerico(tipoDescuento.getText()))
+        {
+            tipoDescuento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return;
+        }
+        if(!validar.validacionMayusculaInicial(tipoDescuento.getText()))
+        {
+            tipoDescuento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El descuento debe iniciar con mayuscula.");
+            return;
+        }
         if(validar.validacionCadenaPalabras(tipoDescuento.getText()))
         {    
             tipoDescuento.setBorder(greenBorder);
@@ -380,7 +394,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         {
             tipoDescuento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
+            formatoInvalido.setText("No puedes repetir tantas letras.");
             return;
         }
         if(!validar.validacionCantidadMinima(tipoDescuento.getText(),5))
@@ -388,7 +402,6 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             tipoDescuento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de descuento debe ser de minimo 5 letras.");
-            return;
             }
         
     }

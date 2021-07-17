@@ -359,10 +359,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
         }
-        }else
-        {
-            JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
-        }
+        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -471,11 +468,11 @@ public class nuevoSalario extends javax.swing.JFrame {
             formatoInvalido3.setText("Solo se permiten números.");
             return false;
         }
-        if(Double.parseDouble(salario.getText()) == 0 |Double.parseDouble(salario.getText()) < 0  )
+        if(Double.parseDouble(salario.getText()) <= 0  )
         {
             salario.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("El salario no puede ser menor o igual a 0");
+            formatoInvalido3.setText("El salario debe ser mayor a 0");
             return false;
         }
          if(validar.validacionDecimal(salario.getText()))
@@ -488,7 +485,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         {
             salario.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("El formato debe de ser (0000.00)");
+            formatoInvalido3.setText("El formato debe de ser 0000.00");
             return false;
         }
         
@@ -496,6 +493,13 @@ public class nuevoSalario extends javax.swing.JFrame {
     
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
+        if(!validar.validacionCampoNumerico(fecha.getText()))
+        {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("Solo puedes ingresar fechas en este campo.");
+            return false;
+        }
         if(!validar.validacionFormatoFecha(fecha.getText()) )
         {
             fecha.setBorder(redBorder);

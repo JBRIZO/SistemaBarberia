@@ -5,10 +5,14 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -20,6 +24,8 @@ public class PantallaLogin extends javax.swing.JFrame {
      * Creates new form PantallaLogin
      */
     
+    private usuariosJpaController usuariosDAO = new usuariosJpaController();
+    private List<usuarios> usuariosBD = usuariosDAO.findusuariosEntities();
     private ImageIcon imagen;
     private Icon icono;
     
@@ -44,7 +50,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         nombreUsuario = new javax.swing.JTextField();
         iniciarSesion = new javax.swing.JButton();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        password = new javax.swing.JPasswordField();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -79,9 +85,9 @@ public class PantallaLogin extends javax.swing.JFrame {
             }
         });
 
-        jPasswordField1.setBackground(new java.awt.Color(30, 33, 34));
-        jPasswordField1.setForeground(new java.awt.Color(255, 255, 255));
-        jPasswordField1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        password.setBackground(new java.awt.Color(30, 33, 34));
+        password.setForeground(new java.awt.Color(255, 255, 255));
+        password.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Contraseña:");
@@ -106,7 +112,7 @@ public class PantallaLogin extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(iniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
                         .addContainerGap())))
         );
@@ -122,7 +128,7 @@ public class PantallaLogin extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(68, 68, 68)
                 .addComponent(iniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(84, Short.MAX_VALUE))
@@ -149,12 +155,32 @@ public class PantallaLogin extends javax.swing.JFrame {
 
     private void iniciarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iniciarSesionMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        for(int i = 0; i< usuariosBD.size();i++)
+        {
+            if(nombreUsuario.getText().equals(usuariosBD.get(i).getNomCuenta()))
+            {
+                if(password.getPassword().equals(usuariosBD.get(i).getContrasena()))
+                {
+                   java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new menuGerente().setVisible(true);
+                    }
+                });
+                this.setVisible(false); 
+                this.dispose();
+                usuariosDAO.close();     
+                }else
+                {
+                    JOptionPane.showMessageDialog(null,"Contraseña o usuario incorrectos.");
+                    
+                }   
             }
-        });
-        this.setVisible(false);
+        }
+        
+        
+        
+        
+        
     }//GEN-LAST:event_iniciarSesionMouseClicked
 
     private void iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarSesionActionPerformed
@@ -215,8 +241,8 @@ public class PantallaLogin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreUsuario;
+    private javax.swing.JPasswordField password;
     // End of variables declaration//GEN-END:variables
 }

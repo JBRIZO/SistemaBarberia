@@ -32,6 +32,10 @@ public class usuariosJpaController implements Serializable {
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
+    public void close()
+    {
+        this.emf.close();
+    }
 
     public void create(usuarios usuarios) throws PreexistingEntityException, Exception {
         EntityManager em = null;

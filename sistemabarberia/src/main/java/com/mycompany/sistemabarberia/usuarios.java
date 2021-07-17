@@ -26,10 +26,13 @@ public class usuarios implements Serializable {
    private String NomCuenta;
    
    @Column
-   private String Contraseña;
+   private String Contrasena;
    
    @Column
    private Boolean Activo;
+   
+   @Column
+   private int Intentos;
    
    
 
@@ -57,12 +60,12 @@ public class usuarios implements Serializable {
         this.NomCuenta = NomCuenta;
     }
 
-    public String getContraseña() {
-        return Contraseña;
+    public String getContrasena() {
+        return Contrasena;
     }
 
-    public void setContraseña(String Contraseña) {
-        this.Contraseña = Contraseña;
+    public void setContrasena(String Contrasena) {
+        this.Contrasena = Contrasena;
     }
 
     public Boolean getActivo() {
@@ -71,6 +74,14 @@ public class usuarios implements Serializable {
 
     public void setActivo(Boolean Activo) {
         this.Activo = Activo;
+    }
+
+    public int getIntentos() {
+        return Intentos;
+    }
+
+    public void setIntentos(int Intentos) {
+        this.Intentos = Intentos;
     }
    
    

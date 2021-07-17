@@ -142,6 +142,9 @@ public class tipoDocumento extends javax.swing.JFrame {
         TipoDocumento.setText("  Nombre de Documento");
         TipoDocumento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         TipoDocumento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                TipoDocumentoFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 TipoDocumentoFocusLost(evt);
             }
@@ -280,7 +283,7 @@ public class tipoDocumento extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
-        }
+        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -305,6 +308,11 @@ public class tipoDocumento extends javax.swing.JFrame {
         // TODO add your handling code here:
         validarCampos();
     }//GEN-LAST:event_TipoDocumentoFocusLost
+
+    private void TipoDocumentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TipoDocumentoFocusGained
+        // TODO add your handling code here:
+        TipoDocumento.selectAll();
+    }//GEN-LAST:event_TipoDocumentoFocusGained
 
     /**
      * @param args the command line arguments
@@ -345,6 +353,20 @@ public class tipoDocumento extends javax.swing.JFrame {
     }
     private void validarCampos()
     {
+        if(validar.validacionCampoNumerico(TipoDocumento.getText()))
+        {
+            TipoDocumento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return;
+        }
+        if(!validar.validacionMayusculaInicial(TipoDocumento.getText()))
+        {
+            TipoDocumento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de documento debe iniciar con mayuscula.");
+            return;
+        }
         if(validar.validacionCadenaPalabras(TipoDocumento.getText()))
         {    
             TipoDocumento.setBorder(greenBorder);
@@ -355,7 +377,7 @@ public class tipoDocumento extends javax.swing.JFrame {
         {
             TipoDocumento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
+            formatoInvalido.setText("No puedes repetir tantas letras.");
             return;
         }
         if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 4))
