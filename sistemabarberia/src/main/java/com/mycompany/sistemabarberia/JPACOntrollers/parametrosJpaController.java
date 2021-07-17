@@ -33,18 +33,13 @@ public class parametrosJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(parametros parametros) throws PreexistingEntityException, Exception {
+    public void create(parametros parametros) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             em.persist(parametros);
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findparametros(parametros.getIdparametro()) != null) {
-                throw new PreexistingEntityException("parametros " + parametros + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
