@@ -154,7 +154,7 @@ public class PantallaLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void iniciarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iniciarSesionMouseClicked
-        // TODO add your handling code here:
+        // TODO add your handling code here:        
         for(int i = 0; i< usuariosBD.size();i++)
         {
             if(nombreUsuario.getText().equals(usuariosBD.get(i).getNomCuenta()))

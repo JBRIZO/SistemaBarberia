@@ -55,7 +55,7 @@ public class tipodocumento implements Serializable {
     @Override
     public String toString()
     {
-        return Integer.toString(idtipodocumento);
+        return idtipodocumento + "." + TipoDocumento;
     }
     
 }

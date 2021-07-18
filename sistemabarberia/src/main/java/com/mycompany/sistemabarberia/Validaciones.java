@@ -118,7 +118,7 @@ public class Validaciones {
     //Valida una fecha valida, que el usuario ingrese el numero apropiado de dias y de meses.
     public boolean validacionFecha(String cadena)
     {
-        String patron = "^((0[1-9])|(1[0-9])|(2[0-9])|(3[0-1]))[\\/-]((0[1-9])|(1[0-2]))[\\/-](\\d{4})";
+        String patron = "^((0[1-9])|(1[0-9])|(2[0-9])|(3[0-1]))[\\/]((0[1-9])|(1[0-2]))[\\/](\\d{4})";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
          if(comparador.matches()){
@@ -132,7 +132,7 @@ public class Validaciones {
     //Valida que el formato sea el correcto
     public boolean validacionFormatoFecha(String cadena)
     {
-        String patron = "^[\\d]{2}-[\\d]{2}-[\\d]{4}$";
+        String patron = "^[\\d]{2}/[\\d]{2}/[\\d]{4}$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
          if(comparador.matches()){
@@ -261,6 +261,32 @@ public class Validaciones {
         {
             return false;
         }  
+    }
+    
+    public boolean validarNomCuenta(String cadena)
+    {
+        String patron = "^[a-z0-9_-]{3,16}$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(cadena);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }  
+    }
+    //validacion de contrasena, permite mayusculas, numeros y @
+    public boolean validarContrasena(String cadena)
+    {
+        String patron = "^[@A-Za-z0-9_-]{6,18}$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(cadena);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }        
     }
     
     /*public boolean validarPalabra(String cadena)

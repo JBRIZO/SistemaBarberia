@@ -141,7 +141,7 @@ public class empleado implements Serializable {
 
     @Override
     public String toString() {
-        return Integer.toString(idempleado);
+        return idempleado + "." + NomEmpleado + " " + ApeEmpleado;
     }
 
     

@@ -5,17 +5,14 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.precioshistoricoservicios;
-import com.mycompany.sistemabarberia.servicios;
 import com.mycompany.sistemabarberia.usuarios;
 import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
+import com.mycompany.sistemabarberia.empleado;
 import java.awt.Color;
 import java.awt.Image;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -35,8 +32,12 @@ public class nuevoUsuario extends javax.swing.JFrame {
     private List<usuarios> usuariosEnBd = usuariosDAO.findusuariosEntities();
     private ImageIcon imagen;
     private Icon icono;
-    //private empleadoJpaController empleadoDAO = new empleadoJpaController();
-   // private List<empleado> empleadoEnBd = empleadoDAO.findempleadoEntities();
+    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private List<empleado> empleadoEnBd = empleadoDAO.findempleadoEntities();
+    Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+
     
 
     /**
@@ -45,22 +46,23 @@ public class nuevoUsuario extends javax.swing.JFrame {
     public nuevoUsuario() {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        Reiniciar();    
+        this.insertarImagen(this.salir1,"src/main/resources/Imagenes/x.png");
+        Reiniciar();   
+        for(int i = 0; i < empleadoEnBd.size();i++)
+        {
+            cbEmpleados.addItem(empleadoEnBd.get(i).toString());
+        }
     }
     
     public void Reiniciar()
     {
- 
-    
-        
-        nombreUsuario.setText("  Nombre de Usuario ");
-        Contraseña.setText("   Contraseña ");
-        Border border = BorderFactory.createLineBorder(Color.RED, 0);
-        nombreUsuario.setBorder(border);
-        Contraseña.setBorder(border);
-        formatoInvalido1.setVisible(false);
-        formatoInvalido2.setVisible(false);
-
+        nombreUsuario.setText("Nombre Usuario");
+        nombreUsuario.setBorder(defaultBorder);
+        contrasena.setBorder(defaultBorder);
+        confirmarContrasena.setBorder(defaultBorder);
+        formatoInvalido1.setText(" ");
+        formatoInvalido2.setText(" ");
+        formatoInvalido3.setText(" ");
     }
 
     /**
@@ -80,10 +82,16 @@ public class nuevoUsuario extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         formatoInvalido1 = new javax.swing.JLabel();
-        Contraseña = new javax.swing.JTextField();
         nombreUsuario = new javax.swing.JTextField();
         formatoInvalido2 = new javax.swing.JLabel();
-        empleado = new javax.swing.JComboBox<>();
+        cbEmpleados = new javax.swing.JComboBox<>();
+        contrasena = new javax.swing.JPasswordField();
+        jLabel2 = new javax.swing.JLabel();
+        formatoInvalido3 = new javax.swing.JLabel();
+        confirmarContrasena = new javax.swing.JPasswordField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        salir1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -121,35 +129,11 @@ public class nuevoUsuario extends javax.swing.JFrame {
         formatoInvalido1.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido1.setText("Formato no valido.");
 
-        Contraseña.setBackground(new java.awt.Color(30, 33, 34));
-        Contraseña.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        Contraseña.setForeground(new java.awt.Color(255, 255, 255));
-        Contraseña.setText("Contraseña");
-        Contraseña.setToolTipText("Ingrese un precio de servicio válido.");
-        Contraseña.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        Contraseña.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                ContraseñaFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                ContraseñaFocusLost(evt);
-            }
-        });
-        Contraseña.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ContraseñaActionPerformed(evt);
-            }
-        });
-        Contraseña.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                ContraseñaKeyTyped(evt);
-            }
-        });
-
         nombreUsuario.setBackground(new java.awt.Color(30, 33, 34));
+        nombreUsuario.setDocument(new JTextFieldLimit(16));
         nombreUsuario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
-        nombreUsuario.setText("Nombre de Usuario");
+        nombreUsuario.setText("Nombre Usuario");
         nombreUsuario.setToolTipText("Ingrese un nombre de servicio valido.");
         nombreUsuario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         nombreUsuario.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -174,6 +158,34 @@ public class nuevoUsuario extends javax.swing.JFrame {
         formatoInvalido2.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido2.setText("Formato no valido.");
 
+        cbEmpleados.setBackground(new java.awt.Color(30, 33, 34));
+        cbEmpleados.setPreferredSize(new java.awt.Dimension(270, 42));
+
+        contrasena.setBackground(new java.awt.Color(30, 33, 34));
+        contrasena.setForeground(new java.awt.Color(255, 255, 255));
+        contrasena.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        contrasena.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                contrasenaFocusLost(evt);
+            }
+        });
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Empleado:");
+
+        formatoInvalido3.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalido3.setText("Formato no valido.");
+
+        confirmarContrasena.setBackground(new java.awt.Color(30, 33, 34));
+        confirmarContrasena.setForeground(new java.awt.Color(255, 255, 255));
+        confirmarContrasena.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Contraseña:");
+
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Confirmar Contraseña:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -181,27 +193,43 @@ public class nuevoUsuario extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatoInvalido2)
-                    .addComponent(Contraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(formatoInvalido1)
-                    .addComponent(empleado, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel3)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(confirmarContrasena)
+                        .addComponent(formatoInvalido3)
+                        .addComponent(jLabel2)
+                        .addComponent(formatoInvalido2)
+                        .addComponent(nombreUsuario)
+                        .addComponent(formatoInvalido1)
+                        .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(contrasena)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(46, 46, 46)
-                .addComponent(empleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53)
-                .addComponent(formatoInvalido1)
+                .addGap(12, 12, 12)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
                 .addComponent(nombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(formatoInvalido1)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(2, 2, 2)
+                .addComponent(contrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
                 .addComponent(formatoInvalido2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Contraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(confirmarContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(formatoInvalido3)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -218,8 +246,15 @@ public class nuevoUsuario extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
+
+        salir1.setText("jLabel2");
+        salir1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salir1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -227,8 +262,13 @@ public class nuevoUsuario extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(349, 349, 349)
+                        .addComponent(salir1))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -251,9 +291,12 @@ public class nuevoUsuario extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(salir1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -272,36 +315,41 @@ public class nuevoUsuario extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
         
-        //anadir servicio
         List<usuarios> usuariosEnBd = usuariosDAO.findusuariosEntities();
-        String txt = nombreUsuario.getText();
+        String pass = new String(contrasena.getPassword());
+        String confirmPass = new String(confirmarContrasena.getPassword());
+        
+        //crear nuevo objeto de usuario
         usuarios usuarioNuevo = new usuarios();
         usuarioNuevo.setNomCuenta(nombreUsuario.getText());
-        usuarioNuevo.setContrasena(Contraseña.getText());
-        //usuarioNuevo.setIDEmpleado();
+        usuarioNuevo.setContrasena(pass);
+        usuarioNuevo.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
         usuarioNuevo.setActivo(true);
         
         //anadir precio 1
-      
         for(int i=0; i < usuariosEnBd.size();i++)
         {
             if(usuarioNuevo.getNomCuenta().equalsIgnoreCase(usuariosEnBd.get(i).getNomCuenta()))
             {
-            Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
             nombreUsuario.setBorder(redBorder);
             formatoInvalido1.setVisible(true);
             formatoInvalido1.setText("Ese usuario ya existe.");
             return;
             }
         }
+        
+        if(!pass.equals(confirmPass))
+        {
+            contrasena.setBorder(redBorder);
+            confirmarContrasena.setBorder(redBorder);
+            formatoInvalido3.setText("Ambas contraseñas deben coincidir.");
+            return;
+        }
            
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionDecimal(Contraseña.getText())){
+        if(validarContrasena(contrasena,formatoInvalido2) && validarContrasena(confirmarContrasena,formatoInvalido3) && validarUsuario(nombreUsuario,formatoInvalido1)){
             
             try {
-            usuariosDAO.create(usuarioNuevo); 
-      
-              
-            usuariosDAO.create(usuarioNuevo);    
+            usuariosDAO.create(usuarioNuevo);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
@@ -320,31 +368,10 @@ public class nuevoUsuario extends javax.swing.JFrame {
     }//GEN-LAST:event_nombreUsuarioFocusGained
 
     private void nombreUsuarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusLost
-        // TODO add your handling code here:
-        Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
-        for(int i=0; i < usuariosEnBd.size();i++)
-        {
-            if(nombreUsuario.getText().equalsIgnoreCase(usuariosEnBd.get(i).getNomCuenta()))
-            {
-            nombreUsuario.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Ese usuario ya existe.");
-            }
-        }
-        if(validar.validacionCadenaPalabras(nombreUsuario.getText()))
-        {    
-            nombreUsuario.setBorder(greenBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato válido");
-            
-        }else
-        {
-            nombreUsuario.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato inválido");
-        }
-        
+    if(nombreUsuario.getText().equals(""))
+    {
+        nombreUsuario.setText("Nombre Usuario");
+    }
     }//GEN-LAST:event_nombreUsuarioFocusLost
 
     private void nombreUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreUsuarioActionPerformed
@@ -353,44 +380,24 @@ public class nuevoUsuario extends javax.swing.JFrame {
 
     private void nombreUsuarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nombreUsuarioKeyTyped
         // TODO add your handling code here:
-        if ((nombreUsuario.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();}
     }//GEN-LAST:event_nombreUsuarioKeyTyped
 
-    private void ContraseñaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ContraseñaKeyTyped
+    private void contrasenaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_contrasenaFocusLost
         // TODO add your handling code here:
-        if ((Contraseña.getText() + evt.getKeyChar()).length() > 6) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_ContraseñaKeyTyped
+        validarContrasena(contrasena,formatoInvalido2);
+    }//GEN-LAST:event_contrasenaFocusLost
 
-    private void ContraseñaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ContraseñaActionPerformed
+    private void salir1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salir1MouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_ContraseñaActionPerformed
-
-//a;adir validaciones botonaceptar
-    private void ContraseñaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ContraseñaFocusLost
-
-        Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-        Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
-        if(validar.validacionDecimal(Contraseña.getText()))
-        {
-            Contraseña.setBorder(greenBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato válido");
-        }else
-        {
-            Contraseña.setBorder(redBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato inválido");
-        }
-
-    }//GEN-LAST:event_ContraseñaFocusLost
-
-    private void ContraseñaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ContraseñaFocusGained
-        // TODO add your handling code here:
-        Contraseña.setText("");
-    }//GEN-LAST:event_ContraseñaFocusGained
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose();
+        empleadoDAO.close();
+    }//GEN-LAST:event_salir1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -418,13 +425,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(nuevoUsuario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+        
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -436,7 +437,46 @@ public class nuevoUsuario extends javax.swing.JFrame {
         
     }
     
+    private boolean validarUsuario(javax.swing.JTextField textField, JLabel label)
+    {
+        if(validar.validacionCampoNumerico(textField.getText()))
+        {
+            textField.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("El nombre de usuario debe contener letras.");
+            return false;
+        }
+        if(validar.validarNomCuenta(textField.getText()))
+        {
+            textField.setBorder(greenBorder);
+            label.setText("Usuario válido.");
+            return true;
+        }else
+        {
+            textField.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("El nombre de usuario es inválido.");
+            return false;
+        }
+    }
     
+    private boolean validarContrasena(javax.swing.JPasswordField contra, JLabel label)
+    {
+        String pass = new String(contra.getPassword());
+        if(validar.validarContrasena(pass))
+        {
+            contra.setBorder(greenBorder);
+            label.setText("Contraseña válida.");
+            return true;
+        }else
+        {
+            contra.setBorder(redBorder);
+            JOptionPane.showMessageDialog(null, "Una contraseña válida debe ser alfanumérica, "
+                    + "de al menos 6 caracteres, solo se permite la '@' como signo.", 
+                    "Contraseña inválida", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
@@ -452,17 +492,24 @@ public class nuevoUsuario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Contraseña;
     private javax.swing.JButton botonAceptar;
-    private javax.swing.JComboBox<String> empleado;
+    private javax.swing.JComboBox<String> cbEmpleados;
+    private javax.swing.JPasswordField confirmarContrasena;
+    private javax.swing.JPasswordField contrasena;
     private javax.swing.JLabel formatoInvalido1;
     private javax.swing.JLabel formatoInvalido2;
+    private javax.swing.JLabel formatoInvalido3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreUsuario;
+    private javax.swing.JLabel salir;
+    private javax.swing.JLabel salir1;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

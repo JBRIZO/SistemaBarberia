@@ -309,6 +309,7 @@ public class parametrosFactura extends javax.swing.JFrame {
             pm.setFechaFinal(txtFechaFinal.getText());
             pm.setValor(txtValor.getText());
             pm.setLlave(txtLlave.getText());
+            pm.setActivo(true);
             try {
                 parametros.create(pm);
                 JOptionPane.showConfirmDialog(null, "El registro se ha almacenado correctamente", "Notificación", JOptionPane.INFORMATION_MESSAGE);
