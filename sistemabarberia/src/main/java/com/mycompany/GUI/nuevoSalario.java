@@ -10,14 +10,11 @@ import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpa
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.empleado;
-import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
-import com.mycompany.sistemabarberia.servicios;
 import java.awt.Color;
 import java.awt.Image;
 import java.sql.Date;
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
