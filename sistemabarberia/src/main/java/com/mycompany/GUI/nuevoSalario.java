@@ -43,7 +43,6 @@ public class nuevoSalario extends javax.swing.JFrame {
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     String currentTime = sdf.format(dt);
-    private LocalDate fecha ;
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
@@ -67,7 +66,6 @@ public class nuevoSalario extends javax.swing.JFrame {
     
     public void Reiniciar()
     {
-        fechaInicio.setDocument(new JTextFieldLimit(25));
         fechaInicio.setText("Fecha Inicial");
         salario.setText("Salario");
         fechaInicio.setBorder(defaultBorder);
@@ -226,11 +224,11 @@ public class nuevoSalario extends javax.swing.JFrame {
                 .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido1)
-                .addGap(45, 45, 45)
+                .addGap(18, 18, 18)
                 .addComponent(salario, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido3)
-                .addGap(94, 94, 94))
+                .addGap(121, 121, 121))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -245,9 +243,9 @@ public class nuevoSalario extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addGap(31, 31, 31)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         salir.setText("jLabel2");
@@ -262,9 +260,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(109, 109, 109)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(474, 474, 474)
+                .addGap(853, 853, 853)
                 .addComponent(jLabel1))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -276,8 +272,11 @@ public class nuevoSalario extends javax.swing.JFrame {
                         .addGap(30, 30, 30)
                         .addComponent(tituloPantalla))))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addGap(20, 20, 20)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(99, 99, 99)
+                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,17 +287,17 @@ public class nuevoSalario extends javax.swing.JFrame {
                         .addGap(33, 33, 33)
                         .addComponent(tituloPantalla))
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addGap(175, 175, 175))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addGap(13, 13, 13)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
                         .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(32, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -309,7 +308,9 @@ public class nuevoSalario extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 718, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -365,7 +366,14 @@ public class nuevoSalario extends javax.swing.JFrame {
     
     //a;adir validaciones botonaceptar
     private void salarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioFocusLost
-        validacionNumerica();
+       
+        if(salario.getText().equals(""))
+        {
+            salario.setText("Salario");
+        }else
+        {
+            validacionNumerica(); 
+        }
     }//GEN-LAST:event_salarioFocusLost
 
     
@@ -380,7 +388,7 @@ public class nuevoSalario extends javax.swing.JFrame {
 
     private void salarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioFocusGained
         // TODO add your handling code here:
-        salario.selectAll();
+        salario.setText("");
     }//GEN-LAST:event_salarioFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -398,12 +406,17 @@ public class nuevoSalario extends javax.swing.JFrame {
 
     private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
         // TODO add your handling code here:
-        fechaInicio.selectAll();
+        fechaInicio.setText("");
     }//GEN-LAST:event_fechaInicioFocusGained
 
     private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
         // TODO add your handling code here:
-        validarFecha(fechaInicio,formatoInvalido1);
+        if(fechaInicio.getText().equals(""))
+        {
+            fechaInicio.setDocument(new JTextFieldLimit(12));
+            fechaInicio.setText("Fecha Inicio");
+        }else{validarFecha(fechaInicio,formatoInvalido1);}
+        
     }//GEN-LAST:event_fechaInicioFocusLost
 
     private void fechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaInicioActionPerformed

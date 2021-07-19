@@ -19,7 +19,7 @@ public class usuarios implements Serializable {
    @Id  
    private int idusuario;
    
-   @Column 
+   @Column(unique=true) 
     private int IDEmpleado;
    
    @Column
@@ -35,7 +35,6 @@ public class usuarios implements Serializable {
    private int Intentos;
    
    
-
     public int getIdusuario() {
         return idusuario;
     }

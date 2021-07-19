@@ -6,6 +6,7 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
@@ -23,9 +25,7 @@ public class PantallaLogin extends javax.swing.JFrame {
     /**
      * Creates new form PantallaLogin
      */
-    
     private usuariosJpaController usuariosDAO = new usuariosJpaController();
-    private List<usuarios> usuariosBD = usuariosDAO.findusuariosEntities();
     private ImageIcon imagen;
     private Icon icono;
     
@@ -66,12 +66,21 @@ public class PantallaLogin extends javax.swing.JFrame {
         jLabel1.setText("BIENVENIDO");
 
         nombreUsuario.setBackground(new java.awt.Color(30, 33, 34));
+        nombreUsuario.setDocument(new JTextFieldLimit(17));
         nombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
         nombreUsuario.setText("   Ingresar Usuario");
         nombreUsuario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        nombreUsuario.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                nombreUsuarioFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                nombreUsuarioFocusLost(evt);
+            }
+        });
 
         iniciarSesion.setBackground(new java.awt.Color(189, 158, 76));
-        iniciarSesion.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        iniciarSesion.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         iniciarSesion.setText("Iniciar Sesion");
         iniciarSesion.setRequestFocusEnabled(false);
         iniciarSesion.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -154,38 +163,81 @@ public class PantallaLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void iniciarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iniciarSesionMouseClicked
-        // TODO add your handling code here:        
-        for(int i = 0; i< usuariosBD.size();i++)
+        // TODO add your handling code here:
+        List<usuarios> usuariosBD = usuariosDAO.findusuariosEntities();
+        String contrasena = new String(password.getPassword());
+        String contraEncriptada = DigestUtils.md5Hex(contrasena);
+        usuarios usuarioActual = new usuarios();
+
+        //ecnontrar usuario en la base de datos
+        for(int i = 0; i < usuariosBD.size(); i++)
         {
             if(nombreUsuario.getText().equals(usuariosBD.get(i).getNomCuenta()))
             {
-                if(password.getPassword().equals(usuariosBD.get(i).getContrasena()))
-                {
-                   java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new menuGerente().setVisible(true);
-                    }
-                });
-                this.setVisible(false); 
-                this.dispose();
-                usuariosDAO.close();     
-                }else
-                {
-                    JOptionPane.showMessageDialog(null,"Contraseña o usuario incorrectos.");
-                    
-                }   
+                usuarioActual = usuariosBD.get(i);
             }
         }
         
-        
-        
-        
-        
+        if(usuarioActual.getIntentos() == 3)
+                {
+                    JOptionPane.showMessageDialog(null,"Alguien intento acceder a tu cuenta sin éxito 3 veces, "
+                            + "tu usuario ha sido bloqueado.","Usuario Bloqueado",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }else
+                {
+                    if(contraEncriptada.equals(usuarioActual.getContrasena()))
+                {
+                    usuarioActual.setIdusuario(usuarioActual.getIdusuario());
+                    usuarioActual.setIntentos(0);
+                    usuarioActual.setIDEmpleado(usuarioActual.getIDEmpleado());
+                    usuarioActual.setNomCuenta(usuarioActual.getNomCuenta());
+                    usuarioActual.setContrasena(usuarioActual.getContrasena());
+                    usuarioActual.setActivo(true);
+                    try{usuariosDAO.edit(usuarioActual);
+                    }catch(Exception ex)
+                    {}
+                   java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                    new menuGerente().setVisible(true);
+                        }
+                    });
+                    this.setVisible(false); 
+                    this.dispose();
+                }else
+                {
+                    JOptionPane.showMessageDialog(null,"Contraseña o usuario incorrectos.", "Credenciales incorrectas", JOptionPane.ERROR_MESSAGE);  
+                    usuarioActual.setIdusuario(usuarioActual.getIdusuario());
+                    usuarioActual.setIDEmpleado(usuarioActual.getIDEmpleado());
+                    usuarioActual.setIntentos(usuarioActual.getIntentos()+1);
+                    usuarioActual.setNomCuenta(usuarioActual.getNomCuenta());
+                    usuarioActual.setContrasena(usuarioActual.getContrasena());
+                    usuarioActual.setActivo(true);
+                    try{
+                        usuariosDAO.edit(usuarioActual);
+                        return;
+                    }catch(Exception ex)
+                    {System.out.println(ex);}
+                }
+        } 
+        contrasena = " "; 
     }//GEN-LAST:event_iniciarSesionMouseClicked
 
     private void iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarSesionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_iniciarSesionActionPerformed
+
+    private void nombreUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusGained
+        // TODO add your handling code here:
+        nombreUsuario.setText("");
+    }//GEN-LAST:event_nombreUsuarioFocusGained
+
+    private void nombreUsuarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusLost
+        // TODO add your handling code here:
+        if(nombreUsuario.getText().equals(""))
+        {
+            nombreUsuario.setText("Nombre de Usuario");
+        }
+    }//GEN-LAST:event_nombreUsuarioFocusLost
 
     /**
      * @param args the command line arguments

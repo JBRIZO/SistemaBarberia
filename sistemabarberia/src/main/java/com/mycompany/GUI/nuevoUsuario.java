@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
@@ -50,6 +51,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
         Reiniciar();   
         for(int i = 0; i < empleadoEnBd.size();i++)
         {
+            if(empleadoEnBd.get(i).isActivo())
             cbEmpleados.addItem(empleadoEnBd.get(i).toString());
         }
     }
@@ -319,25 +321,6 @@ public class nuevoUsuario extends javax.swing.JFrame {
         String pass = new String(contrasena.getPassword());
         String confirmPass = new String(confirmarContrasena.getPassword());
         
-        //crear nuevo objeto de usuario
-        usuarios usuarioNuevo = new usuarios();
-        usuarioNuevo.setNomCuenta(nombreUsuario.getText());
-        usuarioNuevo.setContrasena(pass);
-        usuarioNuevo.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
-        usuarioNuevo.setActivo(true);
-        
-        //anadir precio 1
-        for(int i=0; i < usuariosEnBd.size();i++)
-        {
-            if(usuarioNuevo.getNomCuenta().equalsIgnoreCase(usuariosEnBd.get(i).getNomCuenta()))
-            {
-            nombreUsuario.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Ese usuario ya existe.");
-            return;
-            }
-        }
-        
         if(!pass.equals(confirmPass))
         {
             contrasena.setBorder(redBorder);
@@ -345,6 +328,33 @@ public class nuevoUsuario extends javax.swing.JFrame {
             formatoInvalido3.setText("Ambas contraseñas deben coincidir.");
             return;
         }
+        
+        
+        
+        //encriptacion de contrasena
+        String contraEncriptada = DigestUtils.md5Hex(pass);
+        
+        //crear nuevo objeto de usuario
+        usuarios usuarioNuevo = new usuarios();
+        usuarioNuevo.setNomCuenta(nombreUsuario.getText());
+        usuarioNuevo.setContrasena(contraEncriptada);
+        usuarioNuevo.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
+        usuarioNuevo.setActivo(true);
+        
+        //anadir precio 1
+        for(int i=0; i < usuariosEnBd.size();i++)
+        {
+            if(usuarioNuevo.getIDEmpleado() == usuariosEnBd.get(i).getIDEmpleado())
+            {
+            nombreUsuario.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("Ese empleado ya tiene un usuario.");
+            return;
+            }
+        }
+        
+        //establecer contrasena en blanco despues de usarla
+        pass = " ";
            
         if(validarContrasena(contrasena,formatoInvalido2) && validarContrasena(confirmarContrasena,formatoInvalido3) && validarUsuario(nombreUsuario,formatoInvalido1)){
             

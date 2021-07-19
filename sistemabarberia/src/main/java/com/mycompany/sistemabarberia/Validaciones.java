@@ -177,7 +177,7 @@ public class Validaciones {
     //Si un campo es solo de numeros devuelve TRUE, sino FALSE.
     public boolean validacionCampoNumerico(String cadena)
     {
-        String patron = "^[\\d.-]+$";
+        String patron = "^[\\d./]+$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
