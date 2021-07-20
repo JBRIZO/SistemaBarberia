@@ -83,7 +83,6 @@ public class nuevoPuesto extends javax.swing.JFrame {
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(496, 547));
         setMinimumSize(new java.awt.Dimension(496, 547));
         setResizable(false);
 

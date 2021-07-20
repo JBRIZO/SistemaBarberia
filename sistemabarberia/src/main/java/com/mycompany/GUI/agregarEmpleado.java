@@ -634,10 +634,8 @@ public class agregarEmpleado extends javax.swing.JFrame {
     }
     
     //convertir fecha a formato valido para almacenar en bd mysql
-    private String convertirFecha(String Fecha)
-    {
+    public String convertirFecha(String Fecha){
         String[] palabras  = Fecha.split("-");
-       
         return palabras[2] + "-" + palabras[1] + "-" + palabras[0];
     }
     

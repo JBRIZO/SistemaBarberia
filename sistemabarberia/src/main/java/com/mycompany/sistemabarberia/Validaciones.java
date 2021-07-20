@@ -218,8 +218,7 @@ public class Validaciones {
     }
     
     //valida si el usuario ingresa un numero de celular valido
-    public boolean validarNumCelular(String cadena)
-    {
+    public boolean validarNumCelular(String cadena) {
         String patron = "^[23789]\\d{7}$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
@@ -230,6 +229,4 @@ public class Validaciones {
             return false;
         }  
     }
-    
-    
 }
