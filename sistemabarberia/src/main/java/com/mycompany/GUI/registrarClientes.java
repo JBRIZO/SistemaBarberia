@@ -154,6 +154,7 @@ public class registrarClientes extends javax.swing.JFrame {
         });
 
         fechaNacimiento.setBackground(new java.awt.Color(30, 33, 34));
+        fechaNacimiento.setDocument(new JTextFieldLimit(25));
         fechaNacimiento.setForeground(new java.awt.Color(255, 255, 255));
         fechaNacimiento.setText("Fecha de Nacimiento");
         fechaNacimiento.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -180,6 +181,11 @@ public class registrarClientes extends javax.swing.JFrame {
         numeroidDocumento.setBackground(new java.awt.Color(30, 33, 34));
         numeroidDocumento.setForeground(new java.awt.Color(255, 255, 255));
         numeroidDocumento.setText("Numero de id de documento");
+        numeroidDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numeroidDocumentoActionPerformed(evt);
+            }
+        });
 
         servicioProducto.setBackground(new java.awt.Color(30, 33, 34));
 
@@ -412,6 +418,10 @@ public class registrarClientes extends javax.swing.JFrame {
         }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.");}
     }//GEN-LAST:event_crearPerfilActionPerformed
 
+    private void numeroidDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numeroidDocumentoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_numeroidDocumentoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -468,7 +478,7 @@ public class registrarClientes extends javax.swing.JFrame {
             {
             telefonoCliente.setBorder(redBorder);
             formatoInvalidoTelefono.setVisible(true);
-            formatoInvalidoTelefono.setText("El telefono minimo debe contener 8 digitos");
+            formatoInvalidoTelefono.setText("El formato de fecha es: dd-mm-aaaa");
             return;
             }else
         {
