@@ -11,12 +11,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+
 /**
  *
  * @author flore
  */
 @Entity
-public class descuento implements Serializable{
+public class descuentos implements Serializable{
+    
     @Id 
     private int iddescuento;
     

@@ -18,6 +18,7 @@ import com.mycompany.sistemabarberia.tipodocumento;
 import java.awt.Color;
 import java.awt.Image;
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -75,6 +76,7 @@ public class registrarClientes extends javax.swing.JFrame {
         formatoInvalidoFechaNac.setText("");
         formatoInvalidoIdDocumento.setText("");
         
+        
     }
 
     /**
@@ -122,6 +124,11 @@ public class registrarClientes extends javax.swing.JFrame {
         Cancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         Cancelar.setText("Cancelar");
         Cancelar.setPreferredSize(new java.awt.Dimension(135, 31));
+        Cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CancelarActionPerformed(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -137,6 +144,14 @@ public class registrarClientes extends javax.swing.JFrame {
         nombreCliente.setDocument(new JTextFieldLimit(25));
         nombreCliente.setForeground(new java.awt.Color(255, 255, 255));
         nombreCliente.setText("Nombres");
+        nombreCliente.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                nombreClienteFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                nombreClienteFocusLost(evt);
+            }
+        });
         nombreCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nombreClienteActionPerformed(evt);
@@ -147,6 +162,19 @@ public class registrarClientes extends javax.swing.JFrame {
         telefonoCliente.setDocument(new JTextFieldLimit(8));
         telefonoCliente.setForeground(new java.awt.Color(255, 255, 255));
         telefonoCliente.setText("Telefono");
+        telefonoCliente.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                telefonoClienteFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                telefonoClienteFocusLost(evt);
+            }
+        });
+        telefonoCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                telefonoClienteMouseClicked(evt);
+            }
+        });
         telefonoCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 telefonoClienteActionPerformed(evt);
@@ -157,6 +185,14 @@ public class registrarClientes extends javax.swing.JFrame {
         fechaNacimiento.setDocument(new JTextFieldLimit(25));
         fechaNacimiento.setForeground(new java.awt.Color(255, 255, 255));
         fechaNacimiento.setText("Fecha de Nacimiento");
+        fechaNacimiento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                fechaNacimientoFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fechaNacimientoFocusLost(evt);
+            }
+        });
         fechaNacimiento.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fechaNacimientoMouseClicked(evt);
@@ -172,6 +208,14 @@ public class registrarClientes extends javax.swing.JFrame {
         apellidosCliente.setDocument(new JTextFieldLimit(25));
         apellidosCliente.setForeground(new java.awt.Color(255, 255, 255));
         apellidosCliente.setText("Apellidos");
+        apellidosCliente.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                apellidosClienteFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                apellidosClienteFocusLost(evt);
+            }
+        });
         apellidosCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 apellidosClienteActionPerformed(evt);
@@ -181,6 +225,14 @@ public class registrarClientes extends javax.swing.JFrame {
         numeroidDocumento.setBackground(new java.awt.Color(30, 33, 34));
         numeroidDocumento.setForeground(new java.awt.Color(255, 255, 255));
         numeroidDocumento.setText("Numero de id de documento");
+        numeroidDocumento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                numeroidDocumentoFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                numeroidDocumentoFocusLost(evt);
+            }
+        });
         numeroidDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 numeroidDocumentoActionPerformed(evt);
@@ -362,46 +414,52 @@ public class registrarClientes extends javax.swing.JFrame {
 
     private void telefonoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_telefonoClienteActionPerformed
         // TODO add your handling code here:
-        validarCamposNumero();
+        
         
     }//GEN-LAST:event_telefonoClienteActionPerformed
 
     private void fechaNacimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaNacimientoActionPerformed
         // TODO add your handling code here:
-        validarFecha(fechaNacimiento,formatoInvalidoFechaNac);
+        
     }//GEN-LAST:event_fechaNacimientoActionPerformed
 
     private void nombreClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreClienteActionPerformed
         // TODO add your handling code here:
-        validarNombre();
-        nombreCliente.selectAll();
+        
+        
     }//GEN-LAST:event_nombreClienteActionPerformed
 
     private void apellidosClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosClienteActionPerformed
         // TODO add your handling code here:
-        validarApellido();
-        apellidosCliente.selectAll();
+        
+        
     }//GEN-LAST:event_apellidosClienteActionPerformed
 
     private void fechaNacimientoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fechaNacimientoMouseClicked
         // TODO add your handling code here:
-        fechaNacimiento.setDocument(new JTextFieldLimit(10));
+        
     }//GEN-LAST:event_fechaNacimientoMouseClicked
 
     private void crearPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearPerfilActionPerformed
         // TODO add your handling code here:
+        
+        java.util.Date birthDate;
         String fechaNac = "00-00-0000";
+        try {
+        birthDate = sdf.parse(convertirFecha(fechaNacimiento.getText()));
+        fechaNac = sdf.format(birthDate);
+    } catch (ParseException ex) {
+       ex.printStackTrace();
+    }
         clientes registrarClientes = new clientes();
         registrarClientes.setNomCliente(nombreCliente.getText());
         registrarClientes.setApeCliente(apellidosCliente.getText());
         registrarClientes.setNumTelefono(telefonoCliente.getText());
-        
-        
-        
+        registrarClientes.setNumDocumento(Integer.parseInt(numeroidDocumento.getText()));
         registrarClientes.setIDTipoDocumento(Integer.parseInt(tipoidDocumento.getSelectedItem().toString()));
-       
+        registrarClientes.setIDServicio(Integer.parseInt(servicioProducto.getSelectedItem().toString()));
+        registrarClientes.setFechaNacimiento(Date.valueOf(fechaNac));
         registrarClientes.setActivo(true);
-        
         
         validarCamposNumero();
 
@@ -421,6 +479,65 @@ public class registrarClientes extends javax.swing.JFrame {
     private void numeroidDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numeroidDocumentoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_numeroidDocumentoActionPerformed
+
+    private void nombreClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreClienteFocusLost
+        // TODO add your handling code here:
+        validarNombre();
+    }//GEN-LAST:event_nombreClienteFocusLost
+
+    private void apellidosClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_apellidosClienteFocusLost
+        // TODO add your handling code here:
+        validarApellido();
+    }//GEN-LAST:event_apellidosClienteFocusLost
+
+    private void nombreClienteFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreClienteFocusGained
+        // TODO add your handling code here:
+        nombreCliente.selectAll();
+    }//GEN-LAST:event_nombreClienteFocusGained
+
+    private void apellidosClienteFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_apellidosClienteFocusGained
+        // TODO add your handling code here:
+        apellidosCliente.selectAll();
+    }//GEN-LAST:event_apellidosClienteFocusGained
+
+    private void telefonoClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_telefonoClienteFocusLost
+        // TODO add your handling code here:
+        validarCamposNumero();
+    }//GEN-LAST:event_telefonoClienteFocusLost
+
+    private void fechaNacimientoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaNacimientoFocusLost
+        // TODO add your handling code here:
+        validarFecha(fechaNacimiento,formatoInvalidoFechaNac);
+    }//GEN-LAST:event_fechaNacimientoFocusLost
+
+    private void fechaNacimientoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaNacimientoFocusGained
+        // TODO add your handling code here:
+        fechaNacimiento.setDocument(new JTextFieldLimit(10));
+    }//GEN-LAST:event_fechaNacimientoFocusGained
+
+    private void numeroidDocumentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numeroidDocumentoFocusGained
+        // TODO add your handling code here:
+        numeroidDocumento.setDocument(new JTextFieldLimit(13));
+    }//GEN-LAST:event_numeroidDocumentoFocusGained
+
+    private void numeroidDocumentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numeroidDocumentoFocusLost
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_numeroidDocumentoFocusLost
+
+    private void telefonoClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_telefonoClienteMouseClicked
+        // TODO add your handling code here:
+        telefonoCliente.setDocument(new JTextFieldLimit(8));
+    }//GEN-LAST:event_telefonoClienteMouseClicked
+
+    private void telefonoClienteFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_telefonoClienteFocusGained
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_telefonoClienteFocusGained
+
+    private void CancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -478,7 +595,7 @@ public class registrarClientes extends javax.swing.JFrame {
             {
             telefonoCliente.setBorder(redBorder);
             formatoInvalidoTelefono.setVisible(true);
-            formatoInvalidoTelefono.setText("El formato de fecha es: dd-mm-aaaa");
+            formatoInvalidoTelefono.setText("El numero de tel debe contener 8 digitos");
             return;
             }else
         {
@@ -568,6 +685,10 @@ public class registrarClientes extends javax.swing.JFrame {
             return false;
         }
     }
+     
+     
+     
+     
      
      private String convertirFecha(String Fecha)
     {

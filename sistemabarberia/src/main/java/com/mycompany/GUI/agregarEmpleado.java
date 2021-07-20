@@ -470,6 +470,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonCancelar.setText("CANCELAR");
         botonCancelar.setRequestFocusEnabled(false);
+        botonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -674,6 +679,10 @@ public class agregarEmpleado extends javax.swing.JFrame {
     private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_botonAgregarActionPerformed
+
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botonCancelarActionPerformed
 
     /**
      * @param args the command line arguments
