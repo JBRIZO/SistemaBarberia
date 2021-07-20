@@ -51,7 +51,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
          this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-        Reiniciar();    
+        Reiniciar();   
         for(int i = 0; i < empleadosBD.size(); i++)
         {
             if(empleadosBD.get(i).isActivo())
@@ -319,7 +319,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         List<salariohistoricoempleados> salariosAnteriores = new ArrayList<salariohistoricoempleados>();
         for(int i = 0; i < salariosBD.size();i++)
         {
-            if(salariosBD.get(i).getIDEmpleado() == Integer.parseInt(cbEmpleados.getSelectedItem().toString()))
+            if(salariosBD.get(i).getIDEmpleado() == Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)))
             {
                 salariosAnteriores.add(salariosBD.get(i));
             }
@@ -336,7 +336,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         salariohistoricoempleados nuevoSalario = new salariohistoricoempleados();
         nuevoSalario.setFechaInicial(Date.valueOf(fechaIni));
         nuevoSalario.setFechaFinal(Date.valueOf(fechaIni));
-        nuevoSalario.setIDEmpleado(Integer.parseInt(cbEmpleados.getSelectedItem().toString()));
+        nuevoSalario.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
         nuevoSalario.setSalario(Double.parseDouble(salario.getText()));
         nuevoSalario.setActivo(true);
         
@@ -392,7 +392,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new pantallaEmpleados().setVisible(true);
+                new listaSalarios().setVisible(true);
             }
         });
         this.setVisible(false);
@@ -534,7 +534,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     
     private String convertirFecha(String Fecha)
     {
-        String[] palabras  = Fecha.split("-");
+        String[] palabras  = Fecha.split("/");
        
         return palabras[2] + "-" + palabras[1] + "-" + palabras[0];
     }

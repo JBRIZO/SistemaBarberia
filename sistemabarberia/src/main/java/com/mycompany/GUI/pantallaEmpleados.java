@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
@@ -33,10 +34,17 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
-        String activo = "";
+        cargarTabla();
+           
+    }
+    
+    private void cargarTabla()
+    {
         
+        String activo = "";
         DefaultTableModel modelo = (DefaultTableModel)tablaEmpleados.getModel();
-            tablaEmpleados.setModel(modelo);
+        modelo.setRowCount(0);
+        tablaEmpleados.setModel(modelo);
         List<empleado> empleados = empleadoDAO.findempleadoEntities();
             for(empleado empleado : empleados){
                 if(empleado.isActivo())
@@ -58,10 +66,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                     }
                 );
             } 
-           
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -83,7 +88,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         nuevoEmpleado = new javax.swing.JTextField();
         regresar = new javax.swing.JTextField();
         nuevoSalario = new javax.swing.JTextField();
-        activar = new javax.swing.JCheckBox();
+        activar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -134,7 +139,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID Empleado", "Nombres", "Apellidos", "Genero", "Fecha Inicio", "Num. Teléfono", "Estado"
+                "ID Empleado", "Nombres", "Apellidos", "Genero", "Fecha Inicio", "Num. Teléfono", "Activo"
             }
         ) {
             Class[] types = new Class [] {
@@ -155,6 +160,11 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         tablaEmpleados.setGridColor(new java.awt.Color(255, 255, 255));
         tablaEmpleados.setRowHeight(32);
         tablaEmpleados.getTableHeader().setReorderingAllowed(false);
+        tablaEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaEmpleadosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tablaEmpleados);
 
         nuevoEmpleado.setEditable(false);
@@ -214,6 +224,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
             }
         });
 
+        activar.setBorderPainted(false);
         activar.setContentAreaFilled(false);
         activar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -230,35 +241,34 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nuevoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
+                        .addGap(42, 42, 42)
                         .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(nuevoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(53, 53, 53)
                         .addComponent(nuevoSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
-                .addGap(18, 18, 18)
-                .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(28, 28, 28)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(nuevoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(nuevoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(nuevoSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nuevoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(nuevoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -380,7 +390,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoSalario().setVisible(true);
+                new listaSalarios().setVisible(true);
             }
         });
         this.setVisible(false);
@@ -388,13 +398,48 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         empleadoDAO.close();
     }//GEN-LAST:event_nuevoSalarioMouseClicked
 
+    private void tablaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMouseClicked
+        // TODO add your handling code here:
+        if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
+        {
+            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
+        }else
+        {
+            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+        }
+    }//GEN-LAST:event_tablaEmpleadosMouseClicked
+
     private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
         // TODO add your handling code here:
-        tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),0);
+        empleado modificar = new empleado();
         List<empleado> empleados = empleadoDAO.findempleadoEntities();
-        empleado modificarEmpleado = new empleado();
-        
-        
+        for(int i=0 ; i<empleados.size();i++)
+        {
+            if(Integer.parseInt(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),0).toString()) == empleados.get(i).getIdempleado())
+            {
+                modificar = empleados.get(i);
+            }
+        }
+        if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
+        {
+           modificar.setActivo(false);
+           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+           try
+           {
+               empleadoDAO.edit(modificar);
+           }catch(Exception Ex)
+           {}  
+        }else
+         {
+            modificar.setActivo(true);
+            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
+            try
+           {
+               empleadoDAO.edit(modificar);
+           }catch(Exception Ex)
+           {}  
+        }
+        cargarTabla();
     }//GEN-LAST:event_activarMouseClicked
 
     
@@ -448,7 +493,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
-    private void insertarImagen(JCheckBox checkBox,String ruta)
+    private void insertarImagen(JButton checkBox,String ruta)
     {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
@@ -462,7 +507,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox activar;
+    private javax.swing.JButton activar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

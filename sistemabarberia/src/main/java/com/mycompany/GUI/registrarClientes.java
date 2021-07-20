@@ -57,9 +57,6 @@ public class registrarClientes extends javax.swing.JFrame {
         {
             tipoidDocumento.addItem(documentosBD.get(i).toString());
         }
-        
-        
-        
         for(int i = 0; i < serviciosBD.size(); i++)
         {
             servicioProducto.addItem(serviciosBD.get(i).toString());
@@ -389,11 +386,7 @@ public class registrarClientes extends javax.swing.JFrame {
         registrarClientes.setNomCliente(nombreCliente.getText());
         registrarClientes.setApeCliente(apellidosCliente.getText());
         registrarClientes.setNumTelefono(telefonoCliente.getText());
-        
-        
-        
         registrarClientes.setIDTipoDocumento(Integer.parseInt(tipoidDocumento.getSelectedItem().toString()));
-       
         registrarClientes.setActivo(true);
         
         

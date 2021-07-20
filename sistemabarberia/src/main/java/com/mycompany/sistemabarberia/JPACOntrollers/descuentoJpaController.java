@@ -8,7 +8,7 @@ package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
-import com.mycompany.sistemabarberia.descuento;
+import com.mycompany.sistemabarberia.descuentos;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -34,7 +34,7 @@ public class descuentoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(descuento descuento) throws PreexistingEntityException, Exception {
+    public void create(descuentos descuento) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -53,7 +53,7 @@ public class descuentoJpaController implements Serializable {
         }
     }
 
-    public void edit(descuento descuento) throws NonexistentEntityException, Exception {
+    public void edit(descuentos descuento) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -81,9 +81,9 @@ public class descuentoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            descuento descuento;
+            descuentos descuento;
             try {
-                descuento = em.getReference(descuento.class, id);
+                descuento = em.getReference(descuentos.class, id);
                 descuento.getIddescuento();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The descuento with id " + id + " no longer exists.", enfe);
@@ -97,19 +97,19 @@ public class descuentoJpaController implements Serializable {
         }
     }
 
-    public List<descuento> finddescuentoEntities() {
+    public List<descuentos> finddescuentoEntities() {
         return finddescuentoEntities(true, -1, -1);
     }
 
-    public List<descuento> finddescuentoEntities(int maxResults, int firstResult) {
+    public List<descuentos> finddescuentoEntities(int maxResults, int firstResult) {
         return finddescuentoEntities(false, maxResults, firstResult);
     }
 
-    private List<descuento> finddescuentoEntities(boolean all, int maxResults, int firstResult) {
+    private List<descuentos> finddescuentoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(descuento.class));
+            cq.select(cq.from(descuentos.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -121,10 +121,10 @@ public class descuentoJpaController implements Serializable {
         }
     }
 
-    public descuento finddescuento(int id) {
+    public descuentos finddescuento(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(descuento.class, id);
+            return em.find(descuentos.class, id);
         } finally {
             em.close();
         }
@@ -134,7 +134,7 @@ public class descuentoJpaController implements Serializable {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<descuento> rt = cq.from(descuento.class);
+            Root<descuentos> rt = cq.from(descuentos.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
