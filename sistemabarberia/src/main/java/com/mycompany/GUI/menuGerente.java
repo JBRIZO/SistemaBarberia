@@ -156,8 +156,8 @@ public class menuGerente extends javax.swing.JFrame {
         });
 
         botonNuevoEmpleado.setBackground(new java.awt.Color(189, 158, 76));
-        botonNuevoEmpleado.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        botonNuevoEmpleado.setText("NUEVO EMPLEADO");
+        botonNuevoEmpleado.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonNuevoEmpleado.setText("EMPLEADOS");
         botonNuevoEmpleado.setRequestFocusEnabled(false);
         botonNuevoEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -424,7 +424,7 @@ public class menuGerente extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new agregarEmpleado().setVisible(true);
+                new pantallaEmpleados().setVisible(true);
             }
         });
         this.setVisible(false);
