@@ -60,7 +60,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                         empleado.getNomEmpleado(),
                         empleado.getApeEmpleado(),
                         empleado.getGenEmpleado(),
-                        empleado.getFechaInicio(),
+                        convertirDates(empleado.getFechaInicio().toString()),
                         empleado.getNumCelular(),
                         activo
                     }
@@ -116,7 +116,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         nuevoPuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nuevoPuesto.setForeground(new java.awt.Color(255, 255, 255));
         nuevoPuesto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        nuevoPuesto.setText("Nuevo Puesto");
+        nuevoPuesto.setText("Ver Puestos");
         nuevoPuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         nuevoPuesto.setSelectionColor(new java.awt.Color(55, 53, 53));
         nuevoPuesto.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -143,7 +143,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
@@ -504,6 +504,13 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         );
         checkBox.setIcon(this.icono);
         this.repaint();
+    }
+    
+    private String convertirDates(String Fecha)
+    {
+        String[] palabras  = Fecha.split("-");
+       
+        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -15,6 +15,9 @@ import java.awt.Color;
 import java.awt.Image;
 import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -49,6 +52,7 @@ public class nuevoSalario extends javax.swing.JFrame {
      */
     public nuevoSalario() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
          this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();   
@@ -133,7 +137,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         salario.setDocument(new JTextFieldLimit(8));
         salario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         salario.setForeground(new java.awt.Color(255, 255, 255));
-        salario.setText(" Salario");
+        salario.setText("Salario");
         salario.setToolTipText("Ingrese un precio de servicio válido.");
         salario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         salario.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -158,7 +162,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         fechaInicio.setBackground(new java.awt.Color(30, 33, 34));
         fechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fechaInicio.setForeground(new java.awt.Color(255, 255, 255));
-        fechaInicio.setText(" Fecha Inicio");
+        fechaInicio.setText("Fecha Inicio");
         fechaInicio.setToolTipText("Ingrese un nombre de servicio valido.");
         fechaInicio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         fechaInicio.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -324,7 +328,7 @@ public class nuevoSalario extends javax.swing.JFrame {
                 salariosAnteriores.add(salariosBD.get(i));
             }
         }
-        java.util.Date startDate;
+        java.util.Date startDate = new Date(0000000000);
         String fechaIni = "00-00-0000";
         try {
         startDate = sdf.parse(convertirFecha(fechaInicio.getText()));  
@@ -347,6 +351,17 @@ public class nuevoSalario extends javax.swing.JFrame {
         salarioAnterior.setIDEmpleado(salariosAnteriores.get(salariosAnteriores.size()-1).getIDEmpleado());
         salarioAnterior.setSalario(salariosAnteriores.get(salariosAnteriores.size()-1).getSalario());
         salarioAnterior.setActivo(false);
+        
+        //comparar fehca inicial de nuevo salario con el anterior
+        java.util.Date utilDate = new java.util.Date(salarioAnterior.getFechaInicial().getTime());
+        LocalDate date = convertToLocalDateViaInstant(startDate);
+        LocalDate date2 = convertToLocalDateViaInstant(utilDate);
+        if(date.isBefore(date2))
+        {
+           JOptionPane.showMessageDialog(null,"El nuevo salario no puede empezar antes del anterior.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
+           fechaInicio.setBorder(redBorder);
+           return;
+        }
         
         if(validacionNumerica() && validarFecha(fechaInicio,formatoInvalido1) ){
             try {
@@ -552,6 +567,12 @@ public class nuevoSalario extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

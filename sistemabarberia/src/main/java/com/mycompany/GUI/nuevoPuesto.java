@@ -8,17 +8,17 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.puestohistoricoempleadoJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.puesto;
 import com.mycompany.sistemabarberia.puestohistoricoempleado;
-import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import java.awt.Color;
 import java.awt.Image;
 import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -55,8 +55,10 @@ public class nuevoPuesto extends javax.swing.JFrame {
      */
     public nuevoPuesto() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
          this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+         this.insertarImagen(this.agregar,"src/main/resources/Imagenes/agregar.png");
         Reiniciar();   
         for(int i = 0; i < empleadosBD.size(); i++)
         {
@@ -103,6 +105,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         cbTipoPuesto = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
+        agregar = new javax.swing.JLabel();
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -143,7 +146,6 @@ public class nuevoPuesto extends javax.swing.JFrame {
         fechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fechaInicio.setForeground(new java.awt.Color(255, 255, 255));
         fechaInicio.setText("Fecha Inicio");
-        fechaInicio.setToolTipText("Ingrese un nombre de servicio valido.");
         fechaInicio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         fechaInicio.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -181,21 +183,30 @@ public class nuevoPuesto extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Tipo de Puesto:");
 
+        agregar.setText("jLabel2");
+        agregar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                agregarMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4)
-                    .addComponent(cbTipoPuesto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(fechaInicio)
-                        .addComponent(formatoInvalido1)
-                        .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 42, Short.MAX_VALUE))
+                    .addComponent(fechaInicio)
+                    .addComponent(formatoInvalido1)
+                    .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(cbTipoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 43, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,29 +218,31 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 .addGap(17, 17, 17)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbTipoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbTipoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
                 .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido1)
-                .addGap(143, 143, 143))
+                .addGap(159, 159, 159))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(32, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(29, 29, 29)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         salir.setText("jLabel2");
@@ -311,7 +324,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 puestosAnteriores.add(puestosBD.get(i));
             }
         }
-        java.util.Date startDate;
+        java.util.Date startDate = new Date(0000000000);
         String fechaIni = "00-00-0000";
         try {
         startDate = sdf.parse(convertirFecha(fechaInicio.getText()));  
@@ -335,9 +348,22 @@ public class nuevoPuesto extends javax.swing.JFrame {
         puestoAnterior.setIDPuesto(puestosAnteriores.get(puestosAnteriores.size()-1).getIDPuesto());
         puestoAnterior.setActivo(false);
         
+        //validar que el nuevo peusto sea diferente al anterior
         if(nuevoPuesto.getIDPuesto() == puestoAnterior.getIDPuesto())
         {
-            JOptionPane.showMessageDialog(null, "El nuevo puesto para este empleado no puede ser igual que el anterior.","Puesto Inválido",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El nuevo tipo de puesto para este empleado no puede ser igual que el anterior.","Puesto Inválido",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //validar que la fecha del nuevo puesto sea mayor que la anterior
+        java.util.Date utilDate = new java.util.Date(puestoAnterior.getFechaInicial().getTime());
+        LocalDate date = convertToLocalDateViaInstant(startDate);
+        LocalDate date2 = convertToLocalDateViaInstant(utilDate);
+        if(date.isBefore(date2))
+        {
+           JOptionPane.showMessageDialog(null,"El nuevo puesto no puede empezar antes del anterior.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
+           fechaInicio.setBorder(redBorder);
+           return;
         }
         
         if(validarFecha(fechaInicio,formatoInvalido1) ){
@@ -400,6 +426,16 @@ public class nuevoPuesto extends javax.swing.JFrame {
         fechaInicio.setDocument(new JTextFieldLimit (10));
         
     }//GEN-LAST:event_fechaInicioMouseClicked
+
+    private void agregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_agregarMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoTipoPuesto().setVisible(true);
+            }
+        });
+        this.dispose();
+    }//GEN-LAST:event_agregarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -495,8 +531,15 @@ public class nuevoPuesto extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
+    
+    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel agregar;
     private javax.swing.JButton botonAceptar;
     private javax.swing.JComboBox<String> cbEmpleados;
     private javax.swing.JComboBox<String> cbTipoPuesto;

@@ -31,6 +31,7 @@ public class listaUsuarios extends javax.swing.JFrame {
      */
     public listaUsuarios() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
         cargarTabla();

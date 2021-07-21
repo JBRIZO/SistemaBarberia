@@ -46,6 +46,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
      */
     public nuevoUsuario() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir1,"src/main/resources/Imagenes/x.png");
         Reiniciar();   
@@ -167,6 +168,9 @@ public class nuevoUsuario extends javax.swing.JFrame {
         contrasena.setForeground(new java.awt.Color(255, 255, 255));
         contrasena.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         contrasena.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                contrasenaFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 contrasenaFocusLost(evt);
             }
@@ -206,7 +210,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
                         .addComponent(formatoInvalido1)
                         .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(contrasena)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 57, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,8 +244,8 @@ public class nuevoUsuario extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -381,6 +385,9 @@ public class nuevoUsuario extends javax.swing.JFrame {
     if(nombreUsuario.getText().equals(""))
     {
         nombreUsuario.setText("Nombre Usuario");
+    }else
+    {
+        validarUsuario(nombreUsuario,formatoInvalido1);
     }
     }//GEN-LAST:event_nombreUsuarioFocusLost
 
@@ -408,6 +415,10 @@ public class nuevoUsuario extends javax.swing.JFrame {
         this.dispose();
         empleadoDAO.close();
     }//GEN-LAST:event_salir1MouseClicked
+
+    private void contrasenaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_contrasenaFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_contrasenaFocusGained
 
     /**
      * @param args the command line arguments
@@ -449,11 +460,19 @@ public class nuevoUsuario extends javax.swing.JFrame {
     
     private boolean validarUsuario(javax.swing.JTextField textField, JLabel label)
     {
+        
         if(validar.validacionCampoNumerico(textField.getText()))
         {
             textField.setBorder(redBorder);
             label.setVisible(true);
             label.setText("El nombre de usuario debe contener letras.");
+            return false;
+        }
+        if(!validar.validacionCantidadMinima(textField.getText(),3))
+        {
+            textField.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("El nombre de usuario debe ser de 3 caracteres mínimo.");
             return false;
         }
         if(validar.validarNomCuenta(textField.getText()))
@@ -466,8 +485,12 @@ public class nuevoUsuario extends javax.swing.JFrame {
             textField.setBorder(redBorder);
             label.setVisible(true);
             label.setText("El nombre de usuario es inválido.");
+            JOptionPane.showMessageDialog(null, "Un nombre de usuario válido no lleva mayúsculas, solo se permiten lo signos '-' y '_', letras y números.", 
+                    "Nombre de Usuario Inválido", 
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        
     }
     
     private boolean validarContrasena(javax.swing.JPasswordField contra, JLabel label)
@@ -518,7 +541,6 @@ public class nuevoUsuario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreUsuario;
-    private javax.swing.JLabel salir;
     private javax.swing.JLabel salir1;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

@@ -222,7 +222,7 @@
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="Nuevo Puesto"/>
+                    <Property name="text" type="java.lang.String" value="Ver Puestos"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                         <LineBorder roundedCorners="true"/>
@@ -264,7 +264,7 @@
                             <Column editable="false" title="Nombres" type="java.lang.String"/>
                             <Column editable="false" title="Apellidos" type="java.lang.String"/>
                             <Column editable="false" title="Genero" type="java.lang.String"/>
-                            <Column editable="false" title="Fecha Inicio" type="java.lang.Object"/>
+                            <Column editable="false" title="Fecha Inicio" type="java.lang.String"/>
                             <Column editable="false" title="Num. Tel&#xe9;fono" type="java.lang.String"/>
                             <Column editable="false" title="Activo" type="java.lang.String"/>
                           </Table>

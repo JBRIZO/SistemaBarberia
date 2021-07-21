@@ -11,9 +11,8 @@ import com.mycompany.sistemabarberia.JPACOntrollers.puestohistoricoempleadoJpaCo
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.puesto;
 import com.mycompany.sistemabarberia.puestohistoricoempleado;
-import com.mycompany.sistemabarberia.salariohistoricoempleados;
-import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
@@ -40,6 +39,8 @@ public class listaPuestos extends javax.swing.JFrame {
      */
     public listaPuestos() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoLogin.png"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");for(int i = 0; i < empleadosBD.size(); i++)
         {
             if(empleadosBD.get(i).isActivo())
@@ -190,7 +191,7 @@ public class listaPuestos extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoTipoPuesto().setVisible(true);
+                new nuevoPuesto().setVisible(true);
             }
         });
         this.dispose();

@@ -10,6 +10,7 @@ import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -31,6 +32,7 @@ public class menuGerente extends javax.swing.JFrame {
      */
     public menuGerente() {
         initComponents();
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoLogin.png"));
         List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         for(int i =0 ; i<empleadosBD.size();i++)

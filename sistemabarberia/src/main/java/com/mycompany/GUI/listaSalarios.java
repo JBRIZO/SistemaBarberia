@@ -10,6 +10,7 @@ import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpa
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
@@ -33,6 +34,9 @@ public class listaSalarios extends javax.swing.JFrame {
      */
     public listaSalarios() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoLogin.png"));
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         for(int i = 0; i<empleadosBD.size();i++)
         {
@@ -317,8 +321,8 @@ public class listaSalarios extends javax.swing.JFrame {
                     modelo.addRow(
                     new Object[]{
                         salarios.getIdsalario(),
-                        salarios.getFechaInicial(),
-                        salarios.getFechaFinal(),
+                        convertirDates(salarios.getFechaInicial().toString()),
+                        convertirDates(salarios.getFechaFinal().toString()),
                         salarios.getSalario()
                     }
                 );
@@ -375,6 +379,13 @@ public class listaSalarios extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    private String convertirDates(String Fecha)
+    {
+        String[] palabras  = Fecha.split("-");
+       
+        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

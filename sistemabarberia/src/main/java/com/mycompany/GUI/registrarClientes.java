@@ -52,6 +52,7 @@ public class registrarClientes extends javax.swing.JFrame {
      */
     public registrarClientes() {
         initComponents();
+        this.setLocationRelativeTo(null);
        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
        
        Reiniciar();

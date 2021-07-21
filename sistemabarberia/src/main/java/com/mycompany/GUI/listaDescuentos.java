@@ -6,7 +6,9 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.descuentos;
+import com.mycompany.sistemabarberia.tipodescuento;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
 import java.sql.Date;
@@ -25,13 +27,15 @@ public class listaDescuentos extends javax.swing.JFrame {
 
     private ImageIcon imagen;
     private Icon icono;
-    descuentosJpaController descuentos = new descuentosJpaController();
+    private descuentosJpaController descuentos = new descuentosJpaController();
+    private tipodescuentoJpaController tiposDescuentoDAO = new tipodescuentoJpaController();
 
     /**
      * Creates new form nuevoTipoDescuento
      */
     public listaDescuentos() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         cargarTabla();
 //        tablaPuestosHistoricos();
@@ -101,19 +105,21 @@ public class listaDescuentos extends javax.swing.JFrame {
             }
         });
 
+        tablaDescuentos.setBackground(new java.awt.Color(30, 33, 34));
+        tablaDescuentos.setForeground(new java.awt.Color(255, 255, 255));
         tablaDescuentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID Descuento", "Fecha Inicio", "Fecha Final", "Valor"
+                "ID Descuento", "Tipo Descuento", "Fecha Inicio", "Fecha Final", "Valor"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -255,12 +261,18 @@ public class listaDescuentos extends javax.swing.JFrame {
 
     private void cargarTabla()
     {
+        List<tipodescuento> tiposDescuentoBD = tiposDescuentoDAO.findtipodescuentoEntities();
         String activo = "";
+        String Descuento = "";
         DefaultTableModel modelo = (DefaultTableModel)tablaDescuentos.getModel();
         modelo.setRowCount(0);
         tablaDescuentos.setModel(modelo);
         List<descuentos> descuent = descuentos.finddescuentosEntities();
             for(descuentos descuento : descuent){
+                for(int i = 0; i < descuent.size(); i++)
+                {
+                    Descuento = tiposDescuentoBD.get(descuent.get(i).getIDTipoDescuento()-1).getNomDescuento();
+                }
                 if(descuento.isActivo())
                 {
                 activo = "Sí";   
@@ -271,6 +283,7 @@ public class listaDescuentos extends javax.swing.JFrame {
                     modelo.addRow(
                     new Object[]{
                         descuento.getIddescuento(),
+                        Descuento,
                         convertirDates(descuento.getFechaInicio().toString()),
                         convertirDates(descuento.getFechaFinal().toString()),
                         descuento.getValor()
@@ -278,23 +291,7 @@ public class listaDescuentos extends javax.swing.JFrame {
                 );
             } 
     }
-//    private void tablaPuestosHistoricos() {
-//        DefaultTableModel model;
-//        String[] titulos = {"ID Descuento", "Fecha Inicio", "Fecha Final", "Valor"};
-//        String[] registros = new String[4];
-//        model = new DefaultTableModel(null, titulos);
-//
-//        List<descuentos> listaDescuentos;
-//        listaDescuentos = descuentos.finddescuentosEntities();
-//        for (descuentos em : listaDescuentos) {
-//            registros[0] = em.getIddescuento() + "";
-//            registros[1] = em.getFechaInicio() + "";
-//            registros[2] = em.getFechaFinal() + "";
-//            registros[3] = em.getValor() + "";
-//            model.addRow(registros);
-//        }
-//        tablaDescuentos.setModel(model);
-//    }
+
     
     private void idTipoDescuento3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento3ActionPerformed
         // TODO add your handling code here:

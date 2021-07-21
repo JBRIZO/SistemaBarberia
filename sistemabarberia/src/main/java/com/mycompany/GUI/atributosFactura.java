@@ -25,6 +25,7 @@ public class atributosFactura extends javax.swing.JFrame {
      */
     public atributosFactura() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
     }
     
