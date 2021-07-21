@@ -5,14 +5,13 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
-import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,17 +19,17 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Kesil
  */
-public class pantallaEmpleados extends javax.swing.JFrame {
+public class listaUsuarios extends javax.swing.JFrame {
     
 
-    private empleadoJpaController empleadoDAO =  new empleadoJpaController();
+    private usuariosJpaController usuarioDAO =  new usuariosJpaController();
     private ImageIcon imagen;
     private Icon icono;
 
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public pantallaEmpleados() {
+    public listaUsuarios() {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
@@ -40,14 +39,13 @@ public class pantallaEmpleados extends javax.swing.JFrame {
     
     private void cargarTabla()
     {
-        
         String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaEmpleados.getModel();
+        DefaultTableModel modelo = (DefaultTableModel)tablaUsuarios.getModel();
         modelo.setRowCount(0);
-        tablaEmpleados.setModel(modelo);
-        List<empleado> empleados = empleadoDAO.findempleadoEntities();
-            for(empleado empleado : empleados){
-                if(empleado.isActivo())
+        tablaUsuarios.setModel(modelo);
+        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
+            for(usuarios usuario : usuarios){
+                if(usuario.getActivo())
                 {
                 activo = "Sí";   
                 }else
@@ -56,12 +54,10 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 }
                     modelo.addRow(
                     new Object[]{
-                        empleado.getIdempleado(),
-                        empleado.getNomEmpleado(),
-                        empleado.getApeEmpleado(),
-                        empleado.getGenEmpleado(),
-                        empleado.getFechaInicio(),
-                        empleado.getNumCelular(),
+                        usuario.getIdusuario(),
+                        usuario.getIDEmpleado(),
+                        usuario.getNomCuenta(),
+                        usuario.getContrasena(),
                         activo
                     }
                 );
@@ -82,12 +78,10 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         logo = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        nuevoPuesto = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaEmpleados = new javax.swing.JTable();
-        nuevoEmpleado = new javax.swing.JTextField();
+        tablaUsuarios = new javax.swing.JTable();
+        nuevoUsuario = new javax.swing.JTextField();
         regresar = new javax.swing.JTextField();
-        nuevoSalario = new javax.swing.JTextField();
         activar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -97,7 +91,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("EMPLEADOS");
+        tituloPantalla.setText("USUARIOS");
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -111,42 +105,23 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        nuevoPuesto.setEditable(false);
-        nuevoPuesto.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoPuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nuevoPuesto.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoPuesto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        nuevoPuesto.setText("Nuevo Puesto");
-        nuevoPuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        nuevoPuesto.setSelectionColor(new java.awt.Color(55, 53, 53));
-        nuevoPuesto.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                nuevoPuestoMouseClicked(evt);
-            }
-        });
-        nuevoPuesto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevoPuestoActionPerformed(evt);
-            }
-        });
-
-        tablaEmpleados.setAutoCreateRowSorter(true);
-        tablaEmpleados.setBackground(new java.awt.Color(30, 33, 34));
-        tablaEmpleados.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        tablaEmpleados.setForeground(new java.awt.Color(255, 255, 255));
-        tablaEmpleados.setModel(new javax.swing.table.DefaultTableModel(
+        tablaUsuarios.setAutoCreateRowSorter(true);
+        tablaUsuarios.setBackground(new java.awt.Color(30, 33, 34));
+        tablaUsuarios.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        tablaUsuarios.setForeground(new java.awt.Color(255, 255, 255));
+        tablaUsuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID Empleado", "Nombres", "Apellidos", "Genero", "Fecha Inicio", "Num. Teléfono", "Activo"
+                "ID Usuario", "ID Empleado", "Usuario", "Contrseña", "Estado"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -157,32 +132,32 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tablaEmpleados.setGridColor(new java.awt.Color(255, 255, 255));
-        tablaEmpleados.setRowHeight(32);
-        tablaEmpleados.getTableHeader().setReorderingAllowed(false);
-        tablaEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaUsuarios.setGridColor(new java.awt.Color(255, 255, 255));
+        tablaUsuarios.setRowHeight(32);
+        tablaUsuarios.getTableHeader().setReorderingAllowed(false);
+        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaEmpleadosMouseClicked(evt);
+                tablaUsuariosMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaEmpleados);
+        jScrollPane1.setViewportView(tablaUsuarios);
 
-        nuevoEmpleado.setEditable(false);
-        nuevoEmpleado.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nuevoEmpleado.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoEmpleado.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        nuevoEmpleado.setText("Nuevo Empleado");
-        nuevoEmpleado.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        nuevoEmpleado.setSelectionColor(new java.awt.Color(55, 53, 53));
-        nuevoEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
+        nuevoUsuario.setEditable(false);
+        nuevoUsuario.setBackground(new java.awt.Color(30, 33, 34));
+        nuevoUsuario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        nuevoUsuario.setForeground(new java.awt.Color(255, 255, 255));
+        nuevoUsuario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        nuevoUsuario.setText("Nuevo Usuario");
+        nuevoUsuario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        nuevoUsuario.setSelectionColor(new java.awt.Color(55, 53, 53));
+        nuevoUsuario.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                nuevoEmpleadoMouseClicked(evt);
+                nuevoUsuarioMouseClicked(evt);
             }
         });
-        nuevoEmpleado.addActionListener(new java.awt.event.ActionListener() {
+        nuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevoEmpleadoActionPerformed(evt);
+                nuevoUsuarioActionPerformed(evt);
             }
         });
 
@@ -205,25 +180,6 @@ public class pantallaEmpleados extends javax.swing.JFrame {
             }
         });
 
-        nuevoSalario.setEditable(false);
-        nuevoSalario.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoSalario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nuevoSalario.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoSalario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        nuevoSalario.setText("Ver Salarios");
-        nuevoSalario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        nuevoSalario.setSelectionColor(new java.awt.Color(55, 53, 53));
-        nuevoSalario.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                nuevoSalarioMouseClicked(evt);
-            }
-        });
-        nuevoSalario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevoSalarioActionPerformed(evt);
-            }
-        });
-
         activar.setBorderPainted(false);
         activar.setContentAreaFilled(false);
         activar.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -240,13 +196,10 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(nuevoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nuevoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(42, 42, 42)
                         .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nuevoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 53, 53)
-                        .addComponent(nuevoSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -262,13 +215,10 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(28, 28, 28)
-                        .addComponent(nuevoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(nuevoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(nuevoSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nuevoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -297,7 +247,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(246, 246, 246)
                 .addComponent(tituloPantalla)
-                .addGap(0, 383, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -334,33 +284,25 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void nuevoPuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoPuestoActionPerformed
+    private void nuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoUsuarioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_nuevoPuestoActionPerformed
-
-    private void nuevoEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoEmpleadoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nuevoEmpleadoActionPerformed
+    }//GEN-LAST:event_nuevoUsuarioActionPerformed
 
     private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_regresarActionPerformed
 
-    private void nuevoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoSalarioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nuevoSalarioActionPerformed
-
-    private void nuevoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoEmpleadoMouseClicked
+    private void nuevoUsuarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoUsuarioMouseClicked
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new agregarEmpleado().setVisible(true);
+                new nuevoUsuario().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        empleadoDAO.close();
-    }//GEN-LAST:event_nuevoEmpleadoMouseClicked
+        usuarioDAO.close();
+    }//GEN-LAST:event_nuevoUsuarioMouseClicked
 
     private void regresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_regresarMouseClicked
         // TODO add your handling code here:\
@@ -371,62 +313,38 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         });
         this.setVisible(false);
         this.dispose(); 
-        empleadoDAO.close();
+        usuarioDAO.close();
     }//GEN-LAST:event_regresarMouseClicked
 
-    private void nuevoPuestoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoPuestoMouseClicked
+    private void tablaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaUsuariosMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new nuevoPuesto().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
-        empleadoDAO.close();
-    }//GEN-LAST:event_nuevoPuestoMouseClicked
-
-    private void nuevoSalarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoSalarioMouseClicked
-        // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new listaSalarios().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
-        empleadoDAO.close();
-    }//GEN-LAST:event_nuevoSalarioMouseClicked
-
-    private void tablaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMouseClicked
-        // TODO add your handling code here:
-        if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
+        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
         {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
         }else
         {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
         }
-    }//GEN-LAST:event_tablaEmpleadosMouseClicked
+    }//GEN-LAST:event_tablaUsuariosMouseClicked
 
     private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
         // TODO add your handling code here:
-        empleado modificar = new empleado();
-        List<empleado> empleados = empleadoDAO.findempleadoEntities();
-        for(int i=0 ; i<empleados.size();i++)
+        usuarios modificar = new usuarios();
+        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
+        for(int i=0 ; i<usuarios.size();i++)
         {
-            if(Integer.parseInt(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),0).toString()) == empleados.get(i).getIdempleado())
+            if(Integer.parseInt(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),0).toString()) == usuarios.get(i).getIdusuario())
             {
-                modificar = empleados.get(i);
+                modificar = usuarios.get(i);
             }
         }
-        if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
+        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
         {
            modificar.setActivo(false);
            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
            try
            {
-               empleadoDAO.edit(modificar);
+               usuarioDAO.edit(modificar);
            }catch(Exception Ex)
            {}  
         }else
@@ -435,7 +353,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
             try
            {
-               empleadoDAO.edit(modificar);
+               usuarioDAO.edit(modificar);
            }catch(Exception Ex)
            {}  
         }
@@ -460,21 +378,22 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(pantallaEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(pantallaEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(pantallaEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(pantallaEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
        
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new pantallaEmpleados().setVisible(true);
+                new listaUsuarios().setVisible(true);
             }
         });
         
@@ -513,11 +432,9 @@ public class pantallaEmpleados extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField nuevoEmpleado;
-    private javax.swing.JTextField nuevoPuesto;
-    private javax.swing.JTextField nuevoSalario;
+    private javax.swing.JTextField nuevoUsuario;
     private javax.swing.JTextField regresar;
-    private javax.swing.JTable tablaEmpleados;
+    private javax.swing.JTable tablaUsuarios;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

@@ -23,6 +23,9 @@ public class clientes implements Serializable {
     @Column 
     private int IDTipoDocumento;
     
+    @Column
+    private int NumDocumento;
+    
     @Column 
     private int IDServicio;
     
@@ -40,6 +43,8 @@ public class clientes implements Serializable {
     
     @Column
     private Boolean Activo;
+    
+    
 
     public int getIdcliente() {
         return idcliente;
@@ -103,6 +108,14 @@ public class clientes implements Serializable {
 
     public void setActivo(Boolean Activo) {
         this.Activo = Activo;
+    }
+
+    public int getNumDocumento() {
+        return NumDocumento;
+    }
+
+    public void setNumDocumento(int NumDocumento) {
+        this.NumDocumento = NumDocumento;
     }
     
     

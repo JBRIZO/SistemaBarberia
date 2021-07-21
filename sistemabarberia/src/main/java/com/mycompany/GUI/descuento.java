@@ -5,14 +5,25 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.puesto;
+import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
+
+import com.mycompany.sistemabarberia.Validaciones;
+import com.mycompany.sistemabarberia.descuentos;
+import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
+import java.sql.Date;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
 /**
@@ -20,8 +31,17 @@ import javax.swing.border.Border;
  * @author flore
  */
 public class descuento extends javax.swing.JFrame {
-     private ImageIcon imagen;
+    private descuentosJpaController descuentosDAO = new descuentosJpaController();
+    private List<descuentos> descuentosBD = descuentosDAO.finddescuentosEntities();
+    private tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController();
+    private List<tipodescuento> tipodescuentoBD = tipodescuentoDAO.findtipodescuentoEntities();
+    private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+    private Validaciones validar = new Validaciones();
+    private ImageIcon imagen;
     private Icon icono;
+    Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
 
 
     /**
@@ -30,7 +50,18 @@ public class descuento extends javax.swing.JFrame {
     public descuento() {
         initComponents();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        
+        Reiniciar();
+        for(int i = 0; i < tipodescuentoBD.size(); i++)
+        {
+            cbTiposDescuentos.addItem(tipodescuentoBD.get(i).toString());
+        }
+    }
+    
+    public void Reiniciar()
+    {
+        formatoInvalidoFechaIni.setText("");
+        formatoInvalidoFechaFin.setText("");
+        formatoInvalidoValor.setText("");
     }
 
     /**
@@ -47,9 +78,13 @@ public class descuento extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         Valor = new javax.swing.JTextField();
-        idDescuento = new javax.swing.JComboBox<>();
+        cbTiposDescuentos = new javax.swing.JComboBox<>();
         fechaInicio = new javax.swing.JTextField();
         fechaFinal = new javax.swing.JTextField();
+        formatoInvalidoFechaFin = new javax.swing.JLabel();
+        formatoInvalidoFechaIni = new javax.swing.JLabel();
+        formatoInvalidoValor = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         Aceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
 
@@ -75,74 +110,135 @@ public class descuento extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(55, 53, 53));
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
+        jPanel3.setMaximumSize(new java.awt.Dimension(345, 377));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
-        jPanel3.setPreferredSize(new java.awt.Dimension(358, 323));
+        jPanel3.setPreferredSize(new java.awt.Dimension(345, 377));
 
-        Valor.setEditable(false);
         Valor.setBackground(new java.awt.Color(30, 33, 34));
         Valor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         Valor.setForeground(new java.awt.Color(255, 255, 255));
         Valor.setText("Valor %");
         Valor.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         Valor.setSelectionColor(new java.awt.Color(55, 53, 53));
+        Valor.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                ValorFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ValorFocusLost(evt);
+            }
+        });
+        Valor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ValorMouseClicked(evt);
+            }
+        });
         Valor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ValorActionPerformed(evt);
             }
         });
 
-        fechaInicio.setEditable(false);
+        cbTiposDescuentos.setOpaque(false);
+        cbTiposDescuentos.setPreferredSize(new java.awt.Dimension(299, 42));
+
         fechaInicio.setBackground(new java.awt.Color(30, 33, 34));
+        fechaInicio.setDocument(new JTextFieldLimit(25));
         fechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fechaInicio.setForeground(new java.awt.Color(255, 255, 255));
-        fechaInicio.setText("Fecha de inicio");
+        fechaInicio.setText("Fecha Inicial");
         fechaInicio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        fechaInicio.setSelectionColor(new java.awt.Color(55, 53, 53));
+        fechaInicio.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        fechaInicio.setPreferredSize(new java.awt.Dimension(73, 19));
+        fechaInicio.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                fechaInicioFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fechaInicioFocusLost(evt);
+            }
+        });
         fechaInicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fechaInicioActionPerformed(evt);
             }
         });
 
-        fechaFinal.setEditable(false);
         fechaFinal.setBackground(new java.awt.Color(30, 33, 34));
+        fechaFinal.setDocument(new JTextFieldLimit(25));
         fechaFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fechaFinal.setForeground(new java.awt.Color(255, 255, 255));
         fechaFinal.setText("Fecha Final");
         fechaFinal.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         fechaFinal.setSelectionColor(new java.awt.Color(55, 53, 53));
+        fechaFinal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                fechaFinalFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fechaFinalFocusLost(evt);
+            }
+        });
         fechaFinal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fechaFinalActionPerformed(evt);
             }
         });
 
+        formatoInvalidoFechaFin.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoFechaFin.setText("Formato Invalido.");
+
+        formatoInvalidoFechaIni.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoFechaIni.setText("Formato Invalido.");
+
+        formatoInvalidoValor.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoValor.setText("Formato Invalido.");
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Tipo de descuento:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(Valor, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .addComponent(idDescuento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(fechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .addComponent(fechaFinal, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(formatoInvalidoValor)
+                            .addComponent(formatoInvalidoFechaFin))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(Valor, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fechaFinal, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fechaInicio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(formatoInvalidoFechaIni, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbTiposDescuentos, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(idDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
-                .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addComponent(fechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(27, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbTiposDescuentos, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
+                .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(formatoInvalidoFechaIni)
+                .addGap(18, 18, 18)
+                .addComponent(fechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(formatoInvalidoFechaFin)
+                .addGap(18, 18, 18)
                 .addComponent(Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(formatoInvalidoValor)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -152,14 +248,14 @@ public class descuento extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         Aceptar.setBackground(new java.awt.Color(189, 158, 76));
@@ -182,29 +278,27 @@ public class descuento extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39)
+                        .addGap(42, 42, 42)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(93, 93, 93)
+                        .addComponent(Aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(88, 88, 88)
-                        .addComponent(Aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(23, 23, 23))
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(79, 79, 79)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(Aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -215,7 +309,9 @@ public class descuento extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 629, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -236,8 +332,119 @@ public class descuento extends javax.swing.JFrame {
 
     private void AceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarActionPerformed
         // TODO add your handling code here:
+        java.util.Date startDate = new Date(0000000000);
+        java.util.Date endDate = new Date(0000000000);
+        String fechaIni = "00-00-0000";
+        String fechaFin = "00-00-0000";
+        try {
+        startDate = sdf.parse(convertirFecha(fechaInicio.getText()));  
+        fechaIni = sdf.format(startDate);
+        endDate = sdf.parse(convertirFecha(fechaFinal.getText()));
+        fechaFin = sdf.format(endDate);
+    } catch (ParseException ex) {
+       ex.printStackTrace();
+    }
+        //creacion de objeto
+        descuentos descuentoNuevo = new descuentos();
+        descuentoNuevo.setIDTipoDescuento(Character.getNumericValue(cbTiposDescuentos.getSelectedItem().toString().charAt(0)));
+        descuentoNuevo.setFechaInicio(Date.valueOf(fechaIni));
+        descuentoNuevo.setFechaFinal(Date.valueOf(fechaFin));
+        descuentoNuevo.setValor(Integer.parseInt(Valor.getText()));
+        descuentoNuevo.setActivo(true);
         
+        //coherencia de fechas
+        LocalDate date1 = convertToLocalDateViaInstant(startDate);
+        LocalDate date2 = convertToLocalDateViaInstant(endDate);
+        if(date1.isAfter(date2))
+        {
+            JOptionPane.showMessageDialog(null, "La fecha final no puede ser menor a la fecha inicial.", "Fecha inválida",JOptionPane.ERROR_MESSAGE);
+            fechaFinal.setBorder(redBorder);
+            return;
+        }
+        
+        
+        if(validarFecha(fechaInicio,formatoInvalidoFechaIni) && validarPorcentaje() && validar.validacionCampoNumerico(Valor.getText()) && 
+           validarFecha(fechaFinal,formatoInvalidoFechaFin))
+        {   
+            try {
+            descuentosDAO.create(descuentoNuevo); 
+            JOptionPane.showMessageDialog(null,"Operación Exitosa.");
+                    Reiniciar();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,"No se pudo guardar el descuento, excepción: " + ex.getMessage());
+        }
+        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.");
+        }    
     }//GEN-LAST:event_AceptarActionPerformed
+
+    private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
+        // TODO add your handling code here:
+        if(fechaInicio.getText().equals(""))
+        {
+            fechaInicio.setDocument(new JTextFieldLimit(20));
+            fechaInicio.setText("Fecha Inicial");
+        }else
+        {
+           validarFecha(fechaInicio,formatoInvalidoFechaIni); 
+        }
+    }//GEN-LAST:event_fechaInicioFocusLost
+
+    private void fechaFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaFinalFocusLost
+        // TODO add your handling code here:
+        if(fechaFinal.getText().equals(""))
+        {
+            fechaFinal.setDocument(new JTextFieldLimit(20));
+            fechaFinal.setText("Fecha Final");
+        }else
+        {
+           validarFecha(fechaFinal, formatoInvalidoFechaFin);
+        }
+    }//GEN-LAST:event_fechaFinalFocusLost
+
+    private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
+        // TODO add your handling code here:
+        if(fechaInicio.getText().equals("Fecha Inicial"))
+        {
+            fechaInicio.setDocument(new JTextFieldLimit(10));
+            fechaInicio.setText("");
+        }
+        
+    }//GEN-LAST:event_fechaInicioFocusGained
+
+    private void fechaFinalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaFinalFocusGained
+        // TODO add your handling code here:
+         if(fechaFinal.getText().equals("Fecha Final"))
+        {
+            fechaFinal.setDocument(new JTextFieldLimit(10));
+            fechaFinal.setText("");
+        }
+    }//GEN-LAST:event_fechaFinalFocusGained
+
+    private void ValorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ValorMouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_ValorMouseClicked
+
+    private void ValorFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ValorFocusLost
+        // TODO add your handling code here:
+        if(Valor.getText().equals(""))
+        {
+            Valor.setDocument(new JTextFieldLimit(10));
+            Valor.setText("Valor %");
+        }else
+        {
+           validarPorcentaje(); 
+        }
+    }//GEN-LAST:event_ValorFocusLost
+
+    private void ValorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ValorFocusGained
+        // TODO add your handling code here:
+        if(Valor.getText().equals("Valor %"))
+        {
+            Valor.setDocument(new JTextFieldLimit(3));
+            Valor.setText("");
+        }
+    }//GEN-LAST:event_ValorFocusGained
 
     /**
      * @param args the command line arguments
@@ -287,17 +494,93 @@ public class descuento extends javax.swing.JFrame {
         this.repaint();
     }
     
+    private String convertirFecha(String Fecha)
+    {
+        String[] palabras  = Fecha.split("/");
+       
+        return palabras[2] + "-" + palabras[1] + "-" + palabras[0];
+    }
+    
+    
+    private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
+    {
+        if(!validar.validacionFecha(fecha.getText()))
+            {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("El formato de fecha es: dd-mm-aaaa");
+            return false;
+            }else
+        {
+            fecha.setBorder(greenBorder);
+            label.setText("");
+            return true;
+        }
+        
+    }
+    
+    private boolean validarPorcentaje()
+    {
+       if(Integer.parseInt(Valor.getText())>100)
+       {
+           Valor.setBorder(redBorder);
+           formatoInvalidoValor.setVisible(true);
+           formatoInvalidoValor.setText("El porcentaje no debe de ser mayor a 100.");
+           return false;
+       }else
+           
+           if(Integer.parseInt(Valor.getText())<=0)
+       {
+           Valor.setBorder(redBorder);
+           formatoInvalidoValor.setVisible(true);
+           formatoInvalidoValor.setText("El porcentaje no debe de ser menor o igual a 0.");
+           return false;
+       }else
+               
+           
+    if(!validar.validacionCampoNumerico(Valor.getText()))
+    {
+      Valor.setBorder(redBorder);
+      formatoInvalidoValor.setVisible(true);
+      formatoInvalidoValor.setText("Solo se permiten numeros en este campo. ");
+      return false;
+     }else
+    {
+     Valor.setBorder(greenBorder);
+     formatoInvalidoValor.setText("");
+     return true;
+    }
+    }
+    
+    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+}
+ 
+     
+    
+    
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Aceptar;
     private javax.swing.JTextField Valor;
+    private javax.swing.JComboBox<String> cbTiposDescuentos;
     private javax.swing.JTextField fechaFinal;
     private javax.swing.JTextField fechaInicio;
-    private javax.swing.JComboBox<String> idDescuento;
+    private javax.swing.JLabel formatoInvalidoFechaFin;
+    private javax.swing.JLabel formatoInvalidoFechaIni;
+    private javax.swing.JLabel formatoInvalidoValor;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
     // End of variables declaration//GEN-END:variables
+
+    
+
+   
 }

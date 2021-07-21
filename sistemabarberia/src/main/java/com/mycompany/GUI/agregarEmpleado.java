@@ -50,7 +50,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
-    private ZoneId zona;
     
     
     
@@ -309,7 +308,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         direccion.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         direccion.setForeground(new java.awt.Color(255, 255, 255));
         direccion.setRows(5);
-        direccion.setText("Direccion de Domicilio");
+        direccion.setText("Dirección de Domicilio");
         direccion.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         direccion.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -517,7 +516,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(185, 185, 185)
+                .addGap(191, 191, 191)
                 .addComponent(jLabel4)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -541,7 +540,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
                         .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addGap(41, 41, 41)))
+                        .addGap(35, 35, 35)))
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -570,7 +569,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void telefonoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_telefonoEmpleadoMouseClicked
         // TODO add your handling code here:
-        telefonoEmpleado.setDocument(new JTextFieldLimit(8));
     }//GEN-LAST:event_telefonoEmpleadoMouseClicked
 
     private void fechaNacimientoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fechaNacimientoKeyTyped
@@ -622,7 +620,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
         primerPuesto.setActivo(true);
        
       
-        validarCamposNumero();
         //validar edad de empleado, debes er mayor a 18 años para ser admitido
         LocalDate date = convertToLocalDateViaInstant(birthDate);
         Period periodo = Period.between(date,LocalDate.now());
@@ -633,7 +630,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         }
 
         if(validarNombre() && validarApellido() && validarFecha(fechaInicio,formatoInvalidoFechaIni) && 
-           validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validar.validarNumCelular(telefonoEmpleado.getText()) &&
+           validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validarCamposNumero(telefonoEmpleado,formatoInvalidoTelefono) &&
            validarDecimal())
         {   
             try {
@@ -708,7 +705,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
             telefonoEmpleado.setText("Teléfono");
         }else
         {
-            validarCamposNumero();
+            validarCamposNumero(telefonoEmpleado,formatoInvalidoTelefono);
         }
        
     }//GEN-LAST:event_telefonoEmpleadoFocusLost
@@ -809,12 +806,18 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void salarioInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioInicialFocusLost
         // TODO add your handling code here:
-        validarDecimal();
+        if(!salarioInicial.getText().equals(""))
+        {
+            validarDecimal();
+        } 
     }//GEN-LAST:event_salarioInicialFocusLost
 
     private void direccionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_direccionFocusGained
         // TODO add your handling code here:
-        direccion.setText("");
+        if(direccion.getText().equals("Dirección de Domicilio"))
+        {
+            direccion.setText("");
+        }
     }//GEN-LAST:event_direccionFocusGained
 
     private void direccionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_direccionFocusLost
@@ -830,10 +833,13 @@ public class agregarEmpleado extends javax.swing.JFrame {
         if(numDoc.getText().equals("Numero"))
         {
             numDoc.setText("");
-        if(Character.getNumericValue(cbPuestos.getSelectedItem().toString().charAt(0)) == 1)
-        {
-            numDoc.setDocument(new JTextFieldLimit(13));
-        }
+            if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 2)
+            {
+                numDoc.setDocument(new JTextFieldLimit(13));
+            }else
+            {
+                numDoc.setDocument(new JTextFieldLimit(12));
+            }
         }
     }//GEN-LAST:event_numDocFocusGained
 
@@ -841,9 +847,14 @@ public class agregarEmpleado extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(telefonoEmpleado.getText().equals("Teléfono"))
         {
+            telefonoEmpleado.setDocument(new JTextFieldLimit(8));
             telefonoEmpleado.setText("");
         }
     }//GEN-LAST:event_telefonoEmpleadoFocusGained
+
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botonCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -989,6 +1000,8 @@ public class agregarEmpleado extends javax.swing.JFrame {
         
     }
     
+
+    
     private boolean validarDecimal()
     {
         if(!validar.validacionCampoNumerico(salarioInicial.getText()))
@@ -1019,24 +1032,26 @@ public class agregarEmpleado extends javax.swing.JFrame {
         }  
     }
     
-    private void validarCamposNumero()
+    private boolean validarCamposNumero(javax.swing.JTextField telefonoEmpleado,JLabel formatoInvalidoTelefono)
     {
         if(!validar.validacionCampoNumerico(telefonoEmpleado.getText()))
         {
             telefonoEmpleado.setBorder(redBorder);
             formatoInvalidoTelefono.setVisible(true);
             formatoInvalidoTelefono.setText("Solo puedes ingresar numeros en este campo.");
-            return;
+            return false;
         }
         if(!validar.validarNumCelular(telefonoEmpleado.getText()))
             {
             telefonoEmpleado.setBorder(redBorder);
             formatoInvalidoTelefono.setVisible(true);
             formatoInvalidoTelefono.setText("El numero de teléfono es inválido.");
+            return false;
             }else
         {
             telefonoEmpleado.setBorder(greenBorder);
             formatoInvalidoTelefono.setText(" ");
+            return true;
         }
     }
        
@@ -1044,7 +1059,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
     return dateToConvert.toInstant()
       .atZone(ZoneId.systemDefault())
       .toLocalDate();
-}
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidosEmpleado;

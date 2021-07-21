@@ -6,31 +6,33 @@
 package com.mycompany.sistemabarberia;
 
 import java.io.Serializable;
+import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+
 /**
  *
- * @author Kesil
+ * @author flore
  */
-
 @Entity
-public class descuentos implements Serializable {
-    @Id
+public class descuentos implements Serializable{
+    
+    @Id 
     private int iddescuento;
     
     @Column
-    private int IdTipoDescuento;
+    private int IDTipoDescuento;
     
     @Column
-    private String FechaInicio;
+    private Date FechaInicio;
     
     @Column
-    private String FechaFinal;
+    private Date FechaFinal;
     
     @Column
-    private String Valor;
+    private double Valor;
     
     @Column
     private boolean Activo;
@@ -43,35 +45,35 @@ public class descuentos implements Serializable {
         this.iddescuento = iddescuento;
     }
 
-    public int getIdTipoDescuento() {
-        return IdTipoDescuento;
+    public int getIDTipoDescuento() {
+        return IDTipoDescuento;
     }
 
-    public void setIdTipoDescuento(int IdTipoDescuento) {
-        this.IdTipoDescuento = IdTipoDescuento;
+    public void setIDTipoDescuento(int IDTipoDescuento) {
+        this.IDTipoDescuento = IDTipoDescuento;
     }
 
-    public String getFechaInicio() {
+    public Date getFechaInicio() {
         return FechaInicio;
     }
 
-    public void setFechaInicio(String FechaInicio) {
+    public void setFechaInicio(Date FechaInicio) {
         this.FechaInicio = FechaInicio;
     }
 
-    public String getFechaFinal() {
+    public Date getFechaFinal() {
         return FechaFinal;
     }
 
-    public void setFechaFinal(String FechaFinal) {
+    public void setFechaFinal(Date FechaFinal) {
         this.FechaFinal = FechaFinal;
     }
 
-    public String getValor() {
+    public double getValor() {
         return Valor;
     }
 
-    public void setValor(String Valor) {
+    public void setValor(double Valor) {
         this.Valor = Valor;
     }
 
@@ -82,6 +84,7 @@ public class descuentos implements Serializable {
     public void setActivo(boolean Activo) {
         this.Activo = Activo;
     }
+    
     
     
     

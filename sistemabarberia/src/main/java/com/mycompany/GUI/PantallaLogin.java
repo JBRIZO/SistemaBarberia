@@ -178,7 +178,6 @@ public class PantallaLogin extends javax.swing.JFrame {
                 usuarioActual = usuariosBD.get(i);
             }
         }
-        
         if(usuarioActual.getIntentos() == 3)
                 {
                     JOptionPane.showMessageDialog(null,"Alguien intento acceder a tu cuenta sin éxito 3 veces, "
@@ -186,6 +185,12 @@ public class PantallaLogin extends javax.swing.JFrame {
                     return;
                 }else
                 {
+                    if(!usuarioActual.getActivo())
+                    {
+                         JOptionPane.showMessageDialog(null,"Este usuario ha sido desactivado, "
+                            + "comunicate con el gerente.","Usuario Desactivado",JOptionPane.ERROR_MESSAGE);
+                    return;
+                    }
                     if(contraEncriptada.equals(usuarioActual.getContrasena()))
                 {
                     usuarioActual.setIdusuario(usuarioActual.getIdusuario());

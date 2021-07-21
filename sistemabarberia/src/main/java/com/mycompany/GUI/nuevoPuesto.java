@@ -56,9 +56,8 @@ public class nuevoPuesto extends javax.swing.JFrame {
             idPuesto.setText("  ID de Puesto: " + Integer.toString(puestosEnBd.get(puestosEnBd.size()-1).getIdpuesto()+1));
         } 
         
-        nombrePuesto.setText("  Nombre del Nuevo Puesto");
         nombrePuesto.setBorder(defaultBorder);
-        formatoInvalido.setVisible(false);
+        formatoInvalido.setText(" ");
     }
 
     /**
@@ -137,7 +136,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         nombrePuesto.setDocument(new JTextFieldLimit(25));
         nombrePuesto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombrePuesto.setForeground(new java.awt.Color(255, 255, 255));
-        nombrePuesto.setText("  Nombre del nuevo puesto.");
+        nombrePuesto.setText("Nombre del nuevo puesto");
         nombrePuesto.setToolTipText("Ingrese un puesto válido.");
         nombrePuesto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         nombrePuesto.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -176,11 +175,11 @@ public class nuevoPuesto extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(idPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(formatoInvalido)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                 .addComponent(nombrePuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(formatoInvalido)
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -197,7 +196,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         jPanel9.setBackground(new java.awt.Color(20, 17, 17));
@@ -253,9 +252,9 @@ public class nuevoPuesto extends javax.swing.JFrame {
                     .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tituloPantalla, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 53, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41))
         );
@@ -312,7 +311,13 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }//GEN-LAST:event_idPuestoActionPerformed
 //a;adir validaciones botonaceptar
     private void nombrePuestoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusLost
-        validacionCampos();     
+       if(nombrePuesto.getText().equals(""))
+       {
+           nombrePuesto.setText("Nombre del nuevo puesto");
+       }else
+       {
+           validacionCampos();  
+       }   
     }//GEN-LAST:event_nombrePuestoFocusLost
 
     private void nombrePuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombrePuestoActionPerformed
@@ -325,7 +330,10 @@ public class nuevoPuesto extends javax.swing.JFrame {
 
     private void nombrePuestoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombrePuestoFocusGained
         // TODO add your handling code here:
-        nombrePuesto.selectAll();
+        if(nombrePuesto.getText().equals("Nombre del nuevo puesto"))
+        {
+            nombrePuesto.setText("");
+        }
     }//GEN-LAST:event_nombrePuestoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
