@@ -446,7 +446,7 @@ public class menuGerente extends javax.swing.JFrame {
         // TODO add your handling code here:
     java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoPuesto().setVisible(true);
+                new nuevoTipoPuesto().setVisible(true);
             }
         });
     this.setVisible(false);
@@ -468,7 +468,7 @@ public class menuGerente extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoTipoDescuento().setVisible(true);
+                new listaDescuentos().setVisible(true);
             }
         });
         this.setVisible(false);

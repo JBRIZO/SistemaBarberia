@@ -633,19 +633,36 @@ public class agregarEmpleado extends javax.swing.JFrame {
         primerPuesto.setActivo(true);
        
       
-        //validar edad de empleado, debes er mayor a 18 años para ser admitido
+        //validar edad de empleado, debes ser mayor a 18 años para ser admitido
         LocalDate date = convertToLocalDateViaInstant(birthDate);
-//        LocalDate date2 = convertToLocalDateViaInstant(startDate);
         Period periodo = Period.between(date,LocalDate.now());
         if(periodo.getYears() < 18)
         {
            JOptionPane.showMessageDialog(null,"El empleado no puede ser menor a 18 años.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
            return;
         }
-//        if(date2.isBefore(LocalDate.now()))
-//        {
-//            JOptionPane.showMessageDialog(null,"E");
-//        }
+        
+        //validar pasaporte o identidad
+        if(nuevoEmpleado.getIDTipoDocumento() == 1)
+        {
+            if(!validar.validarPasaporte(nuevoEmpleado.getNumDoc()))
+            {
+                numDoc.setBorder(redBorder);
+                formatoInvalidoNumDoc.setText("Número inválido.");
+                return;
+            }
+        }else
+        {
+            if(nuevoEmpleado.getIDTipoDocumento() == 2)
+            {
+                if(!validar.validacionIdentidad(nuevoEmpleado.getNumDoc()))
+                {
+                    numDoc.setBorder(redBorder);
+                    formatoInvalidoNumDoc.setText("Número inválido.");
+                    return; 
+                }
+            }
+        }
 
         if(validarNombre() && validarApellido() && validarFecha(fechaInicio,formatoInvalidoFechaIni) && 
            validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validarCamposNumero(telefonoEmpleado,formatoInvalidoTelefono) &&
@@ -810,12 +827,17 @@ public class agregarEmpleado extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbPuestosActionPerformed
 
-    private void cbGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbGeneroActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbGeneroActionPerformed
-
+  
     private void cbTipoDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoDocActionPerformed
         // TODO add your handling code here:
+        if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 2)
+            {
+                numDoc.setDocument(new JTextFieldLimit(13));
+            }else
+            {
+                numDoc.setDocument(new JTextFieldLimit(12));
+            }
+        
     }//GEN-LAST:event_cbTipoDocActionPerformed
 
     private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
@@ -851,13 +873,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
         if(numDoc.getText().equals("Número"))
         {
             numDoc.setText("");
-            if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 2)
-            {
-                numDoc.setDocument(new JTextFieldLimit(13));
-            }else
-            {
-                numDoc.setDocument(new JTextFieldLimit(12));
-            }
         }
     }//GEN-LAST:event_numDocFocusGained
 
@@ -882,6 +897,10 @@ public class agregarEmpleado extends javax.swing.JFrame {
             numDoc.setText("Número");
         }
     }//GEN-LAST:event_numDocFocusLost
+
+    private void cbGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbGeneroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbGeneroActionPerformed
 
     /**
      * @param args the command line arguments

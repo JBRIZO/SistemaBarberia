@@ -189,7 +189,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         cbEmpleados.setPreferredSize(new java.awt.Dimension(270, 42));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Salario Num: ");
+        jLabel3.setText("Empleado:");
 
         formatoInvalido3.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido3.setText("Formato no valido.");

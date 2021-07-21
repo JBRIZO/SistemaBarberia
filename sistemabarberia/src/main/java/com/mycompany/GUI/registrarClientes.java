@@ -492,6 +492,28 @@ public class registrarClientes extends javax.swing.JFrame {
            return;
         }
         
+        //validar pasaporte o identidad
+        if(registrarClientes.getIDTipoDocumento() == 1)
+        {
+            if(!validar.validarPasaporte(registrarClientes.getNumDocumento()))
+            {
+                numDoc.setBorder(redBorder);
+                formatoInvalidoIdDocumento.setText("Número inválido.");
+                return;
+            }
+        }else
+        {
+            if(registrarClientes.getIDTipoDocumento() == 2)
+            {
+                if(!validar.validacionIdentidad(registrarClientes.getNumDocumento()))
+                {
+                    numDoc.setBorder(redBorder);
+                    formatoInvalidoIdDocumento.setText("Número inválido.");
+                    return; 
+                }
+            }
+        }
+        
         if(validarNombre() && validarApellido() &&  validarCamposNumero(telefonoCliente,formatoInvalidoTelefono) &&
            validarFecha(fechaNacimiento,formatoInvalidoFechaNac))
         {   

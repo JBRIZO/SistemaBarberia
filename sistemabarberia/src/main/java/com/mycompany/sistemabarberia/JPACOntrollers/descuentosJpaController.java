@@ -33,6 +33,10 @@ public class descuentosJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
+    public void close()
+    {
+        this.emf.close();
+    }
     public void create(descuentos descuentos) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {

@@ -33,19 +33,19 @@ public class puestohistoricoempleadoJpaController implements Serializable {
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
+    
+    public void close()
+    {
+        this.emf.close();
+    }
 
-    public void create(puestohistoricoempleado puestohistoricoempleado) throws PreexistingEntityException, Exception {
+    public void create(puestohistoricoempleado puestohistoricoempleado) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             em.persist(puestohistoricoempleado);
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findpuestohistoricoempleado(puestohistoricoempleado.getNumpuesto()) != null) {
-                throw new PreexistingEntityException("puestohistoricoempleado " + puestohistoricoempleado + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();

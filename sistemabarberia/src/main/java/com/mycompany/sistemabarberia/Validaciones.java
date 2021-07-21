@@ -290,9 +290,10 @@ public class Validaciones {
         }        
     }
     
-    /*public boolean validarPalabra(String cadena)
+    //validar pasaporte
+    public boolean validarPasaporte(String cadena)
     {
-        String patron = "^[23789]\\d{7}$";
+        String patron = "^(?!^0+$)[a-zA-Z0-9]{3,20}$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
@@ -300,8 +301,8 @@ public class Validaciones {
         }else
         {
             return false;
-        }  
-    }*/
+        }             
+    }
     
     
 }
