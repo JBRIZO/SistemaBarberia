@@ -229,11 +229,14 @@ public class agregarEmpleado extends javax.swing.JFrame {
         numDoc.setDocument(new JTextFieldLimit(20));
         numDoc.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         numDoc.setForeground(new java.awt.Color(255, 255, 255));
-        numDoc.setText("Numero");
+        numDoc.setText("Número");
         numDoc.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         numDoc.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 numDocFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                numDocFocusLost(evt);
             }
         });
         numDoc.addActionListener(new java.awt.event.ActionListener() {
@@ -578,7 +581,17 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
-        java.util.Date startDate;
+        
+        //validar que todos los campos esten llenos
+        if(nombreEmpleado.getText().equals("Nombre") || apellidosEmpleado.getText().equals("Apellidos") || telefonoEmpleado.getText().equals("Teléfono") ||
+                fechaInicio.getText().equals("Fecha de Inicio") || fechaNacimiento.getText().equals("Fecha de Nacimiento") || numDoc.getText().equals("Número") ||
+                salarioInicial.getText().equals("") || direccion.getText().equals("Dirección de Domicilio"))
+        {
+            JOptionPane.showMessageDialog(null,"Debes rellenar todos los campos","Datos Faltantes",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        java.util.Date startDate = new Date(0000000000);
         java.util.Date birthDate = new Date(0000000000);
         String fechaIni = "00-00-0000";
         String fechaNac = "00-00-0000";
@@ -622,12 +635,17 @@ public class agregarEmpleado extends javax.swing.JFrame {
       
         //validar edad de empleado, debes er mayor a 18 años para ser admitido
         LocalDate date = convertToLocalDateViaInstant(birthDate);
+//        LocalDate date2 = convertToLocalDateViaInstant(startDate);
         Period periodo = Period.between(date,LocalDate.now());
         if(periodo.getYears() < 18)
         {
            JOptionPane.showMessageDialog(null,"El empleado no puede ser menor a 18 años.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
            return;
         }
+//        if(date2.isBefore(LocalDate.now()))
+//        {
+//            JOptionPane.showMessageDialog(null,"E");
+//        }
 
         if(validarNombre() && validarApellido() && validarFecha(fechaInicio,formatoInvalidoFechaIni) && 
            validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validarCamposNumero(telefonoEmpleado,formatoInvalidoTelefono) &&
@@ -830,7 +848,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void numDocFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numDocFocusGained
         // TODO add your handling code here:
-        if(numDoc.getText().equals("Numero"))
+        if(numDoc.getText().equals("Número"))
         {
             numDoc.setText("");
             if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 2)
@@ -855,6 +873,15 @@ public class agregarEmpleado extends javax.swing.JFrame {
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_botonCancelarActionPerformed
+
+    private void numDocFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numDocFocusLost
+        // TODO add your handling code here:
+
+        if(numDoc.getText().equals(""))
+        {
+            numDoc.setText("Número");
+        }
+    }//GEN-LAST:event_numDocFocusLost
 
     /**
      * @param args the command line arguments

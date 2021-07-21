@@ -32,6 +32,10 @@ public class clientesJpaController implements Serializable {
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
+    public void close()
+    {
+        this.emf.close();
+    }
 
     public void create(clientes clientes) throws PreexistingEntityException, Exception {
         EntityManager em = null;

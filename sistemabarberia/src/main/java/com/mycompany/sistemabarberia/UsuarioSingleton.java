@@ -37,7 +37,9 @@ public String getNombreUsuario() {
  return Usuario.getNomCuenta();
  }
  
-public void setUsuario(usuarios nombreUsuario) {
- this.Usuario = nombreUsuario;
+public void setUsuario(usuarios usuario) {
+ this.Usuario = usuario;
  }
+
+
 }

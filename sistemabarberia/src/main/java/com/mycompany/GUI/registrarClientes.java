@@ -17,6 +17,9 @@ import java.awt.Color;
 import java.awt.Image;
 import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -70,8 +73,6 @@ public class registrarClientes extends javax.swing.JFrame {
         formatoInvalidoTelefono.setText(" ");
         formatoInvalidoFechaNac.setText(" ");
         formatoInvalidoIdDocumento.setText(" ");
-        
-        
     }
 
     /**
@@ -92,7 +93,7 @@ public class registrarClientes extends javax.swing.JFrame {
         telefonoCliente = new javax.swing.JTextField();
         fechaNacimiento = new javax.swing.JTextField();
         apellidosCliente = new javax.swing.JTextField();
-        numeroidDocumento = new javax.swing.JTextField();
+        numDoc = new javax.swing.JTextField();
         servicioProducto = new javax.swing.JComboBox<>();
         tipoidDocumento = new javax.swing.JComboBox<>();
         formatoInvalidoNombre = new javax.swing.JLabel();
@@ -120,6 +121,11 @@ public class registrarClientes extends javax.swing.JFrame {
         Cancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         Cancelar.setText("Cancelar");
         Cancelar.setPreferredSize(new java.awt.Dimension(135, 31));
+        Cancelar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CancelarMouseClicked(evt);
+            }
+        });
         Cancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CancelarActionPerformed(evt);
@@ -223,21 +229,21 @@ public class registrarClientes extends javax.swing.JFrame {
             }
         });
 
-        numeroidDocumento.setBackground(new java.awt.Color(30, 33, 34));
-        numeroidDocumento.setForeground(new java.awt.Color(255, 255, 255));
-        numeroidDocumento.setText("Numero de Documento");
-        numeroidDocumento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        numeroidDocumento.addFocusListener(new java.awt.event.FocusAdapter() {
+        numDoc.setBackground(new java.awt.Color(30, 33, 34));
+        numDoc.setForeground(new java.awt.Color(255, 255, 255));
+        numDoc.setText("Número de Documento");
+        numDoc.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        numDoc.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                numeroidDocumentoFocusGained(evt);
+                numDocFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                numeroidDocumentoFocusLost(evt);
+                numDocFocusLost(evt);
             }
         });
-        numeroidDocumento.addActionListener(new java.awt.event.ActionListener() {
+        numDoc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                numeroidDocumentoActionPerformed(evt);
+                numDocActionPerformed(evt);
             }
         });
 
@@ -294,7 +300,7 @@ public class registrarClientes extends javax.swing.JFrame {
                                     .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addComponent(tipoidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(numeroidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(47, 47, 47))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -315,7 +321,7 @@ public class registrarClientes extends javax.swing.JFrame {
                 .addGap(33, 33, 33)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(telefonoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(numeroidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tipoidDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -449,7 +455,14 @@ public class registrarClientes extends javax.swing.JFrame {
     private void crearPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearPerfilActionPerformed
         // TODO add your handling code here:
         
-        java.util.Date birthDate;
+        if(nombreCliente.getText().equals("Nombres") || apellidosCliente.getText().equals("Apellidos") || telefonoCliente.getText().equals("Teléfono") ||
+                fechaNacimiento.getText().equals("Fecha de Nacimiento") || numDoc.getText().equals("Número de Documento"))
+        {
+            JOptionPane.showMessageDialog(null,"Debes rellenar todos los campos","Datos Faltantes",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        java.util.Date birthDate = new Date(0000000000);
         String fechaNac = "00-00-0000";
         try {
         birthDate = sdf.parse(convertirFecha(fechaNacimiento.getText()));
@@ -461,13 +474,24 @@ public class registrarClientes extends javax.swing.JFrame {
         registrarClientes.setNomCliente(nombreCliente.getText());
         registrarClientes.setApeCliente(apellidosCliente.getText());
         registrarClientes.setNumTelefono(telefonoCliente.getText());
-        registrarClientes.setNumDocumento(Integer.parseInt(numeroidDocumento.getText()));
-        registrarClientes.setIDTipoDocumento(Integer.parseInt(tipoidDocumento.getSelectedItem().toString()));
-        registrarClientes.setIDServicio(Integer.parseInt(servicioProducto.getSelectedItem().toString()));
+        registrarClientes.setNumDocumento(numDoc.getText());
+        registrarClientes.setIDTipoDocumento(Character.getNumericValue(tipoidDocumento.getSelectedItem().toString().charAt(0)));
+        registrarClientes.setIDServicio(Character.getNumericValue(servicioProducto.getSelectedItem().toString().charAt(0)));
         registrarClientes.setFechaNacimiento(Date.valueOf(fechaNac));
         registrarClientes.setActivo(true);
         
 
+        
+        LocalDate date = convertToLocalDateViaInstant(birthDate);
+        Period periodo = Period.between(date,LocalDate.now());
+        
+        
+        if(periodo.getYears() < 18)
+        {
+           JOptionPane.showMessageDialog(null,"El cliente debe tener 18 años para registrarse.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
+           return;
+        }
+        
         if(validarNombre() && validarApellido() &&  validarCamposNumero(telefonoCliente,formatoInvalidoTelefono) &&
            validarFecha(fechaNacimiento,formatoInvalidoFechaNac))
         {   
@@ -481,9 +505,9 @@ public class registrarClientes extends javax.swing.JFrame {
         }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.");}
     }//GEN-LAST:event_crearPerfilActionPerformed
 
-    private void numeroidDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numeroidDocumentoActionPerformed
+    private void numDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numDocActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_numeroidDocumentoActionPerformed
+    }//GEN-LAST:event_numDocActionPerformed
 
     private void nombreClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreClienteFocusLost
         if(nombreCliente.getText().equals(""))
@@ -529,7 +553,7 @@ public class registrarClientes extends javax.swing.JFrame {
             telefonoCliente.setText("Teléfono");
         }else
         {
-            validarCamposNumero();
+            validarCamposNumero(telefonoCliente,formatoInvalidoTelefono);
         }
     }//GEN-LAST:event_telefonoClienteFocusLost
 
@@ -537,6 +561,7 @@ public class registrarClientes extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(fechaNacimiento.getText().equals(""))
         {
+            fechaNacimiento.setDocument(new JTextFieldLimit(25));
             fechaNacimiento.setText("Fecha de Nacimiento");
         }else
         {
@@ -554,36 +579,37 @@ public class registrarClientes extends javax.swing.JFrame {
         
     }//GEN-LAST:event_fechaNacimientoFocusGained
 
-    private void numeroidDocumentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numeroidDocumentoFocusGained
+    private void numDocFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numDocFocusGained
         // TODO add your handling code here:
-        if(numeroidDocumento.getText().equals("Numero de Documento"))
+        if(numDoc.getText().equals("Número de Documento"))
         {
-            numeroidDocumento.setDocument(new JTextFieldLimit(13));
-            numeroidDocumento.setText("");
+            numDoc.setDocument(new JTextFieldLimit(13));
+            numDoc.setText("");
         }
-    }//GEN-LAST:event_numeroidDocumentoFocusGained
+    }//GEN-LAST:event_numDocFocusGained
 
-    private void numeroidDocumentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numeroidDocumentoFocusLost
+    private void numDocFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numDocFocusLost
         // TODO add your handling code here:
-        if(numeroidDocumento.getText().equals(""))
+        if(numDoc.getText().equals(""))
         {
-            numeroidDocumento.setText("Numero de Documento");
+            numDoc.setDocument(new JTextFieldLimit(20));
+            numDoc.setText("Número de Documento");
         }else
         {
             
         }
         
-    }//GEN-LAST:event_numeroidDocumentoFocusLost
+    }//GEN-LAST:event_numDocFocusLost
 
     private void telefonoClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_telefonoClienteMouseClicked
         // TODO add your handling code here:
-        telefonoCliente.setDocument(new JTextFieldLimit(8));
     }//GEN-LAST:event_telefonoClienteMouseClicked
 
     private void telefonoClienteFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_telefonoClienteFocusGained
         // TODO add your handling code here:
         if(telefonoCliente.getText().equals("Teléfono"))
         {
+            telefonoCliente.setDocument(new JTextFieldLimit(8));
             telefonoCliente.setText("");
         }
         
@@ -592,6 +618,18 @@ public class registrarClientes extends javax.swing.JFrame {
     private void CancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_CancelarActionPerformed
+
+    private void CancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelarMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+        });
+        this.dispose();
+        clientesDAO.close();
+        serviciosDAO.close();
+    }//GEN-LAST:event_CancelarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -641,21 +679,6 @@ public class registrarClientes extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
-    }
-    
-    private void validarCamposNumero()
-    {
-        if(!validar.validacionFecha(telefonoCliente.getText()))
-            {
-            telefonoCliente.setBorder(redBorder);
-            formatoInvalidoTelefono.setVisible(true);
-            formatoInvalidoTelefono.setText("El numero de tel debe contener 8 digitos");
-            return;
-            }else
-        {
-            telefonoCliente.setBorder(greenBorder);
-            formatoInvalidoTelefono.setText("");
-        }
     }
     
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
@@ -769,6 +792,12 @@ public class registrarClientes extends javax.swing.JFrame {
         }
     }
    
+   public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+    }
+   
      private String convertirFecha(String Fecha)
     {
         String[] palabras  = Fecha.split("/");
@@ -794,7 +823,7 @@ public class registrarClientes extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreCliente;
-    private javax.swing.JTextField numeroidDocumento;
+    private javax.swing.JTextField numDoc;
     private javax.swing.JComboBox<String> servicioProducto;
     private javax.swing.JTextField telefonoCliente;
     private javax.swing.JComboBox<String> tipoidDocumento;

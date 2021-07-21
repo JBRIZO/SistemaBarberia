@@ -69,7 +69,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         nombreUsuario.setBackground(new java.awt.Color(30, 33, 34));
         nombreUsuario.setDocument(new JTextFieldLimit(17));
         nombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
-        nombreUsuario.setText("   Ingresar Usuario");
+        nombreUsuario.setText("Nombre de Usuario");
         nombreUsuario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         nombreUsuario.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -200,6 +200,7 @@ public class PantallaLogin extends javax.swing.JFrame {
                     usuarioActual.setContrasena(usuarioActual.getContrasena());
                     usuarioActual.setActivo(true);
                     UsuarioSingleton usuario= UsuarioSingleton.getUsuario(usuarioActual);
+                    usuario.setUsuario(usuarioActual);
                     try{usuariosDAO.edit(usuarioActual);
                     }catch(Exception ex)
                     {}
@@ -235,7 +236,10 @@ public class PantallaLogin extends javax.swing.JFrame {
 
     private void nombreUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusGained
         // TODO add your handling code here:
-        nombreUsuario.setText("");
+        if(nombreUsuario.getText().equals("Nombre de Usuario"))
+        {
+            nombreUsuario.setText("");
+        }
     }//GEN-LAST:event_nombreUsuarioFocusGained
 
     private void nombreUsuarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusLost

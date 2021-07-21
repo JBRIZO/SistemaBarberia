@@ -53,7 +53,7 @@ public class servicios implements Serializable {
     @Override
     public String toString()
     {
-        return Integer.toString(idservicio);
+        return idservicio + ". " + NomServicio;
     }
     
 }
