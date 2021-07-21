@@ -33,18 +33,13 @@ public class descuentosJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(descuentos descuentos) throws PreexistingEntityException, Exception {
+    public void create(descuentos descuentos) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             em.persist(descuentos);
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (finddescuentos(descuentos.getIddescuento()) != null) {
-                throw new PreexistingEntityException("descuentos " + descuentos + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();

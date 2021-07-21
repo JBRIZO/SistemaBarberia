@@ -265,6 +265,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         cbGenero.setBackground(new java.awt.Color(30, 33, 34));
         cbGenero.setForeground(new java.awt.Color(255, 255, 255));
         cbGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "M", "F" }));
+        cbGenero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbGeneroActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -584,6 +589,10 @@ public class agregarEmpleado extends javax.swing.JFrame {
         // TODO add your handling code here:
         apellidosEmpleado.selectAll();
     }//GEN-LAST:event_apellidosEmpleadoFocusGained
+
+    private void cbGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbGeneroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbGeneroActionPerformed
 
     /**
      * @param args the command line arguments
