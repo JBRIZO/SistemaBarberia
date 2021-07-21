@@ -5,7 +5,12 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
+import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -15,8 +20,9 @@ import javax.swing.JLabel;
  * @author Jonathan Laux
  */
 public class menuGerente extends javax.swing.JFrame {
-    
-
+    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
     private ImageIcon imagen;
     private Icon icono;
 
@@ -25,7 +31,21 @@ public class menuGerente extends javax.swing.JFrame {
      */
     public menuGerente() {
         initComponents();
+        List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        for(int i =0 ; i<empleadosBD.size();i++)
+        {
+            if(singleton.getCuenta().getIDEmpleado() == empleadosBD.get(i).getIdempleado())
+            {
+                if(empleadosBD.get(i).getGenEmpleado() == 'M')
+                {
+                    bienvenido.setText("Bienvenido, " + empleadosBD.get(i).getNomEmpleado() + " " + empleadosBD.get(i).getApeEmpleado());
+                }else
+                {
+                    bienvenido.setText("Bienvenida, " + empleadosBD.get(i).getNomEmpleado() + " " + empleadosBD.get(i).getApeEmpleado());
+                }
+            }
+        }        
     }
     
     public void Reiniciar()
@@ -56,6 +76,7 @@ public class menuGerente extends javax.swing.JFrame {
         botonBonos = new javax.swing.JButton();
         botonDescuentos = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
+        bienvenido = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -274,14 +295,23 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
 
+        bienvenido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        bienvenido.setForeground(new java.awt.Color(255, 255, 255));
+        bienvenido.setText("Bienvenido, ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(89, 89, 89)
-                .addComponent(tituloPantalla))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(89, 89, 89)
+                        .addComponent(tituloPantalla))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(112, 112, 112)
+                        .addComponent(bienvenido, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -296,7 +326,9 @@ public class menuGerente extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
+                        .addContainerGap()
+                        .addComponent(bienvenido, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45)
                         .addComponent(tituloPantalla))
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -508,6 +540,7 @@ public class menuGerente extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bienvenido;
     private javax.swing.JButton botonAtributosFactura;
     private javax.swing.JButton botonBonos;
     private javax.swing.JButton botonDeducciones;

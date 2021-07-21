@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
 import java.util.List;
@@ -193,6 +194,7 @@ public class PantallaLogin extends javax.swing.JFrame {
                     usuarioActual.setNomCuenta(usuarioActual.getNomCuenta());
                     usuarioActual.setContrasena(usuarioActual.getContrasena());
                     usuarioActual.setActivo(true);
+                    UsuarioSingleton usuario= UsuarioSingleton.getUsuario(usuarioActual);
                     try{usuariosDAO.edit(usuarioActual);
                     }catch(Exception ex)
                     {}
@@ -219,7 +221,7 @@ public class PantallaLogin extends javax.swing.JFrame {
                     {System.out.println(ex);}
                 }
         } 
-        contrasena = " "; 
+        contrasena = ""; 
     }//GEN-LAST:event_iniciarSesionMouseClicked
 
     private void iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarSesionActionPerformed

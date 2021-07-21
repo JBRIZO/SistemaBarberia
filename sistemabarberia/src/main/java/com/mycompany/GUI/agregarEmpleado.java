@@ -21,6 +21,9 @@ import java.awt.Color;
 import java.awt.Image;
 import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -47,6 +50,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+    private ZoneId zona;
     
     
     
@@ -165,6 +169,9 @@ public class agregarEmpleado extends javax.swing.JFrame {
         telefonoEmpleado.setText("Teléfono");
         telefonoEmpleado.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         telefonoEmpleado.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                telefonoEmpleadoFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 telefonoEmpleadoFocusLost(evt);
             }
@@ -183,7 +190,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         fechaNacimiento.setBackground(new java.awt.Color(30, 33, 34));
         fechaNacimiento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fechaNacimiento.setForeground(new java.awt.Color(255, 255, 255));
-        fechaNacimiento.setText("Fecha Nacimiento");
+        fechaNacimiento.setText("Fecha de Nacimiento");
         fechaNacimiento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         fechaNacimiento.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -280,7 +287,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         fechaInicio.setDocument(new JTextFieldLimit(25));
         fechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fechaInicio.setForeground(new java.awt.Color(255, 255, 255));
-        fechaInicio.setText("Fecha Inicio");
+        fechaInicio.setText("Fecha de Inicio");
         fechaInicio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         fechaInicio.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -574,7 +581,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         java.util.Date startDate;
-        java.util.Date birthDate;
+        java.util.Date birthDate = new Date(0000000000);
         String fechaIni = "00-00-0000";
         String fechaNac = "00-00-0000";
         try {
@@ -585,6 +592,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
     } catch (ParseException ex) {
        ex.printStackTrace();
     }
+        
         //nuevo empleado
         empleado nuevoEmpleado = new empleado();
         nuevoEmpleado.setNomEmpleado(nombreEmpleado.getText());
@@ -613,8 +621,16 @@ public class agregarEmpleado extends javax.swing.JFrame {
         primerPuesto.setFechaFinal(Date.valueOf(fechaIni));
         primerPuesto.setActivo(true);
        
-        
+      
         validarCamposNumero();
+        //validar edad de empleado, debes er mayor a 18 años para ser admitido
+        LocalDate date = convertToLocalDateViaInstant(birthDate);
+        Period periodo = Period.between(date,LocalDate.now());
+        if(periodo.getYears() < 18)
+        {
+           JOptionPane.showMessageDialog(null,"El empleado no puede ser menor a 18 años.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
+           return;
+        }
 
         if(validarNombre() && validarApellido() && validarFecha(fechaInicio,formatoInvalidoFechaIni) && 
            validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validar.validarNumCelular(telefonoEmpleado.getText()) &&
@@ -632,7 +648,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el empleado, excepción: " + ex.getMessage());
         }
-        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.");}
+        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.", "Datos inválidos",JOptionPane.ERROR_MESSAGE);}
         
     }//GEN-LAST:event_botonAgregarMouseClicked
 
@@ -656,7 +672,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(apellidosEmpleado.getText().equals(""))
         {
-            apellidosEmpleado.setText("Apellido");
+            apellidosEmpleado.setText("Apellidos");
         }else
         {
            validarApellido(); 
@@ -665,7 +681,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void nombreEmpleadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreEmpleadoFocusGained
         // TODO add your handling code here:
-        nombreEmpleado.setText("");
+        if(nombreEmpleado.getText().equals("Nombre"))
+        {
+            nombreEmpleado.setText("");
+        }
+        
     }//GEN-LAST:event_nombreEmpleadoFocusGained
 
     private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
@@ -695,12 +715,18 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void fechaNacimientoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaNacimientoFocusGained
         // TODO add your handling code here:
-        fechaNacimiento.setDocument(new JTextFieldLimit(10));
+         if(fechaNacimiento.getText().equals("Fecha de Nacimiento"))
+        {
+            fechaNacimiento.setDocument(new JTextFieldLimit(10));        
+        }
     }//GEN-LAST:event_fechaNacimientoFocusGained
 
     private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
         // TODO add your handling code here:
-        fechaInicio.setDocument(new JTextFieldLimit(10));
+        if(fechaInicio.getText().equals("Fecha de Inicio"))
+        {
+            fechaInicio.setDocument(new JTextFieldLimit(10));
+        }
     }//GEN-LAST:event_fechaInicioFocusGained
 
     private void fechaNacimientoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaNacimientoFocusLost
@@ -712,6 +738,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         }else
         {
            validarFecha(fechaNacimiento,formatoInvalidoFechaNac);  
+           
         }
        
     }//GEN-LAST:event_fechaNacimientoFocusLost
@@ -722,7 +749,10 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void apellidosEmpleadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_apellidosEmpleadoFocusGained
         // TODO add your handling code here:
-        apellidosEmpleado.setText("");
+        if(apellidosEmpleado.getText().equals("Apellidos"))
+        {
+            apellidosEmpleado.setText("");
+        }
     }//GEN-LAST:event_apellidosEmpleadoFocusGained
 
     private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
@@ -797,12 +827,23 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
     private void numDocFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numDocFocusGained
         // TODO add your handling code here:
-        numDoc.setText("");
+        if(numDoc.getText().equals("Numero"))
+        {
+            numDoc.setText("");
         if(Character.getNumericValue(cbPuestos.getSelectedItem().toString().charAt(0)) == 1)
         {
             numDoc.setDocument(new JTextFieldLimit(13));
         }
+        }
     }//GEN-LAST:event_numDocFocusGained
+
+    private void telefonoEmpleadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_telefonoEmpleadoFocusGained
+        // TODO add your handling code here:
+        if(telefonoEmpleado.getText().equals("Teléfono"))
+        {
+            telefonoEmpleado.setText("");
+        }
+    }//GEN-LAST:event_telefonoEmpleadoFocusGained
 
     /**
      * @param args the command line arguments
@@ -862,11 +903,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
     
     private boolean validarNombre()
     {
-        if(!validar.validacionCantidadMinima(nombreEmpleado.getText(),8))
+        if(!validar.validacionCantidadMinima(nombreEmpleado.getText(),6))
             {
             nombreEmpleado.setBorder(redBorder);
             formatoInvalidoNombre.setVisible(true);
-            formatoInvalidoNombre.setText("El nombre debe ser de minimo 8 letras.");
+            formatoInvalidoNombre.setText("El nombre debe ser de minimo 6 letras.");
             return false;
             }
         if (!validar.validacionNombres(nombreEmpleado.getText()))
@@ -894,11 +935,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
     
     private boolean validarApellido()
     {
-        if(!validar.validacionCantidadMinima(apellidosEmpleado.getText(),8))
+        if(!validar.validacionCantidadMinima(apellidosEmpleado.getText(),6))
             {
             apellidosEmpleado.setBorder(redBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText("El apellido debe ser de minimo 8 letras.");
+            formatoInvalidoApellido.setText("El apellido debe ser de minimo 6 letras.");
             return false;
             }
         if (!validar.validacionNombres(apellidosEmpleado.getText()))
@@ -937,12 +978,12 @@ public class agregarEmpleado extends javax.swing.JFrame {
             {
             fecha.setBorder(redBorder);
             label.setVisible(true);
-            label.setText("La fecha introducida es invalida.");
+            label.setText("La fecha introducida es inválida.");
             return false;
             }else
         {
             fecha.setBorder(greenBorder);
-            label.setText("");
+            label.setText(" ");
             return true;
         }
         
@@ -995,10 +1036,15 @@ public class agregarEmpleado extends javax.swing.JFrame {
             }else
         {
             telefonoEmpleado.setBorder(greenBorder);
-            formatoInvalidoTelefono.setText("");
+            formatoInvalidoTelefono.setText(" ");
         }
     }
        
+    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidosEmpleado;
