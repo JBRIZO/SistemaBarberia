@@ -217,12 +217,19 @@ public class PantallaLogin extends javax.swing.JFrame {
                 }else
                 {
                     JOptionPane.showMessageDialog(null,"Contraseña o usuario incorrectos.", "Credenciales incorrectas", JOptionPane.ERROR_MESSAGE);  
+                    password.selectAll();
                     usuarioActual.setIdusuario(usuarioActual.getIdusuario());
                     usuarioActual.setIDEmpleado(usuarioActual.getIDEmpleado());
                     usuarioActual.setIntentos(usuarioActual.getIntentos()+1);
                     usuarioActual.setNomCuenta(usuarioActual.getNomCuenta());
                     usuarioActual.setContrasena(usuarioActual.getContrasena());
-                    usuarioActual.setActivo(true);
+                    if(usuarioActual.getIntentos() == 3)
+                    {
+                        usuarioActual.setActivo(false);
+                    }else
+                    {
+                      usuarioActual.setActivo(true);  
+                    }
                     try{
                         usuariosDAO.edit(usuarioActual);
                         return;

@@ -316,13 +316,21 @@ public class listaSalarios extends javax.swing.JFrame {
             }
         }
         //Llenar la tabla de datos
+        String fechaFinal = "";
         listaSalarios.setModel(modelo);
             for(salariohistoricoempleados salarios : salariosEmpleadoSelec){
+                if(salarios.getFechaFinal() == null)
+                    {
+                       fechaFinal = "        -  "; 
+                    }else
+                    {
+                        fechaFinal = convertirDates(salarios.getFechaFinal().toString());
+                    }
                     modelo.addRow(
                     new Object[]{
                         salarios.getIdsalario(),
                         convertirDates(salarios.getFechaInicial().toString()),
-                        convertirDates(salarios.getFechaFinal().toString()),
+                        fechaFinal,
                         salarios.getSalario()
                     }
                 );

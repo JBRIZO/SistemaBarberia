@@ -37,7 +37,7 @@ public class empleado implements Serializable {
     private String NumCelular;
     @Column
     private Date FechaInicio;
-    @Column
+    @Column(nullable=true)
     private Date FechaFinal;
     @Column
     private boolean Activo;

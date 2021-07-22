@@ -304,5 +304,17 @@ public class Validaciones {
         }             
     }
     
+//    public boolean validarABCD(String cadena)
+//    {
+//        String patron = "^abcd\\w+$";
+//        Pattern patt = Pattern.compile(patron);
+//        Matcher comparador = patt.matcher(cadena);
+//        if(comparador.matches()){
+//            return true;
+//        }else
+//        {
+//            return false;
+//        }        
+//    }
     
 }

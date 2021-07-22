@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 
@@ -23,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 public class pantallaEmpleados extends javax.swing.JFrame {
     
 
+    private empleado empleadoSeleccionado;
     private empleadoJpaController empleadoDAO =  new empleadoJpaController();
     private ImageIcon imagen;
     private Icon icono;
@@ -32,6 +32,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
      */
     public pantallaEmpleados() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
         cargarTabla();
@@ -352,14 +353,38 @@ public class pantallaEmpleados extends javax.swing.JFrame {
 
     private void nuevoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoEmpleadoMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
+        
+        if(nuevoEmpleado.getText().equals("Modificar Empleado"))
+        {
+            //target empleado seleccionado
+        for(int i = 0 ; i < empleadosBD.size() ; i++ )
+        {
+            if(Integer.parseInt(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),0).toString()) == empleadosBD.get(i).getIdempleado())
+            {
+              empleadoSeleccionado = empleadosBD.get(i); 
+            }
+        }
+            java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new agregarEmpleado(empleadoSeleccionado).setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+//        empleadoDAO.close();
+        }else
+        {
+           java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new agregarEmpleado().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        empleadoDAO.close();
+        empleadoDAO.close(); 
+        }
+        
     }//GEN-LAST:event_nuevoEmpleadoMouseClicked
 
     private void regresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_regresarMouseClicked
@@ -399,9 +424,11 @@ public class pantallaEmpleados extends javax.swing.JFrame {
     }//GEN-LAST:event_nuevoSalarioMouseClicked
 
     private void tablaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMouseClicked
-        // TODO add your handling code here:
+        
+        
         if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
         {
+            nuevoEmpleado.setText("Modificar Empleado");
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
         }else
         {

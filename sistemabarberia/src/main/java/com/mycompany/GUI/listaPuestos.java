@@ -31,7 +31,7 @@ public class listaPuestos extends javax.swing.JFrame {
     private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
     private ImageIcon imagen;
     private Icon icono;
-    private puestohistoricoempleadoJpaController puestoHistorico = new puestohistoricoempleadoJpaController();
+    private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController();
     
 
     /**
@@ -196,7 +196,7 @@ public class listaPuestos extends javax.swing.JFrame {
         });
         this.dispose();
         empleadoDAO.close();
-        puestoHistorico.close();
+        puestoHistoricoDAO.close();
     }//GEN-LAST:event_botonNuevoMouseClicked
 
     private void botonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoActionPerformed
@@ -212,7 +212,7 @@ public class listaPuestos extends javax.swing.JFrame {
         });
         this.dispose();
         empleadoDAO.close();
-        puestoHistorico.close();
+        puestoHistoricoDAO.close();
     }//GEN-LAST:event_botonCancelarMouseClicked
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
@@ -221,7 +221,7 @@ public class listaPuestos extends javax.swing.JFrame {
 
     private void cbEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmpleadosActionPerformed
        
-        List<puestohistoricoempleado> puestosHistoricosBD = puestoHistorico.findpuestohistoricoempleadoEntities();
+        List<puestohistoricoempleado> puestosHistoricosBD = puestoHistoricoDAO.findpuestohistoricoempleadoEntities();
         List<puesto> tiposPuestoBD = puestoDAO.findpuestoEntities();
         
         //lista en blanco
@@ -240,16 +240,29 @@ public class listaPuestos extends javax.swing.JFrame {
         }
         //Llenar la tabla de datos
         String Puesto = "";
+        String fechaFinal = "";
         tablapuesto.setModel(modelo);
             for(puestohistoricoempleado puestoHistorico : puestosSelec){
-                for(int i = 0; i < puestosSelec.size(); i++)
-                {
-                    Puesto = tiposPuestoBD.get(puestosSelec.get(i).getIDPuesto()-1).getNomPuesto();
-                }
+                //Mostrar el nombre del puesto en vez
+                //del ID.
+                    for(int j = 0; j < tiposPuestoBD.size(); j++)
+                    {
+                        if(tiposPuestoBD.get(j).getIdpuesto() == puestoHistorico.getIDPuesto())
+                        {
+                            Puesto = tiposPuestoBD.get(j).getNomPuesto();  
+                        }
+                    }
+                    if(puestoHistorico.getFechaFinal() == null)
+                    {
+                       fechaFinal = "        -"; 
+                    }else
+                    {
+                        fechaFinal = convertirDates(puestoHistorico.getFechaFinal().toString());
+                    }
                     modelo.addRow(
                     new Object[]{
                         convertirDates(puestoHistorico.getFechaInicial().toString()),
-                        convertirDates(puestoHistorico.getFechaFinal().toString()),
+                        fechaFinal,
                         Puesto
                     }
                 );

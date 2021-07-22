@@ -115,7 +115,7 @@ public class listaUsuarios extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID Usuario", "ID Empleado", "Usuario", "Contrseña", "Estado"
+                "ID Usuario", "ID Empleado", "Usuario", "Contraseña", "Activo"
             }
         ) {
             Class[] types = new Class [] {
@@ -350,6 +350,7 @@ public class listaUsuarios extends javax.swing.JFrame {
            {}  
         }else
          {
+            modificar.setIntentos(0);
             modificar.setActivo(true);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
             try

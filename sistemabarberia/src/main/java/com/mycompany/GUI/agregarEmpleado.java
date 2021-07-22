@@ -38,6 +38,8 @@ import javax.swing.border.Border;
  */
 public class agregarEmpleado extends javax.swing.JFrame {
 
+    private empleado modificarEmpleado;
+    
     private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController();
     private puestoJpaController puestoDAO = new puestoJpaController();
     private List<puesto> puestosBD = puestoDAO.findpuestoEntities();
@@ -60,9 +62,10 @@ public class agregarEmpleado extends javax.swing.JFrame {
      */
     public agregarEmpleado() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
         Reiniciar();
-        for(int i = 0; i < documentosBD.size(); i++)
+            for(int i = 0; i < documentosBD.size(); i++)
         {
             cbTipoDoc.addItem(documentosBD.get(i).toString());
         }
@@ -70,7 +73,24 @@ public class agregarEmpleado extends javax.swing.JFrame {
         {
             cbPuestos.addItem(puestosBD.get(i).toString());
         }
+          
     }
+    
+    //constructor para modificar un empleado 
+    public agregarEmpleado(empleado empleadoModificar)
+    {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
+        this.modificarEmpleado = empleadoModificar;
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
+        Reiniciar();
+        cargarDatosModificarEmpleado();
+        cbPuestos.setEnabled(false);
+        cbGenero.setEnabled(false);
+        salarioInicial.setEnabled(false);
+    }
+    
     
     public void Reiniciar()
     {
@@ -81,6 +101,22 @@ public class agregarEmpleado extends javax.swing.JFrame {
         formatoInvalidoFechaNac.setText(" ");
         formatoInvalidoNumDoc.setText(" ");
         formatoInvalidoSalario.setText(" ");
+        nombreLabel.setText(" ");
+        apellidosLabel.setText(" ");
+        telefonoLabel.setText(" ");
+        inicioLabel.setText(" ");
+    }
+    
+    public void cargarDatosModificarEmpleado()
+    {
+        tituloPantalla.setText("MODIFICAR EMPLEADO");
+        nombreEmpleado.setText(modificarEmpleado.getNomEmpleado());
+        apellidosEmpleado.setText(modificarEmpleado.getApeEmpleado());
+        telefonoEmpleado.setText(modificarEmpleado.getNumCelular());
+        fechaInicio.setText(convertirDates(modificarEmpleado.getFechaInicio().toString()));
+        fechaNacimiento.setText(convertirDates(modificarEmpleado.getFechaNacimiento().toString()));
+        numDoc.setText(modificarEmpleado.getNumDoc());
+        direccion.setText(modificarEmpleado.getDireccion());
     }
 
     /**
@@ -118,7 +154,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         formatoInvalidoFechaNac = new javax.swing.JLabel();
         formatoInvalidoNumDoc = new javax.swing.JLabel();
         formatoInvalidoSalario = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        nombreLabel = new javax.swing.JLabel();
+        apellidosLabel = new javax.swing.JLabel();
+        telefonoLabel = new javax.swing.JLabel();
+        inicioLabel = new javax.swing.JLabel();
+        tituloPantalla = new javax.swing.JLabel();
         botonAgregar = new javax.swing.JButton();
         botonCancelar = new javax.swing.JButton();
 
@@ -369,16 +409,28 @@ public class agregarEmpleado extends javax.swing.JFrame {
         formatoInvalidoSalario.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoSalario.setText("Formato Invalido.");
 
+        nombreLabel.setForeground(new java.awt.Color(255, 255, 255));
+        nombreLabel.setText("Nombres:");
+
+        apellidosLabel.setForeground(new java.awt.Color(255, 255, 255));
+        apellidosLabel.setText("Apellidos:");
+
+        telefonoLabel.setForeground(new java.awt.Color(255, 255, 255));
+        telefonoLabel.setText("Teléfono:");
+
+        inicioLabel.setForeground(new java.awt.Color(255, 255, 255));
+        inicioLabel.setText("Fecha de Inicio:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(32, 32, 32)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(formatoInvalidoSalario)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(620, 620, 620))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -388,7 +440,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
                                 .addGroup(jPanel3Layout.createSequentialGroup()
                                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(cbTipoDoc, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(cbTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(salarioInicial)
@@ -399,31 +451,37 @@ public class agregarEmpleado extends javax.swing.JFrame {
                                             .addGap(0, 0, Short.MAX_VALUE)))))
                             .addComponent(formatoInvalidoNombre)
                             .addComponent(formatoInvalidoTelefono)
-                            .addComponent(formatoInvalidoFechaNac))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                            .addComponent(formatoInvalidoFechaNac)
+                            .addComponent(nombreLabel)
+                            .addComponent(telefonoLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(apellidosEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(cbPuestos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(apellidosEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(apellidosLabel))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cbPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(formatoInvalidoApellido)
-                            .addComponent(formatoInvalidoFechaIni))
-                        .addGap(36, 36, 36))))
+                            .addComponent(formatoInvalidoFechaIni)
+                            .addComponent(inicioLabel)
+                            .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nombreLabel)
+                    .addComponent(apellidosLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(apellidosEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -431,11 +489,15 @@ public class agregarEmpleado extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(formatoInvalidoNombre)
                     .addComponent(formatoInvalidoApellido))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(telefonoLabel)
+                    .addComponent(inicioLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(telefonoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(formatoInvalidoTelefono)
                     .addComponent(formatoInvalidoFechaIni))
@@ -449,7 +511,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cbTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addComponent(formatoInvalidoNumDoc)
                 .addGap(18, 18, 18)
@@ -464,7 +526,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
                         .addComponent(jLabel2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalidoSalario)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addGap(39, 39, 39))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -479,14 +541,14 @@ public class agregarEmpleado extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(40, Short.MAX_VALUE)
+                .addContainerGap(26, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33))
         );
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("REGISTRO DE EMPLEADO");
+        tituloPantalla.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
+        tituloPantalla.setText("REGISTRO DE EMPLEADO");
 
         botonAgregar.setBackground(new java.awt.Color(189, 158, 76));
         botonAgregar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -520,7 +582,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(191, 191, 191)
-                .addComponent(jLabel4)
+                .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -538,14 +600,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(35, 35, 35)))
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tituloPantalla))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -610,7 +669,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         nuevoEmpleado.setApeEmpleado(apellidosEmpleado.getText());
         nuevoEmpleado.setNumCelular(telefonoEmpleado.getText());
         nuevoEmpleado.setFechaInicio(Date.valueOf(fechaIni));
-        nuevoEmpleado.setFechaFinal(Date.valueOf(fechaIni));
+        nuevoEmpleado.setFechaFinal(null);
         nuevoEmpleado.setFechaNacimiento(Date.valueOf(fechaNac));
         nuevoEmpleado.setIDTipoDocumento(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)));
         nuevoEmpleado.setGenEmpleado(cbGenero.getSelectedItem().toString().charAt(0));
@@ -621,7 +680,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         //primer salario
         salariohistoricoempleados primerSalario = new salariohistoricoempleados();
         primerSalario.setFechaInicial(Date.valueOf(fechaIni));
-        primerSalario.setFechaFinal(Date.valueOf(fechaIni));
+        primerSalario.setFechaFinal(null);
         primerSalario.setSalario(Double.parseDouble(salarioInicial.getText()));
         primerSalario.setActivo(true);
         
@@ -629,7 +688,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         puestohistoricoempleado primerPuesto = new puestohistoricoempleado();
         primerPuesto.setIDPuesto(Character.getNumericValue(cbPuestos.getSelectedItem().toString().charAt(0)));
         primerPuesto.setFechaInicial(Date.valueOf(fechaIni));
-        primerPuesto.setFechaFinal(Date.valueOf(fechaIni));
+        primerPuesto.setFechaFinal(null);
         primerPuesto.setActivo(true);
        
       
@@ -694,6 +753,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         if(nombreEmpleado.getText().equals(""))
         {
             nombreEmpleado.setText("Nombre");
+            nombreLabel.setText(" ");
         }else
         {
            validarNombre(); 
@@ -705,6 +765,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         if(apellidosEmpleado.getText().equals(""))
         {
             apellidosEmpleado.setText("Apellidos");
+            apellidosLabel.setText("");
         }else
         {
            validarApellido(); 
@@ -716,6 +777,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         if(nombreEmpleado.getText().equals("Nombre"))
         {
             nombreEmpleado.setText("");
+            nombreLabel.setText("Nombre:");
         }
         
     }//GEN-LAST:event_nombreEmpleadoFocusGained
@@ -726,6 +788,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         {
             fechaInicio.setDocument(new JTextFieldLimit(20));
             fechaInicio.setText("Fecha de Inicio");
+            inicioLabel.setText(" ");
         }else
         {
             validarFecha(fechaInicio,formatoInvalidoFechaIni);
@@ -738,6 +801,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         {
             telefonoEmpleado.setDocument(new JTextFieldLimit(10));
             telefonoEmpleado.setText("Teléfono");
+            telefonoLabel.setText("");
         }else
         {
             validarCamposNumero(telefonoEmpleado,formatoInvalidoTelefono);
@@ -758,6 +822,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         if(fechaInicio.getText().equals("Fecha de Inicio"))
         {
             fechaInicio.setDocument(new JTextFieldLimit(10));
+            inicioLabel.setText("Fecha de Inicio:");
         }
     }//GEN-LAST:event_fechaInicioFocusGained
 
@@ -784,6 +849,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         if(apellidosEmpleado.getText().equals("Apellidos"))
         {
             apellidosEmpleado.setText("");
+            apellidosLabel.setText("Apellidos: ");
         }
     }//GEN-LAST:event_apellidosEmpleadoFocusGained
 
@@ -882,6 +948,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         {
             telefonoEmpleado.setDocument(new JTextFieldLimit(8));
             telefonoEmpleado.setText("");
+            telefonoLabel.setText("Teléfono:");
         }
     }//GEN-LAST:event_telefonoEmpleadoFocusGained
 
@@ -960,11 +1027,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
     
     private boolean validarNombre()
     {
-        if(!validar.validacionCantidadMinima(nombreEmpleado.getText(),6))
+        if(!validar.validacionCantidadMinima(nombreEmpleado.getText(),4))
             {
             nombreEmpleado.setBorder(redBorder);
             formatoInvalidoNombre.setVisible(true);
-            formatoInvalidoNombre.setText("El nombre debe ser de minimo 6 letras.");
+            formatoInvalidoNombre.setText("El nombre debe ser de minimo 4 letras.");
             return false;
             }
         if (!validar.validacionNombres(nombreEmpleado.getText()))
@@ -992,11 +1059,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
     
     private boolean validarApellido()
     {
-        if(!validar.validacionCantidadMinima(apellidosEmpleado.getText(),6))
+        if(!validar.validacionCantidadMinima(apellidosEmpleado.getText(),2))
             {
             apellidosEmpleado.setBorder(redBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText("El apellido debe ser de minimo 6 letras.");
+            formatoInvalidoApellido.setText("El apellido debe ser de minimo 2 letras.");
             return false;
             }
         if (!validar.validacionNombres(apellidosEmpleado.getText()))
@@ -1106,9 +1173,19 @@ public class agregarEmpleado extends javax.swing.JFrame {
       .atZone(ZoneId.systemDefault())
       .toLocalDate();
     }
+    
+    private String convertirDates(String Fecha)
+    {
+        String[] palabras  = Fecha.split("-");
+       
+        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
+    }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidosEmpleado;
+    private javax.swing.JLabel apellidosLabel;
     private javax.swing.JButton botonAgregar;
     private javax.swing.JButton botonCancelar;
     private javax.swing.JComboBox<String> cbGenero;
@@ -1124,18 +1201,21 @@ public class agregarEmpleado extends javax.swing.JFrame {
     private javax.swing.JLabel formatoInvalidoNumDoc;
     private javax.swing.JLabel formatoInvalidoSalario;
     private javax.swing.JLabel formatoInvalidoTelefono;
+    private javax.swing.JLabel inicioLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombreEmpleado;
+    private javax.swing.JLabel nombreLabel;
     private javax.swing.JTextField numDoc;
     private javax.swing.JTextField salarioInicial;
     private javax.swing.JTextField telefonoEmpleado;
+    private javax.swing.JLabel telefonoLabel;
+    private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

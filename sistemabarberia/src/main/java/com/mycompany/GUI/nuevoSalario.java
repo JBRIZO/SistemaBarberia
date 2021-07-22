@@ -16,7 +16,6 @@ import java.awt.Image;
 import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -362,6 +361,8 @@ public class nuevoSalario extends javax.swing.JFrame {
            fechaInicio.setBorder(redBorder);
            return;
         }
+        date = date.minusDays(1);
+        salarioAnterior.setFechaFinal(Date.valueOf(date));
         
         if(validacionNumerica() && validarFecha(fechaInicio,formatoInvalido1) ){
             try {

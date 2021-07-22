@@ -335,7 +335,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         //anadir puesto
         puestohistoricoempleado nuevoPuesto = new puestohistoricoempleado();
         nuevoPuesto.setFechaInicial(Date.valueOf(fechaIni));
-        nuevoPuesto.setFechaFinal(Date.valueOf(fechaIni));
+        nuevoPuesto.setFechaFinal(null);
         nuevoPuesto.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
         nuevoPuesto.setIDPuesto(Character.getNumericValue(cbTipoPuesto.getSelectedItem().toString().charAt(0)));
         nuevoPuesto.setActivo(true);
@@ -343,7 +343,6 @@ public class nuevoPuesto extends javax.swing.JFrame {
         puestohistoricoempleado puestoAnterior = new puestohistoricoempleado();
         puestoAnterior.setNumpuesto(puestosAnteriores.get(puestosAnteriores.size()-1).getNumpuesto());
         puestoAnterior.setFechaInicial(puestosAnteriores.get(puestosAnteriores.size()-1).getFechaInicial());
-        puestoAnterior.setFechaFinal(Date.valueOf(fechaIni));
         puestoAnterior.setIDEmpleado(puestosAnteriores.get(puestosAnteriores.size()-1).getIDEmpleado());
         puestoAnterior.setIDPuesto(puestosAnteriores.get(puestosAnteriores.size()-1).getIDPuesto());
         puestoAnterior.setActivo(false);
@@ -365,6 +364,10 @@ public class nuevoPuesto extends javax.swing.JFrame {
            fechaInicio.setBorder(redBorder);
            return;
         }
+        //establecer la fecha final del registro anteriori a un dia antes del inicio del nuevo
+        date = date.minusDays(1);
+        puestoAnterior.setFechaFinal(Date.valueOf(date));
+
         
         if(validarFecha(fechaInicio,formatoInvalido1) ){
             try {
@@ -385,7 +388,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new listaSalarios().setVisible(true);
+                new listaPuestos().setVisible(true);
             }
         });
         this.setVisible(false);

@@ -23,7 +23,7 @@ public class salariohistoricoempleados implements Serializable {
     private int IDEmpleado;
     @Column
     private Date FechaInicial;
-    @Column
+    @Column(nullable = true)
     private Date FechaFinal;
     @Column
     private double Salario;
