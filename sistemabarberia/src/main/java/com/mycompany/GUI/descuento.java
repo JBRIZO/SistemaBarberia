@@ -544,7 +544,7 @@ public class descuento extends javax.swing.JFrame {
     
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
-        if(!validar.validacionFecha(fecha.getText()))
+        if(!validar.validacionFechaValida(fecha.getText()))
             {
             fecha.setBorder(redBorder);
             label.setVisible(true);

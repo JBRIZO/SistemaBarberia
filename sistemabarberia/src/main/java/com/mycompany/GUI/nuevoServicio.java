@@ -506,7 +506,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         {
             nombreServicio.setBorder(redBorder);
             formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("No puedes repetir tantas letras;");
+            formatoInvalido1.setText("Esa no es una palabra válida.");
             return;
         }
         if(!validar.validacionCantidadMinima(nombreServicio.getText(),4))

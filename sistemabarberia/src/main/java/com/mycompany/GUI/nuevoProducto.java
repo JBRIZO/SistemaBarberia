@@ -166,7 +166,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         precioInicial.setDocument(new JTextFieldLimit(7));
         precioInicial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         precioInicial.setForeground(new java.awt.Color(255, 255, 255));
-        precioInicial.setText("  Precio Inicial");
+        precioInicial.setText("Precio Inicial");
         precioInicial.setToolTipText("Ingrese un precio de producto válido.");
         precioInicial.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         precioInicial.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -192,7 +192,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         nombreProducto.setDocument(new JTextFieldLimit(25));
         nombreProducto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         nombreProducto.setForeground(new java.awt.Color(255, 255, 255));
-        nombreProducto.setText("   Nombre del Nuevo Producto");
+        nombreProducto.setText("Nombre del Producto");
         nombreProducto.setToolTipText("Ingrese un nombre de producto valido.");
         nombreProducto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         nombreProducto.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -448,6 +448,14 @@ public class nuevoProducto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+       
+        if(nombreProducto.getText().equals("Nombre del Producto") || stockInicial.getText().equals("") ||
+                stockMinimo.getText().equals("") || stockMaximo.getText().equals("") || precioInicial.getText().equals("Precio Inicial"))
+        {
+            JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         //anadir producto
         List<productos> productosEnBd = productoDAO.findproductosEntities();
         productos productoNuevo = new productos();
@@ -620,7 +628,15 @@ public class nuevoProducto extends javax.swing.JFrame {
         {
             nombreProducto.setBorder(redBorder);
             formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("El nombre debe iniciar con mayuscula.");
+            formatoInvalido1.setText("El nombre debe iniciar con mayúscula.");
+            return;
+        }
+        
+        if(validar.validacionLetrasRepetidas(nombreProducto.getText()))
+        {
+            nombreProducto.setBorder(redBorder);
+            formatoInvalido1.setVisible(true);
+            formatoInvalido1.setText("No puedes repetir tantas letras.");
             return;
         }
        
@@ -634,7 +650,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         {
             nombreProducto.setBorder(redBorder);
             formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("No puedes repetir tantas letras");
+            formatoInvalido1.setText("Esa no es una palabra válida.");
             return;
         }
         if(!validar.validacionCantidadMinima(nombreProducto.getText(),4))
@@ -699,7 +715,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         {
             precioInicial.setBorder(redBorder);
             formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Solo se permiten numeros en esta campo.");
+            formatoInvalido2.setText("Solo se permiten numeros en este campo.");
             return;
         }
         if(Double.parseDouble(precioInicial.getText()) <= 0.00)

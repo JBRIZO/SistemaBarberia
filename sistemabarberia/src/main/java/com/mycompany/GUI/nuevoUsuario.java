@@ -162,6 +162,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
         formatoInvalido2.setText("Formato no valido.");
 
         cbEmpleados.setBackground(new java.awt.Color(30, 33, 34));
+        cbEmpleados.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
         cbEmpleados.setPreferredSize(new java.awt.Dimension(270, 42));
 
         contrasena.setBackground(new java.awt.Color(30, 33, 34));
@@ -357,9 +358,6 @@ public class nuevoUsuario extends javax.swing.JFrame {
             }
         }
         
-        //establecer contrasena en blanco despues de usarla
-        pass = " ";
-           
         if(validarContrasena(contrasena,formatoInvalido2) && validarContrasena(confirmarContrasena,formatoInvalido3) && validarUsuario(nombreUsuario,formatoInvalido1)){
             
             try {
@@ -367,7 +365,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar el usuario, excepcion: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar el usuario, excepcion: " + ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
         }
     }//GEN-LAST:event_botonAceptarActionPerformed

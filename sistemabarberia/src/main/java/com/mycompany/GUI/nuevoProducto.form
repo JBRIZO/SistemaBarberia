@@ -326,7 +326,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="  Precio Inicial"/>
+                    <Property name="text" type="java.lang.String" value="Precio Inicial"/>
                     <Property name="toolTipText" type="java.lang.String" value="Ingrese un precio de producto v&#xe1;lido."/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -355,7 +355,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="   Nombre del Nuevo Producto"/>
+                    <Property name="text" type="java.lang.String" value="Nombre del Producto"/>
                     <Property name="toolTipText" type="java.lang.String" value="Ingrese un nombre de producto valido."/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">

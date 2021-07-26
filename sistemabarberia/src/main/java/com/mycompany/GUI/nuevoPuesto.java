@@ -172,12 +172,14 @@ public class nuevoPuesto extends javax.swing.JFrame {
         });
 
         cbEmpleados.setBackground(new java.awt.Color(30, 33, 34));
+        cbEmpleados.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
         cbEmpleados.setPreferredSize(new java.awt.Dimension(270, 42));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Empleado:");
 
         cbTipoPuesto.setBackground(new java.awt.Color(30, 33, 34));
+        cbTipoPuesto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
         cbTipoPuesto.setPreferredSize(new java.awt.Dimension(270, 42));
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -498,7 +500,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
             label.setText("El formato de fecha es: dd-mm-aaaa");
             return false;
         }
-        if(!validar.validacionFecha(fecha.getText()))
+        if(!validar.validacionFechaValida(fecha.getText()))
             {
             fecha.setBorder(redBorder);
             label.setVisible(true);

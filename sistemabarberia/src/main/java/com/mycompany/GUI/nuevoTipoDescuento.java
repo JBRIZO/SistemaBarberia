@@ -395,7 +395,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         {
             tipoDescuento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("No puedes repetir tantas letras.");
+            formatoInvalido.setText("Esa no es una palabra válida.");
             return;
         }
         if(!validar.validacionCantidadMinima(tipoDescuento.getText(),5))

@@ -74,7 +74,7 @@ public class menuGerente extends javax.swing.JFrame {
         botonAtributosFactura = new javax.swing.JButton();
         botonServicios = new javax.swing.JButton();
         botonDeducciones = new javax.swing.JButton();
-        botonNuevoEmpleado = new javax.swing.JButton();
+        botonEmpleados = new javax.swing.JButton();
         botonBonos = new javax.swing.JButton();
         botonDescuentos = new javax.swing.JButton();
         botonUsuarios = new javax.swing.JButton();
@@ -180,18 +180,18 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
 
-        botonNuevoEmpleado.setBackground(new java.awt.Color(189, 158, 76));
-        botonNuevoEmpleado.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonNuevoEmpleado.setText("EMPLEADOS");
-        botonNuevoEmpleado.setRequestFocusEnabled(false);
-        botonNuevoEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
+        botonEmpleados.setBackground(new java.awt.Color(189, 158, 76));
+        botonEmpleados.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonEmpleados.setText("EMPLEADOS");
+        botonEmpleados.setRequestFocusEnabled(false);
+        botonEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                botonNuevoEmpleadoMouseClicked(evt);
+                botonEmpleadosMouseClicked(evt);
             }
         });
-        botonNuevoEmpleado.addActionListener(new java.awt.event.ActionListener() {
+        botonEmpleados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonNuevoEmpleadoActionPerformed(evt);
+                botonEmpleadosActionPerformed(evt);
             }
         });
 
@@ -241,8 +241,8 @@ public class menuGerente extends javax.swing.JFrame {
         });
 
         botonClientes.setBackground(new java.awt.Color(189, 158, 76));
-        botonClientes.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        botonClientes.setText("REGISTRAR CLIENTE");
+        botonClientes.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonClientes.setText("CLIENTES");
         botonClientes.setRequestFocusEnabled(false);
         botonClientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -269,7 +269,7 @@ public class menuGerente extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(botonDescuentos, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonNuevoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(botonServicios, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(botonProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,7 +298,7 @@ public class menuGerente extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(botonDeducciones, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonNuevoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(botonEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonBonos, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -431,10 +431,18 @@ public class menuGerente extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_botonDeduccionesActionPerformed
 
-    private void botonNuevoEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoEmpleadoActionPerformed
-        // TODO add your handling code here:
+    private void botonEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEmpleadosActionPerformed
+        // TODO add your handling code here:\
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new pantallaEmpleados().setVisible(true);
+            }
+        });
+        this.dispose(); 
+        this.setVisible(false);
         
-    }//GEN-LAST:event_botonNuevoEmpleadoActionPerformed
+        
+    }//GEN-LAST:event_botonEmpleadosActionPerformed
 
     private void botonBonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBonosActionPerformed
         // TODO add your handling code here:
@@ -500,16 +508,10 @@ public class menuGerente extends javax.swing.JFrame {
         
     }//GEN-LAST:event_botonAtributosFacturaMouseClicked
 
-    private void botonNuevoEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoEmpleadoMouseClicked
+    private void botonEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonEmpleadosMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new pantallaEmpleados().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
-    }//GEN-LAST:event_botonNuevoEmpleadoMouseClicked
+        
+    }//GEN-LAST:event_botonEmpleadosMouseClicked
 
     private void botonProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonProductosMouseClicked
         // TODO add your handling code here:
@@ -560,6 +562,13 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonClientesActionPerformed
         // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new pantallaClientes().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonClientesActionPerformed
 
     private void botonRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonRegresarMouseClicked
@@ -635,7 +644,7 @@ public class menuGerente extends javax.swing.JFrame {
     private javax.swing.JButton botonClientes;
     private javax.swing.JButton botonDeducciones;
     private javax.swing.JButton botonDescuentos;
-    private javax.swing.JButton botonNuevoEmpleado;
+    private javax.swing.JButton botonEmpleados;
     private javax.swing.JButton botonProductos;
     private javax.swing.JButton botonPuesto;
     private javax.swing.JButton botonRegresar;

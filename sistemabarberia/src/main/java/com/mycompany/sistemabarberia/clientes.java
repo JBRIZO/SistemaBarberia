@@ -13,38 +13,28 @@ import javax.persistence.Id;
 
 /**
  *
- * @author flore
+ * @author Jonathan Laux
  */
 @Entity
 public class clientes implements Serializable {
     @Id
     private int idcliente;
-    
-    @Column 
-    private int IDTipoDocumento;
-    
     @Column
-    private String NumDocumento;
-    
-    @Column 
-    private int IDServicio;
-    
-    @Column 
     private String NomCliente;
-    
     @Column
     private String ApeCliente;
-    
+    @Column
+    private int IDTipoDocumento;
+    @Column
+    private String NumDocumento;
     @Column 
-    private String NumTelefono;
-    
+    private int IDServicio;
     @Column
     private Date FechaNacimiento;
-    
     @Column
-    private Boolean Activo;
-    
-    
+    private String NumTelefono;
+    @Column
+    private boolean Activo;
 
     public int getIdcliente() {
         return idcliente;
@@ -52,22 +42,6 @@ public class clientes implements Serializable {
 
     public void setIdcliente(int idcliente) {
         this.idcliente = idcliente;
-    }
-
-    public int getIDTipoDocumento() {
-        return IDTipoDocumento;
-    }
-
-    public void setIDTipoDocumento(int IDTipoDocumento) {
-        this.IDTipoDocumento = IDTipoDocumento;
-    }
-
-    public int getIDServicio() {
-        return IDServicio;
-    }
-
-    public void setIDServicio(int IDServicio) {
-        this.IDServicio = IDServicio;
     }
 
     public String getNomCliente() {
@@ -86,12 +60,28 @@ public class clientes implements Serializable {
         this.ApeCliente = ApeCliente;
     }
 
-    public String getNumTelefono() {
-        return NumTelefono;
+    public int getIDTipoDocumento() {
+        return IDTipoDocumento;
     }
 
-    public void setNumTelefono(String NumTelefono) {
-        this.NumTelefono = NumTelefono;
+    public void setIDTipoDocumento(int IDTipoDocumento) {
+        this.IDTipoDocumento = IDTipoDocumento;
+    }
+
+    public String getNumDocumento() {
+        return NumDocumento;
+    }
+
+    public void setNumDocumento(String NumDocumento) {
+        this.NumDocumento = NumDocumento;
+    }
+
+    public int getIDServicio() {
+        return IDServicio;
+    }
+
+    public void setIDServicio(int IDServicio) {
+        this.IDServicio = IDServicio;
     }
 
     public Date getFechaNacimiento() {
@@ -102,26 +92,26 @@ public class clientes implements Serializable {
         this.FechaNacimiento = FechaNacimiento;
     }
 
-    public Boolean getActivo() {
+    public String getNumTelefono() {
+        return NumTelefono;
+    }
+
+    public void setNumTelefono(String NumTelefono) {
+        this.NumTelefono = NumTelefono;
+    }
+
+    public boolean isActivo() {
         return Activo;
     }
 
-    public void setActivo(Boolean Activo) {
+    public void setActivo(boolean Activo) {
         this.Activo = Activo;
     }
-
-    public String getNumDocumento() {
-        return NumDocumento;
+    
+    @Override
+    public String toString()
+    {
+        return NomCliente;
     }
-
-    public void setNumDocumento(String NumDocumento) {
-        this.NumDocumento = NumDocumento;
-    }
-    
-    
-    
-    
-    
-
     
 }

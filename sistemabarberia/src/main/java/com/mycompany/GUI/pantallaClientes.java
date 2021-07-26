@@ -5,8 +5,9 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
-import com.mycompany.sistemabarberia.usuarios;
+import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.clientes;
 import java.awt.Image;
 import java.util.List;
 import javax.swing.Icon;
@@ -19,17 +20,18 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Kesil
  */
-public class listaUsuarios extends javax.swing.JFrame {
+public class pantallaClientes extends javax.swing.JFrame {
     
 
-    private usuariosJpaController usuarioDAO =  new usuariosJpaController();
+    private clientes clienteSeleccionado;
+    private clientesJpaController clienteDAO =  new clientesJpaController();
     private ImageIcon imagen;
     private Icon icono;
 
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public listaUsuarios() {
+    public pantallaClientes() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
@@ -40,13 +42,14 @@ public class listaUsuarios extends javax.swing.JFrame {
     
     private void cargarTabla()
     {
+        
         String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaUsuarios.getModel();
+        DefaultTableModel modelo = (DefaultTableModel)tablaClientes.getModel();
         modelo.setRowCount(0);
-        tablaUsuarios.setModel(modelo);
-        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
-            for(usuarios usuario : usuarios){
-                if(usuario.getActivo())
+        tablaClientes.setModel(modelo);
+        List<clientes> clientes = clienteDAO.findclientesEntities();
+            for(clientes cliente : clientes){
+                if(cliente.isActivo())
                 {
                 activo = "Sí";   
                 }else
@@ -55,10 +58,12 @@ public class listaUsuarios extends javax.swing.JFrame {
                 }
                     modelo.addRow(
                     new Object[]{
-                        usuario.getIdusuario(),
-                        usuario.getIDEmpleado(),
-                        usuario.getNomCuenta(),
-                        usuario.getContrasena(),
+                        cliente.getIdcliente(),
+                        cliente.getNomCliente(),
+                        cliente.getApeCliente(),
+                        cliente.getNumDocumento(),
+                        convertirDates(cliente.getFechaNacimiento().toString()),
+                        cliente.getNumTelefono(),
                         activo
                     }
                 );
@@ -80,10 +85,10 @@ public class listaUsuarios extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaUsuarios = new javax.swing.JTable();
+        tablaClientes = new javax.swing.JTable();
         activar = new javax.swing.JButton();
-        nuevoUsuario = new javax.swing.JButton();
-        modificarUsuario = new javax.swing.JButton();
+        nuevoEmpleado = new javax.swing.JButton();
+        modificarEmpleado = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -93,7 +98,7 @@ public class listaUsuarios extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("USUARIOS");
+        tituloPantalla.setText("CLIENTES");
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -107,23 +112,23 @@ public class listaUsuarios extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        tablaUsuarios.setAutoCreateRowSorter(true);
-        tablaUsuarios.setBackground(new java.awt.Color(30, 33, 34));
-        tablaUsuarios.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        tablaUsuarios.setForeground(new java.awt.Color(255, 255, 255));
-        tablaUsuarios.setModel(new javax.swing.table.DefaultTableModel(
+        tablaClientes.setAutoCreateRowSorter(true);
+        tablaClientes.setBackground(new java.awt.Color(30, 33, 34));
+        tablaClientes.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        tablaClientes.setForeground(new java.awt.Color(255, 255, 255));
+        tablaClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID Usuario", "ID Empleado", "Usuario", "Contraseña", "Activo"
+                "ID Cliente", "Nombres", "Apellidos", "Numero Id.", "Fecha Nacimiento", "Num. Teléfono", "Activo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -134,15 +139,20 @@ public class listaUsuarios extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tablaUsuarios.setGridColor(new java.awt.Color(255, 255, 255));
-        tablaUsuarios.setRowHeight(32);
-        tablaUsuarios.getTableHeader().setReorderingAllowed(false);
-        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaUsuariosMouseClicked(evt);
+        tablaClientes.setGridColor(new java.awt.Color(255, 255, 255));
+        tablaClientes.setRowHeight(32);
+        tablaClientes.getTableHeader().setReorderingAllowed(false);
+        tablaClientes.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tablaClientesFocusGained(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaUsuarios);
+        tablaClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaClientesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablaClientes);
 
         activar.setBorderPainted(false);
         activar.setContentAreaFilled(false);
@@ -151,30 +161,35 @@ public class listaUsuarios extends javax.swing.JFrame {
                 activarMouseClicked(evt);
             }
         });
-
-        nuevoUsuario.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoUsuario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nuevoUsuario.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/nuevoUsuario.png"))); // NOI18N
-        nuevoUsuario.setBorder(null);
-        nuevoUsuario.setContentAreaFilled(false);
-        nuevoUsuario.setRequestFocusEnabled(false);
-        nuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
+        activar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevoUsuarioActionPerformed(evt);
+                activarActionPerformed(evt);
             }
         });
 
-        modificarUsuario.setBackground(new java.awt.Color(30, 33, 34));
-        modificarUsuario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        modificarUsuario.setForeground(new java.awt.Color(255, 255, 255));
-        modificarUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/modificarUsuario.png"))); // NOI18N
-        modificarUsuario.setBorder(null);
-        modificarUsuario.setContentAreaFilled(false);
-        modificarUsuario.setRequestFocusEnabled(false);
-        modificarUsuario.addActionListener(new java.awt.event.ActionListener() {
+        nuevoEmpleado.setBackground(new java.awt.Color(30, 33, 34));
+        nuevoEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        nuevoEmpleado.setForeground(new java.awt.Color(255, 255, 255));
+        nuevoEmpleado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/nuevoCliente.png"))); // NOI18N
+        nuevoEmpleado.setBorder(null);
+        nuevoEmpleado.setContentAreaFilled(false);
+        nuevoEmpleado.setRequestFocusEnabled(false);
+        nuevoEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modificarUsuarioActionPerformed(evt);
+                nuevoEmpleadoActionPerformed(evt);
+            }
+        });
+
+        modificarEmpleado.setBackground(new java.awt.Color(30, 33, 34));
+        modificarEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        modificarEmpleado.setForeground(new java.awt.Color(255, 255, 255));
+        modificarEmpleado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/modficarCliente.png"))); // NOI18N
+        modificarEmpleado.setBorder(null);
+        modificarEmpleado.setContentAreaFilled(false);
+        modificarEmpleado.setRequestFocusEnabled(false);
+        modificarEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificarEmpleadoActionPerformed(evt);
             }
         });
 
@@ -185,14 +200,15 @@ public class listaUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(nuevoUsuario)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(modificarUsuario)
+                        .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(nuevoEmpleado)
+                        .addGap(18, 18, 18)
+                        .addComponent(modificarEmpleado)
                         .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -202,11 +218,11 @@ public class listaUsuarios extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(nuevoUsuario)
-                    .addComponent(modificarUsuario))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(nuevoEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(modificarEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -216,7 +232,7 @@ public class listaUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -242,7 +258,7 @@ public class listaUsuarios extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(246, 246, 246)
+                .addGap(295, 295, 295)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -251,25 +267,21 @@ public class listaUsuarios extends javax.swing.JFrame {
                         .addGap(29, 29, 29)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(85, 85, 85)
-                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(77, 77, 77)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(tituloPantalla)))
-                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tituloPantalla)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 19, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -288,62 +300,28 @@ public class listaUsuarios extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tablaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaUsuariosMouseClicked
-        // TODO add your handling code here:
-        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
+    private void tablaClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaClientesMouseClicked
+         if(tablaClientes.getValueAt(tablaClientes.getSelectedRow(),6).equals("Sí"))
         {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
+            modificarEmpleado.setEnabled(true);
         }else
         {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+            modificarEmpleado.setEnabled(false);
         }
-    }//GEN-LAST:event_tablaUsuariosMouseClicked
+        
+    }//GEN-LAST:event_tablaClientesMouseClicked
 
     private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
         // TODO add your handling code here:
-        usuarios modificar = new usuarios();
-        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
-        for(int i=0 ; i<usuarios.size();i++)
-        {
-            if(Integer.parseInt(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),0).toString()) == usuarios.get(i).getIdusuario())
-            {
-                modificar = usuarios.get(i);
-            }
-        }
-        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
-        {
-           modificar.setActivo(false);
-           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
-           try
-           {
-               usuarioDAO.edit(modificar);
-           }catch(Exception Ex)
-           {}  
-        }else
-         {
-            modificar.setIntentos(0);
-            modificar.setActivo(true);
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
-            try
-           {
-               usuarioDAO.edit(modificar);
-           }catch(Exception Ex)
-           {}  
-        }
-        cargarTabla();
+
     }//GEN-LAST:event_activarMouseClicked
 
-    private void nuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoUsuarioActionPerformed
+    private void tablaClientesFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tablaClientesFocusGained
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new nuevoUsuario().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
-        usuarioDAO.close();
-    }//GEN-LAST:event_nuevoUsuarioActionPerformed
+        
+    }//GEN-LAST:event_tablaClientesFocusGained
 
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
@@ -355,9 +333,71 @@ public class listaUsuarios extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_botonRegresarActionPerformed
 
-    private void modificarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarUsuarioActionPerformed
+    private void nuevoEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoEmpleadoActionPerformed
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new registrarClientes().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        clienteDAO.close();
+    }//GEN-LAST:event_nuevoEmpleadoActionPerformed
+
+    private void modificarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarEmpleadoActionPerformed
+        List<clientes> clientesBD = clienteDAO.findclientesEntities();
+        for(int i = 0 ; i < clientesBD.size() ; i++ )
+        {
+            //target cliente seleccionado
+            if(Integer.parseInt(tablaClientes.getValueAt(tablaClientes.getSelectedRow(),0).toString()) == clientesBD.get(i).getIdcliente())
+            {
+              clienteSeleccionado = clientesBD.get(i); 
+            }
+        }
+            java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new registrarClientes(clienteSeleccionado).setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        clienteDAO.close();
+    }//GEN-LAST:event_modificarEmpleadoActionPerformed
+
+    private void activarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_modificarUsuarioActionPerformed
+        clientes modificar = new clientes();
+        List<clientes> empleados = clienteDAO.findclientesEntities();
+        for(int i=0 ; i<empleados.size();i++)
+        {
+            if(Integer.parseInt(tablaClientes.getValueAt(tablaClientes.getSelectedRow(),0).toString()) == empleados.get(i).getIdcliente())
+            {
+                modificar = empleados.get(i);
+            }
+        }
+        if(tablaClientes.getValueAt(tablaClientes.getSelectedRow(),6).equals("Sí"))
+        {
+           modificar.setActivo(false);
+           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+           modificarEmpleado.setEnabled(false);
+           try
+           {
+               clienteDAO.edit(modificar);
+           }catch(Exception Ex)
+           {}  
+        }else
+         {
+            modificar.setActivo(true);
+            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png"); 
+            modificarEmpleado.setEnabled(true);
+            try
+           {
+               clienteDAO.edit(modificar);
+           }catch(Exception Ex)
+           {}  
+        }
+        cargarTabla();
+    }//GEN-LAST:event_activarActionPerformed
 
     
     /**
@@ -377,13 +417,13 @@ public class listaUsuarios extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaClientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaClientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaClientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(listaUsuarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaClientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -392,7 +432,7 @@ public class listaUsuarios extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new listaUsuarios().setVisible(true);
+                new pantallaClientes().setVisible(true);
             }
         });
         
@@ -423,6 +463,15 @@ public class listaUsuarios extends javax.swing.JFrame {
         checkBox.setIcon(this.icono);
         this.repaint();
     }
+    
+    private String convertirDates(String Fecha)
+    {
+        String[] palabras  = Fecha.split("-");
+       
+        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
+    }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activar;
@@ -432,9 +481,9 @@ public class listaUsuarios extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel logo;
-    private javax.swing.JButton modificarUsuario;
-    private javax.swing.JButton nuevoUsuario;
-    private javax.swing.JTable tablaUsuarios;
+    private javax.swing.JButton modificarEmpleado;
+    private javax.swing.JButton nuevoEmpleado;
+    private javax.swing.JTable tablaClientes;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

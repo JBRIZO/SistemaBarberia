@@ -116,7 +116,7 @@ public class Validaciones {
     
    
     //Valida una fecha valida, que el usuario ingrese el numero apropiado de dias y de meses.
-    public boolean validacionFecha(String cadena)
+    public boolean validacionFechaValida(String cadena)
     {
         String patron = "^((0[1-9])|(1[0-9])|(2[0-9])|(3[0-1]))[\\/]((0[1-9])|(1[0-2]))[\\/](\\d{4})";
         Pattern patt = Pattern.compile(patron);
@@ -129,7 +129,7 @@ public class Validaciones {
         } 
     }
     
-    //Valida que el formato sea el correcto
+    //Valida que el formato de fecha sea el correcto
     public boolean validacionFormatoFecha(String cadena)
     {
         String patron = "^[\\d]{2}/[\\d]{2}/[\\d]{4}$";
@@ -218,7 +218,10 @@ public class Validaciones {
           }
           for (int i = 0; i < palabras.length; i++)
           {
-              if(!validacionLetrasRepetidas(palabras[i]))
+              if(!validacionLetrasRepetidas(palabras[i]) && 
+                      !validacionAbcd(palabras[i]) && 
+                      !validacionConsonantesSeguidas(palabras[i]) && 
+                      !validacionVocalesSeguidas(palabras[i]))
               {
                   palabraValida = true;
               }else
@@ -226,7 +229,7 @@ public class Validaciones {
                   return false;
               }
           }
-          if(mayusculaInicial && palabraValida)
+          if(mayusculaInicial && palabraValida )
           {
               return true;
           }else
@@ -304,17 +307,43 @@ public class Validaciones {
         }             
     }
     
-//    public boolean validarABCD(String cadena)
-//    {
-//        String patron = "^abcd\\w+$";
-//        Pattern patt = Pattern.compile(patron);
-//        Matcher comparador = patt.matcher(cadena);
-//        if(comparador.matches()){
-//            return true;
-//        }else
-//        {
-//            return false;
-//        }        
-//    }
+    //abcd
+    public static boolean validacionAbcd(String palabra)
+          {
+            String patron = String.format("^(|\\w+)[AabBcCdD]{4,}(|\\w+)$");
+            Pattern patt = Pattern.compile(patron);
+            Matcher comparador = patt.matcher(palabra);
+            if(comparador.matches()){
+                return true;
+            }else
+            {
+                return false;
+            }  
+          }
     
+    public static boolean validacionConsonantesSeguidas(String palabra)
+            { 
+            String patron = String.format("^(|\\w+)[b-df-hj-np-tv-z]{4,}(|\\w+)$");
+            Pattern patt = Pattern.compile(patron);
+            Matcher comparador = patt.matcher(palabra);
+            if(comparador.matches()){
+                return true;
+            }else
+            {
+                return false;
+            }          
+            }
+    
+    public static boolean validacionVocalesSeguidas(String palabra)
+    {
+            String patron = String.format("^(|\\w+)[AaEeIiOoUu]{3,}(|\\w+)$");
+            Pattern patt = Pattern.compile(patron);
+            Matcher comparador = patt.matcher(palabra);
+            if(comparador.matches()){
+                return true;
+            }else
+            {
+                return false;
+            }       
+    }
 }

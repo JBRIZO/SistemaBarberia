@@ -398,7 +398,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         {
             tipoBono.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato inválido");
+            formatoInvalido.setText("Esa no es una palabra válida.");
             return;
         }
          if(!validar.validacionCantidadMinima(tipoBono.getText(),4))

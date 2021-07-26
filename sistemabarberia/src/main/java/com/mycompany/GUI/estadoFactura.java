@@ -445,7 +445,7 @@ public class estadoFactura extends javax.swing.JFrame {
         {
             NombreEstado.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("No puedes repetir tantas letras.");
+            formatoInvalido.setText("Esa no es una palabra válida.");
             return;
         }
 

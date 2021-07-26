@@ -533,11 +533,11 @@ public class nuevoSalario extends javax.swing.JFrame {
             label.setText("El formato de fecha es: dd-mm-aaaa");
             return false;
         }
-        if(!validar.validacionFecha(fecha.getText()))
+        if(!validar.validacionFechaValida(fecha.getText()))
             {
             fecha.setBorder(redBorder);
             label.setVisible(true);
-            label.setText("La fecha introducida es invalida.");
+            label.setText("La fecha introducida es inválida.");
             return false;
             }else
         {

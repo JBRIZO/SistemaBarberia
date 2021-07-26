@@ -34,7 +34,7 @@ public class PantallaLogin extends javax.swing.JFrame {
     public PantallaLogin() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoLogin.png"));
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
         this.insertarImagen(this.imgLogin,"src/main/resources/Imagenes/loginImage.png");
     }
