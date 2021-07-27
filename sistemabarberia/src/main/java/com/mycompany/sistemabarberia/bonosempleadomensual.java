@@ -7,21 +7,23 @@ package com.mycompany.sistemabarberia;
 
 import java.io.Serializable;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
  *
  * @author Kesil
  */
+@Entity
 public class bonosempleadomensual implements Serializable {
     
     @Id
     private int numbono;
     
     @Column
-    private int IdEmpleado;
+    private int IDEmpleado;
     @Column
-    private int TipoBono;
+    private int IDTipoBono;
     @Column
     private double Valor;
     @Column
@@ -38,19 +40,19 @@ public class bonosempleadomensual implements Serializable {
     }
 
     public int getIdEmpleado() {
-        return IdEmpleado;
+        return IDEmpleado;
     }
 
     public void setIdEmpleado(int IdEmpleado) {
-        this.IdEmpleado = IdEmpleado;
+        this.IDEmpleado = IdEmpleado;
     }
 
     public int getTipoBono() {
-        return TipoBono;
+        return IDTipoBono;
     }
 
     public void setTipoBono(int TipoBono) {
-        this.TipoBono = TipoBono;
+        this.IDTipoBono = TipoBono;
     }
 
     public double getValor() {
@@ -69,18 +71,12 @@ public class bonosempleadomensual implements Serializable {
         this.Periodo = Periodo;
     }
 
-    public boolean isActivo() {
+    public boolean getActivo() {
         return Activo;
     }
 
     public void setActivo(boolean Activo) {
         this.Activo = Activo;
     }
-    
-    
-    
-    
-    
-    
     
 }

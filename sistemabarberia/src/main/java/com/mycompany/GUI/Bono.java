@@ -5,7 +5,13 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.bonosempleadomensualJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.bonosempleadomensual;
+import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.tiposbono;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
 import java.util.List;
@@ -21,9 +27,10 @@ import javax.swing.table.DefaultTableModel;
  * @author Kesil
  */
 public class Bono extends javax.swing.JFrame {
-    
 
-    private usuariosJpaController usuarioDAO =  new usuariosJpaController();
+    private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController();
+    private empleadoJpaController empleado = new empleadoJpaController();
+    private tiposbonoJpaController tipoBono = new tiposbonoJpaController();
     private ImageIcon imagen;
     private Icon icono;
 
@@ -33,37 +40,51 @@ public class Bono extends javax.swing.JFrame {
     public Bono() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
+        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
         cargarTabla();
-           
+
     }
-    
-    private void cargarTabla()
-    {
+
+    List<empleado> empleadoBono = empleado.findempleadoEntities();
+    List<tiposbono> bonoTipo = tipoBono.findtiposbonoEntities();
+
+    private void cargarTabla() {
         String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaUsuarios.getModel();
+        String nombreEmpleado = "";
+        String nombreBono = "";
+        DefaultTableModel modelo = (DefaultTableModel) tablaBonos.getModel();
         modelo.setRowCount(0);
-        tablaUsuarios.setModel(modelo);
-        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
-            for(usuarios usuario : usuarios){
-                if(usuario.getActivo())
-                {
-                activo = "Sí";   
-                }else
-                {
-                    activo = "No";
+        tablaBonos.setModel(modelo);
+        List<bonosempleadomensual> bonosempleadomensual = bonosDAO.findbonosempleadomensualEntities();
+        for (bonosempleadomensual bono : bonosempleadomensual) {
+            if (bono.getActivo()) {
+                activo = "Sí";
+            } else {
+                activo = "No";
+            }
+            for (int j = 0; j < empleadoBono.size(); j++) {
+                if (empleadoBono.get(j).getIdempleado() == bono.getIdEmpleado()) {
+                    nombreEmpleado = empleadoBono.get(j).getNomEmpleado();
                 }
-                    modelo.addRow(
+            }
+
+            for (int j = 0; j < bonoTipo.size(); j++) {
+                if (bonoTipo.get(j).getIdtipobono() == bono.getTipoBono()) {
+                    nombreBono = bonoTipo.get(j).getNomBono();
+                }
+            }
+
+            modelo.addRow(
                     new Object[]{
-                        usuario.getIdusuario(),
-                        usuario.getIDEmpleado(),
-                        usuario.getNomCuenta(),
-                        usuario.getContrasena(),
+                        bono.getNumbono(),
+                        nombreEmpleado,
+                        nombreBono,
+                        bono.getValor(),
+                        bono.getPeriodo(),
                         activo
                     }
-                );
-            } 
+            );
+        }
     }
 
     /**
@@ -81,10 +102,9 @@ public class Bono extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaUsuarios = new javax.swing.JTable();
-        activar = new javax.swing.JButton();
-        nuevoUsuario = new javax.swing.JButton();
-        nuevoUsuario1 = new javax.swing.JButton();
+        tablaBonos = new javax.swing.JTable();
+        btnNuevoTipo = new javax.swing.JButton();
+        btnNuevoBono = new javax.swing.JButton();
         Aceptar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -109,16 +129,16 @@ public class Bono extends javax.swing.JFrame {
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        tablaUsuarios.setAutoCreateRowSorter(true);
-        tablaUsuarios.setBackground(new java.awt.Color(30, 33, 34));
-        tablaUsuarios.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        tablaUsuarios.setForeground(new java.awt.Color(255, 255, 255));
-        tablaUsuarios.setModel(new javax.swing.table.DefaultTableModel(
+        tablaBonos.setAutoCreateRowSorter(true);
+        tablaBonos.setBackground(new java.awt.Color(30, 33, 34));
+        tablaBonos.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        tablaBonos.setForeground(new java.awt.Color(255, 255, 255));
+        tablaBonos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Num", "ID Empleado", "Tipo Bono", "Periodo", "Valor"
+                "Num", "ID Empleado", "Tipo Bono", "Valor", "Periodo"
             }
         ) {
             Class[] types = new Class [] {
@@ -136,54 +156,45 @@ public class Bono extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tablaUsuarios.setGridColor(new java.awt.Color(255, 255, 255));
-        tablaUsuarios.setRowHeight(32);
-        tablaUsuarios.getTableHeader().setReorderingAllowed(false);
-        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaBonos.setGridColor(new java.awt.Color(255, 255, 255));
+        tablaBonos.setRowHeight(32);
+        tablaBonos.getTableHeader().setReorderingAllowed(false);
+        tablaBonos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaUsuariosMouseClicked(evt);
+                tablaBonosMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaUsuarios);
+        jScrollPane1.setViewportView(tablaBonos);
 
-        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 14, 660, 287));
+        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 14, 680, 287));
 
-        activar.setBorderPainted(false);
-        activar.setContentAreaFilled(false);
-        activar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                activarMouseClicked(evt);
-            }
-        });
-        jPanel3.add(activar, new org.netbeans.lib.awtextra.AbsoluteConstraints(656, 14, 67, 56));
-
-        nuevoUsuario.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoUsuario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nuevoUsuario.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/NuevoTipo.png"))); // NOI18N
-        nuevoUsuario.setBorder(null);
-        nuevoUsuario.setContentAreaFilled(false);
-        nuevoUsuario.setRequestFocusEnabled(false);
-        nuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevoTipo.setBackground(new java.awt.Color(30, 33, 34));
+        btnNuevoTipo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnNuevoTipo.setForeground(new java.awt.Color(255, 255, 255));
+        btnNuevoTipo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/NuevoTipo.png"))); // NOI18N
+        btnNuevoTipo.setBorder(null);
+        btnNuevoTipo.setContentAreaFilled(false);
+        btnNuevoTipo.setRequestFocusEnabled(false);
+        btnNuevoTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevoUsuarioActionPerformed(evt);
+                btnNuevoTipoActionPerformed(evt);
             }
         });
-        jPanel3.add(nuevoUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 310, -1, -1));
+        jPanel3.add(btnNuevoTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 310, -1, -1));
 
-        nuevoUsuario1.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoUsuario1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nuevoUsuario1.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoUsuario1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/NuevoBono.png"))); // NOI18N
-        nuevoUsuario1.setBorder(null);
-        nuevoUsuario1.setContentAreaFilled(false);
-        nuevoUsuario1.setRequestFocusEnabled(false);
-        nuevoUsuario1.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevoBono.setBackground(new java.awt.Color(30, 33, 34));
+        btnNuevoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnNuevoBono.setForeground(new java.awt.Color(255, 255, 255));
+        btnNuevoBono.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/NuevoBono.png"))); // NOI18N
+        btnNuevoBono.setBorder(null);
+        btnNuevoBono.setContentAreaFilled(false);
+        btnNuevoBono.setRequestFocusEnabled(false);
+        btnNuevoBono.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevoUsuario1ActionPerformed(evt);
+                btnNuevoBonoActionPerformed(evt);
             }
         });
-        jPanel3.add(nuevoUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, -1, -1));
+        jPanel3.add(btnNuevoBono, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, -1, -1));
 
         Aceptar.setBackground(new java.awt.Color(189, 158, 76));
         Aceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -194,7 +205,7 @@ public class Bono extends javax.swing.JFrame {
                 AceptarActionPerformed(evt);
             }
         });
-        jPanel3.add(Aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 310, 110, 40));
+        jPanel3.add(Aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 310, 110, 40));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -220,12 +231,12 @@ public class Bono extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(292, 292, 292)
-                        .addComponent(tituloPantalla))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(tituloPantalla)))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -235,7 +246,7 @@ public class Bono extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(tituloPantalla)
                         .addGap(43, 43, 43)))
@@ -259,72 +270,28 @@ public class Bono extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tablaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaUsuariosMouseClicked
+    private void tablaBonosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaBonosMouseClicked
         // TODO add your handling code here:
-        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
-        {
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
-        }else
-        {
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
-        }
-    }//GEN-LAST:event_tablaUsuariosMouseClicked
+    }//GEN-LAST:event_tablaBonosMouseClicked
 
-    private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
-        // TODO add your handling code here:
-        usuarios modificar = new usuarios();
-        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
-        for(int i=0 ; i<usuarios.size();i++)
-        {
-            if(Integer.parseInt(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),0).toString()) == usuarios.get(i).getIdusuario())
-            {
-                modificar = usuarios.get(i);
-            }
-        }
-        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
-        {
-           modificar.setActivo(false);
-           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
-           try
-           {
-               usuarioDAO.edit(modificar);
-           }catch(Exception Ex)
-           {}  
-        }else
-         {
-            modificar.setIntentos(0);
-            modificar.setActivo(true);
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
-            try
-           {
-               usuarioDAO.edit(modificar);
-           }catch(Exception Ex)
-           {}  
-        }
-        cargarTabla();
-    }//GEN-LAST:event_activarMouseClicked
-
-    private void nuevoUsuario1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoUsuario1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nuevoUsuario1ActionPerformed
+    private void btnNuevoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoBonoActionPerformed
+        NuevoBono nv = new NuevoBono();
+        nv.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnNuevoBonoActionPerformed
 
     private void AceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarActionPerformed
-        // TODO add your handling code here:
+        menuGerente menu = new menuGerente();
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_AceptarActionPerformed
 
-    private void nuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoUsuarioActionPerformed
-        // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new nuevoUsuario().setVisible(true);
-            }
-        });
-        this.setVisible(false);
+    private void btnNuevoTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoTipoActionPerformed
+        nuevoTipoBono ntb = new nuevoTipoBono();
+        ntb.setVisible(true);
         this.dispose();
-        usuarioDAO.close();
-    }//GEN-LAST:event_nuevoUsuarioActionPerformed
+    }//GEN-LAST:event_btnNuevoTipoActionPerformed
 
-    
     /**
      * @param args the command line arguments
      */
@@ -354,7 +321,7 @@ public class Bono extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
-       
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -362,28 +329,26 @@ public class Bono extends javax.swing.JFrame {
                 new Bono().setVisible(true);
             }
         });
-        
-        
+
     }
-    
-   private void insertarImagen(JLabel lbl,String ruta)
-    {
+
+    private void insertarImagen(JLabel lbl, String ruta) {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
-                        lbl.getWidth(), 
+                        lbl.getWidth(),
                         lbl.getHeight(),
                         Image.SCALE_DEFAULT)
         );
         lbl.setIcon(this.icono);
         this.repaint();
     }
-    private void insertarImagen(JButton checkBox,String ruta)
-    {
+
+    private void insertarImagen(JButton checkBox, String ruta) {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
-                        checkBox.getWidth(), 
+                        checkBox.getWidth(),
                         checkBox.getHeight(),
                         Image.SCALE_DEFAULT)
         );
@@ -393,15 +358,14 @@ public class Bono extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Aceptar;
-    private javax.swing.JButton activar;
+    private javax.swing.JButton btnNuevoBono;
+    private javax.swing.JButton btnNuevoTipo;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel logo;
-    private javax.swing.JButton nuevoUsuario;
-    private javax.swing.JButton nuevoUsuario1;
-    private javax.swing.JTable tablaUsuarios;
+    private javax.swing.JTable tablaBonos;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

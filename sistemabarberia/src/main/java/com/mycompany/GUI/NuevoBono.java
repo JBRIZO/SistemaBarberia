@@ -23,6 +23,7 @@ import javax.swing.border.Border;
  *
  * @author Kesil
  */
+
 public class NuevoBono extends javax.swing.JFrame {
     
     private estadofacturaJpaController estadofacturaDAO = new estadofacturaJpaController();
@@ -59,7 +60,6 @@ public class NuevoBono extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         tituloPantalla = new javax.swing.JLabel();
-        logo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -73,6 +73,7 @@ public class NuevoBono extends javax.swing.JFrame {
         Aceptar1 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         salir = new javax.swing.JLabel();
+        logo = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -95,9 +96,6 @@ public class NuevoBono extends javax.swing.JFrame {
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
         tituloPantalla.setText("NUEVO BONO");
         jPanel1.add(tituloPantalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, -1, -1));
-
-        logo.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel1.add(logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 92, 98));
 
         jLabel1.setText("jLabel1");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(853, 513, -1, -1));
@@ -205,7 +203,7 @@ public class NuevoBono extends javax.swing.JFrame {
                 AceptarActionPerformed(evt);
             }
         });
-        jPanel3.add(Aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 280, 110, 30));
+        jPanel3.add(Aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 280, 110, 30));
 
         Aceptar1.setBackground(new java.awt.Color(189, 158, 76));
         Aceptar1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -216,7 +214,7 @@ public class NuevoBono extends javax.swing.JFrame {
                 Aceptar1ActionPerformed(evt);
             }
         });
-        jPanel3.add(Aceptar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 280, 110, 30));
+        jPanel3.add(Aceptar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 280, 110, 30));
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(31, 28, 450, 340));
 
@@ -228,11 +226,11 @@ public class NuevoBono extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 57, Short.MAX_VALUE)
+            .addGap(0, 92, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 52, Short.MAX_VALUE)
+            .addGap(0, 98, Short.MAX_VALUE)
         );
 
         jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 0, -1, -1));
@@ -243,7 +241,10 @@ public class NuevoBono extends javax.swing.JFrame {
                 salirMouseClicked(evt);
             }
         });
-        jPanel1.add(salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 33, 28));
+        jPanel1.add(salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 20, 33, 28));
+
+        logo.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel1.add(logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 0, 92, 98));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -282,15 +283,10 @@ public class NuevoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPeriodoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
-        // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new atributosFactura().setVisible(true);
-            }
-        });
-        this.setVisible(false);
+        menuGerente menu = new menuGerente();
+        menu.setVisible(true);
         this.dispose(); 
-        estadofacturaDAO.close();
+     
     }//GEN-LAST:event_salirMouseClicked
 
     private void txtCantidadFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCantidadFocusGained
