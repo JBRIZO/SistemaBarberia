@@ -11,6 +11,7 @@ import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.estadofactura;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -42,6 +43,7 @@ public class estadoFactura extends javax.swing.JFrame {
     public estadoFactura() {
         initComponents();
         formatoInvalido.setVisible(false);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();  

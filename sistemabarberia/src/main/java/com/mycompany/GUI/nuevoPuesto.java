@@ -15,6 +15,7 @@ import com.mycompany.sistemabarberia.puesto;
 import com.mycompany.sistemabarberia.puestohistoricoempleado;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -56,6 +57,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
     public nuevoPuesto() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
          this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
          this.insertarImagen(this.agregar,"src/main/resources/Imagenes/agregar.png");
@@ -342,6 +344,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
         nuevoPuesto.setIDPuesto(Character.getNumericValue(cbTipoPuesto.getSelectedItem().toString().charAt(0)));
         nuevoPuesto.setActivo(true);
         
+        //modificar puesto anterior
         puestohistoricoempleado puestoAnterior = new puestohistoricoempleado();
         puestoAnterior.setNumpuesto(puestosAnteriores.get(puestosAnteriores.size()-1).getNumpuesto());
         puestoAnterior.setFechaInicial(puestosAnteriores.get(puestosAnteriores.size()-1).getFechaInicial());

@@ -13,6 +13,7 @@ import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -52,6 +53,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     public nuevoSalario() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
          this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();   
@@ -338,7 +340,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         //anadir salario
         salariohistoricoempleados nuevoSalario = new salariohistoricoempleados();
         nuevoSalario.setFechaInicial(Date.valueOf(fechaIni));
-        nuevoSalario.setFechaFinal(Date.valueOf(fechaIni));
+        nuevoSalario.setFechaFinal(null);
         nuevoSalario.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
         nuevoSalario.setSalario(Double.parseDouble(salario.getText()));
         nuevoSalario.setActivo(true);
@@ -363,6 +365,14 @@ public class nuevoSalario extends javax.swing.JFrame {
         }
         date = date.minusDays(1);
         salarioAnterior.setFechaFinal(Date.valueOf(date));
+        
+        //comparar salario nuevo con salario anterior
+        if(salarioAnterior.getSalario() == nuevoSalario.getSalario())
+        {
+            JOptionPane.showMessageDialog(null,"El nuevo salario no puede ser igual al anterior.", "Salario Inválido",JOptionPane.ERROR_MESSAGE); 
+           salario.setBorder(redBorder);
+           return;
+        }
         
         if(validacionNumerica() && validarFecha(fechaInicio,formatoInvalido1) ){
             try {
@@ -500,11 +510,11 @@ public class nuevoSalario extends javax.swing.JFrame {
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("El salario debe ser mayor a 0");
             return false;
-        }
+        } 
          if(validar.validacionDecimal(salario.getText()))
         {
             salario.setBorder(greenBorder);
-            formatoInvalido3.setVisible(true);
+            formatoInvalido3.setVisible(false);
             formatoInvalido3.setText("Formato válido");
             return true;
         }else

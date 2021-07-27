@@ -11,6 +11,7 @@ import com.mycompany.sistemabarberia.JPACOntrollers.puestohistoricoempleadoJpaCo
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.puesto;
 import com.mycompany.sistemabarberia.puestohistoricoempleado;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -40,7 +42,7 @@ public class listaPuestos extends javax.swing.JFrame {
     public listaPuestos() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoLogin.png"));
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");for(int i = 0; i < empleadosBD.size(); i++)
         {
             if(empleadosBD.get(i).isActivo())
@@ -152,6 +154,15 @@ public class listaPuestos extends javax.swing.JFrame {
         });
         tablapuesto.setRowHeight(32);
         jScrollPane1.setViewportView(tablapuesto);
+        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+        MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
+        MyHeaderRender.setForeground(Color.BLACK);
+        for(int i = 0; i < tablapuesto.getColumnCount();i++)
+        {
+            tablapuesto.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+        }
+        tablapuesto.setShowGrid(true);
+        tablapuesto.setGridColor(Color.BLACK);
 
         jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 61, -1, 278));
 

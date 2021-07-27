@@ -10,6 +10,7 @@ import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -38,6 +39,7 @@ public class tipopago extends javax.swing.JFrame {
      */
     public tipopago() {
         initComponents();
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
       

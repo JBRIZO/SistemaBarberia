@@ -10,12 +10,15 @@ import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.descuentos;
 import com.mycompany.sistemabarberia.tipodescuento;
 import com.mycompany.sistemabarberia.usuarios;
+import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.Date;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -36,6 +39,7 @@ public class listaDescuentos extends javax.swing.JFrame {
     public listaDescuentos() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         cargarTabla();
 //        tablaPuestosHistoricos();
@@ -132,6 +136,15 @@ public class listaDescuentos extends javax.swing.JFrame {
         });
         tablaDescuentos.setRowHeight(32);
         jScrollPane1.setViewportView(tablaDescuentos);
+        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+        MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
+        MyHeaderRender.setForeground(Color.BLACK);
+        for(int i = 0; i < tablaDescuentos.getColumnCount();i++)
+        {
+            tablaDescuentos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+        }
+        tablaDescuentos.setShowGrid(true);
+        tablaDescuentos.setGridColor(Color.BLACK);
 
         idTipoDescuento4.setEditable(false);
         idTipoDescuento4.setBackground(new java.awt.Color(30, 33, 34));
@@ -269,10 +282,13 @@ public class listaDescuentos extends javax.swing.JFrame {
         tablaDescuentos.setModel(modelo);
         List<descuentos> descuent = descuentos.finddescuentosEntities();
             for(descuentos descuento : descuent){
-                for(int i = 0; i < descuent.size(); i++)
-                {
-                    Descuento = tiposDescuentoBD.get(descuent.get(i).getIDTipoDescuento()-1).getNomDescuento();
-                }
+                for(int j = 0; j < tiposDescuentoBD.size(); j++)
+                    {
+                        if(tiposDescuentoBD.get(j).getIdtipodescuento() == descuento.getIDTipoDescuento())
+                        {
+                            Descuento = tiposDescuentoBD.get(j).getNomDescuento();  
+                        }
+                    }
                 if(descuento.isActivo())
                 {
                 activo = "Sí";   

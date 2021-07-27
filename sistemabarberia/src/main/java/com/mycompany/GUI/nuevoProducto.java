@@ -13,6 +13,7 @@ import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -48,6 +49,7 @@ public class nuevoProducto extends javax.swing.JFrame {
      */
     public nuevoProducto() {
         initComponents();
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
 

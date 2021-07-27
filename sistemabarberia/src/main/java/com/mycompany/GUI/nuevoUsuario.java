@@ -13,6 +13,7 @@ import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.empleado;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -47,6 +48,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
     public nuevoUsuario() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir1,"src/main/resources/Imagenes/x.png");
         Reiniciar();   

@@ -32,7 +32,7 @@ public class parametrosFactura extends javax.swing.JFrame {
      */
     public parametrosFactura() {
         initComponents();
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoLogin.png"));
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir1,"src/main/resources/Imagenes/x.png");
         txtIdParametro.setEditable(false);

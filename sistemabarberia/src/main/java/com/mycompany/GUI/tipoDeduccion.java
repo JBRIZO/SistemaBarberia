@@ -11,6 +11,7 @@ import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.tipodeduccion;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -39,6 +40,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
      */
     public tipoDeduccion() {
         initComponents();
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         

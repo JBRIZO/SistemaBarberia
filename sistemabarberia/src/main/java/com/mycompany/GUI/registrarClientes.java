@@ -15,6 +15,7 @@ import com.mycompany.sistemabarberia.servicios;
 import com.mycompany.sistemabarberia.tipodocumento;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -56,6 +57,7 @@ public class registrarClientes extends javax.swing.JFrame {
     public registrarClientes() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
        
        Reiniciar();
@@ -75,6 +77,7 @@ public class registrarClientes extends javax.swing.JFrame {
        initComponents();
         modificar = true;
         this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.jpeg");
         this.clienteModificar = clienteModificar;
         Reiniciar();

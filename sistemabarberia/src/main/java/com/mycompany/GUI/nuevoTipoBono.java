@@ -11,6 +11,7 @@ import com.mycompany.sistemabarberia.tiposbono;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -40,6 +41,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
      */
     public nuevoTipoBono() {
         initComponents();
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         formatoInvalido.setVisible(false);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
