@@ -14,12 +14,12 @@ import javax.persistence.Id;
  * @author Kesil
  */
 public class bonosempleadomensual implements Serializable {
-
+    
     @Id
     private int numbono;
-
+    
     @Column
-    private int IDEmpleado;
+    private int IdEmpleado;
     @Column
     private int TipoBono;
     @Column
@@ -30,17 +30,19 @@ public class bonosempleadomensual implements Serializable {
     private boolean Activo;
 
     public int getNumbono() {
-    return numbono;
-  
-    
-}
-
-    public int getIDEmpleado() {
-        return IDEmpleado;
+        return numbono;
     }
 
-    public void setIDEmpleado(int IDEmpleado) {
-        this.IDEmpleado = IDEmpleado;
+    public void setNumbono(int numbono) {
+        this.numbono = numbono;
+    }
+
+    public int getIdEmpleado() {
+        return IdEmpleado;
+    }
+
+    public void setIdEmpleado(int IdEmpleado) {
+        this.IdEmpleado = IdEmpleado;
     }
 
     public int getTipoBono() {
@@ -74,4 +76,11 @@ public class bonosempleadomensual implements Serializable {
     public void setActivo(boolean Activo) {
         this.Activo = Activo;
     }
- }
+    
+    
+    
+    
+    
+    
+    
+}
