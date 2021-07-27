@@ -69,7 +69,7 @@ public class Bono extends javax.swing.JFrame {
             }
 
             for (int j = 0; j < bonoTipo.size(); j++) {
-                if (bonoTipo.get(j).getIdtipobono() == bono.getTipoBono()) {
+                if (bonoTipo.get(j).getIdtipobono() == bono.getIDTipoBono()) {
                     nombreBono = bonoTipo.get(j).getNomBono();
                 }
             }

@@ -47,12 +47,12 @@ public class bonosempleadomensual implements Serializable {
         this.IDEmpleado = IdEmpleado;
     }
 
-    public int getTipoBono() {
+    public int getIDTipoBono() {
         return IDTipoBono;
     }
 
-    public void setTipoBono(int TipoBono) {
-        this.IDTipoBono = TipoBono;
+    public void setIDTipoBono(int IDTipoBono) {
+        this.IDTipoBono = IDTipoBono;
     }
 
     public double getValor() {

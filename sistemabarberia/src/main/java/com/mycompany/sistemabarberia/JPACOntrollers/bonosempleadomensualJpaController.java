@@ -6,6 +6,7 @@
 package com.mycompany.sistemabarberia.JPACOntrollers;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
+import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.PreexistingEntityException;
 import com.mycompany.sistemabarberia.bonosempleadomensual;
 import java.io.Serializable;
 import java.util.List;
