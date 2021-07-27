@@ -321,7 +321,17 @@ public class nuevoUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        
+
+        if(nombreUsuario.getText().equals("Nombre Usuario") || contrasena.getPassword().equals("") || contrasena .getPassword().equals(""))
+        {
+            JOptionPane.showMessageDialog(null,"Debes rellenar con datos todos los campos.","Datos Inválidos", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(cbEmpleados.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null,"Debes de seleccionar un empleado.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         List<usuarios> usuariosEnBd = usuariosDAO.findusuariosEntities();
         String pass = new String(contrasena.getPassword());
         String confirmPass = new String(confirmarContrasena.getPassword());
