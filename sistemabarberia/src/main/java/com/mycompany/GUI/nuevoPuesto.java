@@ -173,12 +173,22 @@ public class nuevoPuesto extends javax.swing.JFrame {
 
         cbEmpleados.setBackground(new java.awt.Color(30, 33, 34));
         cbEmpleados.setPreferredSize(new java.awt.Dimension(270, 42));
+        cbEmpleados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbEmpleadosActionPerformed(evt);
+            }
+        });
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Empleado:");
 
         cbTipoPuesto.setBackground(new java.awt.Color(30, 33, 34));
         cbTipoPuesto.setPreferredSize(new java.awt.Dimension(270, 42));
+        cbTipoPuesto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTipoPuestoActionPerformed(evt);
+            }
+        });
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Tipo de Puesto:");
@@ -436,6 +446,14 @@ public class nuevoPuesto extends javax.swing.JFrame {
         });
         this.dispose();
     }//GEN-LAST:event_agregarMouseClicked
+
+    private void cbEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmpleadosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbEmpleadosActionPerformed
+
+    private void cbTipoPuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoPuestoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbTipoPuestoActionPerformed
 
     /**
      * @param args the command line arguments
