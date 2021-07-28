@@ -49,8 +49,31 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         
         this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        
+        Reiniciar();   
+        for(int i = 0; i < deduccionesempleadomensualBD.size(); i++)
+        {
+            if(deduccionesempleadomensualBD.get(i).isActivo())
+            {
+                idEmpleado.addItem(deduccionesempleadomensualBD.get(i).toString());
+            }
+        }
+        for(int i = 0; i < tipodeduccionBD.size(); i++)
+        {
+            if(tipodeduccionBD.get(i).isActivo())
+            {
+                tipoDeduccion.addItem(tipodeduccionBD.get(i).toString());
+            }
+        }
        
         
+    }
+    
+    public void Reiniciar()
+    {
+        cantidadInicial.setText("Cantidad Inicial");
+        cantidadInicial.setBorder(defaultBorder);
+        formatoInvalidoCantidad.setText(" ");
     }
 
     /**
@@ -69,13 +92,14 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         jLabel = new javax.swing.JLabel();
         idEmpleado = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        nuevoPeriodo = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         tipoDeduccion = new javax.swing.JComboBox<>();
         cantidadInicial = new javax.swing.JTextField();
         botonAceptar = new javax.swing.JButton();
         botonCancelar = new javax.swing.JButton();
         formatoInvalidoCantidad = new javax.swing.JLabel();
+        nuevoPeriodo = new javax.swing.JTextField();
+        formatoInvalidoPeriodo = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -109,12 +133,6 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Periodo:");
-
-        nuevoPeriodo.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoPeriodo.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoPeriodo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        nuevoPeriodo.setMinimumSize(new java.awt.Dimension(31, 22));
-        nuevoPeriodo.setPreferredSize(new java.awt.Dimension(31, 22));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Tipo Deduccion");
@@ -156,6 +174,22 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         formatoInvalidoCantidad.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoCantidad.setText("Formato Invalido.");
 
+        nuevoPeriodo.setBackground(new java.awt.Color(30, 33, 34));
+        nuevoPeriodo.setForeground(new java.awt.Color(255, 255, 255));
+        nuevoPeriodo.setText("Periodo");
+        nuevoPeriodo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        nuevoPeriodo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                nuevoPeriodoFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                nuevoPeriodoFocusLost(evt);
+            }
+        });
+
+        formatoInvalidoPeriodo.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoPeriodo.setText("Formato Invalido.");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -163,26 +197,28 @@ public class nuevaDeduccion extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
+                        .addContainerGap(68, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGap(30, 30, 30)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(idEmpleado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(nuevoPeriodo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(formatoInvalidoPeriodo)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(idEmpleado, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(nuevoPeriodo, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addComponent(tipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(formatoInvalidoCantidad)
+                                        .addComponent(cantidadInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonCancelar))))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(109, 109, 109)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(tipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonAceptar))
-                        .addGap(88, 88, 88)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(formatoInvalidoCantidad)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(botonCancelar)
-                                .addComponent(cantidadInicial, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)))))
+                        .addGap(140, 140, 140)
+                        .addComponent(botonAceptar)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(142, 142, 142))
         );
         jPanel3Layout.setVerticalGroup(
@@ -192,11 +228,13 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel)
                     .addComponent(idEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(47, 47, 47)
+                .addGap(57, 57, 57)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(nuevoPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(44, 44, 44)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(formatoInvalidoPeriodo)
+                .addGap(31, 31, 31)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(tipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -242,7 +280,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(37, 37, 37)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,7 +290,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 47, Short.MAX_VALUE))
+                .addGap(0, 27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -302,6 +340,16 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         this.dispose(); 
         deduccionesempleadomensualDAO.close();
     }//GEN-LAST:event_botonCancelarMouseClicked
+
+    private void nuevoPeriodoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevoPeriodoFocusGained
+        // TODO add your handling code here:
+        nuevoPeriodo.selectAll();
+    }//GEN-LAST:event_nuevoPeriodoFocusGained
+
+    private void nuevoPeriodoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevoPeriodoFocusLost
+        // TODO add your handling code here:
+        validacionCamposTexto();
+    }//GEN-LAST:event_nuevoPeriodoFocusLost
 
     /**
      * @param args the command line arguments
@@ -380,9 +428,48 @@ public class nuevaDeduccion extends javax.swing.JFrame {
             return false;
         }  
          
-          
-    
      
+     }
+     
+     private void validacionCamposTexto()
+     {
+         if(validar.validacionCampoNumerico(nuevoPeriodo.getText()))
+         {
+             nuevoPeriodo.setBorder(redBorder);
+             formatoInvalidoPeriodo.setVisible(true);
+             formatoInvalidoPeriodo.setText("Solo se permite texto en este campo.");
+             return;
+         }
+         
+         if(!validar.validacionMayusculaInicial(nuevoPeriodo.getText()))
+         {
+             nuevoPeriodo.setBorder(redBorder);
+             formatoInvalidoPeriodo.setVisible(true);
+             formatoInvalidoPeriodo.setText("El periodo debe iniciar con mayuscula.");
+             return;
+         }
+         
+         if(validar.validacionCadenaPalabras(nuevoPeriodo.getText()))
+         {
+             nuevoPeriodo.setBorder(greenBorder);
+             formatoInvalidoPeriodo.setVisible(true);
+             formatoInvalidoPeriodo.setText("Formato Valido.");
+             
+         }else
+         {
+             nuevoPeriodo.setBorder(redBorder);
+             formatoInvalidoPeriodo.setVisible(true);
+             formatoInvalidoPeriodo.setText("No puedes repetir tantas letras.");
+             return;
+         }
+         if(!validar.validacionCantidadMinima(nuevoPeriodo.getText(),4))
+         {
+             System.out.println(nuevoPeriodo.getText());
+             nuevoPeriodo.setBorder(redBorder);
+             formatoInvalidoPeriodo.setVisible(true);
+             formatoInvalidoPeriodo.setText("El nombre del periodo debe ser de minimo 5 letras.");
+             return;
+         }
      }
      
 
@@ -395,6 +482,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     private javax.swing.JButton botonCancelar;
     private javax.swing.JTextField cantidadInicial;
     private javax.swing.JLabel formatoInvalidoCantidad;
+    private javax.swing.JLabel formatoInvalidoPeriodo;
     private javax.swing.JComboBox<String> idEmpleado;
     private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabel2;
@@ -403,7 +491,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JComboBox<String> nuevoPeriodo;
+    private javax.swing.JTextField nuevoPeriodo;
     private javax.swing.JComboBox<String> tipoDeduccion;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
