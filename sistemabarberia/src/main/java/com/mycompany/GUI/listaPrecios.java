@@ -5,9 +5,10 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
-import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.precioshistoricosproductos;
+import com.mycompany.sistemabarberia.productos;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -22,27 +23,28 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author kesil
  */
-public class listaSalarios extends javax.swing.JFrame {
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
-    private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
-    private salariohistoricoempleadosJpaController salariosDAO = new salariohistoricoempleadosJpaController();
+public class listaPrecios extends javax.swing.JFrame {
+    
+    private productosJpaController productoDAO = new productosJpaController();
+    private List<productos> productosBD = productoDAO.findproductosEntities();
+    private precioshistoricosproductosJpaController preciosDAO = new precioshistoricosproductosJpaController();
     private ImageIcon imagen;
     private Icon icono;
 
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public listaSalarios() {
+    public listaPrecios() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        for(int i = 0; i<empleadosBD.size();i++)
+        for(int i = 0; i<productosBD.size();i++)
         {
-            if(empleadosBD.get(i).isActivo())
+            if(productosBD.get(i).isActivo())
             {
-                cbEmpleados.addItem(empleadosBD.get(i).toString());
+                cbProductos.addItem(productosBD.get(i).toString());
             }
         }
     }
@@ -64,11 +66,11 @@ public class listaSalarios extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        botonNuevo = new javax.swing.JButton();
-        botonCancelar = new javax.swing.JButton();
+        nuevoPrecio = new javax.swing.JButton();
+        botonRegresar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listaSalarios = new javax.swing.JTable();
-        cbEmpleados = new javax.swing.JComboBox<>();
+        listaPrecios = new javax.swing.JTable();
+        cbProductos = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -78,7 +80,7 @@ public class listaSalarios extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("LISTA DE SALARIOS");
+        tituloPantalla.setText("LISTA DE PRECIOS");
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -94,49 +96,49 @@ public class listaSalarios extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        botonNuevo.setBackground(new java.awt.Color(189, 158, 76));
-        botonNuevo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonNuevo.setText("NUEVO");
-        botonNuevo.setRequestFocusEnabled(false);
-        botonNuevo.addMouseListener(new java.awt.event.MouseAdapter() {
+        nuevoPrecio.setBackground(new java.awt.Color(189, 158, 76));
+        nuevoPrecio.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        nuevoPrecio.setText("NUEVO");
+        nuevoPrecio.setRequestFocusEnabled(false);
+        nuevoPrecio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                botonNuevoMouseClicked(evt);
+                nuevoPrecioMouseClicked(evt);
             }
         });
-        botonNuevo.addActionListener(new java.awt.event.ActionListener() {
+        nuevoPrecio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonNuevoActionPerformed(evt);
+                nuevoPrecioActionPerformed(evt);
             }
         });
 
-        botonCancelar.setBackground(new java.awt.Color(189, 158, 76));
-        botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonCancelar.setText("REGRESAR");
-        botonCancelar.setRequestFocusEnabled(false);
-        botonCancelar.addMouseListener(new java.awt.event.MouseAdapter() {
+        botonRegresar.setBackground(new java.awt.Color(189, 158, 76));
+        botonRegresar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonRegresar.setText("REGRESAR");
+        botonRegresar.setRequestFocusEnabled(false);
+        botonRegresar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                botonCancelarMouseClicked(evt);
+                botonRegresarMouseClicked(evt);
             }
         });
-        botonCancelar.addActionListener(new java.awt.event.ActionListener() {
+        botonRegresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonCancelarActionPerformed(evt);
+                botonRegresarActionPerformed(evt);
             }
         });
 
-        listaSalarios.setModel(new javax.swing.table.DefaultTableModel(
+        listaPrecios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Num Salario", "Fecha Inicial", "Fecha Final", "Salario"
+                "Fecha Inicial", "Fecha Final", "Precio"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -147,21 +149,21 @@ public class listaSalarios extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        listaSalarios.setRowHeight(32);
-        jScrollPane1.setViewportView(listaSalarios);
+        listaPrecios.setRowHeight(32);
+        jScrollPane1.setViewportView(listaPrecios);
 
-        cbEmpleados.setBackground(new java.awt.Color(30, 33, 34));
-        cbEmpleados.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cbEmpleados.setForeground(new java.awt.Color(255, 255, 255));
-        cbEmpleados.addActionListener(new java.awt.event.ActionListener() {
+        cbProductos.setBackground(new java.awt.Color(30, 33, 34));
+        cbProductos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cbProductos.setForeground(new java.awt.Color(255, 255, 255));
+        cbProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbEmpleadosActionPerformed(evt);
+                cbProductosActionPerformed(evt);
             }
         });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Empleado:");
+        jLabel2.setText("Producto:");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -171,14 +173,14 @@ public class listaSalarios extends javax.swing.JFrame {
                 .addGap(0, 20, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(61, 61, 61)
-                        .addComponent(botonNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(nuevoPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel2)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(cbProductos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
@@ -187,14 +189,14 @@ public class listaSalarios extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonCancelar)
-                    .addComponent(botonNuevo))
+                    .addComponent(botonRegresar)
+                    .addComponent(nuevoPrecio))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -223,7 +225,7 @@ public class listaSalarios extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(111, 111, 111)
+                        .addGap(105, 105, 105)
                         .addComponent(tituloPantalla))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
@@ -237,9 +239,10 @@ public class listaSalarios extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(tituloPantalla)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(tituloPantalla)
+                        .addGap(22, 22, 22)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(28, 28, 28)
@@ -265,77 +268,76 @@ public class listaSalarios extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonNuevoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoMouseClicked
+    private void nuevoPrecioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoPrecioMouseClicked
+        // TODO add your handling code here:        
+    }//GEN-LAST:event_nuevoPrecioMouseClicked
+
+    private void nuevoPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoPrecioActionPerformed
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoSalario().setVisible(true);
+                new nuevoProducto().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        empleadoDAO.close();
+        productoDAO.close();
+    }//GEN-LAST:event_nuevoPrecioActionPerformed
+
+    private void botonRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonRegresarMouseClicked
+        // TODO add your handling code here:
         
-    }//GEN-LAST:event_botonNuevoMouseClicked
+    }//GEN-LAST:event_botonRegresarMouseClicked
 
-    private void botonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_botonNuevoActionPerformed
-
-    private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
+    private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new pantallaEmpleados().setVisible(true);
+                new pantallaProductos().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        empleadoDAO.close();
-    }//GEN-LAST:event_botonCancelarMouseClicked
+        productoDAO.close();
+    }//GEN-LAST:event_botonRegresarActionPerformed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_botonCancelarActionPerformed
-
-    private void cbEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmpleadosActionPerformed
-        List<salariohistoricoempleados> salariosBD = salariosDAO.findsalariohistoricoempleadosEntities();
+    private void cbProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbProductosActionPerformed
+        List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
         
         //lista en blanco
-        DefaultTableModel modelo = (DefaultTableModel)listaSalarios.getModel();       
+        DefaultTableModel modelo = (DefaultTableModel)listaPrecios.getModel();       
         modelo.setRowCount(0);
         
         
-        //Capturar salarios para empleado seleccionado
-        List<salariohistoricoempleados> salariosEmpleadoSelec = new ArrayList();
-        for(int i = 0; i<salariosBD.size();i++)
+        //Capturar precios para producto seleccionado
+        List<precioshistoricosproductos> preciosProductoSelec = new ArrayList();
+        for(int i = 0; i<preciosBD.size();i++)
         {
-            if(salariosBD.get(i).getIDEmpleado() == Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)))
+            if(preciosBD.get(i).getIDProducto() == Character.getNumericValue(cbProductos.getSelectedItem().toString().charAt(0)))
             {
-                salariosEmpleadoSelec.add(salariosBD.get(i));
+                preciosProductoSelec.add(preciosBD.get(i));
             }
         }
         //Llenar la tabla de datos
         String fechaFinal = "";
-        listaSalarios.setModel(modelo);
-            for(salariohistoricoempleados salarios : salariosEmpleadoSelec){
-                if(salarios.getFechaFinal() == null)
+        listaPrecios.setModel(modelo);
+            for(precioshistoricosproductos precios : preciosProductoSelec){
+                if(precios.getFechaFinal() == null)
                     {
                        fechaFinal = "        -  "; 
                     }else
                     {
-                        fechaFinal = convertirDates(salarios.getFechaFinal().toString());
+                        fechaFinal = convertirDates(precios.getFechaFinal().toString());
                     }
                     modelo.addRow(
                     new Object[]{
-                        salarios.getIdsalario(),
-                        convertirDates(salarios.getFechaInicial().toString()),
+                        convertirDates(precios.getFechaInicial().toString()),
                         fechaFinal,
-                        salarios.getSalario()
+                        precios.getPrecio()
                     }
                 );
             } 
-    }//GEN-LAST:event_cbEmpleadosActionPerformed
+    }//GEN-LAST:event_cbProductosActionPerformed
 
     
     /**
@@ -355,21 +357,22 @@ public class listaSalarios extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(listaSalarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaPrecios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(listaSalarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaPrecios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(listaSalarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaPrecios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(listaSalarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(listaPrecios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
         
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new listaSalarios().setVisible(true);
+                new listaPrecios().setVisible(true);
             }
         });
         
@@ -388,7 +391,7 @@ public class listaSalarios extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
-    
+    //convierte el formato de sql.Date a string en formato dd/mm/aaaa
     private String convertirDates(String Fecha)
     {
         String[] palabras  = Fecha.split("-");
@@ -397,17 +400,17 @@ public class listaSalarios extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botonCancelar;
-    private javax.swing.JButton botonNuevo;
-    private javax.swing.JComboBox<String> cbEmpleados;
+    private javax.swing.JButton botonRegresar;
+    private javax.swing.JComboBox<String> cbProductos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable listaSalarios;
+    private javax.swing.JTable listaPrecios;
     private javax.swing.JLabel logo;
+    private javax.swing.JButton nuevoPrecio;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

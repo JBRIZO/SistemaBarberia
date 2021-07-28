@@ -77,6 +77,11 @@ public class productos implements Serializable{
         this.Activo = Activo;
     }
     
+    @Override
+    public String toString()
+    {
+        return idproducto + ". " + NomProducto;
+    }
     
     
     

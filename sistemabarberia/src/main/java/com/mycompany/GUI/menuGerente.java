@@ -509,7 +509,7 @@ public class menuGerente extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoProducto().setVisible(true);
+                new pantallaProductos().setVisible(true);
             }
         });
         this.setVisible(false);

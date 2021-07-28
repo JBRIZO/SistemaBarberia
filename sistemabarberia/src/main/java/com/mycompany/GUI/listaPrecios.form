@@ -50,7 +50,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="logo" min="-2" pref="92" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="111" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="105" max="-2" attributes="0"/>
                           <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
@@ -69,9 +69,10 @@
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="logo" min="-2" pref="98" max="-2" attributes="0"/>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -99,7 +100,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="LISTA DE SALARIOS"/>
+            <Property name="text" type="java.lang.String" value="LISTA DE PRECIOS"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="logo">
@@ -178,15 +179,15 @@
                           <EmptySpace min="0" pref="20" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Component id="botonCancelar" min="-2" pref="196" max="-2" attributes="0"/>
+                                  <Component id="botonRegresar" min="-2" pref="196" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
-                                  <Component id="botonNuevo" min="-2" pref="196" max="-2" attributes="0"/>
+                                  <Component id="nuevoPrecio" min="-2" pref="196" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="cbEmpleados" max="32767" attributes="0"/>
+                                      <Component id="cbProductos" max="32767" attributes="0"/>
                                   </Group>
                                   <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -200,15 +201,15 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="cbEmpleados" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                              <Component id="cbProductos" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                               <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jScrollPane1" min="-2" pref="278" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="botonCancelar" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="botonNuevo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="botonRegresar" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="nuevoPrecio" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="22" max="32767" attributes="0"/>
                       </Group>
@@ -216,7 +217,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="botonNuevo">
+                <Component class="javax.swing.JButton" name="nuevoPrecio">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="4c" green="9e" red="bd" type="rgb"/>
@@ -228,11 +229,11 @@
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="botonNuevoMouseClicked"/>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonNuevoActionPerformed"/>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="nuevoPrecioMouseClicked"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nuevoPrecioActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="botonCancelar">
+                <Component class="javax.swing.JButton" name="botonRegresar">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="4c" green="9e" red="bd" type="rgb"/>
@@ -244,8 +245,8 @@
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="botonCancelarMouseClicked"/>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonCancelarActionPerformed"/>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="botonRegresarMouseClicked"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonRegresarActionPerformed"/>
                   </Events>
                 </Component>
                 <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -255,23 +256,17 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="listaSalarios">
+                    <Component class="javax.swing.JTable" name="listaPrecios">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="4" rowCount="0">
-                            <Column editable="false" title="Num Salario" type="java.lang.Integer"/>
+                          <Table columnCount="3" rowCount="0">
                             <Column editable="false" title="Fecha Inicial" type="java.lang.String"/>
                             <Column editable="false" title="Fecha Final" type="java.lang.String"/>
-                            <Column editable="false" title="Salario" type="java.lang.Double"/>
+                            <Column editable="false" title="Precio" type="java.lang.Double"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                           <TableColumnModel selectionModel="0">
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
                             <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                               <Title/>
                               <Editor/>
@@ -297,7 +292,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JComboBox" name="cbEmpleados">
+                <Component class="javax.swing.JComboBox" name="cbProductos">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="22" green="21" red="1e" type="rgb"/>
@@ -313,7 +308,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbEmpleadosActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbProductosActionPerformed"/>
                   </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -327,7 +322,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Empleado:"/>
+                    <Property name="text" type="java.lang.String" value="Producto:"/>
                   </Properties>
                 </Component>
               </SubComponents>

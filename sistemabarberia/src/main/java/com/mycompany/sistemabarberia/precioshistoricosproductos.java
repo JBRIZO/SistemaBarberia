@@ -23,7 +23,7 @@ public class precioshistoricosproductos implements Serializable {
     private int IDProducto;
     @Column
     private Date FechaInicial;
-    @Column
+    @Column(nullable=true)
     private Date FechaFinal;
     @Column
     private double Precio;

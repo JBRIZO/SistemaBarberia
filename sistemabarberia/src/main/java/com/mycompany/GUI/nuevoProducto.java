@@ -30,6 +30,10 @@ import javax.swing.border.Border;
  */
 public class nuevoProducto extends javax.swing.JFrame {
     
+    
+    private productos productoModificar;
+    private boolean modificar;
+    
     private precioshistoricosproductosJpaController preciosDAO = new precioshistoricosproductosJpaController();
     private productosJpaController productoDAO = new productosJpaController();
     private Validaciones validar = new Validaciones();
@@ -49,11 +53,27 @@ public class nuevoProducto extends javax.swing.JFrame {
      */
     public nuevoProducto() {
         initComponents();
+         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
 
         Reiniciar();    
+    }
+    
+    //constructor para modificar un producto
+    public nuevoProducto(productos productoModificar)
+    {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        Reiniciar(); 
+        this.productoModificar = productoModificar;
+        stockInicial.setEnabled(false);
+        precioInicial.setEnabled(false);
+        cargarDatosEmpleadoModificar();
     }
     
     public void Reiniciar()
@@ -77,6 +97,14 @@ public class nuevoProducto extends javax.swing.JFrame {
         formatoInvalido1.setVisible(false);
         formatoInvalido2.setVisible(false);
         formatoInvalido3.setVisible(false);
+    }
+    
+    public void cargarDatosEmpleadoModificar()
+    {
+        nombreProducto.setText(productoModificar.getNomProducto());
+        stockMinimo.setText(Integer.toString(productoModificar.getStockMinimo()));
+        stockMaximo.setText(Integer.toString(productoModificar.getStockMaximo()));
+        
     }
 
     /**
@@ -471,7 +499,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         //anadir precio 1
         precioshistoricosproductos precioUno = new precioshistoricosproductos();
         precioUno.setFechaInicial(Date.valueOf(currentTime));
-        precioUno.setFechaFinal(Date.valueOf(currentTime));
+        precioUno.setFechaFinal(null);
         precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
         precioUno.setActivo(true);  
         

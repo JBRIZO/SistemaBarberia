@@ -70,7 +70,6 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="365" pref="365" max="-2" attributes="0"/>
                               <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="349" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Component id="bienvenido" min="-2" pref="342" max="-2" attributes="0"/>
