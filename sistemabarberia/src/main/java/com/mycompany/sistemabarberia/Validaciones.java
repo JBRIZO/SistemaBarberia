@@ -129,6 +129,7 @@ public class Validaciones {
         } 
     }
     
+    
     //Valida que el formato de fecha sea el correcto
     public boolean validacionFormatoFecha(String cadena)
     {
@@ -142,7 +143,6 @@ public class Validaciones {
             return false;
         } 
     }
-    
     
     
     //Devuelve TRUE si una cadena de texto tiene letras repetidas, sino false.
@@ -189,6 +189,18 @@ public class Validaciones {
         }  
     }
     
+    public boolean validacionNumEntero(String cadena)
+    {
+        String patron = "^[\\d]+$";
+        Pattern patt = Pattern.compile(patron);
+        Matcher comparador = patt.matcher(cadena);
+        if(comparador.matches()){
+            return true;
+        }else
+        {
+            return false;
+        }  
+    }
     
     
     //Compara el resultado de dos validaciones, y devuelve TRUE si ambas son ciertas, sino FALSE.

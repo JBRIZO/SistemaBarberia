@@ -7,16 +7,20 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,12 +31,16 @@ public class pantallaProductos extends javax.swing.JFrame {
     
     private productos productoSeleccionado;
     
+    private Validaciones validar = new Validaciones();
     private productosJpaController productosDAO =  new productosJpaController();
     private List<productos> productosBD = productosDAO.findproductosEntities();
     private precioshistoricosproductosJpaController preciosDAO= new precioshistoricosproductosJpaController();
     List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
     private ImageIcon imagen;
     private Icon icono;
+    private java.util.Date dt = new java.util.Date();
+    private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+    String currentTime = sdf.format(dt);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -44,8 +52,12 @@ public class pantallaProductos extends javax.swing.JFrame {
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
         this.insertarImagen(this.anadirProductos,"src/main/resources/Imagenes/agregar.png");
+        fechaLabel.setText("Fecha: " + currentTime);
         cargarTabla();
-           
+        for(int i = 0; i < tablaProductos.getColumnCount()-1 ; i++)
+        {
+            cbParametros.addItem(tablaProductos.getColumnName(i));
+        }  
     }
     
     private void cargarTabla()
@@ -77,11 +89,207 @@ public class pantallaProductos extends javax.swing.JFrame {
                         producto.getIdproducto(),
                         producto.getNomProducto(),
                         producto.getStockActual(),
+                        producto.getStockMaximo(),
                         precioActual,
                         activo
                     }
                 );
             } 
+    }
+    
+    private void cargarTablaBusquedaId(int IDProducto)
+    {
+        double precioActual = 0;
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        modelo.setRowCount(0);
+        tablaProductos.setModel(modelo);
+        List<productos> productosEnBD = productosDAO.findproductosEntities();
+        List<productos> productosFiltrados = new ArrayList();
+        
+        for(int i = 0; i < productosEnBD.size();i++)
+        {
+            if(productosEnBD.get(i).getIdproducto() == IDProducto)
+            {
+                productosFiltrados.add(productosEnBD.get(i));
+            }
+        }
+            for(productos producto : productosFiltrados){
+                for(int i = 0; i < preciosBD.size() ; i++)
+                    {
+                        //precio actual del producto
+                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        {
+                            precioActual = preciosBD.get(i).getPrecio();
+                        }
+                    }
+                if(producto.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        producto.getIdproducto(),
+                        producto.getNomProducto(),
+                        producto.getStockActual(),
+                        producto.getStockMaximo(),
+                        precioActual,
+                        activo
+                    }
+                );
+            }    
+    }
+    
+    private void cargarTablaBusquedaNombre(String Nombre)
+    {
+        double precioActual = 0;
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        modelo.setRowCount(0);
+        tablaProductos.setModel(modelo);
+        List<productos> productosEnBD = productosDAO.findproductosEntities();
+        List<productos> productosFiltrados = new ArrayList();
+        
+        for(int i = 0; i < productosEnBD.size();i++)
+        {
+            if(productosEnBD.get(i).getNomProducto().equalsIgnoreCase(Nombre))
+            {
+                productosFiltrados.add(productosEnBD.get(i));
+            }
+        }
+            for(productos producto : productosFiltrados){
+                for(int i = 0; i < preciosBD.size() ; i++)
+                    {
+                        //precio actual del producto
+                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        {
+                            precioActual = preciosBD.get(i).getPrecio();
+                        }
+                    }
+                if(producto.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        producto.getIdproducto(),
+                        producto.getNomProducto(),
+                        producto.getStockActual(),
+                        producto.getStockMaximo(),
+                        precioActual,
+                        activo
+                    }
+                );
+            }    
+    }
+    
+    private void cargarTablaBusquedaStock(int Stock)
+    {
+        double precioActual = 0;
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        modelo.setRowCount(0);
+        tablaProductos.setModel(modelo);
+        List<productos> productosEnBD = productosDAO.findproductosEntities();
+        List<productos> productosFiltrados = new ArrayList();
+        
+        for(int i = 0; i < productosEnBD.size();i++)
+        {
+            if(productosEnBD.get(i).getStockActual() == Stock)
+            {
+                productosFiltrados.add(productosEnBD.get(i));
+            }
+        }
+            for(productos producto : productosFiltrados){
+                for(int i = 0; i < preciosBD.size() ; i++)
+                    {
+                        //precio actual del producto
+                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        {
+                            precioActual = preciosBD.get(i).getPrecio();
+                        }
+                    }
+                if(producto.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        producto.getIdproducto(),
+                        producto.getNomProducto(),
+                        producto.getStockActual(),
+                        producto.getStockMaximo(),
+                        precioActual,
+                        activo
+                    }
+                );
+            }    
+    }
+    private void cargarTablaBusquedaPrecio(double Precio)
+    {
+        double precioActual = 0;
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        modelo.setRowCount(0);
+        tablaProductos.setModel(modelo);
+        List<productos> productosEnBD = productosDAO.findproductosEntities();
+        List<productos> productosFiltrados = new ArrayList();
+        List<precioshistoricosproductos> preciosFiltrados = new ArrayList();
+        
+        for(int i = 0 ; i < preciosBD.size() ; i++)
+        {
+            if(preciosBD.get(i).isActivo())
+            {
+                preciosFiltrados.add(preciosBD.get(i));
+            }
+        }     
+        
+        for(int i = 0; i < productosEnBD.size() ; i++)
+        {
+            for(int j = 0 ; j < preciosFiltrados.size(); j++)
+            {
+                if(productosEnBD.get(i).getIdproducto() == preciosFiltrados.get(j).getIDProducto() && preciosFiltrados.get(j).getPrecio() == Precio)
+                {
+                    productosFiltrados.add(productosEnBD.get(i));
+                }
+            }
+        }
+            for(productos producto : productosFiltrados){
+                for(int i = 0; i < preciosBD.size() ; i++)
+                    {
+                        //precio actual del producto
+                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        {
+                            precioActual = preciosBD.get(i).getPrecio();
+                        }
+                    }
+                if(producto.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        producto.getIdproducto(),
+                        producto.getNomProducto(),
+                        producto.getStockActual(),
+                        producto.getStockMaximo(),
+                        precioActual,
+                        activo
+                    }
+                );
+            }    
     }
 
     /**
@@ -104,8 +312,13 @@ public class pantallaProductos extends javax.swing.JFrame {
         nuevoProducto = new javax.swing.JButton();
         modificarProducto = new javax.swing.JButton();
         listaPrecios = new javax.swing.JButton();
-        anadirProductos = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        cbParametros = new javax.swing.JComboBox<>();
+        buscarTxt = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        anadirProductos = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
+        fechaLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -130,21 +343,20 @@ public class pantallaProductos extends javax.swing.JFrame {
 
         tablaProductos.setAutoCreateRowSorter(true);
         tablaProductos.setBackground(new java.awt.Color(30, 33, 34));
-        tablaProductos.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         tablaProductos.setForeground(new java.awt.Color(255, 255, 255));
         tablaProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID Producto", "Nombre", "Stock Actual", "Precio Actual", "Activo"
+                "ID Producto", "Nombre", "Stock Actual", "Stock Maximo", "Precio Actual", "Activo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -169,6 +381,15 @@ public class pantallaProductos extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tablaProductos);
+        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+        MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
+        MyHeaderRender.setForeground(Color.BLACK);
+        for(int i = 0; i < tablaProductos.getColumnCount();i++)
+        {
+            tablaProductos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+        }
+        tablaProductos.setShowGrid(true);
+        tablaProductos.setGridColor(Color.BLACK);
 
         activar.setBorderPainted(false);
         activar.setContentAreaFilled(false);
@@ -222,7 +443,40 @@ public class pantallaProductos extends javax.swing.JFrame {
             }
         });
 
-        anadirProductos.setPreferredSize(new java.awt.Dimension(33, 9));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Buscar por:");
+
+        buscarTxt.setBackground(new java.awt.Color(30, 33, 34));
+        buscarTxt.setForeground(new java.awt.Color(255, 255, 255));
+        buscarTxt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        buscarTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                buscarTxtFocusGained(evt);
+            }
+        });
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/lupa.png"))); // NOI18N
+        jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        anadirProductos.setBorderPainted(false);
+        anadirProductos.setContentAreaFilled(false);
+        anadirProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                anadirProductosMouseClicked(evt);
+            }
+        });
+        anadirProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                anadirProductosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -232,35 +486,53 @@ public class pantallaProductos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(anadirProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nuevoProducto)
                         .addGap(18, 18, 18)
                         .addComponent(modificarProducto)
                         .addGap(18, 18, 18)
-                        .addComponent(listaPrecios))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(anadirProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                        .addComponent(listaPrecios)))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buscarTxt)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(21, 21, 21)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(anadirProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(anadirProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(nuevoProducto, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(nuevoProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(modificarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(listaPrecios, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                    .addComponent(listaPrecios, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -277,7 +549,7 @@ public class pantallaProductos extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         botonRegresar.setBackground(new java.awt.Color(189, 158, 76));
@@ -290,33 +562,44 @@ public class pantallaProductos extends javax.swing.JFrame {
             }
         });
 
+        fechaLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        fechaLabel.setForeground(new java.awt.Color(255, 255, 255));
+        fechaLabel.setText("Fecha:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(269, 269, 269)
+                .addGap(278, 278, 278)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(77, 77, 77)
-                .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(34, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(fechaLabel)
+                .addGap(895, 895, 895))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(77, 77, 77)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(tituloPantalla)
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tituloPantalla))
                 .addGap(18, 18, 18)
+                .addComponent(fechaLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
         );
@@ -325,13 +608,13 @@ public class pantallaProductos extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -352,12 +635,14 @@ public class pantallaProductos extends javax.swing.JFrame {
               productoSeleccionado = productosBD.get(i); 
             }
         }
-        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),4).equals("Sí"))
+        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),5).equals("Sí"))
         {
+            anadirProductos.setVisible(true);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
             modificarProducto.setEnabled(true);
         }else
         {
+            anadirProductos.setVisible(false);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
             modificarProducto.setEnabled(false);
         }
@@ -436,6 +721,14 @@ public class pantallaProductos extends javax.swing.JFrame {
         // TODO add your handling code here:
         productos modificar = new productos();
         List<productos> productos = productosDAO.findproductosEntities();
+        //verificar que el usuario haya seleccionado un producto
+        if(tablaProductos.getSelectedRow() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Debes seleccionar un producto para poder desactivarlo.", "Selecciona un producto", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //target producto a modificar
         for(int i=0 ; i<productos.size();i++)
         {
             if(Integer.parseInt(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),0).toString()) == productos.get(i).getIdproducto())
@@ -443,11 +736,12 @@ public class pantallaProductos extends javax.swing.JFrame {
                 modificar = productos.get(i);
             }
         }
-        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),4).equals("Sí"))
+        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),5).equals("Sí"))
         {
            modificar.setActivo(false);
            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
            modificarProducto.setEnabled(false);
+           anadirProductos.setVisible(false);
            try
            {
                productosDAO.edit(modificar);
@@ -458,6 +752,7 @@ public class pantallaProductos extends javax.swing.JFrame {
             modificar.setActivo(true);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png"); 
             modificarProducto.setEnabled(true);
+            anadirProductos.setVisible(true);
             try
            {
                productosDAO.edit(modificar);
@@ -466,6 +761,89 @@ public class pantallaProductos extends javax.swing.JFrame {
         }
         cargarTabla();
     }//GEN-LAST:event_activarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        switch(cbParametros.getSelectedItem().toString())
+        {
+            case "ID Producto":
+                    cargarTablaBusquedaId(Integer.parseInt(buscarTxt.getText()));
+                 return;
+            case "Nombre":
+                    cargarTablaBusquedaNombre(buscarTxt.getText());
+                return;
+            case "Stock Actual":
+                    cargarTablaBusquedaStock(Integer.parseInt(buscarTxt.getText()));
+                return;
+            case "Precio Actual":
+                    cargarTablaBusquedaPrecio(Double.parseDouble(buscarTxt.getText()));
+                return;
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void buscarTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscarTxtFocusGained
+        // TODO add your handling code here:
+        buscarTxt.selectAll();
+    }//GEN-LAST:event_buscarTxtFocusGained
+
+    private void anadirProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_anadirProductosMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_anadirProductosMouseClicked
+
+    private void anadirProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anadirProductosActionPerformed
+        // TODO add your handling code here:
+        int numeroIngresado = Integer.parseInt(JOptionPane.showInputDialog(null,
+                "Ingresa el numero de unidades a ser agregadas.",
+                "Ingresar Unidades",
+                JOptionPane.PLAIN_MESSAGE));
+        productos modificar = new productos();
+        List<productos> productos = productosDAO.findproductosEntities(); 
+        
+        //verificar si el usuario selecciono un producto
+        if(tablaProductos.getSelectedRow() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Debes seleccionar un producto para poder añadir unidades.", "Selecciona un producto", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        
+        if(!validar.validacionNumEntero(Integer.toString(numeroIngresado)))
+        {
+            JOptionPane.showMessageDialog(null,"Solo puedes introducir números enteros en este campo.","Numero inválido",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //target producto a modificar
+        for(int i=0 ; i< productos.size();i++)
+        {
+            if(Integer.parseInt(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),0).toString()) == productos.get(i).getIdproducto())
+            {
+                modificar = productos.get(i);
+            }
+        }
+        
+        if(modificar.getStockActual() +  numeroIngresado > modificar.getStockMaximo())
+        {
+           JOptionPane.showMessageDialog(null,"La cantidad de unidades no puede exceder el stock máximo para este producto.","Unidades inválidas",JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
+        
+        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),5).equals("Sí"))
+        {
+           modificar.setStockActual(modificar.getStockActual() + numeroIngresado);
+           try
+           {
+               productosDAO.edit(modificar);
+           }catch(Exception Ex)
+           {}  
+        }else
+         {
+            anadirProductos.setEnabled(false);  
+        }
+        cargarTabla();
+        
+    }//GEN-LAST:event_anadirProductosActionPerformed
 
     
     /**
@@ -543,8 +921,13 @@ public class pantallaProductos extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activar;
-    private javax.swing.JLabel anadirProductos;
+    private javax.swing.JButton anadirProductos;
     private javax.swing.JButton botonRegresar;
+    private javax.swing.JTextField buscarTxt;
+    private javax.swing.JComboBox<String> cbParametros;
+    private javax.swing.JLabel fechaLabel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
