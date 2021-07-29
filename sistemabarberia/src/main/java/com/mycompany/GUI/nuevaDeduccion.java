@@ -139,6 +139,11 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
         tipoDeduccion.setBackground(new java.awt.Color(30, 33, 34));
         tipoDeduccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tipoDeduccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipoDeduccionActionPerformed(evt);
+            }
+        });
 
         cantidadInicial.setBackground(new java.awt.Color(30, 33, 34));
         cantidadInicial.setForeground(new java.awt.Color(255, 255, 255));
@@ -350,6 +355,10 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         // TODO add your handling code here:
         validacionCamposTexto();
     }//GEN-LAST:event_nuevoPeriodoFocusLost
+
+    private void tipoDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoDeduccionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipoDeduccionActionPerformed
 
     /**
      * @param args the command line arguments

@@ -251,6 +251,11 @@ public class registrarClientes extends javax.swing.JFrame {
         servicioProducto.setBackground(new java.awt.Color(30, 33, 34));
 
         tipoidDocumento.setBackground(new java.awt.Color(30, 33, 34));
+        tipoidDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipoidDocumentoActionPerformed(evt);
+            }
+        });
 
         formatoInvalidoNombre.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoNombre.setText("Formato invalido.");
@@ -653,6 +658,10 @@ public class registrarClientes extends javax.swing.JFrame {
         clientesDAO.close();
         serviciosDAO.close();
     }//GEN-LAST:event_CancelarMouseClicked
+
+    private void tipoidDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoidDocumentoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipoidDocumentoActionPerformed
 
     /**
      * @param args the command line arguments

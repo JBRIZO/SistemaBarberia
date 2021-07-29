@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -34,6 +35,7 @@ public class listaDeducciones extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        cargarTabla();
     }
 
     /**
@@ -51,8 +53,8 @@ public class listaDeducciones extends javax.swing.JFrame {
         nuevaDeduccion = new javax.swing.JTextField();
         nuevoTipoDeduccion = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        tablaDeducciones = new javax.swing.JTable();
+        botonCancelar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
 
@@ -94,9 +96,9 @@ public class listaDeducciones extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setBackground(new java.awt.Color(30, 33, 34));
-        jTable1.setForeground(new java.awt.Color(255, 255, 255));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaDeducciones.setBackground(new java.awt.Color(30, 33, 34));
+        tablaDeducciones.setForeground(new java.awt.Color(255, 255, 255));
+        tablaDeducciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -115,16 +117,16 @@ public class listaDeducciones extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jTable1.setPreferredSize(new java.awt.Dimension(375, 0));
-        jTable1.setRowHeight(32);
-        jScrollPane1.setViewportView(jTable1);
+        tablaDeducciones.setPreferredSize(new java.awt.Dimension(375, 0));
+        tablaDeducciones.setRowHeight(32);
+        jScrollPane1.setViewportView(tablaDeducciones);
 
-        jButton1.setBackground(new java.awt.Color(189, 158, 76));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton1.setText("CANCELAR");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        botonCancelar.setBackground(new java.awt.Color(189, 158, 76));
+        botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonCancelar.setText("CANCELAR");
+        botonCancelar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                botonCancelarMouseClicked(evt);
             }
         });
 
@@ -138,7 +140,7 @@ public class listaDeducciones extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nuevoTipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(botonCancelar))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nuevaDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -156,7 +158,7 @@ public class listaDeducciones extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nuevoTipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(botonCancelar))
                 .addContainerGap())
         );
 
@@ -228,7 +230,38 @@ public class listaDeducciones extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void cargarTabla()
+    {
+        List<tipodeduccion> tipodeduccionBD = tipodeduccionDAO.findtipodeduccionEntities();
+        String activo = "";
+        String Deduccion = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaDeducciones.getModel();
+        modelo.setRowCount(0);
+        tablaDeducciones.setModel(modelo);
+        List<deduccionesempleadomensual> deduccionesempleadomensu = deduccionesempleadomensualDAO.finddeduccionesempleadomensualEntities();
+            for (deduccionesempleadomensual nuevaDeduccion :deduccionesempleadomensu){
+                for(int i = 0; i < deduccionesempleadomensu.size(); i++)
+            {
+                Deduccion = tipodeduccionBD.get(deduccionesempleadomensu.get(i).getIDTipoDeduccion()-1).getNombre();    
+            }
+            if(nuevaDeduccion.isActivo())
+            {
+              activo = "Si";  
+            }else
+            {
+                activo = "No";
+            }
+            modelo.addRow(
+                    new Object[]{
+                        nuevaDeduccion.getIDEmpleado(),
+                            Deduccion,
+                            nuevaDeduccion.getValor()
+                    }
+            );
+        }
+    }
+    
+    private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -238,10 +271,11 @@ public class listaDeducciones extends javax.swing.JFrame {
         this.setVisible(false);
         this.dispose(); 
         deduccionesempleadomensualDAO.close();
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_botonCancelarMouseClicked
 
     private void nuevaDeduccionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevaDeduccionMouseClicked
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_nuevaDeduccionMouseClicked
 
     private void nuevoTipoDeduccionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoTipoDeduccionMouseClicked
@@ -300,15 +334,15 @@ public class listaDeducciones extends javax.swing.JFrame {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton botonCancelar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nuevaDeduccion;
     private javax.swing.JTextField nuevoTipoDeduccion;
+    private javax.swing.JTable tablaDeducciones;
     // End of variables declaration//GEN-END:variables
 }
