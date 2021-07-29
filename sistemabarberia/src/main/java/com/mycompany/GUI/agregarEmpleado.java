@@ -195,7 +195,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
         idEmpleado = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(700, 500));
         setMinimumSize(new java.awt.Dimension(911, 716));
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
@@ -619,6 +618,11 @@ public class agregarEmpleado extends javax.swing.JFrame {
         botonCancelar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 botonCancelarMouseClicked(evt);
+            }
+        });
+        botonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCancelarActionPerformed(evt);
             }
         });
 
