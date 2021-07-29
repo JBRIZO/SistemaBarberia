@@ -5,12 +5,12 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.empleado;
-import com.mycompany.sistemabarberia.salariohistoricoempleados;
+import com.mycompany.sistemabarberia.precioshistoricosproductos;
+import com.mycompany.sistemabarberia.productos;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -31,13 +31,13 @@ import javax.swing.border.Border;
  *
  * @author Jonathan Laux
  */
-public class nuevoSalario extends javax.swing.JFrame {
+public class nuevoPrecioProducto extends javax.swing.JFrame {
     
     private Validaciones validar = new Validaciones();
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
-    private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
-    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
-    private List<salariohistoricoempleados> salariosBD = salarioDAO.findsalariohistoricoempleadosEntities();
+    private productosJpaController productosDAO = new productosJpaController();
+    private List<productos> empleadosBD = productosDAO.findproductosEntities();
+    private precioshistoricosproductosJpaController preciosDAO = new precioshistoricosproductosJpaController();
+    private List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
     private ImageIcon imagen;
     private Icon icono;
     private java.util.Date dt = new java.util.Date();
@@ -50,7 +50,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public nuevoSalario() {
+    public nuevoPrecioProducto() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
@@ -61,17 +61,17 @@ public class nuevoSalario extends javax.swing.JFrame {
         {
             if(empleadosBD.get(i).isActivo())
             {
-                cbEmpleados.addItem(empleadosBD.get(i).toString());
+                cbProductos.addItem(empleadosBD.get(i).toString());
             }
         }
     }
     
     public void Reiniciar()
     {
-        fechaInicio.setText("Fecha Inicial");
-        salario.setText("Salario");
+        fechaInicio.setText("Fecha Inicio");
+        precio.setText("Precio");
         fechaInicio.setBorder(defaultBorder);
-        salario.setBorder(defaultBorder);
+        precio.setBorder(defaultBorder);
         formatoInvalido1.setText(" ");
         formatoInvalido3.setText(" ");
     }
@@ -93,9 +93,9 @@ public class nuevoSalario extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         formatoInvalido1 = new javax.swing.JLabel();
-        salario = new javax.swing.JTextField();
+        precio = new javax.swing.JTextField();
         fechaInicio = new javax.swing.JTextField();
-        cbEmpleados = new javax.swing.JComboBox<>();
+        cbProductos = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         formatoInvalido3 = new javax.swing.JLabel();
         salir = new javax.swing.JLabel();
@@ -107,7 +107,7 @@ public class nuevoSalario extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("NUEVO SALARIO");
+        tituloPantalla.setText("NUEVO PRECIO");
 
         botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
         botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -134,29 +134,28 @@ public class nuevoSalario extends javax.swing.JFrame {
         formatoInvalido1.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido1.setText("Formato no valido.");
 
-        salario.setBackground(new java.awt.Color(30, 33, 34));
-        salario.setDocument(new JTextFieldLimit(8));
-        salario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        salario.setForeground(new java.awt.Color(255, 255, 255));
-        salario.setText("Salario");
-        salario.setToolTipText("Ingrese un precio de servicio válido.");
-        salario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        salario.addFocusListener(new java.awt.event.FocusAdapter() {
+        precio.setBackground(new java.awt.Color(30, 33, 34));
+        precio.setDocument(new JTextFieldLimit(8));
+        precio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        precio.setForeground(new java.awt.Color(255, 255, 255));
+        precio.setText("Precio");
+        precio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        precio.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                salarioFocusGained(evt);
+                precioFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                salarioFocusLost(evt);
+                precioFocusLost(evt);
             }
         });
-        salario.addActionListener(new java.awt.event.ActionListener() {
+        precio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                salarioActionPerformed(evt);
+                precioActionPerformed(evt);
             }
         });
-        salario.addKeyListener(new java.awt.event.KeyAdapter() {
+        precio.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                salarioKeyTyped(evt);
+                precioKeyTyped(evt);
             }
         });
 
@@ -164,7 +163,6 @@ public class nuevoSalario extends javax.swing.JFrame {
         fechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fechaInicio.setForeground(new java.awt.Color(255, 255, 255));
         fechaInicio.setText("Fecha Inicio");
-        fechaInicio.setToolTipText("Ingrese un nombre de servicio valido.");
         fechaInicio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         fechaInicio.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -190,12 +188,12 @@ public class nuevoSalario extends javax.swing.JFrame {
             }
         });
 
-        cbEmpleados.setBackground(new java.awt.Color(30, 33, 34));
-        cbEmpleados.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
-        cbEmpleados.setPreferredSize(new java.awt.Dimension(270, 42));
+        cbProductos.setBackground(new java.awt.Color(30, 33, 34));
+        cbProductos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+        cbProductos.setPreferredSize(new java.awt.Dimension(270, 42));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Empleado:");
+        jLabel3.setText("Producto:");
 
         formatoInvalido3.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido3.setText("Formato no valido.");
@@ -211,9 +209,9 @@ public class nuevoSalario extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(fechaInicio)
-                        .addComponent(salario)
+                        .addComponent(precio)
                         .addComponent(formatoInvalido1)
-                        .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cbProductos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -222,13 +220,13 @@ public class nuevoSalario extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido1)
                 .addGap(18, 18, 18)
-                .addComponent(salario, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(precio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido3)
                 .addGap(121, 121, 121))
@@ -272,7 +270,7 @@ public class nuevoSalario extends javax.swing.JFrame {
                         .addGap(339, 339, 339)
                         .addComponent(salir))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
+                        .addGap(38, 38, 38)
                         .addComponent(tituloPantalla))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
@@ -286,10 +284,12 @@ public class nuevoSalario extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(33, 33, 33)
-                        .addComponent(tituloPantalla))
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tituloPantalla)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -320,26 +320,27 @@ public class nuevoSalario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        
-        if(salario.getText().equals("Salario") || fechaInicio.getText().equals("Fecha Inicio"))
+
+        if(fechaInicio.getText().equals("Fecha Inicio") || precio.getText().equals("Precio"))
         {
-        JOptionPane.showMessageDialog(null,"Debes rellenar topos los campos.", "Datos Incompletos",JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null,"Debes llenar todos los campos.", "Datos Faltantes",JOptionPane.ERROR_MESSAGE); 
            return;
         }
         
-        if(cbEmpleados.getSelectedIndex() == 0)
+        if(cbProductos.getSelectedIndex() == 0)
         {
-            JOptionPane.showMessageDialog(null,"Debes seleccionar un empleado.", "Empleado Invalido",JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null,"Debes seleccionar un producto.", "Producto Invalido",JOptionPane.ERROR_MESSAGE); 
            return;
         }
         
-        List<salariohistoricoempleados> salariosBD = salarioDAO.findsalariohistoricoempleadosEntities();
-        List<salariohistoricoempleados> salariosAnteriores = new ArrayList<salariohistoricoempleados>();
-        for(int i = 0; i < salariosBD.size();i++)
+        
+        List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
+        List<precioshistoricosproductos> preciosAnteriores = new ArrayList<precioshistoricosproductos>();
+        for(int i = 0; i < preciosBD.size();i++)
         {
-            if(salariosBD.get(i).getIDEmpleado() == Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)))
+            if(preciosBD.get(i).getIDProducto() == Character.getNumericValue(cbProductos.getSelectedItem().toString().charAt(0)))
             {
-                salariosAnteriores.add(salariosBD.get(i));
+                preciosAnteriores.add(preciosBD.get(i));
             }
         }
         java.util.Date startDate = new Date(0000000000);
@@ -350,99 +351,106 @@ public class nuevoSalario extends javax.swing.JFrame {
     } catch (ParseException ex) {
        ex.printStackTrace();
     }
-        //anadir salario
-        salariohistoricoempleados nuevoSalario = new salariohistoricoempleados();
-        nuevoSalario.setFechaInicial(Date.valueOf(fechaIni));
-        nuevoSalario.setFechaFinal(null);
-        nuevoSalario.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
-        nuevoSalario.setSalario(Double.parseDouble(salario.getText()));
-        nuevoSalario.setActivo(true);
+        //anadir precio
+        precioshistoricosproductos nuevoPrecio = new precioshistoricosproductos();
+        nuevoPrecio.setFechaInicial(Date.valueOf(fechaIni));
+        nuevoPrecio.setFechaFinal(null);
+        nuevoPrecio.setIDProducto(Character.getNumericValue(cbProductos.getSelectedItem().toString().charAt(0)));
+        nuevoPrecio.setPrecio(Double.parseDouble(precio.getText()));
+        nuevoPrecio.setActivo(true);
         
-        salariohistoricoempleados salarioAnterior = new salariohistoricoempleados();
-        salarioAnterior.setIdsalario(salariosAnteriores.get(salariosAnteriores.size()-1).getIdsalario());
-        salarioAnterior.setFechaInicial(salariosAnteriores.get(salariosAnteriores.size()-1).getFechaInicial());
-        salarioAnterior.setFechaFinal(Date.valueOf(fechaIni));
-        salarioAnterior.setIDEmpleado(salariosAnteriores.get(salariosAnteriores.size()-1).getIDEmpleado());
-        salarioAnterior.setSalario(salariosAnteriores.get(salariosAnteriores.size()-1).getSalario());
-        salarioAnterior.setActivo(false);
+        precioshistoricosproductos precioAnterior = new precioshistoricosproductos();
+        precioAnterior.setNumprecio(preciosAnteriores.get(preciosAnteriores.size()-1).getNumprecio());
+        precioAnterior.setFechaInicial(preciosAnteriores.get(preciosAnteriores.size()-1).getFechaInicial());
+        precioAnterior.setFechaFinal(Date.valueOf(fechaIni));
+        precioAnterior.setIDProducto(preciosAnteriores.get(preciosAnteriores.size()-1).getIDProducto());
+        precioAnterior.setPrecio(preciosAnteriores.get(preciosAnteriores.size()-1).getPrecio());
+        precioAnterior.setActivo(false);
         
         //comparar fehca inicial de nuevo salario con el anterior
-        java.util.Date utilDate = new java.util.Date(salarioAnterior.getFechaInicial().getTime());
+        java.util.Date utilDate = new java.util.Date(precioAnterior.getFechaInicial().getTime());
         LocalDate date = convertToLocalDateViaInstant(startDate);
         LocalDate date2 = convertToLocalDateViaInstant(utilDate);
         if(date.isBefore(date2))
         {
-           JOptionPane.showMessageDialog(null,"El nuevo salario no puede empezar antes del anterior.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
+           JOptionPane.showMessageDialog(null,"El nuevo precio no puede empezar antes del anterior.", "Precio Inválido",JOptionPane.ERROR_MESSAGE); 
            fechaInicio.setBorder(redBorder);
            return;
         }
         date = date.minusDays(1);
-        salarioAnterior.setFechaFinal(Date.valueOf(date));
+        precioAnterior.setFechaFinal(Date.valueOf(date));
         
-        //comparar salario nuevo con salario anterior
-        if(salarioAnterior.getSalario() == nuevoSalario.getSalario())
+        //comparar precio nuevo con precio anterior
+        if(precioAnterior.getPrecio() == nuevoPrecio.getPrecio())
         {
-            JOptionPane.showMessageDialog(null,"El nuevo salario no puede ser igual al anterior.", "Salario Inválido",JOptionPane.ERROR_MESSAGE); 
-           salario.setBorder(redBorder);
+            JOptionPane.showMessageDialog(null,"El nuevo precio no puede ser igual al anterior.", "Precio Inválido",JOptionPane.ERROR_MESSAGE); 
+           precio.setBorder(redBorder);
            return;
         }
         
         if(validacionNumerica() && validarFecha(fechaInicio,formatoInvalido1) ){
             try {
-            salarioDAO.create(nuevoSalario); 
-            salarioDAO.edit(salarioAnterior);
+            preciosDAO.create(nuevoPrecio); 
+            preciosDAO.edit(precioAnterior);
             JOptionPane.showMessageDialog(null,"Operación Exitosa.");
                     Reiniciar();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null,"No se pudo guardar el precio, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     //a;adir validaciones botonaceptar
-    private void salarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioFocusLost
+    private void precioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioFocusLost
        
-        if(salario.getText().equals(""))
+        if(precio.getText().equals(""))
         {
-            salario.setText("Salario");
+            precio.setText("Precio");
         }else
         {
             validacionNumerica(); 
         }
-    }//GEN-LAST:event_salarioFocusLost
+    }//GEN-LAST:event_precioFocusLost
 
     
     
-    private void salarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salarioActionPerformed
+    private void precioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_salarioActionPerformed
+    }//GEN-LAST:event_precioActionPerformed
 
-    private void salarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salarioKeyTyped
+    private void precioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precioKeyTyped
         // TODO add your handling code here
-    }//GEN-LAST:event_salarioKeyTyped
+    }//GEN-LAST:event_precioKeyTyped
 
-    private void salarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioFocusGained
+    private void precioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioFocusGained
         // TODO add your handling code here:
-        salario.setText("");
-    }//GEN-LAST:event_salarioFocusGained
+        if(precio.getText().equals("Precio"))
+        {
+             precio.setText("");
+        } 
+    }//GEN-LAST:event_precioFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new listaSalarios().setVisible(true);
+                new listaPrecios().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        empleadoDAO.close();
-        salarioDAO.close();        
+        productosDAO.close();
+        preciosDAO.close();        
     }//GEN-LAST:event_salirMouseClicked
 
     private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
         // TODO add your handling code here:
-        fechaInicio.setText("");
+        if(fechaInicio.getText().equals("Fecha Inicio"))
+        {
+            fechaInicio.setDocument(new JTextFieldLimit (10));
+            fechaInicio.setText("");   
+        }
     }//GEN-LAST:event_fechaInicioFocusGained
 
     private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
@@ -465,8 +473,7 @@ public class nuevoSalario extends javax.swing.JFrame {
 
     private void fechaInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fechaInicioMouseClicked
         // TODO add your handling code here:
-        fechaInicio.setDocument(new JTextFieldLimit (10));
-        
+
     }//GEN-LAST:event_fechaInicioMouseClicked
 
     /**
@@ -486,21 +493,22 @@ public class nuevoSalario extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(nuevoSalario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(nuevoSalario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(nuevoSalario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(nuevoSalario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
        
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoSalario().setVisible(true);
+                new nuevoPrecioProducto().setVisible(true);
             }
         });
         
@@ -510,29 +518,29 @@ public class nuevoSalario extends javax.swing.JFrame {
     
     private boolean validacionNumerica()
     {
-        if (!validar.validacionCampoNumerico(salario.getText()) )
+        if (!validar.validacionCampoNumerico(precio.getText()) )
         {
-            salario.setBorder(redBorder);
+            precio.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("Solo se permiten números.");
             return false;
         }
-        if(Double.parseDouble(salario.getText()) <= 0  )
+        if(Double.parseDouble(precio.getText()) <= 0  )
         {
-            salario.setBorder(redBorder);
+            precio.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("El salario debe ser mayor a 0");
+            formatoInvalido3.setText("El precio debe ser mayor a 0");
             return false;
         } 
-         if(validar.validacionDecimal(salario.getText()))
+         if(validar.validacionDecimal(precio.getText()))
         {
-            salario.setBorder(greenBorder);
+            precio.setBorder(greenBorder);
             formatoInvalido3.setVisible(false);
             formatoInvalido3.setText("Formato válido");
             return true;
         }else
         {
-            salario.setBorder(redBorder);
+            precio.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("El formato debe de ser 0000.00");
             return false;
@@ -553,7 +561,7 @@ public class nuevoSalario extends javax.swing.JFrame {
         {
             fecha.setBorder(redBorder);
             label.setVisible(true);
-            label.setText("El formato de fecha es: dd-mm-aaaa");
+            label.setText("El formato de fecha es: dd/mm/aaaa");
             return false;
         }
         if(!validar.validacionFechaValida(fecha.getText()))
@@ -601,7 +609,7 @@ public class nuevoSalario extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
-    private javax.swing.JComboBox<String> cbEmpleados;
+    private javax.swing.JComboBox<String> cbProductos;
     private javax.swing.JTextField fechaInicio;
     private javax.swing.JLabel formatoInvalido1;
     private javax.swing.JLabel formatoInvalido3;
@@ -611,7 +619,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField salario;
+    private javax.swing.JTextField precio;
     private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

@@ -93,7 +93,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
         Reiniciar();
         cargarDatosModificarEmpleado();
         cbPuestos.setEnabled(false);
-        cbGenero.setEnabled(false);
         salarioInicial.setEnabled(false);
         cbTipoDoc.addItem("Seleccione");
         for(int i = 0; i < documentosBD.size(); i++)
@@ -101,6 +100,16 @@ public class agregarEmpleado extends javax.swing.JFrame {
             cbTipoDoc.addItem(documentosBD.get(i).toString());
         }
         cbTipoDoc.setSelectedIndex(modificarEmpleado.getIDTipoDocumento()-1);
+        if(modificarEmpleado.getGenEmpleado() == 'M')
+        {
+            cbGenero.setSelectedIndex(1);
+        }else
+        {
+            if(modificarEmpleado.getGenEmpleado() == 'F')
+            {
+                cbGenero.setSelectedIndex(2);
+            }
+        }
     }
     
     
