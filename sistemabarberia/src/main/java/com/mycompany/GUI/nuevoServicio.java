@@ -30,6 +30,8 @@ import javax.swing.border.Border;
  */
 public class nuevoServicio extends javax.swing.JFrame {
     
+    private servicios servicioModificar;
+    
     private precioshistoricoserviciosJpaController preciosDAO = new precioshistoricoserviciosJpaController();
     private serviciosJpaController servicioDAO = new serviciosJpaController();
     private Validaciones validar = new Validaciones();
@@ -49,10 +51,26 @@ public class nuevoServicio extends javax.swing.JFrame {
      */
     public nuevoServicio() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
          this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();    
+    }
+    
+    public nuevoServicio(servicios servicioModificar)
+    {
+       this.servicioModificar = servicioModificar;
+       initComponents();
+       this.setLocationRelativeTo(null);
+       this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+       this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+       this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+       precioInicial.setEnabled(false);
+       tituloPantalla.setText("MODIFICAR SERVICIO");
+       idServicio.setText("Id de Servicio: " + servicioModificar.getIdservicio());
+       nombreServicio.setText(servicioModificar.getNomServicio());
+       formatoInvalido1.setVisible(false);
     }
     
     public void Reiniciar()
@@ -323,7 +341,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         //anadir precio 1
         precioshistoricoservicios precioUno = new precioshistoricoservicios();
         precioUno.setFechaInicial(Date.valueOf(currentTime));
-        precioUno.setFechaFinal(Date.valueOf(currentTime));
+        precioUno.setFechaFinal(null);
         precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
         precioUno.setActivo(true);  
         
@@ -403,7 +421,7 @@ public class nuevoServicio extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new menuGerente().setVisible(true);
+                new pantallaServicios().setVisible(true);
             }
         });
         this.setVisible(false);

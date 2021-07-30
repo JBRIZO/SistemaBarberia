@@ -5,11 +5,11 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.precioshistoricosproductos;
-import com.mycompany.sistemabarberia.productos;
+import com.mycompany.sistemabarberia.precioshistoricoservicios;
+import com.mycompany.sistemabarberia.servicios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -22,22 +22,21 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import net.sf.jasperreports.components.table.fill.FillTable;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 /**
  *
  * @author Kesil
  */
-public class pantallaProductos extends javax.swing.JFrame {
+public class pantallaServicios extends javax.swing.JFrame {
     
-    private productos productoSeleccionado;
+    private servicios servicioSeleccionado;
     
     private Validaciones validar = new Validaciones();
-    private productosJpaController productosDAO =  new productosJpaController();
-    private List<productos> productosBD = productosDAO.findproductosEntities();
-    private precioshistoricosproductosJpaController preciosDAO= new precioshistoricosproductosJpaController();
-    List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
+    private serviciosJpaController serviciosDAO =  new serviciosJpaController();
+    private List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
+    private precioshistoricoserviciosJpaController preciosDAO= new precioshistoricoserviciosJpaController();
+    List<precioshistoricoservicios> preciosBD = preciosDAO.findprecioshistoricoserviciosEntities();
     private ImageIcon imagen;
     private Icon icono;
     private java.util.Date dt = new java.util.Date();
@@ -47,18 +46,17 @@ public class pantallaProductos extends javax.swing.JFrame {
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public pantallaProductos() {
+    public pantallaServicios() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
-        this.insertarImagen(this.anadirProductos,"src/main/resources/Imagenes/agregar.png");
         fechaLabel.setText("Fecha: " + currentTime);
         cargarTabla();
-        for(int i = 0; i < tablaProductos.getColumnCount()-1 ; i++)
+        for(int i = 0; i < tablaServicios.getColumnCount()-1 ; i++)
         {
-            cbParametros.addItem(tablaProductos.getColumnName(i));
+            cbParametros.addItem(tablaServicios.getColumnName(i));
         }  
     }
     
@@ -66,20 +64,20 @@ public class pantallaProductos extends javax.swing.JFrame {
     {
         double precioActual = 0;
         String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        DefaultTableModel modelo = (DefaultTableModel)tablaServicios.getModel();
         modelo.setRowCount(0);
-        tablaProductos.setModel(modelo);
-        List<productos> productosEnBD = productosDAO.findproductosEntities();
-            for(productos producto : productosEnBD){
+        tablaServicios.setModel(modelo);
+        List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
+            for(servicios servicio : serviciosEnBd){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
-                        //precio actual del producto
-                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        //precio actual del servicio
+                        if(preciosBD.get(i).getIDServicio() == servicio.getIdservicio() && preciosBD.get(i).isActivo())
                         {
                             precioActual = preciosBD.get(i).getPrecio();
                         }
                     }
-                if(producto.isActivo())
+                if(servicio.isActivo())
                 {
                 activo = "Sí";   
                 }else
@@ -88,10 +86,8 @@ public class pantallaProductos extends javax.swing.JFrame {
                 }
                     modelo.addRow(
                     new Object[]{
-                        producto.getIdproducto(),
-                        producto.getNomProducto(),
-                        producto.getStockActual(),
-                        producto.getStockMaximo(),
+                        servicio.getIdservicio(),
+                        servicio.getNomServicio(),
                         precioActual,
                         activo
                     }
@@ -103,29 +99,29 @@ public class pantallaProductos extends javax.swing.JFrame {
     {
         double precioActual = 0;
         String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        DefaultTableModel modelo = (DefaultTableModel)tablaServicios.getModel();
         modelo.setRowCount(0);
-        tablaProductos.setModel(modelo);
-        List<productos> productosEnBD = productosDAO.findproductosEntities();
-        List<productos> productosFiltrados = new ArrayList();
+        tablaServicios.setModel(modelo);
+        List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
+        List<servicios> serviciosFiltrados = new ArrayList();
         
-        for(int i = 0; i < productosEnBD.size();i++)
+        for(int i = 0; i < serviciosEnBd.size();i++)
         {
-            if(productosEnBD.get(i).getIdproducto() == IDProducto)
+            if(serviciosEnBd.get(i).getIdservicio() == IDProducto)
             {
-                productosFiltrados.add(productosEnBD.get(i));
+                serviciosFiltrados.add(serviciosEnBd.get(i));
             }
         }
-            for(productos producto : productosFiltrados){
+            for(servicios servicio : serviciosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
                         //precio actual del producto
-                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        if(preciosBD.get(i).getIDServicio() == servicio.getIdservicio() && preciosBD.get(i).isActivo())
                         {
                             precioActual = preciosBD.get(i).getPrecio();
                         }
                     }
-                if(producto.isActivo())
+                if(servicio.isActivo())
                 {
                 activo = "Sí";   
                 }else
@@ -134,10 +130,8 @@ public class pantallaProductos extends javax.swing.JFrame {
                 }
                     modelo.addRow(
                     new Object[]{
-                        producto.getIdproducto(),
-                        producto.getNomProducto(),
-                        producto.getStockActual(),
-                        producto.getStockMaximo(),
+                        servicio.getIdservicio(),
+                        servicio.getNomServicio(),
                         precioActual,
                         activo
                     }
@@ -149,29 +143,29 @@ public class pantallaProductos extends javax.swing.JFrame {
     {
         double precioActual = 0;
         String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        DefaultTableModel modelo = (DefaultTableModel)tablaServicios.getModel();
         modelo.setRowCount(0);
-        tablaProductos.setModel(modelo);
-        List<productos> productosEnBD = productosDAO.findproductosEntities();
-        List<productos> productosFiltrados = new ArrayList();
+        tablaServicios.setModel(modelo);
+        List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
+        List<servicios> serviciosFiltrados = new ArrayList();
         
-        for(int i = 0; i < productosEnBD.size();i++)
+        for(int i = 0; i < serviciosEnBd.size();i++)
         {
-            if(productosEnBD.get(i).getNomProducto().equalsIgnoreCase(Nombre))
+            if(serviciosEnBd.get(i).getNomServicio().equalsIgnoreCase(Nombre))
             {
-                productosFiltrados.add(productosEnBD.get(i));
+                serviciosFiltrados.add(serviciosEnBd.get(i));
             }
         }
-            for(productos producto : productosFiltrados){
+            for(servicios servicio : serviciosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
-                        //precio actual del producto
-                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        //precio actual del servicio
+                        if(preciosBD.get(i).getIDServicio() == servicio.getIdservicio() && preciosBD.get(i).isActivo())
                         {
                             precioActual = preciosBD.get(i).getPrecio();
                         }
                     }
-                if(producto.isActivo())
+                if(servicio.isActivo())
                 {
                 activo = "Sí";   
                 }else
@@ -180,10 +174,8 @@ public class pantallaProductos extends javax.swing.JFrame {
                 }
                     modelo.addRow(
                     new Object[]{
-                        producto.getIdproducto(),
-                        producto.getNomProducto(),
-                        producto.getStockActual(),
-                        producto.getStockMaximo(),
+                        servicio.getIdservicio(),
+                        servicio.getNomServicio(),
                         precioActual,
                         activo
                     }
@@ -191,61 +183,16 @@ public class pantallaProductos extends javax.swing.JFrame {
             }    
     }
     
-    private void cargarTablaBusquedaStock(int Stock)
-    {
-        double precioActual = 0;
-        String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
-        modelo.setRowCount(0);
-        tablaProductos.setModel(modelo);
-        List<productos> productosEnBD = productosDAO.findproductosEntities();
-        List<productos> productosFiltrados = new ArrayList();
-        
-        for(int i = 0; i < productosEnBD.size();i++)
-        {
-            if(productosEnBD.get(i).getStockActual() == Stock)
-            {
-                productosFiltrados.add(productosEnBD.get(i));
-            }
-        }
-            for(productos producto : productosFiltrados){
-                for(int i = 0; i < preciosBD.size() ; i++)
-                    {
-                        //precio actual del producto
-                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
-                        {
-                            precioActual = preciosBD.get(i).getPrecio();
-                        }
-                    }
-                if(producto.isActivo())
-                {
-                activo = "Sí";   
-                }else
-                {
-                    activo = "No";
-                }
-                    modelo.addRow(
-                    new Object[]{
-                        producto.getIdproducto(),
-                        producto.getNomProducto(),
-                        producto.getStockActual(),
-                        producto.getStockMaximo(),
-                        precioActual,
-                        activo
-                    }
-                );
-            }    
-    }
     private void cargarTablaBusquedaPrecio(double Precio)
     {
         double precioActual = 0;
         String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        DefaultTableModel modelo = (DefaultTableModel)tablaServicios.getModel();
         modelo.setRowCount(0);
-        tablaProductos.setModel(modelo);
-        List<productos> productosEnBD = productosDAO.findproductosEntities();
-        List<productos> productosFiltrados = new ArrayList();
-        List<precioshistoricosproductos> preciosFiltrados = new ArrayList();
+        tablaServicios.setModel(modelo);
+        List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
+        List<servicios> serviciosFiltrados = new ArrayList();
+        List<precioshistoricoservicios> preciosFiltrados = new ArrayList();
         
         for(int i = 0 ; i < preciosBD.size() ; i++)
         {
@@ -255,26 +202,26 @@ public class pantallaProductos extends javax.swing.JFrame {
             }
         }     
         
-        for(int i = 0; i < productosEnBD.size() ; i++)
+        for(int i = 0; i < serviciosEnBd.size() ; i++)
         {
             for(int j = 0 ; j < preciosFiltrados.size(); j++)
             {
-                if(productosEnBD.get(i).getIdproducto() == preciosFiltrados.get(j).getIDProducto() && preciosFiltrados.get(j).getPrecio() == Precio)
+                if(serviciosEnBd.get(i).getIdservicio() == preciosFiltrados.get(j).getIDServicio() && preciosFiltrados.get(j).getPrecio() == Precio)
                 {
-                    productosFiltrados.add(productosEnBD.get(i));
+                    serviciosFiltrados.add(serviciosEnBd.get(i));
                 }
             }
         }
-            for(productos producto : productosFiltrados){
+            for(servicios servicio : serviciosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
                         //precio actual del producto
-                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        if(preciosBD.get(i).getIDServicio() == servicio.getIdservicio() && preciosBD.get(i).isActivo())
                         {
                             precioActual = preciosBD.get(i).getPrecio();
                         }
                     }
-                if(producto.isActivo())
+                if(servicio.isActivo())
                 {
                 activo = "Sí";   
                 }else
@@ -283,10 +230,8 @@ public class pantallaProductos extends javax.swing.JFrame {
                 }
                     modelo.addRow(
                     new Object[]{
-                        producto.getIdproducto(),
-                        producto.getNomProducto(),
-                        producto.getStockActual(),
-                        producto.getStockMaximo(),
+                        servicio.getIdservicio(),
+                        servicio.getNomServicio(),
                         precioActual,
                         activo
                     }
@@ -309,16 +254,15 @@ public class pantallaProductos extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaProductos = new javax.swing.JTable();
+        tablaServicios = new javax.swing.JTable();
         activar = new javax.swing.JButton();
-        nuevoProducto = new javax.swing.JButton();
-        modificarProducto = new javax.swing.JButton();
-        listaPrecios = new javax.swing.JButton();
+        nuevoServicio = new javax.swing.JButton();
+        modificarServicio = new javax.swing.JButton();
+        listaPreciosServicios = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         cbParametros = new javax.swing.JComboBox<>();
         buscarTxt = new javax.swing.JTextField();
         botonBuscar = new javax.swing.JButton();
-        anadirProductos = new javax.swing.JButton();
         imprimirReporte = new javax.swing.JButton();
         recargar = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
@@ -331,7 +275,7 @@ public class pantallaProductos extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 36)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("PRODUCTOS");
+        tituloPantalla.setText("SERVICIOS");
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -345,22 +289,22 @@ public class pantallaProductos extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        tablaProductos.setAutoCreateRowSorter(true);
-        tablaProductos.setBackground(new java.awt.Color(30, 33, 34));
-        tablaProductos.setForeground(new java.awt.Color(255, 255, 255));
-        tablaProductos.setModel(new javax.swing.table.DefaultTableModel(
+        tablaServicios.setAutoCreateRowSorter(true);
+        tablaServicios.setBackground(new java.awt.Color(30, 33, 34));
+        tablaServicios.setForeground(new java.awt.Color(255, 255, 255));
+        tablaServicios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID Producto", "Nombre", "Stock Actual", "Stock Maximo", "Precio Actual", "Activo"
+                "ID Servicio", "Nombre", "Precio Actual", "Activo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -371,29 +315,29 @@ public class pantallaProductos extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tablaProductos.setGridColor(new java.awt.Color(255, 255, 255));
-        tablaProductos.setRowHeight(32);
-        tablaProductos.getTableHeader().setReorderingAllowed(false);
-        tablaProductos.addFocusListener(new java.awt.event.FocusAdapter() {
+        tablaServicios.setGridColor(new java.awt.Color(255, 255, 255));
+        tablaServicios.setRowHeight(32);
+        tablaServicios.getTableHeader().setReorderingAllowed(false);
+        tablaServicios.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tablaProductosFocusGained(evt);
+                tablaServiciosFocusGained(evt);
             }
         });
-        tablaProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaServicios.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaProductosMouseClicked(evt);
+                tablaServiciosMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaProductos);
+        jScrollPane1.setViewportView(tablaServicios);
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
         MyHeaderRender.setForeground(Color.BLACK);
-        for(int i = 0; i < tablaProductos.getColumnCount();i++)
+        for(int i = 0; i < tablaServicios.getColumnCount();i++)
         {
-            tablaProductos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+            tablaServicios.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
         }
-        tablaProductos.setShowGrid(true);
-        tablaProductos.setGridColor(Color.BLACK);
+        tablaServicios.setShowGrid(true);
+        tablaServicios.setGridColor(Color.BLACK);
 
         activar.setBorderPainted(false);
         activar.setContentAreaFilled(false);
@@ -408,42 +352,42 @@ public class pantallaProductos extends javax.swing.JFrame {
             }
         });
 
-        nuevoProducto.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoProducto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        nuevoProducto.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/nuevoProducto.png"))); // NOI18N
-        nuevoProducto.setBorder(null);
-        nuevoProducto.setContentAreaFilled(false);
-        nuevoProducto.setRequestFocusEnabled(false);
-        nuevoProducto.addActionListener(new java.awt.event.ActionListener() {
+        nuevoServicio.setBackground(new java.awt.Color(30, 33, 34));
+        nuevoServicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        nuevoServicio.setForeground(new java.awt.Color(255, 255, 255));
+        nuevoServicio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/nuevoServicio.png"))); // NOI18N
+        nuevoServicio.setBorder(null);
+        nuevoServicio.setContentAreaFilled(false);
+        nuevoServicio.setRequestFocusEnabled(false);
+        nuevoServicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevoProductoActionPerformed(evt);
+                nuevoServicioActionPerformed(evt);
             }
         });
 
-        modificarProducto.setBackground(new java.awt.Color(30, 33, 34));
-        modificarProducto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        modificarProducto.setForeground(new java.awt.Color(255, 255, 255));
-        modificarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/modificarProducto.png"))); // NOI18N
-        modificarProducto.setBorder(null);
-        modificarProducto.setContentAreaFilled(false);
-        modificarProducto.setRequestFocusEnabled(false);
-        modificarProducto.addActionListener(new java.awt.event.ActionListener() {
+        modificarServicio.setBackground(new java.awt.Color(30, 33, 34));
+        modificarServicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        modificarServicio.setForeground(new java.awt.Color(255, 255, 255));
+        modificarServicio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/modificarServicio.png"))); // NOI18N
+        modificarServicio.setBorder(null);
+        modificarServicio.setContentAreaFilled(false);
+        modificarServicio.setRequestFocusEnabled(false);
+        modificarServicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modificarProductoActionPerformed(evt);
+                modificarServicioActionPerformed(evt);
             }
         });
 
-        listaPrecios.setBackground(new java.awt.Color(30, 33, 34));
-        listaPrecios.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        listaPrecios.setForeground(new java.awt.Color(255, 255, 255));
-        listaPrecios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/preciosProducto.png"))); // NOI18N
-        listaPrecios.setBorder(null);
-        listaPrecios.setContentAreaFilled(false);
-        listaPrecios.setRequestFocusEnabled(false);
-        listaPrecios.addActionListener(new java.awt.event.ActionListener() {
+        listaPreciosServicios.setBackground(new java.awt.Color(30, 33, 34));
+        listaPreciosServicios.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        listaPreciosServicios.setForeground(new java.awt.Color(255, 255, 255));
+        listaPreciosServicios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/preciosProducto.png"))); // NOI18N
+        listaPreciosServicios.setBorder(null);
+        listaPreciosServicios.setContentAreaFilled(false);
+        listaPreciosServicios.setRequestFocusEnabled(false);
+        listaPreciosServicios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                listaPreciosActionPerformed(evt);
+                listaPreciosServiciosActionPerformed(evt);
             }
         });
 
@@ -466,19 +410,6 @@ public class pantallaProductos extends javax.swing.JFrame {
         botonBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBuscarActionPerformed(evt);
-            }
-        });
-
-        anadirProductos.setBorderPainted(false);
-        anadirProductos.setContentAreaFilled(false);
-        anadirProductos.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                anadirProductosMouseClicked(evt);
-            }
-        });
-        anadirProductos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                anadirProductosActionPerformed(evt);
             }
         });
 
@@ -505,34 +436,29 @@ public class pantallaProductos extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(nuevoServicio)
+                        .addGap(18, 18, 18)
+                        .addComponent(modificarServicio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(listaPreciosServicios)
+                        .addGap(31, 31, 31)
+                        .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
+                .addGap(24, 24, 24)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(anadirProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(nuevoProducto)
-                        .addGap(18, 18, 18)
-                        .addComponent(modificarProducto)
-                        .addGap(18, 18, 18)
-                        .addComponent(listaPrecios)
-                        .addGap(18, 18, 18)
-                        .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -544,22 +470,19 @@ public class pantallaProductos extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 1, Short.MAX_VALUE))
                     .addComponent(botonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(recargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(21, 21, 21)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(anadirProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(nuevoProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(modificarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(listaPrecios, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(nuevoServicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(modificarServicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(listaPreciosServicios, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imprimirReporte, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(19, 19, 19))
         );
 
@@ -600,13 +523,9 @@ public class pantallaProductos extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(278, 278, 278)
+                .addGap(325, 325, 325)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(fechaLabel)
-                .addGap(895, 895, 895))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -614,8 +533,10 @@ public class pantallaProductos extends javax.swing.JFrame {
                         .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(39, 39, 39)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(83, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fechaLabel)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -648,44 +569,44 @@ public class pantallaProductos extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tablaProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosMouseClicked
+    private void tablaServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaServiciosMouseClicked
          
-        for(int i = 0 ; i < productosBD.size() ; i++ )
+        for(int i = 0 ; i < serviciosBD.size() ; i++ )
         {
-            if(tablaProductos.getSelectedRow() == -1)
+            if(tablaServicios.getSelectedRow() == -1)
                 {
-                    JOptionPane.showMessageDialog(null, "Debes seleccionar un producto para poder desactivarlo o activarlo.","Selecciona un producto.", JOptionPane.OK_OPTION);
+                    JOptionPane.showMessageDialog(null, "Debes seleccionar un servicio para poder desactivarlo o activarlo.",
+                            "Selecciona un servicio.", 
+                            JOptionPane.OK_OPTION);
                     return;
                 } 
-            //target producto seleccionado
-            if(Integer.parseInt(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),0).toString()) == productosBD.get(i).getIdproducto())
+            //target servicio seleccionado
+            if(Integer.parseInt(tablaServicios.getValueAt(tablaServicios.getSelectedRow(),0).toString()) == serviciosBD.get(i).getIdservicio())
             {
-              productoSeleccionado = productosBD.get(i); 
+              servicioSeleccionado = serviciosBD.get(i); 
             }
         }
-        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),5).equals("Sí"))
+        if(tablaServicios.getValueAt(tablaServicios.getSelectedRow(),3).equals("Sí"))
         {
-            anadirProductos.setVisible(true);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
-            modificarProducto.setEnabled(true);
+            modificarServicio.setEnabled(true);
         }else
         {
-            anadirProductos.setVisible(false);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
-            modificarProducto.setEnabled(false);
+            modificarServicio.setEnabled(false);
         }
         
-    }//GEN-LAST:event_tablaProductosMouseClicked
+    }//GEN-LAST:event_tablaServiciosMouseClicked
 
     private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
         // TODO add your handling code here:
 
     }//GEN-LAST:event_activarMouseClicked
 
-    private void tablaProductosFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tablaProductosFocusGained
+    private void tablaServiciosFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tablaServiciosFocusGained
         // TODO add your handling code here:
         
-    }//GEN-LAST:event_tablaProductosFocusGained
+    }//GEN-LAST:event_tablaServiciosFocusGained
 
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
@@ -697,93 +618,90 @@ public class pantallaProductos extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_botonRegresarActionPerformed
 
-    private void nuevoProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoProductoActionPerformed
+    private void nuevoServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoServicioActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoProducto().setVisible(true);
+                new nuevoServicio().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        productosDAO.close();
-    }//GEN-LAST:event_nuevoProductoActionPerformed
+        serviciosDAO.close();
+    }//GEN-LAST:event_nuevoServicioActionPerformed
 
-    private void modificarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarProductoActionPerformed
-        List<productos> productosBD = productosDAO.findproductosEntities();
-        for(int i = 0 ; i < productosBD.size() ; i++ )
+    private void modificarServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarServicioActionPerformed
+        List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
+        for(int i = 0 ; i < serviciosBD.size() ; i++ )
         {
-            if(tablaProductos.getSelectedRow() == -1)
+            if(tablaServicios.getSelectedRow() == -1)
                 {
-                    JOptionPane.showMessageDialog(null, "Debes seleccionar un producto para poder modificarlo.","Selecciona un producto.", JOptionPane.OK_OPTION);
+                    JOptionPane.showMessageDialog(null, "Debes seleccionar un servicio para poder modificarlo.","Selecciona un servicio.", JOptionPane.OK_OPTION);
                     return;
                 } 
             //target producto seleccionado
-            if(Integer.parseInt(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),0).toString()) == productosBD.get(i).getIdproducto())
+            if(Integer.parseInt(tablaServicios.getValueAt(tablaServicios.getSelectedRow(),0).toString()) == serviciosBD.get(i).getIdservicio())
             {
-              productoSeleccionado = productosBD.get(i); 
+              servicioSeleccionado = serviciosBD.get(i); 
             }
         }
             java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoProducto(productoSeleccionado).setVisible(true);
+                new nuevoServicio(servicioSeleccionado).setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        productosDAO.close();
-    }//GEN-LAST:event_modificarProductoActionPerformed
+        serviciosDAO.close();
+    }//GEN-LAST:event_modificarServicioActionPerformed
 
-    private void listaPreciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listaPreciosActionPerformed
+    private void listaPreciosServiciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listaPreciosServiciosActionPerformed
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new listaPreciosProducto().setVisible(true);
+                new listaPreciosServicio().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        productosDAO.close();
-    }//GEN-LAST:event_listaPreciosActionPerformed
+        serviciosDAO.close();
+    }//GEN-LAST:event_listaPreciosServiciosActionPerformed
 
     private void activarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activarActionPerformed
         // TODO add your handling code here:
-        productos modificar = new productos();
-        List<productos> productos = productosDAO.findproductosEntities();
-        //verificar que el usuario haya seleccionado un producto
-        if(tablaProductos.getSelectedRow() == -1)
+        servicios modificar = new servicios();
+        List<servicios> servicios = serviciosDAO.findserviciosEntities();
+        //verificar que el usuario haya seleccionado un servicio
+        if(tablaServicios.getSelectedRow() == -1)
         {
-            JOptionPane.showMessageDialog(null, "Debes seleccionar un producto para poder desactivarlo.", "Selecciona un producto", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Debes seleccionar un servicio para poder desactivarlo.", "Selecciona un servicio", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
         //target producto a modificar
-        for(int i=0 ; i<productos.size();i++)
+        for(int i=0 ; i<servicios.size();i++)
         {
-            if(Integer.parseInt(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),0).toString()) == productos.get(i).getIdproducto())
+            if(Integer.parseInt(tablaServicios.getValueAt(tablaServicios.getSelectedRow(),0).toString()) == servicios.get(i).getIdservicio())
             {
-                modificar = productos.get(i);
+                modificar = servicios.get(i);
             }
         }
-        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),5).equals("Sí"))
+        if(tablaServicios.getValueAt(tablaServicios.getSelectedRow(),3).equals("Sí"))
         {
            modificar.setActivo(false);
            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
-           modificarProducto.setEnabled(false);
-           anadirProductos.setVisible(false);
+           modificarServicio.setEnabled(false);
            try
            {
-               productosDAO.edit(modificar);
+               serviciosDAO.edit(modificar);
            }catch(Exception Ex)
            {}  
         }else
          {
             modificar.setActivo(true);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png"); 
-            modificarProducto.setEnabled(true);
-            anadirProductos.setVisible(true);
+            modificarServicio.setEnabled(true);
             try
            {
-               productosDAO.edit(modificar);
+               serviciosDAO.edit(modificar);
            }catch(Exception Ex)
            {}  
         }
@@ -792,17 +710,14 @@ public class pantallaProductos extends javax.swing.JFrame {
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-        
+
         switch(cbParametros.getSelectedItem().toString())
         {
-            case "ID Producto":
+            case "ID Servicio":
                     cargarTablaBusquedaId(Integer.parseInt(buscarTxt.getText()));
                  return;
             case "Nombre":
                     cargarTablaBusquedaNombre(buscarTxt.getText());
-                return;
-            case "Stock Actual":
-                    cargarTablaBusquedaStock(Integer.parseInt(buscarTxt.getText()));
                 return;
             case "Precio Actual":
                     cargarTablaBusquedaPrecio(Double.parseDouble(buscarTxt.getText()));
@@ -814,64 +729,6 @@ public class pantallaProductos extends javax.swing.JFrame {
         // TODO add your handling code here:
         buscarTxt.selectAll();
     }//GEN-LAST:event_buscarTxtFocusGained
-
-    private void anadirProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_anadirProductosMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_anadirProductosMouseClicked
-
-    private void anadirProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anadirProductosActionPerformed
-        // TODO add your handling code here:
-        int numeroIngresado = Integer.parseInt(JOptionPane.showInputDialog(null,
-                "Ingresa el numero de unidades a ser agregadas.",
-                "Ingresar Unidades",
-                JOptionPane.PLAIN_MESSAGE));
-        productos modificar = new productos();
-        List<productos> productos = productosDAO.findproductosEntities(); 
-        
-        //verificar si el usuario selecciono un producto
-        if(tablaProductos.getSelectedRow() == -1)
-        {
-            JOptionPane.showMessageDialog(null, "Debes seleccionar un producto para poder añadir unidades.", "Selecciona un producto", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        
-        if(!validar.validacionNumEntero(Integer.toString(numeroIngresado)))
-        {
-            JOptionPane.showMessageDialog(null,"Solo puedes introducir números enteros en este campo.","Numero inválido",JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        //target producto a modificar
-        for(int i=0 ; i< productos.size();i++)
-        {
-            if(Integer.parseInt(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),0).toString()) == productos.get(i).getIdproducto())
-            {
-                modificar = productos.get(i);
-            }
-        }
-        
-        if(modificar.getStockActual() +  numeroIngresado > modificar.getStockMaximo())
-        {
-           JOptionPane.showMessageDialog(null,"La cantidad de unidades no puede exceder el stock máximo para este producto.","Unidades inválidas",JOptionPane.ERROR_MESSAGE);
-            return; 
-        }
-        
-        if(tablaProductos.getValueAt(tablaProductos.getSelectedRow(),5).equals("Sí"))
-        {
-           modificar.setStockActual(modificar.getStockActual() + numeroIngresado);
-           try
-           {
-               productosDAO.edit(modificar);
-           }catch(Exception Ex)
-           {}  
-        }else
-         {
-            anadirProductos.setEnabled(false);  
-        }
-        cargarTabla();
-        
-    }//GEN-LAST:event_anadirProductosActionPerformed
 
     private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
         // TODO add your handling code here:
@@ -888,8 +745,6 @@ public class pantallaProductos extends javax.swing.JFrame {
     private void recargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recargarActionPerformed
         // TODO add your handling code here:
         cargarTabla();
-        buscarTxt.setText("");
-        anadirProductos.setVisible(false);
     }//GEN-LAST:event_recargarActionPerformed
 
     
@@ -910,14 +765,16 @@ public class pantallaProductos extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(pantallaProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaServicios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(pantallaProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaServicios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(pantallaProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaServicios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(pantallaProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaServicios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
        
@@ -925,7 +782,7 @@ public class pantallaProductos extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new pantallaProductos().setVisible(true);
+                new pantallaServicios().setVisible(true);
             }
         });
         
@@ -968,7 +825,6 @@ public class pantallaProductos extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activar;
-    private javax.swing.JButton anadirProductos;
     private javax.swing.JButton botonBuscar;
     private javax.swing.JButton botonRegresar;
     private javax.swing.JTextField buscarTxt;
@@ -980,12 +836,12 @@ public class pantallaProductos extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton listaPrecios;
+    private javax.swing.JButton listaPreciosServicios;
     private javax.swing.JLabel logo;
-    private javax.swing.JButton modificarProducto;
-    private javax.swing.JButton nuevoProducto;
+    private javax.swing.JButton modificarServicio;
+    private javax.swing.JButton nuevoServicio;
     private javax.swing.JButton recargar;
-    private javax.swing.JTable tablaProductos;
+    private javax.swing.JTable tablaServicios;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

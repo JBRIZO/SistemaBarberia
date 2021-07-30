@@ -423,6 +423,13 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonServiciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonServiciosActionPerformed
         // TODO add your handling code here:
+         java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new pantallaServicios().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
     }//GEN-LAST:event_botonServiciosActionPerformed
 
     private void botonDeduccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDeduccionesActionPerformed
@@ -463,13 +470,7 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonServiciosMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new nuevoServicio().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
+       
     }//GEN-LAST:event_botonServiciosMouseClicked
 
     private void botonDescuentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDescuentosMouseClicked

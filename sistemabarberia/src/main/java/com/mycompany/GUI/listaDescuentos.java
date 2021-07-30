@@ -42,7 +42,6 @@ public class listaDescuentos extends javax.swing.JFrame {
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         cargarTabla();
-//        tablaPuestosHistoricos();
     }
     
     public void Reiniciar()
@@ -275,7 +274,6 @@ public class listaDescuentos extends javax.swing.JFrame {
     private void cargarTabla()
     {
         List<tipodescuento> tiposDescuentoBD = tiposDescuentoDAO.findtipodescuentoEntities();
-        String activo = "";
         String Descuento = "";
         DefaultTableModel modelo = (DefaultTableModel)tablaDescuentos.getModel();
         modelo.setRowCount(0);
@@ -289,13 +287,6 @@ public class listaDescuentos extends javax.swing.JFrame {
                             Descuento = tiposDescuentoBD.get(j).getNomDescuento();  
                         }
                     }
-                if(descuento.isActivo())
-                {
-                activo = "Sí";   
-                }else
-                {
-                    activo = "No";
-                }
                     modelo.addRow(
                     new Object[]{
                         descuento.getIddescuento(),

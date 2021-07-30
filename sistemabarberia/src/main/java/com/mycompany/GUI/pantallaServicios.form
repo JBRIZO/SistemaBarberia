@@ -51,14 +51,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="logo" min="-2" pref="92" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="278" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="325" max="-2" attributes="0"/>
                   <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="fechaLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="895" max="-2" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -68,10 +63,13 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                          <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="fechaLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="83" max="32767" attributes="0"/>
+                  <EmptySpace pref="79" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -102,7 +100,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="PRODUCTOS"/>
+            <Property name="text" type="java.lang.String" value="SERVICIOS"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="logo">
@@ -174,41 +172,33 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="cbParametros" min="-2" pref="126" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="buscarTxt" min="-2" pref="439" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="botonBuscar" min="-2" pref="40" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="jScrollPane1" min="-2" pref="706" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="activar" min="-2" pref="67" max="-2" attributes="0"/>
-                                      <Component id="anadirProductos" min="-2" pref="67" max="-2" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                          <Component id="recargar" min="-2" pref="40" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                              </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Component id="nuevoProducto" min="-2" max="-2" attributes="0"/>
+                                  <Component id="nuevoServicio" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="modificarProducto" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="listaPrecios" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="imprimirReporte" min="-2" pref="177" max="-2" attributes="0"/>
+                                  <Component id="modificarServicio" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="listaPreciosServicios" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                                  <Component id="imprimirReporte" min="-2" pref="171" max="-2" attributes="0"/>
                               </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="cbParametros" min="-2" pref="126" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="buscarTxt" min="-2" pref="439" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="botonBuscar" min="-2" pref="40" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="16" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="activar" min="-2" pref="67" max="-2" attributes="0"/>
+                              <Component id="recargar" min="-2" pref="40" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="20" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -223,26 +213,22 @@
                                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="cbParametros" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="1" max="32767" attributes="0"/>
                               </Group>
                               <Component id="botonBuscar" max="32767" attributes="0"/>
-                              <Component id="recargar" max="32767" attributes="0"/>
+                              <Component id="recargar" pref="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="activar" min="-2" pref="56" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="anadirProductos" min="-2" pref="56" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="activar" min="-2" pref="56" max="-2" attributes="0"/>
                               <Component id="jScrollPane1" min="-2" pref="375" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="nuevoProducto" max="32767" attributes="0"/>
-                              <Component id="modificarProducto" alignment="1" max="32767" attributes="0"/>
-                              <Component id="listaPrecios" alignment="1" pref="42" max="32767" attributes="0"/>
-                              <Component id="imprimirReporte" pref="0" max="32767" attributes="0"/>
+                              <Component id="nuevoServicio" max="32767" attributes="0"/>
+                              <Component id="modificarServicio" alignment="1" max="32767" attributes="0"/>
+                              <Component id="listaPreciosServicios" alignment="0" min="-2" pref="39" max="-2" attributes="0"/>
+                              <Component id="imprimirReporte" alignment="0" min="-2" pref="39" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                       </Group>
@@ -257,7 +243,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="tablaProductos">
+                    <Component class="javax.swing.JTable" name="tablaServicios">
                       <Properties>
                         <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -267,27 +253,15 @@
                           <Color blue="ff" green="ff" red="ff" type="rgb"/>
                         </Property>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="6" rowCount="0">
-                            <Column editable="false" title="ID Producto" type="java.lang.Integer"/>
+                          <Table columnCount="4" rowCount="0">
+                            <Column editable="false" title="ID Servicio" type="java.lang.Integer"/>
                             <Column editable="false" title="Nombre" type="java.lang.String"/>
-                            <Column editable="false" title="Stock Actual" type="java.lang.String"/>
-                            <Column editable="false" title="Stock Maximo" type="java.lang.String"/>
                             <Column editable="false" title="Precio Actual" type="java.lang.Double"/>
                             <Column editable="false" title="Activo" type="java.lang.String"/>
                           </Table>
                         </Property>
-                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor" postCode="DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();&#xa;        MyHeaderRender.setBackground(Color.decode(&quot;#BD9E4C&quot;));&#xa;        MyHeaderRender.setForeground(Color.BLACK);&#xa;        for(int i = 0; i &lt; tablaProductos.getColumnCount();i++)&#xa;            {&#xa;                tablaProductos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);&#xa;            }&#xa;tablaProductos.setShowGrid(true);&#xa;tablaProductos.setGridColor(Color.BLACK);">
+                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor" postCode="DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();&#xa;        MyHeaderRender.setBackground(Color.decode(&quot;#BD9E4C&quot;));&#xa;        MyHeaderRender.setForeground(Color.BLACK);&#xa;        for(int i = 0; i &lt; tablaServicios.getColumnCount();i++)&#xa;            {&#xa;                tablaServicios.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);&#xa;            }&#xa;tablaServicios.setShowGrid(true);&#xa;tablaServicios.setGridColor(Color.BLACK);">
                           <TableColumnModel selectionModel="0">
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
                             <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                               <Title/>
                               <Editor/>
@@ -319,8 +293,8 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="tablaProductosFocusGained"/>
-                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tablaProductosMouseClicked"/>
+                        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="tablaServiciosFocusGained"/>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tablaServiciosMouseClicked"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -335,7 +309,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="activarActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="nuevoProducto">
+                <Component class="javax.swing.JButton" name="nuevoServicio">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="22" green="21" red="1e" type="rgb"/>
@@ -347,7 +321,7 @@
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/Imagenes/nuevoProducto.png"/>
+                      <Image iconType="3" name="/Imagenes/nuevoServicio.png"/>
                     </Property>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="null"/>
@@ -356,10 +330,10 @@
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nuevoProductoActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nuevoServicioActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="modificarProducto">
+                <Component class="javax.swing.JButton" name="modificarServicio">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="22" green="21" red="1e" type="rgb"/>
@@ -371,7 +345,7 @@
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/Imagenes/modificarProducto.png"/>
+                      <Image iconType="3" name="/Imagenes/modificarServicio.png"/>
                     </Property>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="null"/>
@@ -380,10 +354,10 @@
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="modificarProductoActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="modificarServicioActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="listaPrecios">
+                <Component class="javax.swing.JButton" name="listaPreciosServicios">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="22" green="21" red="1e" type="rgb"/>
@@ -404,7 +378,7 @@
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listaPreciosActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listaPreciosServiciosActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel1">
@@ -456,16 +430,6 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonBuscarActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="anadirProductos">
-                  <Properties>
-                    <Property name="borderPainted" type="boolean" value="false"/>
-                    <Property name="contentAreaFilled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="anadirProductosMouseClicked"/>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="anadirProductosActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="imprimirReporte">

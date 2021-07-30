@@ -5,12 +5,16 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
+import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
+import com.mycompany.sistemabarberia.servicios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -31,13 +35,14 @@ import javax.swing.border.Border;
  *
  * @author Jonathan Laux
  */
-public class nuevoPrecioProducto extends javax.swing.JFrame {
+public class nuevoPrecioServicio extends javax.swing.JFrame {
     
     private Validaciones validar = new Validaciones();
-    private productosJpaController productosDAO = new productosJpaController();
-    private List<productos> productosBD = productosDAO.findproductosEntities();
-    private precioshistoricosproductosJpaController preciosDAO = new precioshistoricosproductosJpaController();
-    private List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
+    
+    private serviciosJpaController serviciosDAO = new serviciosJpaController();
+    private List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
+    private precioshistoricoserviciosJpaController preciosDAO = new precioshistoricoserviciosJpaController();
+    private List<precioshistoricoservicios> preciosBD = preciosDAO.findprecioshistoricoserviciosEntities();
     private ImageIcon imagen;
     private Icon icono;
     private java.util.Date dt = new java.util.Date();
@@ -50,18 +55,18 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public nuevoPrecioProducto() {
+    public nuevoPrecioServicio() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
          this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();   
-        for(int i = 0; i < productosBD.size(); i++)
+        for(int i = 0; i < serviciosBD.size(); i++)
         {
-            if(productosBD.get(i).isActivo())
+            if(serviciosBD.get(i).isActivo())
             {
-                cbProductos.addItem(productosBD.get(i).toString());
+                cbServicios.addItem(serviciosBD.get(i).toString());
             }
         }
     }
@@ -95,7 +100,7 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         formatoInvalido1 = new javax.swing.JLabel();
         precio = new javax.swing.JTextField();
         fechaInicio = new javax.swing.JTextField();
-        cbProductos = new javax.swing.JComboBox<>();
+        cbServicios = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         formatoInvalido3 = new javax.swing.JLabel();
         salir = new javax.swing.JLabel();
@@ -107,7 +112,7 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("NUEVO PRECIO");
+        tituloPantalla.setText("NUEVO PRECIO SERVICIO");
 
         botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
         botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -188,12 +193,12 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
             }
         });
 
-        cbProductos.setBackground(new java.awt.Color(30, 33, 34));
-        cbProductos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
-        cbProductos.setPreferredSize(new java.awt.Dimension(270, 42));
+        cbServicios.setBackground(new java.awt.Color(30, 33, 34));
+        cbServicios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+        cbServicios.setPreferredSize(new java.awt.Dimension(270, 42));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Producto:");
+        jLabel3.setText("Servicio:");
 
         formatoInvalido3.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido3.setText("Formato no valido.");
@@ -211,7 +216,7 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
                         .addComponent(fechaInicio)
                         .addComponent(precio)
                         .addComponent(formatoInvalido1)
-                        .addComponent(cbProductos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cbServicios, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -220,7 +225,7 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbServicios, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -265,19 +270,17 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
                 .addComponent(jLabel1))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(339, 339, 339)
-                        .addComponent(salir))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(tituloPantalla))))
+                .addGap(339, 339, 339)
+                .addComponent(salir))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(99, 99, 99)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(78, 78, 78)
+                .addComponent(tituloPantalla))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -285,18 +288,17 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(9, 9, 9))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(tituloPantalla)))
+                        .addGap(0, 0, 0))
+                    .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addGap(175, 175, 175))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tituloPantalla)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(27, 27, 27)
                         .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -327,18 +329,18 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
            return;
         }
         
-        if(cbProductos.getSelectedIndex() == 0)
+        if(cbServicios.getSelectedIndex() == 0)
         {
            JOptionPane.showMessageDialog(null,"Debes seleccionar un producto.", "Producto Invalido",JOptionPane.ERROR_MESSAGE); 
            return;
         }
         
         
-        List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
-        List<precioshistoricosproductos> preciosAnteriores = new ArrayList<precioshistoricosproductos>();
+        List<precioshistoricoservicios> preciosBD = preciosDAO.findprecioshistoricoserviciosEntities();
+        List<precioshistoricoservicios> preciosAnteriores = new ArrayList<precioshistoricoservicios>();
         for(int i = 0; i < preciosBD.size();i++)
         {
-            if(preciosBD.get(i).getIDProducto() == Character.getNumericValue(cbProductos.getSelectedItem().toString().charAt(0)))
+            if(preciosBD.get(i).getIDServicio() == Character.getNumericValue(cbServicios.getSelectedItem().toString().charAt(0)))
             {
                 preciosAnteriores.add(preciosBD.get(i));
             }
@@ -352,18 +354,18 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
        ex.printStackTrace();
     }
         //anadir precio
-        precioshistoricosproductos nuevoPrecio = new precioshistoricosproductos();
+        precioshistoricoservicios nuevoPrecio = new precioshistoricoservicios();
         nuevoPrecio.setFechaInicial(Date.valueOf(fechaIni));
         nuevoPrecio.setFechaFinal(null);
-        nuevoPrecio.setIDProducto(Character.getNumericValue(cbProductos.getSelectedItem().toString().charAt(0)));
+        nuevoPrecio.setIDServicio(Character.getNumericValue(cbServicios.getSelectedItem().toString().charAt(0)));
         nuevoPrecio.setPrecio(Double.parseDouble(precio.getText()));
         nuevoPrecio.setActivo(true);
         
-        precioshistoricosproductos precioAnterior = new precioshistoricosproductos();
-        precioAnterior.setNumprecio(preciosAnteriores.get(preciosAnteriores.size()-1).getNumprecio());
+        precioshistoricoservicios precioAnterior = new precioshistoricoservicios();
+        precioAnterior.setNumprecioservicio(preciosAnteriores.get(preciosAnteriores.size()-1).getNumprecioservicio());
         precioAnterior.setFechaInicial(preciosAnteriores.get(preciosAnteriores.size()-1).getFechaInicial());
         precioAnterior.setFechaFinal(Date.valueOf(fechaIni));
-        precioAnterior.setIDProducto(preciosAnteriores.get(preciosAnteriores.size()-1).getIDProducto());
+        precioAnterior.setIDServicio(preciosAnteriores.get(preciosAnteriores.size()-1).getIDServicio());
         precioAnterior.setPrecio(preciosAnteriores.get(preciosAnteriores.size()-1).getPrecio());
         precioAnterior.setActivo(false);
         
@@ -435,12 +437,12 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new listaPreciosProducto().setVisible(true);
+                new listaPreciosServicio().setVisible(true);
             }
         });
         this.setVisible(false);
         this.dispose(); 
-        productosDAO.close();
+        serviciosDAO.close();
         preciosDAO.close();        
     }//GEN-LAST:event_salirMouseClicked
 
@@ -493,14 +495,16 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioServicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioServicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioServicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(nuevoPrecioProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(nuevoPrecioServicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
        
@@ -508,7 +512,7 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoPrecioProducto().setVisible(true);
+                new nuevoPrecioServicio().setVisible(true);
             }
         });
         
@@ -609,7 +613,7 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
-    private javax.swing.JComboBox<String> cbProductos;
+    private javax.swing.JComboBox<String> cbServicios;
     private javax.swing.JTextField fechaInicio;
     private javax.swing.JLabel formatoInvalido1;
     private javax.swing.JLabel formatoInvalido3;
