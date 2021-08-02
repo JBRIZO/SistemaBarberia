@@ -25,14 +25,13 @@ import javax.swing.table.DefaultTableModel;
  * @author kesil
  */
 public class listaPuestos extends javax.swing.JFrame {
-    
+
     private puestoJpaController puestoDAO = new puestoJpaController();
     private empleadoJpaController empleadoDAO = new empleadoJpaController();
     private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
     private ImageIcon imagen;
     private Icon icono;
     private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController();
-    
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -41,15 +40,13 @@ public class listaPuestos extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoLogin.png"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");for(int i = 0; i < empleadosBD.size(); i++)
-        {
-            if(empleadosBD.get(i).isActivo())
-            {
+        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
+        for (int i = 0; i < empleadosBD.size(); i++) {
+            if (empleadosBD.get(i).isActivo()) {
                 cbEmpleados.addItem(empleadosBD.get(i).toString());
             }
         }
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -220,21 +217,18 @@ public class listaPuestos extends javax.swing.JFrame {
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     private void cbEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmpleadosActionPerformed
-       
+
         List<puestohistoricoempleado> puestosHistoricosBD = puestoHistoricoDAO.findpuestohistoricoempleadoEntities();
         List<puesto> tiposPuestoBD = puestoDAO.findpuestoEntities();
-        
+
         //lista en blanco
-        DefaultTableModel modelo = (DefaultTableModel)tablapuesto.getModel();       
+        DefaultTableModel modelo = (DefaultTableModel) tablapuesto.getModel();
         modelo.setRowCount(0);
-        
-        
+
         //Capturar salarios para empleado seleccionado
         List<puestohistoricoempleado> puestosSelec = new ArrayList();
-        for(int i = 0; i<puestosHistoricosBD.size();i++)
-        {
-            if(puestosHistoricosBD.get(i).getIDEmpleado() == Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)))
-            {
+        for (int i = 0; i < puestosHistoricosBD.size(); i++) {
+            if (puestosHistoricosBD.get(i).getIDEmpleado() == Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0))) {
                 puestosSelec.add(puestosHistoricosBD.get(i));
             }
         }
@@ -242,34 +236,29 @@ public class listaPuestos extends javax.swing.JFrame {
         String Puesto = "";
         String fechaFinal = "";
         tablapuesto.setModel(modelo);
-            for(puestohistoricoempleado puestoHistorico : puestosSelec){
-                //Mostrar el nombre del puesto en vez
-                //del ID.
-                    for(int j = 0; j < tiposPuestoBD.size(); j++)
-                    {
-                        if(tiposPuestoBD.get(j).getIdpuesto() == puestoHistorico.getIDPuesto())
-                        {
-                            Puesto = tiposPuestoBD.get(j).getNomPuesto();  
-                        }
-                    }
-                    if(puestoHistorico.getFechaFinal() == null)
-                    {
-                       fechaFinal = "        -"; 
-                    }else
-                    {
-                        fechaFinal = convertirDates(puestoHistorico.getFechaFinal().toString());
-                    }
-                    modelo.addRow(
+        for (puestohistoricoempleado puestoHistorico : puestosSelec) {
+            //Mostrar el nombre del puesto en vez
+            //del ID.
+            for (int j = 0; j < tiposPuestoBD.size(); j++) {
+                if (tiposPuestoBD.get(j).getIdpuesto() == puestoHistorico.getIDPuesto()) {
+                    Puesto = tiposPuestoBD.get(j).getNomPuesto();
+                }
+            }
+            if (puestoHistorico.getFechaFinal() == null) {
+                fechaFinal = "        -";
+            } else {
+                fechaFinal = convertirDates(puestoHistorico.getFechaFinal().toString());
+            }
+            modelo.addRow(
                     new Object[]{
                         convertirDates(puestoHistorico.getFechaInicial().toString()),
                         fechaFinal,
                         Puesto
                     }
-                );
-            }         
+            );
+        }
     }//GEN-LAST:event_cbEmpleadosActionPerformed
 
-    
     /**
      * @param args the command line arguments
      */
@@ -296,7 +285,7 @@ public class listaPuestos extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(listaPuestos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -304,27 +293,24 @@ public class listaPuestos extends javax.swing.JFrame {
                 new listaPuestos().setVisible(true);
             }
         });
-        
-        
+
     }
-    
-    private void insertarImagen(JLabel lbl,String ruta)
-    {
+
+    private void insertarImagen(JLabel lbl, String ruta) {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
-                        lbl.getWidth(), 
+                        lbl.getWidth(),
                         lbl.getHeight(),
                         Image.SCALE_DEFAULT)
         );
         lbl.setIcon(this.icono);
         this.repaint();
     }
-    
-    private String convertirDates(String Fecha)
-    {
-        String[] palabras  = Fecha.split("-");
-       
+
+    private String convertirDates(String Fecha) {
+        String[] palabras = Fecha.split("-");
+
         return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
 

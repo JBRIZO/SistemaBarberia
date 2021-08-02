@@ -24,16 +24,15 @@ import javax.swing.border.Border;
  * @author Jonathan Laux
  */
 public class nuevoTipoBono extends javax.swing.JFrame {
-    
+
     private tiposbonoJpaController tipoBonoDAO = new tiposbonoJpaController();
     private Validaciones validar = new Validaciones();
     private List<tiposbono> descuentosEnBd = tipoBonoDAO.findtiposbonoEntities();
     private ImageIcon imagen;
     private Icon icono;
-    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);    
+    Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
-
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -41,24 +40,21 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     public nuevoTipoBono() {
         initComponents();
         formatoInvalido.setVisible(false);
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-        Reiniciar();    
+        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.salir, "src/main/resources/Imagenes/x.png");
+        Reiniciar();
     }
-    
-    public void Reiniciar()
-    {
+
+    public void Reiniciar() {
         List<tiposbono> bonosEnBd = tipoBonoDAO.findtiposbonoEntities();
-        if (bonosEnBd.isEmpty())
-        {
+        if (bonosEnBd.isEmpty()) {
             idTipoBono.setText("  ID Tipo de Bono: 1");
-        }else
-        {
-            idTipoBono.setText("  ID Tipo de Bono: " + Integer.toString(bonosEnBd.get(bonosEnBd.size()-1).getIdtipobono()+1));
-        } 
-        
+        } else {
+            idTipoBono.setText("  ID Tipo de Bono: " + Integer.toString(bonosEnBd.get(bonosEnBd.size() - 1).getIdtipobono() + 1));
+        }
+
         tipoBono.setBorder(defaultBorder);
-        tipoBono.setText("  Nuevo Tipo de Bono");        
+        tipoBono.setText("  Nuevo Tipo de Bono");
         formatoInvalido.setVisible(false);
 
     }
@@ -272,40 +268,38 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         tiposbono tipoBonoNuevo = new tiposbono();
         tipoBonoNuevo.setNomBono(tipoBono.getText());
         tipoBonoNuevo.setActivo(true);
-        
-         validacionCampos();
-       
-        for(int i=0; i < bonosEnBD.size();i++)
-        {
-            if(tipoBonoNuevo.getNomBono().equalsIgnoreCase(bonosEnBD.get(i).getNomBono()))
-            {
+
+        validacionCampos();
+
+        for (int i = 0; i < bonosEnBD.size(); i++) {
+            if (tipoBonoNuevo.getNomBono().equalsIgnoreCase(bonosEnBD.get(i).getNomBono())) {
                 tipoBono.setBorder(redBorder);
                 formatoInvalido.setVisible(true);
                 formatoInvalido.setText("Ese tipo de bono ya existe.");
                 return;
             }
         }
-       
-        
-        if(validar.validacionCadenaPalabras(tipoBono.getText()) && validar.validacionCantidadMinima(tipoBono.getText(),4)){
+
+        if (validar.validacionCadenaPalabras(tipoBono.getText()) && validar.validacionCantidadMinima(tipoBono.getText(), 4)) {
             try {
-            tipoBonoDAO.create(tipoBonoNuevo);
-            JOptionPane.showMessageDialog(null,"Operación Exitosa");
-                    Reiniciar();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
+                tipoBonoDAO.create(tipoBonoNuevo);
+                JOptionPane.showMessageDialog(null, "Operación Exitosa");
+                Reiniciar();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "No se pudo guardar, excepción: " + ex.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
         }
-        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
 
-    
-    
+
     private void idTipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoBonoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_idTipoBonoActionPerformed
 //a;adir validaciones botonaceptar
     private void tipoBonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusLost
-        validacionCampos();  
+        validacionCampos();
     }//GEN-LAST:event_tipoBonoFocusLost
 
     private void tipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoBonoActionPerformed
@@ -313,7 +307,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoBonoActionPerformed
 
     private void tipoBonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tipoBonoKeyTyped
-   
+
     }//GEN-LAST:event_tipoBonoKeyTyped
 
     private void tipoBonoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusGained
@@ -322,15 +316,9 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoBonoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
-        // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new menuGerente().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
-        tipoBonoDAO.close();
+        Bono bono = new Bono();
+        bono.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_salirMouseClicked
 
     /**
@@ -367,53 +355,47 @@ public class nuevoTipoBono extends javax.swing.JFrame {
                 new nuevoTipoBono().setVisible(true);
             }
         });
-        
-        
+
     }
-    private void validacionCampos()
-    {
-        if(validar.validacionCampoNumerico(tipoBono.getText()))
-        {
+
+    private void validacionCampos() {
+        if (validar.validacionCampoNumerico(tipoBono.getText())) {
             tipoBono.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Solo se permite texto en este campo.");
             return;
         }
-        
-        if(!validar.validacionMayusculaInicial(tipoBono.getText()))
-        {
+
+        if (!validar.validacionMayusculaInicial(tipoBono.getText())) {
             tipoBono.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de bono debe iniciar con mayuscula.");
             return;
         }
 
-        if(validar.validacionCadenaPalabras(tipoBono.getText()))
-        {    
+        if (validar.validacionCadenaPalabras(tipoBono.getText())) {
             tipoBono.setBorder(greenBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
+
+        } else {
             tipoBono.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Esa no es una palabra válida.");
             return;
         }
-         if(!validar.validacionCantidadMinima(tipoBono.getText(),4))
-            {
+        if (!validar.validacionCantidadMinima(tipoBono.getText(), 4)) {
             tipoBono.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de descuento debe ser de minimo 4 letras.");
-            }
+        }
     }
-    private void insertarImagen(JLabel lbl,String ruta)
-    {
+
+    private void insertarImagen(JLabel lbl, String ruta) {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
-                        lbl.getWidth(), 
+                        lbl.getWidth(),
                         lbl.getHeight(),
                         Image.SCALE_DEFAULT)
         );

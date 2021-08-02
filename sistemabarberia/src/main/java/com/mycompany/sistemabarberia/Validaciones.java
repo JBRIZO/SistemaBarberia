@@ -58,7 +58,7 @@ public class Validaciones {
     }
     
     //Valida el periodo, que debe tener el formato mm-AAAA 
-     public boolean validacionEntero(String numero)
+     public boolean validacionEntero(String numero) 
     {
         String patron = "^[1-9][0-9]+$";
         Pattern patt = Pattern.compile(patron);

@@ -5,10 +5,14 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.estadofacturaJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.bonosempleadomensualJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.estadofactura;
+import com.mycompany.sistemabarberia.bonosempleadomensual;
+import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.tiposbono;
 import java.awt.Color;
 import java.awt.Image;
 import java.util.List;
@@ -23,10 +27,12 @@ import javax.swing.border.Border;
  *
  * @author Kesil
  */
-
 public class NuevoBono extends javax.swing.JFrame {
+
+    private empleadoJpaController nombreEmpleado = new empleadoJpaController();
+    private tiposbonoJpaController bonos = new tiposbonoJpaController();
+    private bonosempleadomensualJpaController bonosEmp = new bonosempleadomensualJpaController();
     
-    private estadofacturaJpaController estadofacturaDAO = new estadofacturaJpaController();
     private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
     private Icon icono;
@@ -34,19 +40,17 @@ public class NuevoBono extends javax.swing.JFrame {
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
 
-    
-
-
     /**
      * Creates new form nuevoestadofactura
      */
     public NuevoBono() {
         initComponents();
-        formatoInvalido.setVisible(false);
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png"); 
+        lbPeriodo.setVisible(false);
+        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.salir, "src/main/resources/Imagenes/x.png");
+        obtenerEmpleados();
+        obtenerTipoBono();
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -63,13 +67,13 @@ public class NuevoBono extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        formatoInvalido = new javax.swing.JLabel();
+        lbPeriodo = new javax.swing.JLabel();
         txtPeriodo = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbIdEmpleado = new javax.swing.JComboBox<>();
         txtCantidad = new javax.swing.JTextField();
         cbTipoBono = new javax.swing.JComboBox<>();
-        formatoInvalido1 = new javax.swing.JLabel();
-        Aceptar = new javax.swing.JButton();
+        lbCantidad = new javax.swing.JLabel();
+        Cancelar = new javax.swing.JButton();
         Aceptar1 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         salir = new javax.swing.JLabel();
@@ -95,7 +99,7 @@ public class NuevoBono extends javax.swing.JFrame {
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
         tituloPantalla.setText("NUEVO BONO");
-        jPanel1.add(tituloPantalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, -1, -1));
+        jPanel1.add(tituloPantalla, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 50, -1, -1));
 
         jLabel1.setText("jLabel1");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(853, 513, -1, -1));
@@ -112,9 +116,10 @@ public class NuevoBono extends javax.swing.JFrame {
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
-        formatoInvalido.setText("Formato no valido.");
-        jPanel3.add(formatoInvalido, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 160, 270, 10));
+        lbPeriodo.setForeground(new java.awt.Color(255, 255, 255));
+        lbPeriodo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbPeriodo.setText("Formato no valido.");
+        jPanel3.add(lbPeriodo, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 160, 270, 10));
 
         txtPeriodo.setBackground(new java.awt.Color(30, 33, 34));
         txtPeriodo.setDocument(new JTextFieldLimit(25));
@@ -143,15 +148,14 @@ public class NuevoBono extends javax.swing.JFrame {
         });
         jPanel3.add(txtPeriodo, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, 270, 42));
 
-        jComboBox1.setBackground(new java.awt.Color(30, 33, 34));
-        jComboBox1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ID Empleado" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        cbIdEmpleado.setBackground(new java.awt.Color(30, 33, 34));
+        cbIdEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cbIdEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                cbIdEmpleadoActionPerformed(evt);
             }
         });
-        jPanel3.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, 270, 44));
+        jPanel3.add(cbIdEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, 270, 44));
 
         txtCantidad.setBackground(new java.awt.Color(30, 33, 34));
         txtCantidad.setDocument(new JTextFieldLimit(25));
@@ -178,32 +182,31 @@ public class NuevoBono extends javax.swing.JFrame {
                 txtCantidadKeyTyped(evt);
             }
         });
-        jPanel3.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 190, 150, 42));
+        jPanel3.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 190, 90, 42));
 
         cbTipoBono.setBackground(new java.awt.Color(30, 33, 34));
         cbTipoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cbTipoBono.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo Bono" }));
         cbTipoBono.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbTipoBonoActionPerformed(evt);
             }
         });
-        jPanel3.add(cbTipoBono, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 190, 100, 40));
+        jPanel3.add(cbTipoBono, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 190, 160, 40));
 
-        formatoInvalido1.setForeground(new java.awt.Color(255, 255, 255));
-        formatoInvalido1.setText("Formato no valido.");
-        jPanel3.add(formatoInvalido1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 230, 150, 20));
+        lbCantidad.setForeground(new java.awt.Color(255, 255, 255));
+        lbCantidad.setText("Formato no valido.");
+        jPanel3.add(lbCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 230, 90, 20));
 
-        Aceptar.setBackground(new java.awt.Color(189, 158, 76));
-        Aceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        Aceptar.setText("CANCELAR");
-        Aceptar.setRequestFocusEnabled(false);
-        Aceptar.addActionListener(new java.awt.event.ActionListener() {
+        Cancelar.setBackground(new java.awt.Color(189, 158, 76));
+        Cancelar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Cancelar.setText("CANCELAR");
+        Cancelar.setRequestFocusEnabled(false);
+        Cancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AceptarActionPerformed(evt);
+                CancelarActionPerformed(evt);
             }
         });
-        jPanel3.add(Aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 280, 110, 30));
+        jPanel3.add(Cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 280, 110, 30));
 
         Aceptar1.setBackground(new java.awt.Color(189, 158, 76));
         Aceptar1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -216,7 +219,7 @@ public class NuevoBono extends javax.swing.JFrame {
         });
         jPanel3.add(Aceptar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 280, 110, 30));
 
-        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(31, 28, 450, 340));
+        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(31, 28, 460, 340));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 104, 520, 400));
 
@@ -260,10 +263,35 @@ public class NuevoBono extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     //a;adir validaciones botonaceptar
+    public void obtenerEmpleados() {
+        cbIdEmpleado.addItem("Seleccione Empleado");
+        List<empleado> listaEmpleados;
+        listaEmpleados = nombreEmpleado.findempleadoEntities();
+        for (int i = 0; i < listaEmpleados.size(); i++) {
+            cbIdEmpleado.addItem(listaEmpleados.get(i).getNomEmpleado());
+        }
+    }
+
+    public void obtenerTipoBono() {
+        cbTipoBono.addItem("Tipo Bono");
+        List<tiposbono> listaBonos;
+        listaBonos = bonos.findtiposbonoEntities();
+        for (int i = 0; i < listaBonos.size(); i++) {
+            cbTipoBono.addItem(listaBonos.get(i).getNomBono());
+        }
+    }
+
+
     private void txtPeriodoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPeriodoFocusLost
-           validacionCampos();
+        Validaciones validar = new Validaciones();
+        if (validar.validacionEntero(txtPeriodo.getText()) == false) {
+            txtPeriodo.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+            lbPeriodo.setText("Formato inválido: mm-AAAA ");
+        } else {
+            txtPeriodo.setBorder(BorderFactory.createLineBorder(Color.green, 1));
+            lbPeriodo.setText("Formato correcto");
+        }
     }//GEN-LAST:event_txtPeriodoFocusLost
 
     private void txtPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPeriodoActionPerformed
@@ -273,8 +301,8 @@ public class NuevoBono extends javax.swing.JFrame {
     private void txtPeriodoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPeriodoKeyTyped
         // TODO add your handling code here:
         if ((txtPeriodo.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();
-    }
+            evt.consume();
+        }
     }//GEN-LAST:event_txtPeriodoKeyTyped
 
     private void txtPeriodoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPeriodoFocusGained
@@ -283,10 +311,9 @@ public class NuevoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPeriodoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
-        menuGerente menu = new menuGerente();
-        menu.setVisible(true);
-        this.dispose(); 
-     
+        Bono bono = new Bono();
+        bono.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_salirMouseClicked
 
     private void txtCantidadFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCantidadFocusGained
@@ -305,16 +332,38 @@ public class NuevoBono extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCantidadKeyTyped
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    private void cbIdEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbIdEmpleadoActionPerformed
 
-    private void AceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_AceptarActionPerformed
+    }//GEN-LAST:event_cbIdEmpleadoActionPerformed
+
+    private void CancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarActionPerformed
+        cbIdEmpleado.setSelectedIndex(0);
+        txtPeriodo.setText("Periodo");
+        cbTipoBono.setSelectedIndex(0);
+        txtCantidad.setText("Cantidad");
+        lbCantidad.setText("");
+        lbPeriodo.setText("");
+        txtPeriodo.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        txtCantidad.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+    }//GEN-LAST:event_CancelarActionPerformed
 
     private void Aceptar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Aceptar1ActionPerformed
-        // TODO add your handling code here:
+        if (cbIdEmpleado.getSelectedIndex() == 0 || txtPeriodo.getText().isEmpty()
+                || cbTipoBono.getSelectedIndex() == 0 || txtCantidad.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debes llenar todos los datos", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        } else {
+            bonosempleadomensual bonos = new bonosempleadomensual();
+            bonos.setIdEmpleado(cbIdEmpleado.getSelectedIndex());
+            bonos.setPeriodo(txtPeriodo.getText());
+            bonos.setIDTipoBono(cbTipoBono.getSelectedIndex());
+            bonos.setValor(Double.parseDouble(txtCantidad.getText()));
+            try {
+                bonosEmp.create(bonos);
+                JOptionPane.showMessageDialog(null, "El registro se ha almacenado satisfactoriamente", "Confirmación", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                
+            }
+        }
     }//GEN-LAST:event_Aceptar1ActionPerformed
 
     private void cbTipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoBonoActionPerformed
@@ -357,76 +406,68 @@ public class NuevoBono extends javax.swing.JFrame {
                 new NuevoBono().setVisible(true);
             }
         });
-        
-        
+
     }
-    
-    private void insertarImagen(JLabel lbl,String ruta)
-    {
+
+    private void insertarImagen(JLabel lbl, String ruta) {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
-                        lbl.getWidth(), 
+                        lbl.getWidth(),
                         lbl.getHeight(),
                         Image.SCALE_DEFAULT)
         );
         lbl.setIcon(this.icono);
         this.repaint();
     }
-    
-    public void validacionCampos()
-    {
-        if(validar.validacionCampoNumerico(txtPeriodo.getText()))
-        {
+
+    public void validacionCampos() {
+        if (validar.validacionCampoNumerico(txtPeriodo.getText())) {
             txtPeriodo.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Solo se permite texto en este campo.");
+            lbPeriodo.setVisible(true);
+            lbPeriodo.setText("Solo se permite texto en este campo.");
             return;
-            
+
         }
-        
-        if(!validar.validacionMayusculaInicial(txtPeriodo.getText()))
-        {
-             txtPeriodo.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nombre debe empezar con mayúscula.");
+
+        if (!validar.validacionMayusculaInicial(txtPeriodo.getText())) {
+            txtPeriodo.setBorder(redBorder);
+            lbPeriodo.setVisible(true);
+            lbPeriodo.setText("El nombre debe empezar con mayúscula.");
             return;
         }
-        if(validar.validacionCadenaPalabras(txtPeriodo.getText()))
-        {    
+        if (validar.validacionCadenaPalabras(txtPeriodo.getText())) {
             txtPeriodo.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
-        {
+            lbPeriodo.setVisible(true);
+            lbPeriodo.setText("Formato válido");
+
+        } else {
             txtPeriodo.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Esa no es una palabra válida.");
+            lbPeriodo.setVisible(true);
+            lbPeriodo.setText("Esa no es una palabra válida.");
             return;
         }
 
-         if(!validar.validacionCantidadMinima(txtPeriodo.getText(), 4))
-            {
+        if (!validar.validacionCantidadMinima(txtPeriodo.getText(), 4)) {
             txtPeriodo.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
-            }      
+            lbPeriodo.setVisible(true);
+            lbPeriodo.setText("El tipo de pago debe ser de minimo 4 letras.");
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Aceptar;
     private javax.swing.JButton Aceptar1;
+    private javax.swing.JButton Cancelar;
+    private javax.swing.JComboBox<String> cbIdEmpleado;
     private javax.swing.JComboBox<String> cbTipoBono;
-    private javax.swing.JLabel formatoInvalido;
-    private javax.swing.JLabel formatoInvalido1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JLabel lbCantidad;
+    private javax.swing.JLabel lbPeriodo;
     private javax.swing.JLabel logo;
     private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
