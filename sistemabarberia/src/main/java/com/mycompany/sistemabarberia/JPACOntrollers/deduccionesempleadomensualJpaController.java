@@ -33,6 +33,10 @@ public class deduccionesempleadomensualJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
+    public void close()
+    {
+        this.emf.close();
+    }
     public void create(deduccionesempleadomensual deduccionesempleadomensual) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
@@ -140,10 +144,6 @@ public class deduccionesempleadomensualJpaController implements Serializable {
         } finally {
             em.close();
         }
-    }
-
-    public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

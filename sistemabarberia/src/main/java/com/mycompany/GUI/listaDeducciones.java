@@ -9,19 +9,24 @@ import com.mycompany.sistemabarberia.JPACOntrollers.deduccionesempleadomensualJp
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
 import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.tipodeduccion;
+import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author flore
  */
 public class listaDeducciones extends javax.swing.JFrame {
-    private deduccionesempleadomensualJpaController deduccionesempleadomensualDAO = new deduccionesempleadomensualJpaController();
-    private List<deduccionesempleadomensual> deduccionesempleadomensualBD = deduccionesempleadomensualDAO.finddeduccionesempleadomensualEntities();
+    
+    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController();
+    private List<deduccionesempleadomensual> deduccionesempleadomensualBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
     private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController();
     private List<tipodeduccion> tipodeduccionBD = tipodeduccionDAO.findtipodeduccionEntities();
      private ImageIcon imagen;
@@ -33,7 +38,9 @@ public class listaDeducciones extends javax.swing.JFrame {
     public listaDeducciones() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        cargarTabla();
     }
 
     /**
@@ -48,11 +55,11 @@ public class listaDeducciones extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        nuevaDeduccion = new javax.swing.JTextField();
-        nuevoTipoDeduccion = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        botonCancelar = new javax.swing.JButton();
+        jScrollpane = new javax.swing.JScrollPane();
+        tablaDeducciones = new javax.swing.JTable();
+        nuevaDeduccion = new javax.swing.JButton();
+        nuevoTipo = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
 
@@ -66,65 +73,64 @@ public class listaDeducciones extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(55, 53, 53));
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        nuevaDeduccion.setEditable(false);
-        nuevaDeduccion.setBackground(new java.awt.Color(30, 33, 34));
-        nuevaDeduccion.setForeground(new java.awt.Color(255, 255, 255));
-        nuevaDeduccion.setText("  Nueva Deduccion");
-        nuevaDeduccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        nuevaDeduccion.setMinimumSize(new java.awt.Dimension(2, 19));
-        nuevaDeduccion.setPreferredSize(new java.awt.Dimension(42, 19));
-        nuevaDeduccion.setSelectionColor(new java.awt.Color(55, 53, 53));
-        nuevaDeduccion.addMouseListener(new java.awt.event.MouseAdapter() {
+        botonCancelar.setBackground(new java.awt.Color(189, 158, 76));
+        botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonCancelar.setText("CANCELAR");
+        botonCancelar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                nuevaDeduccionMouseClicked(evt);
+                botonCancelarMouseClicked(evt);
             }
         });
 
-        nuevoTipoDeduccion.setEditable(false);
-        nuevoTipoDeduccion.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoTipoDeduccion.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoTipoDeduccion.setText("     Nuevo Tipo");
-        nuevoTipoDeduccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        nuevoTipoDeduccion.setMinimumSize(new java.awt.Dimension(2, 19));
-        nuevoTipoDeduccion.setPreferredSize(new java.awt.Dimension(42, 19));
-        nuevoTipoDeduccion.setSelectionColor(new java.awt.Color(55, 53, 53));
-        nuevoTipoDeduccion.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                nuevoTipoDeduccionMouseClicked(evt);
-            }
-        });
-
-        jTable1.setBackground(new java.awt.Color(30, 33, 34));
-        jTable1.setForeground(new java.awt.Color(255, 255, 255));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaDeducciones.setBackground(new java.awt.Color(30, 33, 34));
+        tablaDeducciones.setForeground(new java.awt.Color(255, 255, 255));
+        tablaDeducciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "Num.", "ID Empleado", "Tipo Deduccion", "Periodo", "Valor"
+                "Num.", "ID Empleado", "Tipo ", "Periodo", "Valor"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
             };
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
-        jTable1.setPreferredSize(new java.awt.Dimension(375, 0));
-        jTable1.setRowHeight(32);
-        jScrollPane1.setViewportView(jTable1);
+        jScrollpane.setViewportView(tablaDeducciones);
+        if (tablaDeducciones.getColumnModel().getColumnCount() > 0) {
+            tablaDeducciones.getColumnModel().getColumn(0).setResizable(false);
+            tablaDeducciones.getColumnModel().getColumn(1).setResizable(false);
+            tablaDeducciones.getColumnModel().getColumn(2).setResizable(false);
+            tablaDeducciones.getColumnModel().getColumn(3).setResizable(false);
+            tablaDeducciones.getColumnModel().getColumn(4).setResizable(false);
+        }
+        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+        MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
+        MyHeaderRender.setForeground(Color.BLACK);
+        for(int i = 0; i < tablaDeducciones.getColumnCount();i++)
+        {
+            tablaDeducciones.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+        }
+        tablaDeducciones.setShowGrid(true);
+        tablaDeducciones.setGridColor(Color.BLACK);
 
-        jButton1.setBackground(new java.awt.Color(189, 158, 76));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton1.setText("CANCELAR");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+        nuevaDeduccion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/nuevaDeduccion.png"))); // NOI18N
+        nuevaDeduccion.setContentAreaFilled(false);
+        nuevaDeduccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevaDeduccionActionPerformed(evt);
+            }
+        });
+
+        nuevoTipo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/nuevoTipo.png"))); // NOI18N
+        nuevoTipo.setContentAreaFilled(false);
+        nuevoTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoTipoActionPerformed(evt);
             }
         });
 
@@ -136,28 +142,30 @@ public class listaDeducciones extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(nuevoTipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nuevaDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 653, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(jScrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(nuevaDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(nuevoTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonCancelar)
+                        .addGap(20, 20, 20))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(nuevaDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nuevoTipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addContainerGap())
+                .addContainerGap(46, Short.MAX_VALUE)
+                .addComponent(jScrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(11, 11, 11)
+                .addComponent(nuevaDeduccion)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nuevoTipo)
+                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -173,8 +181,8 @@ public class listaDeducciones extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jLabel1.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
@@ -199,7 +207,7 @@ public class listaDeducciones extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,26 +217,56 @@ public class listaDeducciones extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void cargarTabla()
+    {
+        List<tipodeduccion> tipoDeduccionBd = tipodeduccionDAO.findtipodeduccionEntities();
+        String deduccion = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaDeducciones.getModel();
+        modelo.setRowCount(0);
+        tablaDeducciones.setModel(modelo);
+        
+        List<deduccionesempleadomensual> deduccionesempleadomensu = deduccionesDAO.finddeduccionesempleadomensualEntities();
+        
+            for (deduccionesempleadomensual deduccionActual :deduccionesempleadomensu){
+                for(int i = 0; i < tipoDeduccionBd.size(); i++)
+            {
+                if(tipoDeduccionBd.get(i).getIdtipodeduccion() == deduccionActual.getIDTipoDeduccion())
+                        {
+                            deduccion = tipoDeduccionBd.get(i).getNombre();  
+                        }   
+            }
+            modelo.addRow(
+                    new Object[]{
+                        deduccionActual.getNumdeduccion(),
+                        deduccionActual.getIDEmpleado(),
+                        deduccion,
+                        deduccionActual.getPeriodo(),
+                        deduccionActual.getValor()
+                    }
+            );
+        }
+    }
+    
+    private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -237,17 +275,34 @@ public class listaDeducciones extends javax.swing.JFrame {
         });
         this.setVisible(false);
         this.dispose(); 
-        deduccionesempleadomensualDAO.close();
-    }//GEN-LAST:event_jButton1MouseClicked
+        deduccionesDAO.close();
+        tipodeduccionDAO.close();
+    }//GEN-LAST:event_botonCancelarMouseClicked
 
-    private void nuevaDeduccionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevaDeduccionMouseClicked
+    private void nuevaDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevaDeduccionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_nuevaDeduccionMouseClicked
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevaDeduccion().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        deduccionesDAO.close();
+        tipodeduccionDAO.close();
+    }//GEN-LAST:event_nuevaDeduccionActionPerformed
 
-    private void nuevoTipoDeduccionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoTipoDeduccionMouseClicked
+    private void nuevoTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoTipoActionPerformed
         // TODO add your handling code here:
-       
-    }//GEN-LAST:event_nuevoTipoDeduccionMouseClicked
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new tipoDeduccion().setVisible(true);
+            }
+        });
+        deduccionesDAO.close();
+        tipodeduccionDAO.close();
+        this.dispose();
+    }//GEN-LAST:event_nuevoTipoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -300,15 +355,15 @@ public class listaDeducciones extends javax.swing.JFrame {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton botonCancelar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollpane;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField nuevaDeduccion;
-    private javax.swing.JTextField nuevoTipoDeduccion;
+    private javax.swing.JButton nuevaDeduccion;
+    private javax.swing.JButton nuevoTipo;
+    private javax.swing.JTable tablaDeducciones;
     // End of variables declaration//GEN-END:variables
 }

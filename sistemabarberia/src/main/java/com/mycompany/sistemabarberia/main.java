@@ -9,12 +9,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
 /**
@@ -27,6 +28,7 @@ static Connection conn = null;
     public static void main(String[] args)
     {
         // Cargamos el driver JDBC
+         
     try {
       Class.forName("com.mysql.jdbc.Driver");
     }
@@ -37,7 +39,7 @@ static Connection conn = null;
     //Para iniciar el Logger.
     //inicializaLogger();
     try {
-      conn = DriverManager.getConnection("jdbc:mysql:3306//localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+      conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
       conn.setAutoCommit(false);
     }
     catch (SQLException e) {
@@ -46,20 +48,36 @@ static Connection conn = null;
     }
 
     try {
-      Map parameters = new HashMap();
-      parameters.put("TITULO", "PAISES");
-      parameters.put("FECHA", new java.util.Date());
-      JasperReport report = JasperCompileManager.compileReport(
-          "G:\\Documentos\\prueba.jrxml");
-      JasperPrint print = JasperFillManager.fillReport(report, parameters, conn);
-      // Exporta el informe a PDF
-      JasperExportManager.exportReportToPdfFile(print,
-          "G:\\Documentos\\Ing Software I\\Informe.pdf");
-      //Para visualizar el pdf directamente desde java
-      JasperViewer.viewReport(print, false);
+//     JasperDesign design = JRXmlLoader.load("C:\\Users\\Jonathan Laux\\Documents\\NetBeansProjects\\SistemaBarberia\\sistemabarberia\\src\\main\\java\\Reportes\\reporteInventario.jrxml");
+//     String query = "SELECT * from productos";
+//     
+//     JRDesignQuery updateQuery = new JRDesignQuery();
+//     updateQuery.setText(query);
+//     
+//     design.setQuery(updateQuery);
+//     
+//     JasperReport jReport = JasperCompileManager.compileReport(design);
+//     JasperPrint print = JasperFillManager.fillReport(jReport,null,conn);
+//System.out.println(main.class.getResourceAsStream("C:\\Users\\Jonathan Laux\\Documents\\NetBeansProjects\\SistemaBarberia\\sistemabarberia\\src\\main\\java\\Reportes\\reporteInventario.jrxml"));
+//     JasperPrint print = JasperFillManager.fillReport(
+//             main.class.getResourceAsStream("/Reportes/reporteInventario.jrxml") , 
+//              new HashMap<>(), conn);
+     
+     JasperReport reporte = JasperCompileManager.compileReport("src/main/resources/Reportes/reporteInventario.jrxml");
+            JasperPrint print = JasperFillManager.fillReport(
+                    reporte,
+                    null, 
+                    conn);
+
+      
+      JasperViewer view = new JasperViewer(print,false);
+      view.setVisible(true);
+      //JasperViewer.viewReport(print, false);
     }
     catch (Exception e) {
-      e.printStackTrace();
+        System.out.println("fuck");
+        System.out.println(e.toString());
+      //e.printStackTrace();
     }
     finally {
       /*

@@ -13,18 +13,28 @@ import com.mycompany.sistemabarberia.productos;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import net.sf.jasperreports.components.table.fill.FillTable;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
+
 /**
  *
  * @author Kesil
@@ -615,7 +625,7 @@ public class pantallaProductos extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(39, 39, 39)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -875,14 +885,37 @@ public class pantallaProductos extends javax.swing.JFrame {
 
     private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
         // TODO add your handling code here:
-        try
-        {
-            JasperReport report = JasperCompileManager.compileReport("C:\\Users\\Jonathan Laux\\Documents\\NetBeansProjects\\SistemaBarberia\\sistemabarberia\\reportes\\reporteInventario.jrxml");
-        }catch(Exception Ex)
-        {
-            System.out.println("fuck");
+        Connection conn = null;
+         try {
+      Class.forName("com.mysql.jdbc.Driver");
+    }
+    catch (ClassNotFoundException e) {
+      System.out.println("MySQL JDBC Driver not found.");
+      System.exit(1);
+    }
+    try {
+      conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+      conn.setAutoCommit(false);
+    }
+    catch (SQLException e) {
+      System.out.println("Error de conexión: " + e.getMessage());
+      System.exit(4);
+    }
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport("src/main/resources/Reportes/reporteInventario.jrxml");
+            JasperPrint print = JasperFillManager.fillReport(
+                    reporte,
+                    null, 
+                    conn);
+      
+      JasperViewer view = new JasperViewer(print,false);
+      view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+      view.setTitle("Reporte de Inventario");
+      view.setVisible(true);
+        } catch (JRException ex) {
+            Logger.getLogger(pantallaProductos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_imprimirReporteActionPerformed
 
     private void recargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recargarActionPerformed

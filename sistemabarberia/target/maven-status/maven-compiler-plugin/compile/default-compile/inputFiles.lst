@@ -14,6 +14,7 @@ C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberi
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\tiposbonoJpaController.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\parametros.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\estadofactura.java
+C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\nuevoPrecioServicio.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\precioshistoricoserviciosJpaController.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\puestoJpaController.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\atributosFactura.java
@@ -33,14 +34,16 @@ C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberi
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\tipodocumento.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\UsuarioSingleton.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\PantallaLogin.java
-C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\listaPrecios.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\puestohistoricoempleadoJpaController.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\tipodescuentoJpaController.java
+C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\listaPreciosProducto.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\salariohistoricoempleadosJpaController.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\empleado.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\productosJpaController.java
+C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\pantallaServicios.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\listaPuestos.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\sistemabarberia\JPACOntrollers\clientesJpaController.java
+C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\listaPreciosServicio.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\nuevoTipoDescuento.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\nuevoProducto.java
 C:\Users\Jonathan Laux\Documents\NetBeansProjects\SistemaBarberia\sistemabarberia\src\main\java\com\mycompany\GUI\nuevoTipoPuesto.java

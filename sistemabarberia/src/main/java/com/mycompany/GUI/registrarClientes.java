@@ -788,6 +788,10 @@ public class registrarClientes extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_servicioProductoActionPerformed
 
+    private void tipoidDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoidDocumentoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipoidDocumentoActionPerformed
+
     /**
      * @param args the command line arguments
      */

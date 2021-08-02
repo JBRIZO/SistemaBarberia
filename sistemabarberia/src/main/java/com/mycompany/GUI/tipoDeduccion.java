@@ -40,6 +40,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
      */
     public tipoDeduccion() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
@@ -296,7 +297,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new menuGerente().setVisible(true);
+                new listaDeducciones().setVisible(true);
             }
         });
         this.setVisible(false);
