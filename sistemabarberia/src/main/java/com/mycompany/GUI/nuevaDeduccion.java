@@ -6,17 +6,23 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.deduccionesempleadomensualJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.deduccionesempleadomensual;
+import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.tipodeduccion;
 import java.awt.Color;
 import java.awt.Image;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
 
@@ -26,36 +32,31 @@ import javax.swing.border.Border;
  */
 public class nuevaDeduccion extends javax.swing.JFrame {
     
-    private deduccionesempleadomensualJpaController deduccionesempleadomensualDAO = new deduccionesempleadomensualJpaController();
-    private List<deduccionesempleadomensual> deduccionesempleadomensualBD = deduccionesempleadomensualDAO.finddeduccionesempleadomensualEntities();
+    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController();
+    private List<deduccionesempleadomensual> deduccionesempleadomensualBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
     private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController();
     private List<tipodeduccion> tipodeduccionBD = tipodeduccionDAO.findtipodeduccionEntities();
+    private empleadoJpaController empleadosDAO = new empleadoJpaController();
+    private List<empleado> empleadosBD = empleadosDAO.findempleadoEntities();
     private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
-  
-    
-    
-    
-
     /**
      * Creates new form nuevaDeduccion
      */
     public nuevaDeduccion() {
         initComponents();
-        
         this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        
         Reiniciar();   
-        for(int i = 0; i < deduccionesempleadomensualBD.size(); i++)
+        for(int i = 0; i < empleadosBD.size(); i++)
         {
-            if(deduccionesempleadomensualBD.get(i).isActivo())
+            if(empleadosBD.get(i).isActivo())
             {
-                idEmpleado.addItem(deduccionesempleadomensualBD.get(i).toString());
+                idEmpleado.addItem(empleadosBD.get(i).toString());
             }
         }
         for(int i = 0; i < tipodeduccionBD.size(); i++)
@@ -64,16 +65,15 @@ public class nuevaDeduccion extends javax.swing.JFrame {
             {
                 tipoDeduccion.addItem(tipodeduccionBD.get(i).toString());
             }
-        }
-       
-        
+        } 
     }
     
     public void Reiniciar()
     {
-        cantidadInicial.setText("Cantidad Inicial");
-        cantidadInicial.setBorder(defaultBorder);
+        cantidad.setText("Cantidad");
+        cantidad.setBorder(defaultBorder);
         formatoInvalidoCantidad.setText(" ");
+        formatoInvalidoPeriodo.setText(" ");
     }
 
     /**
@@ -94,11 +94,11 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         tipoDeduccion = new javax.swing.JComboBox<>();
-        cantidadInicial = new javax.swing.JTextField();
+        cantidad = new javax.swing.JTextField();
         botonAceptar = new javax.swing.JButton();
         botonCancelar = new javax.swing.JButton();
         formatoInvalidoCantidad = new javax.swing.JLabel();
-        nuevoPeriodo = new javax.swing.JTextField();
+        periodo = new javax.swing.JTextField();
         formatoInvalidoPeriodo = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
 
@@ -122,6 +122,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
         idEmpleado.setBackground(new java.awt.Color(30, 33, 34));
         idEmpleado.setForeground(new java.awt.Color(255, 255, 255));
+        idEmpleado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
         idEmpleado.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         idEmpleado.setMinimumSize(new java.awt.Dimension(32, 23));
         idEmpleado.setPreferredSize(new java.awt.Dimension(32, 23));
@@ -138,6 +139,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         jLabel3.setText("Tipo Deduccion");
 
         tipoDeduccion.setBackground(new java.awt.Color(30, 33, 34));
+        tipoDeduccion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
         tipoDeduccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         tipoDeduccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -145,27 +147,33 @@ public class nuevaDeduccion extends javax.swing.JFrame {
             }
         });
 
-        cantidadInicial.setBackground(new java.awt.Color(30, 33, 34));
-        cantidadInicial.setForeground(new java.awt.Color(255, 255, 255));
-        cantidadInicial.setText("Cantidad");
-        cantidadInicial.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        cantidadInicial.addFocusListener(new java.awt.event.FocusAdapter() {
+        cantidad.setEditable(true);
+        cantidad.setBackground(new java.awt.Color(30, 33, 34));
+        cantidad.setForeground(new java.awt.Color(255, 255, 255));
+        cantidad.setText("Cantidad");
+        cantidad.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        cantidad.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                cantidadInicialFocusGained(evt);
+                cantidadFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                cantidadInicialFocusLost(evt);
+                cantidadFocusLost(evt);
             }
         });
-        cantidadInicial.addActionListener(new java.awt.event.ActionListener() {
+        cantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cantidadInicialActionPerformed(evt);
+                cantidadActionPerformed(evt);
             }
         });
 
         botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
         botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonAceptar.setText("ACEPTAR");
+        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAceptarActionPerformed(evt);
+            }
+        });
 
         botonCancelar.setBackground(new java.awt.Color(189, 158, 76));
         botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -175,20 +183,26 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                 botonCancelarMouseClicked(evt);
             }
         });
+        botonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCancelarActionPerformed(evt);
+            }
+        });
 
         formatoInvalidoCantidad.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoCantidad.setText("Formato Invalido.");
 
-        nuevoPeriodo.setBackground(new java.awt.Color(30, 33, 34));
-        nuevoPeriodo.setForeground(new java.awt.Color(255, 255, 255));
-        nuevoPeriodo.setText("Periodo");
-        nuevoPeriodo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        nuevoPeriodo.addFocusListener(new java.awt.event.FocusAdapter() {
+        periodo.setBackground(new java.awt.Color(30, 33, 34));
+        periodo.setDocument(new JTextFieldLimit(7));
+        periodo.setForeground(new java.awt.Color(255, 255, 255));
+        periodo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        periodo.setPreferredSize(new java.awt.Dimension(305, 42));
+        periodo.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                nuevoPeriodoFocusGained(evt);
+                periodoFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                nuevoPeriodoFocusLost(evt);
+                periodoFocusLost(evt);
             }
         });
 
@@ -208,18 +222,17 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addComponent(jLabel))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(formatoInvalidoPeriodo)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(idEmpleado, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(nuevoPeriodo, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addComponent(tipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(formatoInvalidoCantidad)
-                                        .addComponent(cantidadInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(botonCancelar))))))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(formatoInvalidoPeriodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(tipoDeduccion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(73, 73, 73)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(formatoInvalidoCantidad)
+                                    .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(botonCancelar)))
+                            .addComponent(idEmpleado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(periodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(140, 140, 140)
                         .addComponent(botonAceptar)
@@ -236,14 +249,14 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                 .addGap(57, 57, 57)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(nuevoPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(periodo, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalidoPeriodo)
                 .addGap(31, 31, 31)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(tipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cantidadInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalidoCantidad)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
@@ -316,49 +329,105 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_idEmpleadoActionPerformed
 
-    private void cantidadInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantidadInicialActionPerformed
+    private void cantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantidadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cantidadInicialActionPerformed
+    }//GEN-LAST:event_cantidadActionPerformed
 
-    private void cantidadInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cantidadInicialFocusGained
+    private void cantidadFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cantidadFocusGained
         // TODO add your handling code here:
-        
-    }//GEN-LAST:event_cantidadInicialFocusGained
-
-    private void cantidadInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cantidadInicialFocusLost
-        // TODO add your handling code here:
-        if(!cantidadInicial.getText().equals(""))
+        if(cantidad.getText().equals("Cantidad"))
         {
-            validarDecimal();
+            cantidad.setText("");
         }
         
-    }//GEN-LAST:event_cantidadInicialFocusLost
+    }//GEN-LAST:event_cantidadFocusGained
+
+    private void cantidadFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cantidadFocusLost
+        // TODO add your handling code here:
+        if(cantidad.getText().equals(""))
+        {
+            cantidad.setText("Cantidad");
+        }else
+        {
+         validarDecimal();   
+        }
+        
+    }//GEN-LAST:event_cantidadFocusLost
 
     private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new pantallaEmpleados().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
-        deduccionesempleadomensualDAO.close();
+        
     }//GEN-LAST:event_botonCancelarMouseClicked
 
-    private void nuevoPeriodoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevoPeriodoFocusGained
+    private void periodoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_periodoFocusGained
         // TODO add your handling code here:
-        nuevoPeriodo.selectAll();
-    }//GEN-LAST:event_nuevoPeriodoFocusGained
+        periodo.selectAll();
+    }//GEN-LAST:event_periodoFocusGained
 
-    private void nuevoPeriodoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevoPeriodoFocusLost
+    private void periodoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_periodoFocusLost
         // TODO add your handling code here:
-        validacionCamposTexto();
-    }//GEN-LAST:event_nuevoPeriodoFocusLost
+        validacionPeriodo(periodo,formatoInvalidoPeriodo);
+    }//GEN-LAST:event_periodoFocusLost
 
     private void tipoDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoDeduccionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tipoDeduccionActionPerformed
+
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        // TODO add your handling code here:
+        if(idEmpleado.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null,"Debes seleccionar un empleado.",
+                    "Selecciona un empleado.",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(tipoDeduccion.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null,"Debes seleccionar un tipo de deduccion.",
+                    "Selecciona un tipo de deduccion.",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(periodo.getText().equals("") || cantidad.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.",
+                    "Campos Incompletos",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        deduccionesempleadomensual nuevaDeduccion = new deduccionesempleadomensual();
+        nuevaDeduccion.setIDEmpleado(Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
+        nuevaDeduccion.setIDTipoDeduccion(Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
+        nuevaDeduccion.setPeriodo(periodo.getText());
+        nuevaDeduccion.setValor(Integer.parseInt(cantidad.getText()));
+        nuevaDeduccion.setActivo(true);
+        
+        if(validarDecimal() && validacionPeriodo(periodo,formatoInvalidoPeriodo))
+        {
+            try {
+                deduccionesDAO.create(nuevaDeduccion);
+                JOptionPane.showMessageDialog(null,"Operacion Exitosa.");
+            } catch (Exception ex) {
+                Logger.getLogger(nuevaDeduccion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else
+        {
+            JOptionPane.showMessageDialog(null,"Por favor corrige campos en rojo.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_botonAceptarActionPerformed
+
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new listaDeducciones().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        deduccionesDAO.close();
+    }//GEN-LAST:event_botonCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -410,29 +479,29 @@ public class nuevaDeduccion extends javax.swing.JFrame {
      
      private boolean validarDecimal()
      {
-         if(!validar.validacionCampoNumerico(cantidadInicial.getText()))
+         if(!validar.validacionCampoNumerico(cantidad.getText()))
          {
-             cantidadInicial.setBorder(redBorder);
+             cantidad.setBorder(redBorder);
              formatoInvalidoCantidad.setVisible(true);
              formatoInvalidoCantidad.setText("Solo puedes ingresar numeros en este campo.");
              return false;
          }
          
-         if(Double.parseDouble(cantidadInicial.getText()) <= 0)
+         if(Double.parseDouble(cantidad.getText()) <= 0)
         {
-            cantidadInicial.setBorder(redBorder);
+            cantidad.setBorder(redBorder);
             formatoInvalidoCantidad.setText("La cantidad debe ser mayor a 0.");
             return false;
         }
         
-        if(validar.validacionDecimal(cantidadInicial.getText()))
+        if(validar.validacionDecimal(cantidad.getText()))
         {
-            cantidadInicial.setBorder(greenBorder);
+            cantidad.setBorder(greenBorder);
             formatoInvalidoCantidad.setText(" ");
             return true;
         }else
         {
-            cantidadInicial.setBorder(redBorder);
+            cantidad.setBorder(redBorder);
             formatoInvalidoCantidad.setText("El formato debe ser 000000.00");
             return false;
         }  
@@ -440,46 +509,31 @@ public class nuevaDeduccion extends javax.swing.JFrame {
      
      }
      
-     private void validacionCamposTexto()
+     private boolean validacionPeriodo(javax.swing.JTextField jText, JLabel label)
      {
-         if(validar.validacionCampoNumerico(nuevoPeriodo.getText()))
+         if(!validar.validacionCampoNumerico(jText.getText()))
          {
-             nuevoPeriodo.setBorder(redBorder);
-             formatoInvalidoPeriodo.setVisible(true);
-             formatoInvalidoPeriodo.setText("Solo se permite texto en este campo.");
-             return;
+             jText.setBorder(redBorder);
+             label.setVisible(true);
+             JOptionPane.showMessageDialog(null,"Solo puedes ingresar periodos en este campo.\nEl formato de un periodo es MM-aaaa.",
+                     "Periodo Inválido",
+                     JOptionPane.ERROR_MESSAGE);
+             return false;
          }
-         
-         if(!validar.validacionMayusculaInicial(nuevoPeriodo.getText()))
-         {
-             nuevoPeriodo.setBorder(redBorder);
-             formatoInvalidoPeriodo.setVisible(true);
-             formatoInvalidoPeriodo.setText("El periodo debe iniciar con mayuscula.");
-             return;
-         }
-         
-         if(validar.validacionCadenaPalabras(nuevoPeriodo.getText()))
-         {
-             nuevoPeriodo.setBorder(greenBorder);
-             formatoInvalidoPeriodo.setVisible(true);
-             formatoInvalidoPeriodo.setText("Formato Valido.");
-             
-         }else
-         {
-             nuevoPeriodo.setBorder(redBorder);
-             formatoInvalidoPeriodo.setVisible(true);
-             formatoInvalidoPeriodo.setText("No puedes repetir tantas letras.");
-             return;
-         }
-         if(!validar.validacionCantidadMinima(nuevoPeriodo.getText(),4))
-         {
-             System.out.println(nuevoPeriodo.getText());
-             nuevoPeriodo.setBorder(redBorder);
-             formatoInvalidoPeriodo.setVisible(true);
-             formatoInvalidoPeriodo.setText("El nombre del periodo debe ser de minimo 5 letras.");
-             return;
-         }
+       if(validar.validacionPeriodo(jText.getText()))
+       {
+           jText.setBorder(greenBorder);
+           return true;
+       }else
+       {
+           jText.setBorder(redBorder);
+           label.setVisible(true);
+           label.setText("Ese periodo es inválido.");
+           return false; 
+       }  
      }
+     
+         
      
 
      
@@ -489,7 +543,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
-    private javax.swing.JTextField cantidadInicial;
+    private javax.swing.JTextField cantidad;
     private javax.swing.JLabel formatoInvalidoCantidad;
     private javax.swing.JLabel formatoInvalidoPeriodo;
     private javax.swing.JComboBox<String> idEmpleado;
@@ -500,7 +554,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField nuevoPeriodo;
+    private javax.swing.JTextField periodo;
     private javax.swing.JComboBox<String> tipoDeduccion;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

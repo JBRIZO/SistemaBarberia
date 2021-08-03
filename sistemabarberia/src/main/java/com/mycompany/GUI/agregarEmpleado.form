@@ -231,7 +231,7 @@
                                   <Component id="nacimientoLabel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="direccionLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="195" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="255" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -402,7 +402,9 @@
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="0"/>
+                      <StringArray count="1">
+                        <StringItem index="0" value="Seleccione"/>
+                      </StringArray>
                     </Property>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -591,7 +593,9 @@
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="0"/>
+                      <StringArray count="1">
+                        <StringItem index="0" value="Seleccione"/>
+                      </StringArray>
                     </Property>
                   </Properties>
                   <Events>

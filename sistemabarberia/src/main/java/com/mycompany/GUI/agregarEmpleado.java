@@ -68,8 +68,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
         Reiniciar();
-        cbTipoDoc.addItem("Seleccione");
-        cbPuestos.addItem("Seleccione");
             for(int i = 0; i < documentosBD.size(); i++)
         {
             cbTipoDoc.addItem(documentosBD.get(i).toString());
@@ -78,7 +76,6 @@ public class agregarEmpleado extends javax.swing.JFrame {
         {
             cbPuestos.addItem(puestosBD.get(i).toString());
         }
-          
     }
     
     //constructor para modificar un empleado 
@@ -86,20 +83,20 @@ public class agregarEmpleado extends javax.swing.JFrame {
     {
         initComponents();
         modificar = true;
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
         this.modificarEmpleado = empleadoModificar;
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
         Reiniciar();
         cargarDatosModificarEmpleado();
+        botonCancelar.setText("CANCELAR");
         cbPuestos.setEnabled(false);
         salarioInicial.setEnabled(false);
-        cbTipoDoc.addItem("Seleccione");
         for(int i = 0; i < documentosBD.size(); i++)
         {
             cbTipoDoc.addItem(documentosBD.get(i).toString());
         }
-        cbTipoDoc.setSelectedIndex(modificarEmpleado.getIDTipoDocumento()-1);
+        cbTipoDoc.setSelectedIndex(modificarEmpleado.getIDTipoDocumento());
         if(modificarEmpleado.getGenEmpleado() == 'M')
         {
             cbGenero.setSelectedIndex(1);
@@ -289,6 +286,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         cbTipoDoc.setBackground(new java.awt.Color(30, 33, 34));
         cbTipoDoc.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cbTipoDoc.setForeground(new java.awt.Color(255, 255, 255));
+        cbTipoDoc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
         cbTipoDoc.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         cbTipoDoc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -400,6 +398,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
 
         cbPuestos.setBackground(new java.awt.Color(30, 33, 34));
         cbPuestos.setForeground(new java.awt.Color(255, 255, 255));
+        cbPuestos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
         cbPuestos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbPuestosActionPerformed(evt);
@@ -514,7 +513,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
                         .addComponent(nacimientoLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(direccionLabel)
-                        .addGap(195, 195, 195))))
+                        .addGap(255, 255, 255))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -923,9 +922,23 @@ public class agregarEmpleado extends javax.swing.JFrame {
         Period periodo = Period.between(date,LocalDate.now());
         if(periodo.getYears() < 18)
         {
-           JOptionPane.showMessageDialog(null,"El empleado no puede ser menor a 18 años.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
+           JOptionPane.showMessageDialog(null,"El empleado no puede ser menor a 18 años.", 
+                   "Fecha Inválida",
+                   JOptionPane.ERROR_MESSAGE); 
            return;
         }
+        
+        //validar fecha de inicio del empleado
+        LocalDate fecha = convertToLocalDateViaInstant(startDate);
+        Period periodoInicio = Period.between(LocalDate.now(),fecha);
+        if(periodoInicio.getDays() > 4)
+        {
+           JOptionPane.showMessageDialog(null,"Solo puedes ingresar un empleado un maximo de 4 dias \nantes de que empiece a trabajar.", 
+                   "Fecha Inválida",
+                   JOptionPane.ERROR_MESSAGE); 
+           return;
+        }
+        
         
         //nuevo empleado o modificar uno existente
         empleado nuevoEmpleado = new empleado();
@@ -1016,8 +1029,7 @@ public class agregarEmpleado extends javax.swing.JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el empleado, excepción: " + ex.getMessage());
         }
-        }    
-            
+        } 
         }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.", "Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAgregarActionPerformed
 

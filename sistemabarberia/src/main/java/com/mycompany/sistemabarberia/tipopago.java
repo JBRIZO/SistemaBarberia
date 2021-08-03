@@ -49,4 +49,10 @@ public class tipopago implements Serializable {
         this.Activo = Activo;
     }
     
+    @Override 
+    public String toString()
+    {
+        return idtipopago + ". " + TipoPago;
+    }
+    
 }

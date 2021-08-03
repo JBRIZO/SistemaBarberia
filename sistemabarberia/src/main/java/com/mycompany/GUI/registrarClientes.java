@@ -78,7 +78,7 @@ public class registrarClientes extends javax.swing.JFrame {
         modificar = true;
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.jpeg");
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.clienteModificar = clienteModificar;
         Reiniciar();
         cargarDatosModificarCliente();

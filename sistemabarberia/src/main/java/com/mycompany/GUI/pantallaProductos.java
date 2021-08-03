@@ -246,6 +246,53 @@ public class pantallaProductos extends javax.swing.JFrame {
                 );
             }    
     }
+    
+    private void cargarTablaBusquedaStockMaximo(int Stock)
+    {
+        double precioActual = 0;
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaProductos.getModel();
+        modelo.setRowCount(0);
+        tablaProductos.setModel(modelo);
+        List<productos> productosEnBD = productosDAO.findproductosEntities();
+        List<productos> productosFiltrados = new ArrayList();
+        
+        for(int i = 0; i < productosEnBD.size();i++)
+        {
+            if(productosEnBD.get(i).getStockMaximo() == Stock)
+            {
+                productosFiltrados.add(productosEnBD.get(i));
+            }
+        }
+            for(productos producto : productosFiltrados){
+                for(int i = 0; i < preciosBD.size() ; i++)
+                    {
+                        //precio actual del producto
+                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
+                        {
+                            precioActual = preciosBD.get(i).getPrecio();
+                        }
+                    }
+                if(producto.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        producto.getIdproducto(),
+                        producto.getNomProducto(),
+                        producto.getStockActual(),
+                        producto.getStockMaximo(),
+                        precioActual,
+                        activo
+                    }
+                );
+            }    
+    }
+    
     private void cargarTablaBusquedaPrecio(double Precio)
     {
         double precioActual = 0;
@@ -609,15 +656,6 @@ public class pantallaProductos extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(278, 278, 278)
-                .addComponent(tituloPantalla)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(fechaLabel)
-                .addGap(895, 895, 895))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(77, 77, 77)
@@ -626,6 +664,13 @@ public class pantallaProductos extends javax.swing.JFrame {
                         .addGap(39, 39, 39)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(53, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(fechaLabel)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(278, 278, 278)
+                .addComponent(tituloPantalla)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -817,6 +862,8 @@ public class pantallaProductos extends javax.swing.JFrame {
             case "Precio Actual":
                     cargarTablaBusquedaPrecio(Double.parseDouble(buscarTxt.getText()));
                 return;
+            case "Stock Maximo":
+                    cargarTablaBusquedaStockMaximo(Integer.parseInt(buscarTxt.getText()));
         }
     }//GEN-LAST:event_botonBuscarActionPerformed
 
@@ -952,7 +999,7 @@ public class pantallaProductos extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(pantallaProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
+        
        
 
         /* Create and display the form */

@@ -6,11 +6,11 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.clientes;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -18,7 +18,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -42,6 +41,10 @@ public class pantallaClientes extends javax.swing.JFrame {
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
         cargarTabla();
+        for(int i = 0 ; i < tablaClientes.getColumnCount()-1 ; i++)
+        {
+            cbParametros.addItem(tablaClientes.getColumnName(i));
+        }
            
     }
     
@@ -74,6 +77,234 @@ public class pantallaClientes extends javax.swing.JFrame {
                 );
             }
     }
+    
+    private void cargarTablaIdCliente(int IdCliente)
+    {
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaClientes.getModel();
+        modelo.setRowCount(0);
+        tablaClientes.setModel(modelo);
+        List<clientes> clientes = clienteDAO.findclientesEntities();
+        List<clientes> clientesFiltrados = new ArrayList();
+        
+        for(int i = 0; i < clientes.size();i++)
+        {
+            if(clientes.get(i).getIdcliente() == IdCliente)
+            {
+                clientesFiltrados.add(clientes.get(i));
+            }
+        }
+            for(clientes cliente : clientesFiltrados){
+                if(cliente.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        cliente.getIdcliente(),
+                        cliente.getNomCliente(),
+                        cliente.getApeCliente(),
+                        cliente.getNumDocumento(),
+                        cliente.getFechaNacimiento(),
+                        cliente.getNumTelefono(),
+                        activo
+                    }
+                );
+            } 
+    }
+    
+    private void cargarTablaNomCliente(String NomCliente)
+    {
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaClientes.getModel();
+        modelo.setRowCount(0);
+        tablaClientes.setModel(modelo);
+        List<clientes> clientes = clienteDAO.findclientesEntities();
+        List<clientes> clientesFiltrados = new ArrayList();
+        
+        for(int i = 0; i < clientes.size();i++)
+        {
+            if(clientes.get(i).getNomCliente().equalsIgnoreCase(NomCliente))
+            {
+                clientesFiltrados.add(clientes.get(i));
+            }
+        }
+            for(clientes cliente : clientesFiltrados){
+                if(cliente.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        cliente.getIdcliente(),
+                        cliente.getNomCliente(),
+                        cliente.getApeCliente(),
+                        cliente.getNumDocumento(),
+                        cliente.getFechaNacimiento(),
+                        cliente.getNumTelefono(),
+                        activo
+                    }
+                );
+            } 
+    }
+    
+    private void cargarTablaApeCliente(String apeCliente)
+    {
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaClientes.getModel();
+        modelo.setRowCount(0);
+        tablaClientes.setModel(modelo);
+        List<clientes> clientes = clienteDAO.findclientesEntities();
+        List<clientes> clientesFiltrados = new ArrayList();
+        
+        for(int i = 0; i < clientes.size();i++)
+        {
+            if(clientes.get(i).getNomCliente().equalsIgnoreCase(apeCliente))
+            {
+                clientesFiltrados.add(clientes.get(i));
+            }
+        }
+            for(clientes cliente : clientesFiltrados){
+                if(cliente.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        cliente.getIdcliente(),
+                        cliente.getNomCliente(),
+                        cliente.getApeCliente(),
+                        cliente.getNumDocumento(),
+                        cliente.getFechaNacimiento(),
+                        cliente.getNumTelefono(),
+                        activo
+                    }
+                );
+            } 
+    }
+    
+    private void cargarTablaNumDoc(String numDocumento)
+    {
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaClientes.getModel();
+        modelo.setRowCount(0);
+        tablaClientes.setModel(modelo);
+        List<clientes> clientes = clienteDAO.findclientesEntities();
+        List<clientes> clientesFiltrados = new ArrayList();
+        
+        for(int i = 0; i < clientes.size();i++)
+        {
+            if(clientes.get(i).getNumDocumento().equalsIgnoreCase(numDocumento))
+            {
+                clientesFiltrados.add(clientes.get(i));
+            }
+        }
+            for(clientes cliente : clientesFiltrados){
+                if(cliente.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        cliente.getIdcliente(),
+                        cliente.getNomCliente(),
+                        cliente.getApeCliente(),
+                        cliente.getNumDocumento(),
+                        cliente.getFechaNacimiento(),
+                        cliente.getNumTelefono(),
+                        activo
+                    }
+                );
+            } 
+    }
+    
+    private void cargarTablaFechaNacimiento(String fechaNac)
+    {
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaClientes.getModel();
+        modelo.setRowCount(0);
+        tablaClientes.setModel(modelo);
+        List<clientes> clientes = clienteDAO.findclientesEntities();
+        List<clientes> clientesFiltrados = new ArrayList();
+        
+        for(int i = 0; i < clientes.size();i++)
+        {
+            if(convertirDates(clientes.get(i).getFechaNacimiento().toString()).equals(fechaNac))
+            {
+                clientesFiltrados.add(clientes.get(i));
+            }
+        }
+            for(clientes cliente : clientesFiltrados){
+                if(cliente.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        cliente.getIdcliente(),
+                        cliente.getNomCliente(),
+                        cliente.getApeCliente(),
+                        cliente.getNumDocumento(),
+                        cliente.getFechaNacimiento(),
+                        cliente.getNumTelefono(),
+                        activo
+                    }
+                );
+            } 
+    }
+    
+    private void cargarTablaNumTelefono(String numTelefono)
+    {
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaClientes.getModel();
+        modelo.setRowCount(0);
+        tablaClientes.setModel(modelo);
+        List<clientes> clientes = clienteDAO.findclientesEntities();
+        List<clientes> clientesFiltrados = new ArrayList();
+        
+        for(int i = 0; i < clientes.size();i++)
+        {
+            if(clientes.get(i).getNumTelefono().equals(numTelefono))
+            {
+                clientesFiltrados.add(clientes.get(i));
+            }
+        }
+            for(clientes cliente : clientesFiltrados){
+                if(cliente.isActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        cliente.getIdcliente(),
+                        cliente.getNomCliente(),
+                        cliente.getApeCliente(),
+                        cliente.getNumDocumento(),
+                        cliente.getFechaNacimiento(),
+                        cliente.getNumTelefono(),
+                        activo
+                    }
+                );
+            } 
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -94,6 +325,11 @@ public class pantallaClientes extends javax.swing.JFrame {
         activar = new javax.swing.JButton();
         nuevoEmpleado = new javax.swing.JButton();
         modificarEmpleado = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        cbParametros = new javax.swing.JComboBox<>();
+        buscarTxt = new javax.swing.JTextField();
+        botonBuscar = new javax.swing.JButton();
+        recargar = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -208,6 +444,30 @@ public class pantallaClientes extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Buscar Por:");
+
+        buscarTxt.setBackground(new java.awt.Color(30, 33, 34));
+        buscarTxt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/lupa.png"))); // NOI18N
+        botonBuscar.setBorderPainted(false);
+        botonBuscar.setContentAreaFilled(false);
+        botonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonBuscarActionPerformed(evt);
+            }
+        });
+
+        recargar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/recargar.png"))); // NOI18N
+        recargar.setContentAreaFilled(false);
+        recargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                recargarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -216,28 +476,56 @@ public class pantallaClientes extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nuevoEmpleado)
                         .addGap(18, 18, 18)
-                        .addComponent(modificarEmpleado)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(modificarEmpleado))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(buscarTxt)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 774, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cbParametros)
+                                    .addComponent(buscarTxt)))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(botonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(recargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(nuevoEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(modificarEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                    .addComponent(nuevoEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(modificarEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -246,15 +534,15 @@ public class pantallaClientes extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(51, 51, 51))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         botonRegresar.setBackground(new java.awt.Color(189, 158, 76));
@@ -273,7 +561,7 @@ public class pantallaClientes extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(295, 295, 295)
+                .addGap(353, 353, 353)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -284,7 +572,7 @@ public class pantallaClientes extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -292,8 +580,8 @@ public class pantallaClientes extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(tituloPantalla)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 19, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
@@ -303,11 +591,15 @@ public class pantallaClientes extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -412,6 +704,36 @@ public class pantallaClientes extends javax.swing.JFrame {
         cargarTabla();
     }//GEN-LAST:event_activarActionPerformed
 
+    private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
+        // TODO add your handling code here:
+
+        switch(cbParametros.getSelectedItem().toString())
+        {
+            case "ID Cliente":
+            cargarTablaIdCliente(Integer.parseInt(buscarTxt.getText()));
+            return;
+            case "Nombres":
+            cargarTablaNomCliente(buscarTxt.getText());
+            return;
+            case "Apellidos":
+            cargarTablaApeCliente(buscarTxt.getText());
+            case "Numero Id.":
+            cargarTablaNumDoc(buscarTxt.getText());
+            return;
+            case "Fecha Nacimiento":
+            cargarTablaFechaNacimiento(buscarTxt.getText());
+            return;
+            case "Num. Télefono":
+            cargarTablaNumTelefono(buscarTxt.getText());    
+        }
+    }//GEN-LAST:event_botonBuscarActionPerformed
+
+    private void recargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recargarActionPerformed
+        // TODO add your handling code here:
+        cargarTabla();
+        buscarTxt.setText("");
+    }//GEN-LAST:event_recargarActionPerformed
+
     
     /**
      * @param args the command line arguments
@@ -488,7 +810,11 @@ public class pantallaClientes extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activar;
+    private javax.swing.JButton botonBuscar;
     private javax.swing.JButton botonRegresar;
+    private javax.swing.JTextField buscarTxt;
+    private javax.swing.JComboBox<String> cbParametros;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -496,6 +822,7 @@ public class pantallaClientes extends javax.swing.JFrame {
     private javax.swing.JLabel logo;
     private javax.swing.JButton modificarEmpleado;
     private javax.swing.JButton nuevoEmpleado;
+    private javax.swing.JButton recargar;
     private javax.swing.JTable tablaClientes;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
