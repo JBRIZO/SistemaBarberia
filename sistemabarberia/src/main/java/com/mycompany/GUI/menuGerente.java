@@ -454,7 +454,10 @@ public class menuGerente extends javax.swing.JFrame {
     }//GEN-LAST:event_botonEmpleadosActionPerformed
 
     private void botonBonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBonosActionPerformed
-        // TODO add your handling code here:
+        Bono pantallabono = new Bono();
+        pantallabono.setVisible(true);
+        this.dispose();
+        
     }//GEN-LAST:event_botonBonosActionPerformed
 
     private void botonDescuentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDescuentosActionPerformed
@@ -518,13 +521,6 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonBonosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonBonosMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new nuevoTipoBono().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
     }//GEN-LAST:event_botonBonosMouseClicked
 
     private void botonUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonUsuariosMouseClicked

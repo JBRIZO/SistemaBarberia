@@ -47,6 +47,12 @@ public class tiposbono implements Serializable{
         this.Activo = Activo;
     }
     
+    @Override
+    public String toString()
+    {
+        return idtipobono + ". " + NomBono;
+    }
+    
     
     
 }
