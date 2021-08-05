@@ -9,11 +9,9 @@ import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.descuentos;
 import com.mycompany.sistemabarberia.tipodescuento;
-import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.sql.Date;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -44,9 +42,7 @@ public class listaDescuentos extends javax.swing.JFrame {
         cargarTabla();
     }
     
-    public void Reiniciar()
-    {
-    }
+ 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,7 +115,7 @@ public class listaDescuentos extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, true, false, false, false
@@ -274,7 +270,8 @@ public class listaDescuentos extends javax.swing.JFrame {
     private void cargarTabla()
     {
         List<tipodescuento> tiposDescuentoBD = tiposDescuentoDAO.findtipodescuentoEntities();
-        String Descuento = "";
+        String tipoDescuento = "";
+        String valor = "";
         DefaultTableModel modelo = (DefaultTableModel)tablaDescuentos.getModel();
         modelo.setRowCount(0);
         tablaDescuentos.setModel(modelo);
@@ -284,16 +281,23 @@ public class listaDescuentos extends javax.swing.JFrame {
                     {
                         if(tiposDescuentoBD.get(j).getIdtipodescuento() == descuento.getIDTipoDescuento())
                         {
-                            Descuento = tiposDescuentoBD.get(j).getNomDescuento();  
+                            tipoDescuento = tiposDescuentoBD.get(j).getNomDescuento();  
                         }
                     }
+                if(descuento.getValor() <= 1)
+                {
+                    valor = descuento.getValor()*100 + " %";
+                }else
+                {
+                    valor = descuento.getValor() + "";
+                }
                     modelo.addRow(
                     new Object[]{
                         descuento.getIddescuento(),
-                        Descuento,
+                        tipoDescuento,
                         convertirDates(descuento.getFechaInicio().toString()),
                         convertirDates(descuento.getFechaFinal().toString()),
-                        descuento.getValor()
+                        valor
                     }
                 );
             } 

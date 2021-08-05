@@ -132,6 +132,15 @@ public class usuariosJpaController implements Serializable {
             em.close();
         }
     }
+    
+    public usuarios findusuariosPorEmpleado(int IDEmpleado) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.find(usuarios.class, IDEmpleado);
+        } finally {
+            em.close();
+        }
+    }
 
     public int getusuariosCount() {
         EntityManager em = getEntityManager();

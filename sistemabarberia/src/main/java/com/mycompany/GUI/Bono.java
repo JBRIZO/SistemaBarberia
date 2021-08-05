@@ -13,6 +13,7 @@ import com.mycompany.sistemabarberia.bonosempleadomensual;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.tiposbono;
 import com.mycompany.sistemabarberia.usuarios;
+import java.awt.Color;
 import java.awt.Image;
 import java.util.List;
 import javax.swing.Icon;
@@ -20,6 +21,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -165,6 +167,15 @@ public class Bono extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tablaBonos);
+        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+        MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
+        MyHeaderRender.setForeground(Color.BLACK);
+        for(int i = 0; i < tablaBonos.getColumnCount();i++)
+        {
+            tablaBonos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+        }
+        tablaBonos.setShowGrid(true);
+        tablaBonos.setGridColor(Color.BLACK);
 
         jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 14, 680, 287));
 

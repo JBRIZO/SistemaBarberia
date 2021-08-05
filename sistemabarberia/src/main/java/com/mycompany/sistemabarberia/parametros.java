@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  *
@@ -23,10 +24,10 @@ public class parametros implements Serializable {
         private String Llave;
         
         @Column
-        private String FechaInicio;
+        private Date FechaInicio;
         
         @Column
-        private String FechaFinal;
+        private Date FechaFinal;
         
         @Column
         private String Valor;
@@ -52,19 +53,19 @@ public class parametros implements Serializable {
         this.Llave = Llave;
     }
 
-    public String getFechaInicio() {
+    public Date getFechaInicio() {
         return FechaInicio;
     }
 
-    public void setFechaInicio(String FechaInicio) {
+    public void setFechaInicio(Date FechaInicio) {
         this.FechaInicio = FechaInicio;
     }
 
-    public String getFechaFinal() {
+    public Date getFechaFinal() {
         return FechaFinal;
     }
 
-    public void setFechaFinal(String FechaFinal) {
+    public void setFechaFinal(Date FechaFinal) {
         this.FechaFinal = FechaFinal;
     }
 

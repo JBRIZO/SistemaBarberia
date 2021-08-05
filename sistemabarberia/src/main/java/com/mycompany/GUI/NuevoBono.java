@@ -51,6 +51,7 @@ public class NuevoBono extends javax.swing.JFrame {
         this.insertarImagen(this.salir, "src/main/resources/Imagenes/x.png");
         obtenerEmpleados();
         obtenerTipoBono();
+        lbCantidad.setText("");
     }
 
     /**
@@ -286,7 +287,7 @@ public class NuevoBono extends javax.swing.JFrame {
 
     private void txtPeriodoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPeriodoFocusLost
         Validaciones validar = new Validaciones();
-        if (validar.validacionEntero(txtPeriodo.getText()) == false) {
+        if (validar.validacionPeriodo(txtPeriodo.getText()) == false) {
             txtPeriodo.setBorder(BorderFactory.createLineBorder(Color.red, 1));
             lbPeriodo.setText("Formato inválido: mm-AAAA ");
         } else {
@@ -346,6 +347,13 @@ public class NuevoBono extends javax.swing.JFrame {
         lbPeriodo.setText("");
         txtPeriodo.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         txtCantidad.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Bono().setVisible(true);
+            }
+        });
+        this.dispose();
+        
     }//GEN-LAST:event_CancelarActionPerformed
 
     private void Aceptar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Aceptar1ActionPerformed

@@ -240,7 +240,7 @@
                             <Column editable="true" title="Tipo Descuento" type="java.lang.String"/>
                             <Column editable="false" title="Fecha Inicio" type="java.lang.String"/>
                             <Column editable="false" title="Fecha Final" type="java.lang.String"/>
-                            <Column editable="false" title="Valor" type="java.lang.Integer"/>
+                            <Column editable="false" title="Valor" type="java.lang.String"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor" postCode="DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();&#xa;        MyHeaderRender.setBackground(Color.decode(&quot;#BD9E4C&quot;));&#xa;        MyHeaderRender.setForeground(Color.BLACK);&#xa;        for(int i = 0; i &lt; tablaDescuentos.getColumnCount();i++)&#xa;            {&#xa;                tablaDescuentos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);&#xa;            }&#xa;tablaDescuentos.setShowGrid(true);&#xa;tablaDescuentos.setGridColor(Color.BLACK);">

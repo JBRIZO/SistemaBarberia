@@ -5,12 +5,14 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.bonosempleadomensualJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.deduccionesempleadomensualJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
+import com.mycompany.sistemabarberia.bonosempleadomensual;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -34,8 +36,8 @@ public class Planilla extends javax.swing.JFrame {
     private List<deduccionesempleadomensual> deduccionsBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
     private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
     private List<salariohistoricoempleados> salariosBD = salarioDAO.findsalariohistoricoempleadosEntities();
-//    private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController();
-//    private List<bonosempleadomensual> bonosBD = bonosDAO.findbonosempleadomensualEntities();
+    private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController();
+    private List<bonosempleadomensual> bonosBD = bonosDAO.findbonosempleadomensualEntities();
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
     String currentTime = sdf.format(dt);

@@ -6,10 +6,10 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
 import com.mycompany.sistemabarberia.empleado;
-import com.mycompany.sistemabarberia.productos;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -309,11 +308,6 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 );
             }
     }
-
-
-
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -642,7 +636,8 @@ public class pantallaEmpleados extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tablaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMouseClicked
-         if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
+ 
+       if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
         {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
             modificarEmpleado.setEnabled(true);
@@ -745,23 +740,39 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 modificar = empleados.get(i);
             }
         }
+        //para desactivar usuario
+        usuariosJpaController usuarioDAO = new usuariosJpaController();
+        List<usuarios> usuariosBD = usuarioDAO.findusuariosEntities();
+        usuarios usuario = new usuarios();
+        for(int i = 0 ; i < usuariosBD.size() ; i++)
+        {
+            if(usuariosBD.get(i).getIDEmpleado() == Integer.parseInt(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),0).toString()))
+            {
+                usuario = usuariosBD.get(i);
+            }
+        }
+        
         if(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),6).equals("Sí"))
         {
+           usuario.setActivo(false);
            modificar.setActivo(false);
            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
            modificarEmpleado.setEnabled(false);
            try
            {
+               usuarioDAO.edit(usuario);
                empleadoDAO.edit(modificar);
            }catch(Exception Ex)
            {}
         }else
          {
+            usuario.setActivo(true);
             modificar.setActivo(true);
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
             modificarEmpleado.setEnabled(true);
             try
            {
+               usuarioDAO.edit(usuario);
                empleadoDAO.edit(modificar);
            }catch(Exception Ex)
            {}

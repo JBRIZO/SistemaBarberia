@@ -60,7 +60,7 @@ public class Validaciones {
     //Valida el periodo, que debe tener el formato mm-AAAA 
      public boolean validacionEntero(String numero) 
     {
-        String patron = "^[1-9][0-9]+$";
+        String patron = "^\\d+$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(numero);
         if(comparador.matches()){

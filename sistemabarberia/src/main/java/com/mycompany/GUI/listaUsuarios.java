@@ -5,7 +5,9 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
@@ -16,6 +18,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -282,6 +285,11 @@ public class listaUsuarios extends javax.swing.JFrame {
                 activarMouseClicked(evt);
             }
         });
+        activar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                activarActionPerformed(evt);
+            }
+        });
 
         nuevoUsuario.setBackground(new java.awt.Color(30, 33, 34));
         nuevoUsuario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -483,36 +491,6 @@ public class listaUsuarios extends javax.swing.JFrame {
 
     private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
         // TODO add your handling code here:
-        usuarios modificar = new usuarios();
-        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
-        for(int i=0 ; i<usuarios.size();i++)
-        {
-            if(Integer.parseInt(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),0).toString()) == usuarios.get(i).getIdusuario())
-            {
-                modificar = usuarios.get(i);
-            }
-        }
-        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
-        {
-           modificar.setActivo(false);
-           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
-           try
-           {
-               usuarioDAO.edit(modificar);
-           }catch(Exception Ex)
-           {}  
-        }else
-         {
-            modificar.setIntentos(0);
-            modificar.setActivo(true);
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
-            try
-           {
-               usuarioDAO.edit(modificar);
-           }catch(Exception Ex)
-           {}  
-        }
-        cargarTabla();
     }//GEN-LAST:event_activarMouseClicked
 
     private void nuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoUsuarioActionPerformed
@@ -567,6 +545,52 @@ public class listaUsuarios extends javax.swing.JFrame {
         cargarTabla();
         buscarTxt.setText("");
     }//GEN-LAST:event_recargarActionPerformed
+
+    private void activarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activarActionPerformed
+        // TODO add your handling code here:
+        //Si el empleado esta desactivado no puede activarse su usuario.
+        empleadoJpaController empleadoDAO = new empleadoJpaController();
+        
+        usuarios modificar = new usuarios();
+        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
+        for(int i=0 ; i<usuarios.size();i++)
+        {
+            if(Integer.parseInt(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),0).toString()) == usuarios.get(i).getIdusuario())
+            {
+                modificar = usuarios.get(i);
+            }
+        }
+        
+        empleado empleado = empleadoDAO.findempleado(modificar.getIDEmpleado());
+        
+        if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
+        {
+           modificar.setActivo(false);
+           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+           try
+           {
+               usuarioDAO.edit(modificar);
+           }catch(Exception Ex)
+           {}  
+        }else
+         {
+             if(!empleado.isActivo())
+             {
+                 JOptionPane.showMessageDialog(null,"El empleado propietario de este usuario ha sido desactivado, \n"
+                         + "debes activarlo para poder activar este usuario.","Empleado Desactivado",JOptionPane.ERROR_MESSAGE);
+                 return;
+             }
+            modificar.setIntentos(0);
+            modificar.setActivo(true);
+            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
+            try
+           {
+               usuarioDAO.edit(modificar);
+           }catch(Exception Ex)
+           {}  
+        }
+        cargarTabla();
+    }//GEN-LAST:event_activarActionPerformed
 
     
     /**
