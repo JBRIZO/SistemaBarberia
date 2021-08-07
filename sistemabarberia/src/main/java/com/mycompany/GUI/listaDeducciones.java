@@ -6,12 +6,14 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.deduccionesempleadomensualJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
 import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.tipodeduccion;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -26,7 +28,7 @@ import javax.swing.table.DefaultTableModel;
 public class listaDeducciones extends javax.swing.JFrame {
     
     private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController();
-    private List<deduccionesempleadomensual> deduccionesempleadomensualBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
+    private List<deduccionesempleadomensual> deduccionesBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
     private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController();
     private List<tipodeduccion> tipodeduccionBD = tipodeduccionDAO.findtipodeduccionEntities();
      private ImageIcon imagen;
@@ -41,8 +43,28 @@ public class listaDeducciones extends javax.swing.JFrame {
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         cargarTabla();
+        cargarPeriodosCb();
+        
     }
 
+    private void cargarPeriodosCb()
+    {
+        List<String> periodosEnBD = new ArrayList<>();
+         periodosEnBD.add(deduccionesBD.get(deduccionesBD.size()-1).getPeriodo());
+        for(int i = deduccionesBD.size()-1 ; i > 0; i--)
+        {
+            System.out.println(deduccionesBD.get(i).getPeriodo());
+            if(!deduccionesBD.get(i).getPeriodo().equals(deduccionesBD.get(i-1).getPeriodo()))
+            {
+                periodosEnBD.add(deduccionesBD.get(i-1).getPeriodo());
+            }
+        }
+        
+        for(int i = 0; i < periodosEnBD.size() ; i++)
+        {
+            cbPeriodos.addItem(periodosEnBD.get(i));
+        }  
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -60,6 +82,8 @@ public class listaDeducciones extends javax.swing.JFrame {
         tablaDeducciones = new javax.swing.JTable();
         nuevaDeduccion = new javax.swing.JButton();
         nuevoTipo = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        cbPeriodos = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
 
@@ -89,11 +113,11 @@ public class listaDeducciones extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Num.", "ID Empleado", "Tipo ", "Periodo", "Valor"
+                "Num.", "ID Empleado", "Nombre Empleado", "Tipo ", "Periodo", "Valor"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -107,6 +131,7 @@ public class listaDeducciones extends javax.swing.JFrame {
             tablaDeducciones.getColumnModel().getColumn(2).setResizable(false);
             tablaDeducciones.getColumnModel().getColumn(3).setResizable(false);
             tablaDeducciones.getColumnModel().getColumn(4).setResizable(false);
+            tablaDeducciones.getColumnModel().getColumn(5).setResizable(false);
         }
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
@@ -134,6 +159,16 @@ public class listaDeducciones extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Deducciones por periodo:");
+
+        cbPeriodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbPeriodosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -142,6 +177,11 @@ public class listaDeducciones extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbPeriodos, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nuevaDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -155,18 +195,20 @@ public class listaDeducciones extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(jScrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nuevoTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel2))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nuevaDeduccion)))
-                .addGap(19, 19, 19))
+                        .addContainerGap()
+                        .addComponent(cbPeriodos, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(nuevoTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nuevaDeduccion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -218,7 +260,7 @@ public class listaDeducciones extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -239,6 +281,7 @@ public class listaDeducciones extends javax.swing.JFrame {
 
     private void cargarTabla()
     {
+        empleadoJpaController empleadoDAO = new empleadoJpaController();
         List<tipodeduccion> tipoDeduccionBd = tipodeduccionDAO.findtipodeduccionEntities();
         String deduccion = "";
         DefaultTableModel modelo = (DefaultTableModel)tablaDeducciones.getModel();
@@ -259,6 +302,48 @@ public class listaDeducciones extends javax.swing.JFrame {
                     new Object[]{
                         deduccionActual.getNumdeduccion(),
                         deduccionActual.getIDEmpleado(),
+                        empleadoDAO.findempleado(deduccionActual.getIDEmpleado()).getNomEmpleado(),
+                        deduccion,
+                        deduccionActual.getPeriodo(),
+                        deduccionActual.getValor()
+                    }
+            );
+        }
+    }
+    
+    private void cargarTablaPeriodo(String periodo)
+    {
+        empleadoJpaController empleadoDAO = new empleadoJpaController();
+        List<tipodeduccion> tipoDeduccionBd = tipodeduccionDAO.findtipodeduccionEntities();
+        String deduccion = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaDeducciones.getModel();
+        modelo.setRowCount(0);
+        tablaDeducciones.setModel(modelo);
+        
+        List<deduccionesempleadomensual> deduccionesempleadomensu = deduccionesDAO.finddeduccionesempleadomensualEntities();
+        List<deduccionesempleadomensual> deduccionesFiltradas = new ArrayList();
+        
+        for(int i =0 ; i < deduccionesempleadomensu.size() ; i++)
+        {
+            if(deduccionesempleadomensu.get(i).getPeriodo().equals(periodo) )
+            {
+                deduccionesFiltradas.add(deduccionesempleadomensu.get(i));
+            }
+        }
+        
+            for (deduccionesempleadomensual deduccionActual :deduccionesFiltradas){
+                for(int i = 0; i < tipoDeduccionBd.size(); i++)
+            {
+                if(tipoDeduccionBd.get(i).getIdtipodeduccion() == deduccionActual.getIDTipoDeduccion())
+                        {
+                            deduccion = tipoDeduccionBd.get(i).getNombre();  
+                        }   
+            }
+            modelo.addRow(
+                    new Object[]{
+                        deduccionActual.getNumdeduccion(),
+                        deduccionActual.getIDEmpleado(),
+                        empleadoDAO.findempleado(deduccionActual.getIDEmpleado()).getNomEmpleado(),
                         deduccion,
                         deduccionActual.getPeriodo(),
                         deduccionActual.getValor()
@@ -304,6 +389,11 @@ public class listaDeducciones extends javax.swing.JFrame {
         tipodeduccionDAO.close();
         this.dispose();
     }//GEN-LAST:event_nuevoTipoActionPerformed
+
+    private void cbPeriodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPeriodosActionPerformed
+        // TODO add your handling code here:
+        cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
+    }//GEN-LAST:event_cbPeriodosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -357,7 +447,9 @@ public class listaDeducciones extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonCancelar;
+    private javax.swing.JComboBox<String> cbPeriodos;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

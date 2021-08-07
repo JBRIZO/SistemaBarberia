@@ -15,6 +15,7 @@ import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.tipodeduccion;
 import java.awt.Color;
 import java.awt.Image;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -122,7 +123,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
         idEmpleado.setBackground(new java.awt.Color(30, 33, 34));
         idEmpleado.setForeground(new java.awt.Color(255, 255, 255));
-        idEmpleado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+        idEmpleado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione", "Todos los empleados" }));
         idEmpleado.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         idEmpleado.setMinimumSize(new java.awt.Dimension(32, 23));
         idEmpleado.setPreferredSize(new java.awt.Dimension(32, 23));
@@ -193,7 +194,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         formatoInvalidoCantidad.setText("Formato Invalido.");
 
         periodo.setBackground(new java.awt.Color(30, 33, 34));
-        periodo.setDocument(new JTextFieldLimit(7));
+        periodo.setDocument(new JTextFieldLimit(6));
         periodo.setForeground(new java.awt.Color(255, 255, 255));
         periodo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         periodo.setPreferredSize(new java.awt.Dimension(305, 42));
@@ -374,7 +375,61 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoDeduccionActionPerformed
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        // TODO add your handling code here:
+        //Filtrar empleados activos
+        List<empleado> empleadosActivos = new ArrayList();
+        
+        for(int i=0 ; i < empleadosBD.size();i++)
+        {
+            if(empleadosBD.get(i).isActivo())
+            {
+                empleadosActivos.add(empleadosBD.get(i));
+            }
+        }
+        
+        //para todos los empleados
+       if(idEmpleado.getSelectedIndex() == 1)
+       {
+           if(periodo.getText().equals("") || cantidad.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.",
+                    "Campos Incompletos",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+           int contador = 0;
+           for(empleado empleado:empleadosBD)
+           {
+               deduccionesempleadomensual deduccionEmpleado = new deduccionesempleadomensual();
+               deduccionEmpleado.setIDEmpleado(empleado.getIdempleado());
+               deduccionEmpleado.setIDTipoDeduccion(Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
+               deduccionEmpleado.setPeriodo(periodo.getText());
+               deduccionEmpleado.setValor(Double.parseDouble(cantidad.getText()));
+               deduccionEmpleado.setActivo(true);
+               if(validarDecimal() && validacionPeriodo(periodo,formatoInvalidoPeriodo))
+                {
+                    try {
+                        deduccionesDAO.create(deduccionEmpleado);
+                        contador++;
+                    } catch (Exception ex) {
+                        //empleado con error
+                        contador = empleado.getIdempleado();
+                        Logger.getLogger(nuevaDeduccion.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }else
+                {
+                    JOptionPane.showMessageDialog(null,"Por favor corrige campos en rojo.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
+                }
+           }
+           if(contador == empleadosActivos.size())
+           {
+             JOptionPane.showMessageDialog(null,"Operacion Exitosa.");  
+           }else
+           {
+              JOptionPane.showMessageDialog(null,"Error al aplicar deducción al empleado con Id número " + contador); 
+           }
+           return;
+           
+       }
         if(idEmpleado.getSelectedIndex() == 0)
         {
             JOptionPane.showMessageDialog(null,"Debes seleccionar un empleado.",
@@ -515,7 +570,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
          {
              jText.setBorder(redBorder);
              label.setVisible(true);
-             JOptionPane.showMessageDialog(null,"Solo puedes ingresar periodos en este campo.\nEl formato de un periodo es MM-aaaa.",
+             JOptionPane.showMessageDialog(null,"Solo puedes ingresar periodos en este campo.\nEl formato de un periodo es aaaaMM.",
                      "Periodo Inválido",
                      JOptionPane.ERROR_MESSAGE);
              return false;
@@ -527,8 +582,8 @@ public class nuevaDeduccion extends javax.swing.JFrame {
        }else
        {
            jText.setBorder(redBorder);
-           label.setVisible(true);
-           label.setText("Ese periodo es inválido.");
+           JOptionPane.showMessageDialog(null,"Por favor verifica que el año y el mes del periodo "
+                   + "otorgado sean válidos","Periodo Inválido",JOptionPane.ERROR_MESSAGE);
            return false; 
        }  
      }

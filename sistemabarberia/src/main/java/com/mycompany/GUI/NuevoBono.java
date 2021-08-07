@@ -152,6 +152,7 @@ public class NuevoBono extends javax.swing.JFrame {
 
         cbIdEmpleado.setBackground(new java.awt.Color(30, 33, 34));
         cbIdEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cbIdEmpleado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione Empleado", "Todos los empleados" }));
         cbIdEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbIdEmpleadoActionPerformed(evt);
@@ -188,6 +189,7 @@ public class NuevoBono extends javax.swing.JFrame {
 
         cbTipoBono.setBackground(new java.awt.Color(30, 33, 34));
         cbTipoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cbTipoBono.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione Tipo Bono" }));
         cbTipoBono.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbTipoBonoActionPerformed(evt);
@@ -267,7 +269,6 @@ public class NuevoBono extends javax.swing.JFrame {
 
     //a;adir validaciones botonaceptar
     public void obtenerEmpleados() {
-        cbIdEmpleado.addItem("Seleccione Empleado");
         List<empleado> listaEmpleados;
         listaEmpleados = nombreEmpleado.findempleadoEntities();
         for (int i = 0; i < listaEmpleados.size(); i++) {
@@ -276,7 +277,6 @@ public class NuevoBono extends javax.swing.JFrame {
     }
 
     public void obtenerTipoBono() {
-        cbTipoBono.addItem("Tipo Bono");
         List<tiposbono> listaBonos;
         listaBonos = bonos.findtiposbonoEntities();
         for (int i = 0; i < listaBonos.size(); i++) {

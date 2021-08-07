@@ -6,12 +6,10 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipopagoJpaController;
-import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.clientes;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
@@ -20,29 +18,15 @@ import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.view.JasperViewer;
 import com.mycompany.sistemabarberia.tipopago;
-import javax.swing.table.TableColumn;
 
 /**
  *

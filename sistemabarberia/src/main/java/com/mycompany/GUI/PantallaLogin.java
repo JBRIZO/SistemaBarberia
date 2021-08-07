@@ -79,6 +79,7 @@ public class PantallaLogin extends javax.swing.JFrame {
 
         nombreUsuario.setBackground(new java.awt.Color(30, 33, 34));
         nombreUsuario.setDocument(new JTextFieldLimit(17));
+        nombreUsuario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         nombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
         nombreUsuario.setText("Nombre de Usuario");
         nombreUsuario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -93,6 +94,7 @@ public class PantallaLogin extends javax.swing.JFrame {
 
         iniciarSesion.setBackground(new java.awt.Color(189, 158, 76));
         iniciarSesion.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        iniciarSesion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/login.png"))); // NOI18N
         iniciarSesion.setText("Iniciar Sesion");
         iniciarSesion.setRequestFocusEnabled(false);
         iniciarSesion.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -209,7 +211,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         String contraEncriptada = DigestUtils.md5Hex(contrasena);
         usuarios usuarioActual = new usuarios();
 
-        //ecnontrar usuario en la base de datos
+        //encontrar usuario en la base de datos
         for(int i = 0; i < usuariosBD.size(); i++)
         {
             if(nombreUsuario.getText().equals(usuariosBD.get(i).getNomCuenta()))

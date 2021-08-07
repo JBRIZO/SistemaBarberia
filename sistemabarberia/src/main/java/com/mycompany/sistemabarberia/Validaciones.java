@@ -57,7 +57,7 @@ public class Validaciones {
         
     }
     
-    //Valida el periodo, que debe tener el formato mm-AAAA 
+    //Valida que el numero sea un entero
      public boolean validacionEntero(String numero) 
     {
         String patron = "^\\d+$";
@@ -85,25 +85,12 @@ public class Validaciones {
         }
     }
     
-    //valida un periodo valido con formato MM-aaaa
+    //valida un periodo valido con formato aaaaMM
     public boolean validacionPeriodo(String cadena)
     {
-        String mes = "";
-        String patron = "^[0-1][1-9]-[2][0-2][2-9][1-9]";
+        String patron = "^[2][0-2][2-9][1-9]([0][1-9]|[1][0-2])$";
         Pattern patt = Pattern.compile(patron);
-        Matcher comparador = patt.matcher(cadena);
-        //Verificacion de mes valido
-        for (int i=0 ; i<=1;i++)
-        {
-         mes = mes + cadena.charAt(i);  
-        }
-        int numMes = Integer.parseInt(mes);
-        
-        if(numMes>12)
-        {
-            return false;
-        }
-        
+        Matcher comparador = patt.matcher(cadena);        
         if(comparador.matches()){
             return true;
         }else

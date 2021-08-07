@@ -38,6 +38,8 @@ public class puestohistoricoempleadoJpaController implements Serializable {
     {
         this.emf.close();
     }
+    
+    
 
     public void create(puestohistoricoempleado puestohistoricoempleado) {
         EntityManager em = null;
@@ -142,5 +144,4 @@ public class puestohistoricoempleadoJpaController implements Serializable {
             em.close();
         }
     }
-    
 }

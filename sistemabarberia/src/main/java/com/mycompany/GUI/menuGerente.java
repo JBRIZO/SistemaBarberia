@@ -82,6 +82,7 @@ public class menuGerente extends javax.swing.JFrame {
         bienvenido = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));

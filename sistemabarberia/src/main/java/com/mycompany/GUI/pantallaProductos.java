@@ -47,7 +47,7 @@ public class pantallaProductos extends javax.swing.JFrame {
     private productosJpaController productosDAO =  new productosJpaController();
     private List<productos> productosBD = productosDAO.findproductosEntities();
     private precioshistoricosproductosJpaController preciosDAO= new precioshistoricosproductosJpaController();
-    List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
+    private List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
     private ImageIcon imagen;
     private Icon icono;
     private java.util.Date dt = new java.util.Date();

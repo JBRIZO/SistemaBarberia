@@ -672,7 +672,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
     private void nuevoEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoEmpleadoActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new agregarEmpleado().setVisible(true);
+                new AgregarEmpleado().setVisible(true);
             }
         });
         this.setVisible(false);
@@ -697,7 +697,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         }
             java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new agregarEmpleado(empleadoSeleccionado).setVisible(true);
+                new AgregarEmpleado(empleadoSeleccionado).setVisible(true);
             }
         });
         this.setVisible(false);

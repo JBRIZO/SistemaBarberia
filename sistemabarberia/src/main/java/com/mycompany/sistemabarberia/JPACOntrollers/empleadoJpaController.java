@@ -147,4 +147,5 @@ public class empleadoJpaController implements Serializable {
         }
     }
     
+    
 }

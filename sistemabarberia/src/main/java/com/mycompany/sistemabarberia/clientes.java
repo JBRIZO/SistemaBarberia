@@ -111,7 +111,7 @@ public class clientes implements Serializable {
     @Override
     public String toString()
     {
-        return NomCliente;
+        return idcliente + ". " +  NomCliente;
     }
     
 }
