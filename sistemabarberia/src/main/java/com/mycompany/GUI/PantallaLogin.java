@@ -217,7 +217,10 @@ public class PantallaLogin extends javax.swing.JFrame {
             if(nombreUsuario.getText().equals(usuariosBD.get(i).getNomCuenta()))
             {
                 usuarioActual = usuariosBD.get(i);
+                break;
             }
+            JOptionPane.showMessageDialog(null,"Contraseña o usuario incorrectos.", "Credenciales incorrectas", JOptionPane.ERROR_MESSAGE);
+            return;
         }
         if(usuarioActual.getIntentos() == 3)
                 {

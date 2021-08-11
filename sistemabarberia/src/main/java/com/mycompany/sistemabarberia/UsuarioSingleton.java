@@ -40,8 +40,4 @@ public String getNombreUsuario() {
 public void setUsuario(usuarios usuario) {
  this.Usuario = usuario;
  }
-
-
-
-
 }

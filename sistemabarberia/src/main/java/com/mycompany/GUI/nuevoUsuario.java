@@ -46,7 +46,10 @@ public class nuevoUsuario extends javax.swing.JFrame {
      * Creates new form nuevoTipoDescuento
      */
     public nuevoUsuario() {
+       this.setVisible(false);
+        this.setUndecorated(true);
         initComponents();
+        this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
@@ -96,6 +99,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
         confirmarContrasena = new javax.swing.JPasswordField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        mostrar = new javax.swing.JToggleButton();
         salir1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -195,6 +199,15 @@ public class nuevoUsuario extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Confirmar Contraseña:");
 
+        mostrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/show.png"))); // NOI18N
+        mostrar.setContentAreaFilled(false);
+        mostrar.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/hide.png"))); // NOI18N
+        mostrar.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                mostrarStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -204,16 +217,19 @@ public class nuevoUsuario extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(confirmarContrasena)
-                        .addComponent(formatoInvalido3)
-                        .addComponent(jLabel2)
-                        .addComponent(formatoInvalido2)
-                        .addComponent(nombreUsuario)
-                        .addComponent(formatoInvalido1)
-                        .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(contrasena)))
-                .addGap(0, 57, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(confirmarContrasena)
+                            .addComponent(formatoInvalido3)
+                            .addComponent(jLabel2)
+                            .addComponent(formatoInvalido2)
+                            .addComponent(nombreUsuario)
+                            .addComponent(formatoInvalido1)
+                            .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(contrasena))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(mostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 22, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,7 +245,9 @@ public class nuevoUsuario extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addGap(2, 2, 2)
-                .addComponent(contrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(mostrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(contrasena, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
                 .addGap(1, 1, 1)
                 .addComponent(formatoInvalido2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -324,10 +342,19 @@ public class nuevoUsuario extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
 
-        if(nombreUsuario.getText().equals("Nombre Usuario") || contrasena.getPassword().equals("") || contrasena .getPassword().equals(""))
+         if(nombreUsuario.getText().equals("Nombre Usuario") || contrasena.getPassword().equals("") || contrasena .getPassword().equals(""))
         {
             JOptionPane.showMessageDialog(null,"Debes rellenar con datos todos los campos.","Datos Inválidos", JOptionPane.ERROR_MESSAGE);
             return;
+        }
+        for(int i = 0; i< usuariosEnBd.size();i++)
+        {
+            if(usuariosEnBd.get(i).getNomCuenta().equals(nombreUsuario.getText()))
+            {
+            JOptionPane.showMessageDialog(null,"Ese usuario ya existe, intenta con otro nombre de usuario.","Usuario ya existente", JOptionPane.ERROR_MESSAGE);
+            nombreUsuario.setBorder(redBorder);
+            return;
+            }
         }
         if(cbEmpleados.getSelectedIndex() == 0)
         {
@@ -345,7 +372,6 @@ public class nuevoUsuario extends javax.swing.JFrame {
             formatoInvalido3.setText("Ambas contraseñas deben coincidir.");
             return;
         }
-        
         
         
         //encriptacion de contrasena
@@ -411,7 +437,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
 
     private void contrasenaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_contrasenaFocusLost
         // TODO add your handling code here:
-        validarContrasena(contrasena,formatoInvalido2);
+        
     }//GEN-LAST:event_contrasenaFocusLost
 
     private void salir1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salir1MouseClicked
@@ -429,6 +455,17 @@ public class nuevoUsuario extends javax.swing.JFrame {
     private void contrasenaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_contrasenaFocusGained
         // TODO add your handling code here:
     }//GEN-LAST:event_contrasenaFocusGained
+
+    private void mostrarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mostrarStateChanged
+        // TODO add your handling code here:
+        if(mostrar.isSelected())
+        {
+            contrasena.setEchoChar((char)0);
+        }else
+        {
+            contrasena.setEchoChar('*');
+        }
+    }//GEN-LAST:event_mostrarStateChanged
 
     /**
      * @param args the command line arguments
@@ -471,6 +508,14 @@ public class nuevoUsuario extends javax.swing.JFrame {
     private boolean validarUsuario(javax.swing.JTextField textField, JLabel label)
     {
         
+        if(validar.validacionLetrasRepetidas(textField.getText()))
+        {
+            textField.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("No puedes repetir tantas letras.");
+            return false;
+        }
+        
         if(validar.validacionCampoNumerico(textField.getText()))
         {
             textField.setBorder(redBorder);
@@ -482,7 +527,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
         {
             textField.setBorder(redBorder);
             label.setVisible(true);
-            label.setText("El nombre de usuario debe ser de 3 caracteres mínimo.");
+            label.setText("El nombre de usuario debe ser de 5 caracteres mínimo.");
             return false;
         }
         if(validar.validarNomCuenta(textField.getText()))
@@ -495,7 +540,8 @@ public class nuevoUsuario extends javax.swing.JFrame {
             textField.setBorder(redBorder);
             label.setVisible(true);
             label.setText("El nombre de usuario es inválido.");
-            JOptionPane.showMessageDialog(null, "Un nombre de usuario válido no lleva mayúsculas, solo se permiten lo signos '-' y '_', letras y números.", 
+            JOptionPane.showMessageDialog(null, "Un nombre de usuario válido no lleva mayúsculas, solo se permiten lo signos '-' y '_', letras y números.\n"
+                    + " Debe contener al menos 5 caracteres.", 
                     "Nombre de Usuario Inválido", 
                     JOptionPane.ERROR_MESSAGE);
             return false;
@@ -514,8 +560,8 @@ public class nuevoUsuario extends javax.swing.JFrame {
         }else
         {
             contra.setBorder(redBorder);
-            JOptionPane.showMessageDialog(null, "Una contraseña válida debe ser alfanumérica, "
-                    + "de al menos 6 caracteres, solo se permite la '@' como signo.", 
+            JOptionPane.showMessageDialog(null, "Para que la contraseña sea válida necesita ser de mínimo 8 caracteres, debe incluir al menos una letra mayúscula,\n"
+                    + " un cáracter especial(@$!%*?&) y un número.", 
                     "Contraseña inválida", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -550,6 +596,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
+    private javax.swing.JToggleButton mostrar;
     private javax.swing.JTextField nombreUsuario;
     private javax.swing.JLabel salir1;
     private javax.swing.JLabel tituloPantalla;

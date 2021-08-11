@@ -23,6 +23,12 @@
     <class>com.mycompany.sistemabarberia.empleado</class>
     <class>com.mycompany.sistemabarberia.usuarios</class>
     <class>com.mycompany.sistemabarberia.bonosempleadomensual</class>
+    <class>com.mycompany.sistemabarberia.deduccionesempleadomensual</class>
+    <class>com.mycompany.sistemabarberia.descuentofactura</class>
+    <class>com.mycompany.sistemabarberia.detalleproducto</class>
+    <class>com.mycompany.sistemabarberia.detalleservicio</class>
+    <class>com.mycompany.sistemabarberia.facturaencabezado</class>
+    <class>com.mycompany.sistemabarberia.planillas</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

@@ -5,13 +5,26 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.FacturaDataSource;
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.estadofacturaJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.facturaencabezadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.parametrosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipopagoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.clientes;
+import com.mycompany.sistemabarberia.descuentofactura;
+import com.mycompany.sistemabarberia.descuentos;
+import com.mycompany.sistemabarberia.detalleproducto;
+import com.mycompany.sistemabarberia.detalleservicio;
+import com.mycompany.sistemabarberia.estadofactura;
+import com.mycompany.sistemabarberia.facturaencabezado;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
 import com.mycompany.sistemabarberia.tipodescuento;
@@ -27,6 +40,22 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.mycompany.sistemabarberia.tipopago;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.TableRowSorter;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -35,22 +64,24 @@ import com.mycompany.sistemabarberia.tipopago;
 public class BusquedaFactura extends javax.swing.JFrame {
     
 
-    
+    private facturaencabezado facturaSeleccionada;
     private Validaciones validar = new Validaciones();
     
-    
+    private facturaencabezadoJpaController facturaDAO = new facturaencabezadoJpaController();
     private productosJpaController productosDAO =  new productosJpaController();
-    private List<productos> productosBD = productosDAO.findproductosEntities();
+    private serviciosJpaController serviciosDAO = new serviciosJpaController();
     private precioshistoricosproductosJpaController preciosDAO= new precioshistoricosproductosJpaController();
     private List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
     private clientesJpaController clientesDAO = new clientesJpaController();
-    private List<clientes> clientesBD = clientesDAO.findclientesEntities();
     private tipopagoJpaController tipopagoDAO = new tipopagoJpaController();
-    private List<tipopago> tipospagoBD = tipopagoDAO.findtipopagoEntities();
-    private tipodescuentoJpaController descuentosDAO = new tipodescuentoJpaController();
-    private List<tipodescuento>  descuentosBD = descuentosDAO.findtipodescuentoEntities();
-    
-    
+    private tipodescuentoJpaController tipoDescuentosDAO = new tipodescuentoJpaController();
+    private estadofacturaJpaController estadoFacturaDAO = new estadofacturaJpaController();
+    private List<estadofactura> estadosFacturaBD = estadoFacturaDAO.findestadofacturaEntities();
+    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private parametrosJpaController parametrosDAO = new parametrosJpaController();
+    private descuentosJpaController descuentosDAO = new descuentosJpaController();
+        
+    private FacturaDataSource dataSource;
     private ImageIcon imagen;
     private Icon icono;
     private java.util.Date dt = new java.util.Date();
@@ -65,47 +96,130 @@ public class BusquedaFactura extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        //cargarTabla();
-
+        cargarTabla();
+        for(int i = 0 ; i <estadosFacturaBD.size() ; i++)
+        {
+            cbEstados.addItem(estadosFacturaBD.get(i).toString());
+        }
         for(int i = 0; i < tablaFactura.getColumnCount(); i++)
         {
             cbParametros.addItem(tablaFactura.getColumnName(i));
         }
         fechaLabel.setText("Fecha: " + currentTime);
+        busquedaTabla();
+    }
+    
+    public void imprimirFactura()
+    {
+        facturaencabezado factura = facturaDAO.findfacturaencabezado(Integer.parseInt(tablaFactura.getValueAt(tablaFactura.getSelectedRow(),0).toString()));
+        
+        //detalles producto
+        EntityManager em = descuentosDAO.getEntityManager();
+        
+        String hqlDetalleProd = "FROM detalleproducto E WHERE E.IDFacturaEncabezado = :idFactura";
+        Query queryDetalleProd = em.createQuery(hqlDetalleProd);
+        queryDetalleProd.setParameter("idFactura",factura.getIdfacturaencabezado());
+        List<detalleproducto> detallesProd = queryDetalleProd.getResultList();
+        
+        //detalles servicios
+        
+        String hqlDetalleServ = "FROM detalleservicio E WHERE E.IDFacturaEncabezado = :idFactura";
+        Query queryDetalleServ = em.createQuery(hqlDetalleServ);
+        queryDetalleServ.setParameter("idFactura",factura.getIdfacturaencabezado());
+        List<detalleservicio> detallesServ = queryDetalleServ.getResultList();
+        
+        
+        Object[][] arrayDetallesFactura;
+        arrayDetallesFactura = new Object[detallesProd.size() + detallesServ.size()][3];
+      
+    for(int i = 0; i < detallesProd.size();i++)
+    {
+        for(int j = 0; j < 3 ; j++)
+        {
+            switch(j)
+            {
+                case 0:
+                arrayDetallesFactura[i][0] = detallesProd.get(i).getCantidad();
+                break;
+                case 1:
+                arrayDetallesFactura[i][1] = productosDAO.findproductos(detallesProd.get(i).getIDProducto()).getNomProducto();
+                break;
+                case 2:
+                arrayDetallesFactura[i][2] = detallesProd.get(i).getPrecio();
+                break;
+            }
+            
+        }
+    }
+    for(int i = detallesProd.size() ; i < detallesProd.size() + detallesServ.size() ;i++)
+    {
+        for(int j = 0; j < 3 ; j++)
+        {
+            switch(j)
+            {
+                case 0:
+                arrayDetallesFactura[i][0] = detallesServ.get(i-detallesProd.size()).getCantidad();
+                break;
+                case 1:
+                arrayDetallesFactura[i][1] = serviciosDAO.findservicios(detallesServ.get(i-detallesProd.size()).getIDServicio()).getNomServicio();
+                break;
+                case 2:
+                arrayDetallesFactura[i][2] = detallesServ.get(i-detallesProd.size()).getPrecio();
+                break;
+            }
+            
+        }
+    }
+    
+    //descuento factura
+        String hql = "FROM descuentofactura E WHERE E.IDFactura = :idFactura AND E.Activo = 1";
+        Query query = em.createQuery(hql);
+        query.setParameter("idFactura",factura.getIdfacturaencabezado());
+        List<descuentofactura> descuento = query.getResultList();
+    
+        HashMap param = new HashMap();
+        param.put("IDFactura", factura.getIdfacturaencabezado());
+        param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente());
+        param.put("ApellidoCliente", clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
+        param.put("NumDocumento", clientesDAO.findclientes(factura.getIDCliente()).getNumDocumento());
+        param.put("FechaFactura", factura.getFechaFactura());
+        param.put("NomVendedor",empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado());
+        param.put("NomBarbero",empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado());
+        param.put("Cai", parametrosDAO.findparametros(factura.getIDParametro()).getLlave());
+        param.put("Impuesto",0.15);
+        param.put("Descuento",descuento.isEmpty() ? 0.00 : descuento.get(descuento.size()-1).getValor());
+        
+        try {
+            JasperReport reporteFactura = JasperCompileManager.compileReport("src/main/resources/Reportes/report1.jrxml");
+            JasperPrint print = JasperFillManager.fillReport(
+                    reporteFactura,
+                    param, 
+                    dataSource.getDataSource(arrayDetallesFactura));
+            JasperViewer view = new JasperViewer(print,false);
+            view.setVisible(true);
+            view.setTitle("Factura " + factura.getIdfacturaencabezado());
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+        } catch (JRException ex) {
+            Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void cargarTabla()
     {
-        double precioActual = 0;
-        String activo = "";
         DefaultTableModel modelo = (DefaultTableModel)tablaFactura.getModel();
         modelo.setRowCount(0);
         tablaFactura.setModel(modelo);
-        List<productos> productosEnBD = productosDAO.findproductosEntities();
-            for(productos producto : productosEnBD){
-                for(int i = 0; i < preciosBD.size() ; i++)
-                    {
-                        //precio actual del producto
-                        if(preciosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosBD.get(i).isActivo())
-                        {
-                            precioActual = preciosBD.get(i).getPrecio();
-                        }
-                    }
-                if(producto.isActivo())
-                {
-                activo = "Sí";   
-                }else
-                {
-                    activo = "No";
-                }
+        List<facturaencabezado> facturasEnBd = facturaDAO.findfacturaencabezadoEntities();
+            for(facturaencabezado factura : facturasEnBd){
                     modelo.addRow(
                     new Object[]{
-                        producto.getIdproducto(),
-                        producto.getNomProducto(),
-                        producto.getStockActual(),
-                        producto.getStockMaximo(),
-                        precioActual,
-                        activo
+                        factura.getIdfacturaencabezado(),
+                        empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
+                       empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
+                        clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
+                        factura.getFechaFactura(),
+                       tipopagoDAO.findtipopago(factura.getIDTipoPago()).getTipoPago(),
+                       estadoFacturaDAO.findestadofactura(factura.getIDEstado()).getNombreEstado(),
                     }
                 );
             } 
@@ -178,7 +292,9 @@ public class BusquedaFactura extends javax.swing.JFrame {
         botonBuscar = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        imprimirReporte = new javax.swing.JButton();
+        cbEstados = new javax.swing.JComboBox<>();
+        modificarEstado = new javax.swing.JButton();
         fechaLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -217,18 +333,31 @@ public class BusquedaFactura extends javax.swing.JFrame {
                 buscarTxtFocusGained(evt);
             }
         });
+        buscarTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                buscarTxtKeyTyped(evt);
+            }
+        });
+
+        jScrollPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jScrollPane1MouseClicked(evt);
+            }
+        });
 
         tablaFactura.setBackground(new java.awt.Color(30, 33, 34));
+        tablaFactura.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        tablaFactura.setForeground(new java.awt.Color(255, 255, 255));
         tablaFactura.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Número", "ID Empleado", "ID Cliente", "Fecha", "Tipo de Pago", "Estado", "Total"
+                "Número", "Vendedor", "Barbero", "Cliente", "Fecha", "Tipo de Pago", "Estado"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
@@ -243,7 +372,21 @@ public class BusquedaFactura extends javax.swing.JFrame {
             }
         });
         tablaFactura.getTableHeader().setReorderingAllowed(false);
+        tablaFactura.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaFacturaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tablaFactura);
+        if (tablaFactura.getColumnModel().getColumnCount() > 0) {
+            tablaFactura.getColumnModel().getColumn(0).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(1).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(2).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(3).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(4).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(5).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(6).setResizable(false);
+        }
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
         MyHeaderRender.setForeground(Color.BLACK);
@@ -276,8 +419,25 @@ public class BusquedaFactura extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/imprimirReporte.png"))); // NOI18N
-        jButton2.setContentAreaFilled(false);
+        imprimirReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/imprimirReporte.png"))); // NOI18N
+        imprimirReporte.setContentAreaFilled(false);
+        imprimirReporte.setEnabled(false);
+        imprimirReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteActionPerformed(evt);
+            }
+        });
+
+        cbEstados.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+
+        modificarEstado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/modificarEstadoFactura.png"))); // NOI18N
+        modificarEstado.setContentAreaFilled(false);
+        modificarEstado.setEnabled(false);
+        modificarEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificarEstadoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -299,13 +459,22 @@ public class BusquedaFactura extends javax.swing.JFrame {
                         .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cbEstados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(modificarEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -320,11 +489,18 @@ public class BusquedaFactura extends javax.swing.JFrame {
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(22, 22, 22)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
-                .addGap(17, 17, 17))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(modificarEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbEstados, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(imprimirReporte))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -341,7 +517,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(47, 47, 47)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         fechaLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -374,7 +550,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
                 .addComponent(fechaLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -424,6 +600,60 @@ public class BusquedaFactura extends javax.swing.JFrame {
 //            return;
         }
     }//GEN-LAST:event_botonBuscarActionPerformed
+
+    private void buscarTxtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarTxtKeyTyped
+        
+    }//GEN-LAST:event_buscarTxtKeyTyped
+
+    private void modificarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarEstadoActionPerformed
+        // TODO add your handling code here:
+        if(tablaFactura.getSelectedRow() == -1)
+        {
+            JOptionPane.showMessageDialog(null,
+                    "Debes seleccionar una factura para cambiar su estado",
+                    "Selecciona una factura",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //target factura seleccionada
+        facturaSeleccionada = facturaDAO.findfacturaencabezado(Integer.parseInt(tablaFactura.getValueAt(tablaFactura.getSelectedRow(),0).toString()));
+        
+        if(cbEstados.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null,
+                    "Debes seleccionar un estado.",
+                    "Selecciona un estado",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        facturaSeleccionada.setIDEstado(Character.getNumericValue(cbEstados.getSelectedItem().toString().charAt(0)));
+        try {
+            facturaDAO.edit(facturaSeleccionada);
+            cargarTabla();
+            cbEstados.setSelectedIndex(0);
+        } catch (Exception ex) {
+            Logger.getLogger(BusquedaFactura.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+    }//GEN-LAST:event_modificarEstadoActionPerformed
+
+    private void jScrollPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane1MouseClicked
+
+    private void tablaFacturaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaFacturaMouseClicked
+        // TODO add your handling code here:
+        if(tablaFactura.getSelectedRow() != -1)
+        {
+           imprimirReporte.setEnabled(true);
+           modificarEstado.setEnabled(true);
+        }
+    }//GEN-LAST:event_tablaFacturaMouseClicked
+
+    private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
+        // TODO add your handling code here:
+        imprimirFactura();
+    }//GEN-LAST:event_imprimirReporteActionPerformed
 
     
     /**
@@ -500,22 +730,55 @@ public class BusquedaFactura extends javax.swing.JFrame {
         return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
     
+    private void busquedaTabla()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
+        TableRowSorter sorter = new TableRowSorter<>(modelo);
+        tablaFactura.setRowSorter(sorter);
+        
+      buscarTxt.getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e) {
+            search(buscarTxt.getText());
+         }
+         @Override
+         public void removeUpdate(DocumentEvent e) {
+            search(buscarTxt.getText());
+         }
+         @Override
+         public void changedUpdate(DocumentEvent e) {
+            search(buscarTxt.getText());
+         }
+         public void search(String str) {
+            if (str.length() == 0) {
+               sorter.setRowFilter(null);
+            } else {
+               sorter.setRowFilter(RowFilter.regexFilter(str));
+            }
+         }
+      });
+   }
+    
+    
+    
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonBuscar;
     private javax.swing.JButton botonRegresar;
     private javax.swing.JTextField buscarTxt;
+    private javax.swing.JComboBox<String> cbEstados;
     private javax.swing.JComboBox<String> cbParametros;
     private javax.swing.JLabel fechaLabel;
+    private javax.swing.JButton imprimirReporte;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel logo;
+    private javax.swing.JButton modificarEstado;
     private javax.swing.JTable tablaFactura;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

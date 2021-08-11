@@ -268,7 +268,7 @@ public class Validaciones {
     
     public boolean validarNomCuenta(String cadena)
     {
-        String patron = "^[a-z0-9_-]{3,16}$";
+        String patron = "^[a-z0-9_-]{5,16}$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
@@ -281,7 +281,7 @@ public class Validaciones {
     //validacion de contrasena, permite mayusculas, numeros y @
     public boolean validarContrasena(String cadena)
     {
-        String patron = "^[@A-Za-z0-9_-]{6,18}$";
+        String patron = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){

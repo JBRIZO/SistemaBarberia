@@ -8,9 +8,8 @@ package com.mycompany.sistemabarberia;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.sql.Date;
+import java.util.Date;
 import javax.persistence.Column;
-import javax.persistence.Temporal;
 
 /**
  *
@@ -23,7 +22,9 @@ public class facturaencabezado implements Serializable{
     @Column
     private int IDCliente;
     @Column
-    private int IDEmpleado;
+    private int IDVendedor;
+    @Column
+    private int IDBarbero;
     @Column
     private int IDTipoPago;
     @Column
@@ -31,7 +32,7 @@ public class facturaencabezado implements Serializable{
     @Column
     private int IDEstado;
     @Column
-    private Date FechaFactura;
+    private String FechaFactura;
 
     public int getIdfacturaencabezado() {
         return idfacturaencabezado;
@@ -49,14 +50,22 @@ public class facturaencabezado implements Serializable{
         this.IDCliente = IDCliente;
     }
 
-    public int getIDEmpleado() {
-        return IDEmpleado;
+    public int getIDVendedor() {
+        return IDVendedor;
     }
 
-    public void setIDEmpleado(int IDEmpleado) {
-        this.IDEmpleado = IDEmpleado;
+    public void setIDVendedor(int IDVendedor) {
+        this.IDVendedor = IDVendedor;
     }
 
+    public int getIDBarbero() {
+        return IDBarbero;
+    }
+
+    public void setIDBarbero(int IDBarbero) {
+        this.IDBarbero = IDBarbero;
+    }
+    
     public int getIDTipoPago() {
         return IDTipoPago;
     }
@@ -81,11 +90,11 @@ public class facturaencabezado implements Serializable{
         this.IDEstado = IDEstado;
     }
 
-    public Date getFechaFactura() {
+    public String getFechaFactura() {
         return FechaFactura;
     }
 
-    public void setFechaFactura(Date FechaFactura) {
+    public void setFechaFactura(String FechaFactura) {
         this.FechaFactura = FechaFactura;
     }
     

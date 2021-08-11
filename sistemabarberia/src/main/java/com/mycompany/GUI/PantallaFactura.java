@@ -5,13 +5,17 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.FacturaDataSource;
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.descuentofacturaJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.detalleproductoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.detalleservicioJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.facturaencabezadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.parametrosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.puestohistoricoempleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipopagoJpaController;
@@ -19,7 +23,12 @@ import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.clientes;
+import com.mycompany.sistemabarberia.descuentofactura;
+import com.mycompany.sistemabarberia.descuentos;
+import com.mycompany.sistemabarberia.detalleproducto;
+import com.mycompany.sistemabarberia.detalleservicio;
 import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.facturaencabezado;
 import com.mycompany.sistemabarberia.parametros;
 import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
@@ -28,19 +37,33 @@ import com.mycompany.sistemabarberia.puestohistoricoempleado;
 import com.mycompany.sistemabarberia.servicios;
 import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import com.mycompany.sistemabarberia.tipopago;
 import com.mycompany.sistemabarberia.usuarios;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
+
 
 /**
  *
@@ -49,7 +72,7 @@ import javax.swing.table.TableColumnModel;
 public class PantallaFactura extends javax.swing.JFrame {
     
 
-    
+    private FacturaDataSource dataSource;
     private Validaciones validar = new Validaciones();
     
     private usuarios usuarios = new usuarios(); 
@@ -57,8 +80,10 @@ public class PantallaFactura extends javax.swing.JFrame {
     
     private productosJpaController productosDAO =  new productosJpaController();
     private serviciosJpaController serviciosDAO = new serviciosJpaController();
+    private descuentofacturaJpaController descuentosDAO = new descuentofacturaJpaController();
    
     private precioshistoricosproductosJpaController preciosProductosDAO= new precioshistoricosproductosJpaController();
+    List<precioshistoricosproductos> preciosProductosBD = preciosProductosDAO.findprecioshistoricosproductosEntities();
     private precioshistoricoserviciosJpaController preciosServiciosDAO = new precioshistoricoserviciosJpaController();
     
     private empleadoJpaController empleadosDAO = new empleadoJpaController();
@@ -66,18 +91,21 @@ public class PantallaFactura extends javax.swing.JFrame {
     private List<clientes> clientesBD = clientesDAO.findclientesEntities();
     private tipopagoJpaController tipopagoDAO = new tipopagoJpaController();
     private List<tipopago> tipospagoBD = tipopagoDAO.findtipopagoEntities();
-    private tipodescuentoJpaController descuentosDAO = new tipodescuentoJpaController();
-    private List<tipodescuento>  descuentosBD = descuentosDAO.findtipodescuentoEntities();
+    private tipodescuentoJpaController tipoDescuentosDAO = new tipodescuentoJpaController();
+    private List<tipodescuento>  descuentosBD = tipoDescuentosDAO.findtipodescuentoEntities();
     private parametrosJpaController parametrosDAO = new parametrosJpaController();
     private parametros CAI = parametrosDAO.findparametros(parametrosDAO.getparametrosCount());
     
     
+    private descuentos descuentoFactura;
     
     private ImageIcon imagen;
     private Icon icono;
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    private java.text.SimpleDateFormat sdfSql = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     String currentTime = sdf.format(dt);
+    String currentTimeSql = sdfSql.format(dt);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -87,11 +115,14 @@ public class PantallaFactura extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.setTitle("Facturación");
+        facturaencabezadoJpaController encabezadoDAO = new facturaencabezadoJpaController();
         empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
-        //cbCajero.setText(empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+        cajeroTxt.setText(empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
         cargarBarberos();
         cbOpciones.setSelectedIndex(0);
-         cargarProductoATabla();
+        //ocultar columnas de servicio/producto
+         TableColumnModel columnModel = tablaFactura.getColumnModel();
+        columnModel.removeColumn(columnModel.getColumn(1));
         for(int i = 0; i < clientesBD.size() ; i++)
         {
             cbCliente.addItem(clientesBD.get(i).toString());
@@ -106,14 +137,42 @@ public class PantallaFactura extends javax.swing.JFrame {
         }
         caiLabel.setText("CAI: " + CAI.getLlave());
         fecha.setText(currentTime);
+
+        numFactura.setText(encabezadoDAO.getfacturaencabezadoCount() == 0 
+                    ?"1"
+                    :Integer.toString(encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado()+1));
     }
     
-    public void cargarProductoATabla()
+    //busqeuda de servicio o producto runtime
+    private void busquedaTabla()
     {
-        TableColumnModel columnModel = tablaFactura.getColumnModel();
-        columnModel.removeColumn(columnModel.getColumn(1));
+        DefaultTableModel modelo = (DefaultTableModel) tablaProductosServicios.getModel();
+        TableRowSorter sorter = new TableRowSorter<>(modelo);
+        tablaProductosServicios.setRowSorter(sorter);
         
-    }
+      buscarTxt.getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e) {
+            search(buscarTxt.getText());
+         }
+         @Override
+         public void removeUpdate(DocumentEvent e) {
+            search(buscarTxt.getText());
+         }
+         @Override
+         public void changedUpdate(DocumentEvent e) {
+            search(buscarTxt.getText());
+         }
+         public void search(String str) {
+            if (str.length() == 0) {
+               sorter.setRowFilter(null);
+            } else {
+               sorter.setRowFilter(RowFilter.regexFilter(str));
+            }
+         }
+      });
+   }
+
     
     public void cargarBarberos()
     {
@@ -127,6 +186,85 @@ public class PantallaFactura extends javax.swing.JFrame {
         }
     }
     
+    public void imprimirFactura()
+    {
+          Object[][] arrayDetallesFactura;
+      arrayDetallesFactura = new Object[tablaFactura.getRowCount()][3];
+      
+    for(int i = 0; i < tablaFactura.getRowCount();i++)
+    {
+        for(int j = 0; j < 3 ; j++)
+        {
+            switch(j)
+            {
+                case 0:
+                arrayDetallesFactura[i][0] = tablaFactura.getValueAt(i,0);
+                break;
+                case 1:
+                arrayDetallesFactura[i][1] = tablaFactura.getValueAt(i,2);
+                break;
+                case 2:
+                arrayDetallesFactura[i][2] = tablaFactura.getValueAt(i,3);
+                break;
+            }
+            
+        }
+    }
+    //descuento
+     //descuento de factura
+     EntityManager em = productosDAO.getEntityManager();
+        String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
+        Query query = em.createQuery(hql);
+        query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
+        descuentos descuentoValor = (descuentos)query.getSingleResult();
+        
+        HashMap param = new HashMap();
+        param.put("IDFactura", Integer.parseInt(numFactura.getText()));
+        param.put("NombreCliente", cbCliente.getSelectedIndex()==0?"CONSUMIDOR FINAL":clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNomCliente());
+        param.put("ApellidoCliente",cbCliente.getSelectedIndex()==0?null:clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getApeCliente());
+        param.put("NumDocumento",cbCliente.getSelectedIndex()==0?"9999999999":clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNumDocumento());
+        param.put("FechaFactura",fecha.getText());
+        param.put("NomVendedor",empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado()).getNomEmpleado());
+        param.put("NomBarbero",empleadosDAO.findempleado(Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0))).getNomEmpleado());
+        param.put("Cai",CAI.getLlave());
+        param.put("Impuesto",0.15);
+        param.put("Descuento",cbDescuento.getSelectedIndex()==0?0:descuentoValor.getValor());
+        //param.put("Descuento",0.12);
+        try {
+            JasperReport reporteFactura = JasperCompileManager.compileReport("src/main/resources/Reportes/report1.jrxml");
+            JasperPrint print = JasperFillManager.fillReport(
+                    reporteFactura,
+                    param, 
+                    dataSource.getDataSource(arrayDetallesFactura));
+            JasperViewer view = new JasperViewer(print,false);
+            view.setVisible(true);
+            view.setTitle("Factura " + Integer.parseInt(numFactura.getText()));
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+        } catch (JRException ex) {
+            Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    //calcular el total por filas
+    private void calcularTotalFila()
+    {
+        double totalFila = 0.00;
+        for(int i = 0 ; i < tablaFactura.getRowCount(); i++)
+        {
+            if(Double.parseDouble(tablaFactura.getValueAt(i,4).toString()) > 0.00)
+            {
+                totalFila = Double.parseDouble(tablaFactura.getValueAt(i,0).toString()) * Double.parseDouble(tablaFactura.getValueAt(i,3).toString()) * 
+                        (1-Double.parseDouble(tablaFactura.getValueAt(i,4).toString()));
+                tablaFactura.setValueAt(totalFila,i,5);
+            }else
+            {
+               totalFila = Double.parseDouble(tablaFactura.getValueAt(i,0).toString()) * Double.parseDouble(tablaFactura.getValueAt(i,3).toString());
+               tablaFactura.setValueAt(totalFila,i,5);  
+            }
+        }
+        
+    }
+    
     private void calcularSubtotal()
     {
       double subtotal = 0.00;
@@ -134,7 +272,7 @@ public class PantallaFactura extends javax.swing.JFrame {
       {
           for(int i  = 0 ; i < tablaFactura.getRowCount(); i++)
       {
-           subtotal = subtotal + Double.parseDouble(tablaFactura.getValueAt(i,4).toString());
+           subtotal = subtotal + Double.parseDouble(tablaFactura.getValueAt(i,5).toString());
       }
       subTotal.setText(Double.toString(subtotal));
       }else
@@ -145,8 +283,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     }
     
     public void cargarProductos()
-    {
-        List<precioshistoricosproductos> preciosProductosBD = preciosProductosDAO.findprecioshistoricosproductosEntities();
+    {       
         double precioActual = 0;
         DefaultTableModel modelo = new DefaultTableModel();
         modelo.setRowCount(0);
@@ -179,10 +316,12 @@ public class PantallaFactura extends javax.swing.JFrame {
                 );
                 }
             }
+            //busquedaTabla();
     }
     
     public void cargarServicios()
     {
+        
         List<precioshistoricoservicios> preciosServicioBD = preciosServiciosDAO.findprecioshistoricoserviciosEntities();
         double precioActual = 0;
         DefaultTableModel modelo = new DefaultTableModel();
@@ -214,6 +353,7 @@ public class PantallaFactura extends javax.swing.JFrame {
                 );
                 }  
             }  
+         //busquedaTabla();    
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -248,7 +388,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         subTotal = new javax.swing.JTextField();
         botonFacturar = new javax.swing.JButton();
         botonBuscar = new javax.swing.JButton();
-        botonBuscar1 = new javax.swing.JButton();
+        botonReiniciar = new javax.swing.JButton();
         caiLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -258,6 +398,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         botonAnadir = new javax.swing.JButton();
         cbOpciones = new javax.swing.JComboBox<>();
         cbBarbero = new javax.swing.JComboBox<>();
+        botonCantidad = new javax.swing.JButton();
         titulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -319,6 +460,11 @@ public class PantallaFactura extends javax.swing.JFrame {
         jLabel5.setText("Descuento:");
 
         cbDescuento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+        cbDescuento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbDescuentoActionPerformed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
@@ -374,6 +520,16 @@ public class PantallaFactura extends javax.swing.JFrame {
         jLabel8.setText("Barbero:");
 
         jScrollPane1.setBackground(new java.awt.Color(30, 33, 34));
+        jScrollPane1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jScrollPane1PropertyChange(evt);
+            }
+        });
+        jScrollPane1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jScrollPane1KeyTyped(evt);
+            }
+        });
 
         tablaFactura.setBackground(new java.awt.Color(30, 33, 34));
         tablaFactura.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -383,14 +539,14 @@ public class PantallaFactura extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Cantidad", "Servicio/Producto", "Descripción", "Precio Unitario", "Descuento", "Total "
+                "Cantidad", "Servicio/Producto", "ID", "Descripción", "Precio Unitario", "Descuento", "Total "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -406,6 +562,19 @@ public class PantallaFactura extends javax.swing.JFrame {
         tablaFactura.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaFacturaMouseClicked(evt);
+            }
+        });
+        tablaFactura.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tablaFacturaPropertyChange(evt);
+            }
+        });
+        tablaFactura.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tablaFacturaKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tablaFacturaKeyTyped(evt);
             }
         });
         jScrollPane1.setViewportView(tablaFactura);
@@ -489,15 +658,15 @@ public class PantallaFactura extends javax.swing.JFrame {
             }
         });
 
-        botonBuscar1.setBackground(new java.awt.Color(189, 158, 76));
-        botonBuscar1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        botonBuscar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/recargar.png"))); // NOI18N
-        botonBuscar1.setText("REINICIAR");
-        botonBuscar1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        botonBuscar1.setRequestFocusEnabled(false);
-        botonBuscar1.addActionListener(new java.awt.event.ActionListener() {
+        botonReiniciar.setBackground(new java.awt.Color(189, 158, 76));
+        botonReiniciar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        botonReiniciar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/recargar.png"))); // NOI18N
+        botonReiniciar.setText("REINICIAR");
+        botonReiniciar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        botonReiniciar.setRequestFocusEnabled(false);
+        botonReiniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonBuscar1ActionPerformed(evt);
+                botonReiniciarActionPerformed(evt);
             }
         });
 
@@ -586,6 +755,19 @@ public class PantallaFactura extends javax.swing.JFrame {
 
         cbBarbero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
 
+        botonCantidad.setBackground(new java.awt.Color(189, 158, 76));
+        botonCantidad.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        botonCantidad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/editar.png"))); // NOI18N
+        botonCantidad.setText("MODIFICAR CANTIDAD");
+        botonCantidad.setEnabled(false);
+        botonCantidad.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        botonCantidad.setRequestFocusEnabled(false);
+        botonCantidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCantidadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -597,7 +779,7 @@ public class PantallaFactura extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonBuscar1)
+                        .addComponent(botonReiniciar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
@@ -607,6 +789,8 @@ public class PantallaFactura extends javax.swing.JFrame {
                                 .addComponent(jLabel10))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(botonCantidad)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel9)))
                         .addGap(18, 18, 18)
@@ -709,7 +893,8 @@ public class PantallaFactura extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(subTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
@@ -718,7 +903,7 @@ public class PantallaFactura extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonBuscar1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(botonReiniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18))
         );
 
@@ -765,18 +950,138 @@ public class PantallaFactura extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonFacturarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonFacturarActionPerformed
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new menuGerente().setVisible(true);
+    EntityManager em = productosDAO.getEntityManager();
+        if(tablaFactura.getRowCount() == 0)
+        {
+            JOptionPane.showMessageDialog(null,"No hay nada para facturar.","",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(cbTipoPago.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null,"Debes seleccionar un método de pago.","Selecciona un método de pago",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+   facturaencabezadoJpaController encabezadoDAO = new facturaencabezadoJpaController();
+   detalleproductoJpaController detalleProdDAO = new detalleproductoJpaController();
+   detalleservicioJpaController detalleServicioDAO = new detalleservicioJpaController();
+   boolean procesoConExito = true;
+   
+    //encabezado de la factura
+    facturaencabezado encabezado = new facturaencabezado();
+    encabezado.setFechaFactura(currentTimeSql);
+    encabezado.setIDVendedor(singleton.getCuenta().getIDEmpleado());
+    encabezado.setIDBarbero(Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0)));
+    encabezado.setIDCliente(Character.getNumericValue((cbCliente.getSelectedItem().toString().charAt(0))));
+    encabezado.setIDTipoPago(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)));
+    encabezado.setIDParametro(CAI.getIdparametro());
+    encabezado.setIDEstado(1);
+        try {
+            encabezadoDAO.create(encabezado);
+        } catch (Exception ex) {
+            procesoConExito = false;
+            Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    //detalle de productos
+    for(int i = 0 ; i < tablaFactura.getRowCount() ; i++)
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
+        //0 significa que el articulo en detalle es un producto
+        if(Integer.parseInt(modelo.getValueAt(i,1).toString()) == 0)
+        {
+            //encontrar el precio actual del producto
+            
+            String hql = "FROM precioshistoricosproductos E WHERE E.IDProducto = :idProducto AND E.Activo = 1";
+            Query query = em.createQuery(hql);
+            query.setParameter("idProducto",Integer.parseInt(tablaFactura.getValueAt(i,1).toString()));
+            precioshistoricosproductos precio = (precioshistoricosproductos)query.getSingleResult();
+            
+            //creacion de objeto para JPA Hibernate y seteando los atributos
+            detalleproducto detalleProductos = new detalleproducto();
+            detalleProductos.setCantidad(Integer.parseInt(tablaFactura.getValueAt(i,0).toString()));
+            detalleProductos.setIDFacturaEncabezado(encabezadoDAO.getfacturaencabezadoCount() == 0 
+                    ?1 
+                    :encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado());
+            detalleProductos.setIDProducto(Integer.parseInt(tablaFactura.getValueAt(i,1).toString()));
+            detalleProductos.setPrecio(precio.getPrecio());
+              //disminuir inventario
+            productos disminuirProducto = productosDAO.findproductos(Integer.parseInt(tablaFactura.getValueAt(i,1).toString()));
+            disminuirProducto.setStockActual(disminuirProducto.getStockActual() - Integer.parseInt(tablaFactura.getValueAt(i,0).toString()));
+            try
+            {
+              detalleProdDAO.create(detalleProductos);  
+              productosDAO.edit(disminuirProducto);
+              procesoConExito = true;
+            }catch(Exception ex)
+            {
+                procesoConExito = false;
+                Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });
-        this.dispose();
+        }
+    }
+    
+    //detalle de servicios
+    for(int i = 0 ; i < tablaFactura.getRowCount() ; i++)
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
+        //1 significa que el detalle de esa fila es un servicio
+        if(Integer.parseInt(modelo.getValueAt(i,1).toString()) == 1)
+        {
+            //encontrar el precio actual del producto
+            String hql = "FROM precioshistoricoservicios E WHERE E.IDServicio = :idServicio AND E.Activo = 1";
+            Query query = em.createQuery(hql);
+            query.setParameter("idServicio",Integer.parseInt(tablaFactura.getValueAt(i,1).toString()));
+            precioshistoricoservicios precio = (precioshistoricoservicios)query.getSingleResult();
+            
+            //creacion de objeto JPA
+            detalleservicio detalleServicios = new detalleservicio();
+            detalleServicios.setCantidad(Integer.parseInt(tablaFactura.getValueAt(i,0).toString()));
+            detalleServicios.setIDFacturaEncabezado(encabezadoDAO.getfacturaencabezadoCount() == 0 
+                    ? 1 
+                    :encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado());
+            detalleServicios.setIDServicio(Integer.parseInt(tablaFactura.getValueAt(i,1).toString()));
+            detalleServicios.setPrecio(precio.getPrecio());
+            try {
+                detalleServicioDAO.create(detalleServicios);
+                procesoConExito = true;
+            } catch (Exception ex) {
+                procesoConExito = false;
+                Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    //descuento de factura
+        String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
+        Query query = em.createQuery(hql);
+        query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
+        descuentos descuentoValor = (descuentos)query.getSingleResult();
+        
+    descuentofactura descuento = new descuentofactura();
+    descuento.setIDFactura(encabezadoDAO.getfacturaencabezadoCount() == 0 
+                    ? 1 
+                    :encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado());
+    descuento.setIDDescuento(Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
+    descuento.setValor(descuentoValor.getValor());
+    descuento.setActivo(true);
+    
+        try {
+            descuentosDAO.create(descuento);
+            procesoConExito = true;
+        } catch (Exception ex) {
+            Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+            procesoConExito = false;
+        }
+        
+     if(procesoConExito)
+    {
+        JOptionPane.showMessageDialog(null,"Proceso realizado con Exito");
+    }
+        imprimirFactura();
+        botonReiniciarActionPerformed(evt);
     }//GEN-LAST:event_botonFacturarActionPerformed
 
     private void numFacturaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numFacturaFocusGained
         // TODO add your handling code here:
-
     }//GEN-LAST:event_numFacturaFocusGained
 
     private void numFacturaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numFacturaFocusLost
@@ -855,7 +1160,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_botonBuscarActionPerformed
 
-    private void botonBuscar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscar1ActionPerformed
+    private void botonReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonReiniciarActionPerformed
         // TODO add your handling code here:
         List<clientes> clientesBD = clientesDAO.findclientesEntities();
         for(int i = 0; i < clientesBD.size() ; i++)
@@ -872,7 +1177,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         calcularSubtotal();
         botonAnadir.setEnabled(false);
         botonQuitar.setEnabled(false);
-    }//GEN-LAST:event_botonBuscar1ActionPerformed
+    }//GEN-LAST:event_botonReiniciarActionPerformed
 
     private void buscarTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscarTxtFocusGained
         // TODO add your handling code here:
@@ -895,34 +1200,87 @@ public class PantallaFactura extends javax.swing.JFrame {
     }//GEN-LAST:event_botonQuitarActionPerformed
 
     private void botonAnadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAnadirActionPerformed
-        // TODO add your handling code here:
+        // Descuentos en BD
+        EntityManager em = descuentosDAO.getEntityManager();
+        String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
+        Query query = em.createQuery(hql);
+        query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
+        List<descuentos> results = query.getResultList();
+        
+        //valida que el usuario no agregue el mismo producto 2 veces
        if(cbOpciones.getSelectedIndex() == 0)
        {
+           for(int i = 0 ; i < tablaFactura.getRowCount(); i++)
+           {
+             if(tablaFactura.getValueAt(i,2).toString().equals(tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(),1).toString()))
+                {
+               JOptionPane.showMessageDialog(null,"Ese producto ya ha sido agregado a la factura. \n"
+                       + "Modifica la cantidad con el boton Modificar Cantidad.",
+                       "Producto ya agregado",
+                       JOptionPane.ERROR_MESSAGE);
+               return;
+                }  
+           }
+           
+           //valida que el usuario no pueda facturar productos que no se encuentran en el inventario
+           if(productosDAO.findproductos(Integer.parseInt(tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(),0).toString())).getStockActual() == 0)
+           {
+              JOptionPane.showMessageDialog(null,"Actualmente no existen unidades de ese producto en existencia. \n"
+                       + "Agrega unidades en la pantalla de productos",
+                       "Producto agotado.",
+                       JOptionPane.ERROR_MESSAGE);
+               return; 
+           }
+           
+           //despliega mensaje de verificacion indicando al cajero que muy pronto se acabara el producto seleccionado para facturarse
+           if(productosDAO.findproductos(Integer.parseInt(tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(),0).toString())).getStockActual() < productosDAO.findproductos(Integer.parseInt(tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(),0).toString())).getStockMinimo())
+           {
+              JOptionPane.showMessageDialog(null,"Las unidades en existencia de este producto son menores a las \n"
+                       + "unidades mínimas preestablecidas. Se recomienda comprar mas unidades de este producto.",
+                       "Producto por agotarse.",
+                       JOptionPane.WARNING_MESSAGE); 
+           }
         DefaultTableModel modelo = (DefaultTableModel)tablaFactura.getModel();
         tablaFactura.setModel(modelo);
          modelo.addRow(
                     new Object[]{
                         1,
-                        true,
+                        0,
+                        tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 0),
                         tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 1),
                         tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 2),
-                        1,
+                        cbDescuento.getSelectedIndex() == 0 ? 0.00 : results.get(results.size()-1).getValor(),
                         1 * Double.parseDouble(tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 2).toString())
                     });
+         calcularTotalFila();
          calcularSubtotal();
        }else
        {
-           DefaultTableModel modelo = (DefaultTableModel)tablaFactura.getModel();
+           for(int i = 0 ; i < tablaFactura.getRowCount(); i++)
+           {
+               //valida que el usuario no agregue el mismo servicio 2 veces
+             if(tablaFactura.getValueAt(i,2).toString().equals(tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(),1).toString()))
+                {
+               JOptionPane.showMessageDialog(null,"Ese servicio ya ha sido agregado a la factura. \n"
+                       + "Modifica la cantidad con el boton Modificar Cantidad.",
+                       "Producto ya agregado",
+                       JOptionPane.ERROR_MESSAGE);
+               return;
+                }  
+           } 
+        DefaultTableModel modelo = (DefaultTableModel)tablaFactura.getModel();
         tablaFactura.setModel(modelo);
-         modelo.addRow(
+        modelo.addRow(
                     new Object[]{
                         1,
-                        true,
+                        1,
+                        tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 0),
                         tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 1),
                         tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 2),
-                        1,
+                        cbDescuento.getSelectedIndex() == 0 ? 0.00 : results.get(results.size()-1).getValor(),
                         1 * Double.parseDouble(tablaProductosServicios.getValueAt(tablaProductosServicios.getSelectedRow(), 2).toString())
                     });
+        calcularTotalFila();
          calcularSubtotal();
        }
         
@@ -952,8 +1310,70 @@ public class PantallaFactura extends javax.swing.JFrame {
         if(tablaFactura.getSelectedRow()!= -1)
         {
           botonQuitar.setEnabled(true);  
+          botonCantidad.setEnabled(true);
         }
     }//GEN-LAST:event_tablaFacturaMouseClicked
+
+    private void jScrollPane1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jScrollPane1KeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane1KeyTyped
+
+    private void tablaFacturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablaFacturaKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tablaFacturaKeyTyped
+
+    private void jScrollPane1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jScrollPane1PropertyChange
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jScrollPane1PropertyChange
+
+    private void tablaFacturaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaFacturaPropertyChange
+        // TODO add your handling code here:
+      
+    }//GEN-LAST:event_tablaFacturaPropertyChange
+
+    private void tablaFacturaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablaFacturaKeyPressed
+        // TODO add your handling code here:
+        calcularTotalFila();
+        calcularSubtotal();
+    }//GEN-LAST:event_tablaFacturaKeyPressed
+
+    private void botonCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCantidadActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel modelo = (DefaultTableModel)tablaFactura.getModel();
+        tablaFactura.setModel(modelo);
+        int cantidad = Integer.parseInt(JOptionPane.showInputDialog(null,
+                "Ingresa la cantidad específica de este producto o servicio.",
+                "Cantidad",
+                JOptionPane.PLAIN_MESSAGE));
+        if(cantidad > productosDAO.findproductos(Integer.parseInt(modelo.getValueAt(tablaFactura.getSelectedRow(),2).toString())).getStockActual())
+        {
+            JOptionPane.showMessageDialog(null,"No existen tantas unidades de ese producto","Cantidad Inválida",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        modelo.setValueAt(cantidad,tablaFactura.getSelectedRow(),0);
+        calcularTotalFila();
+        calcularSubtotal();
+    }//GEN-LAST:event_botonCantidadActionPerformed
+
+    private void cbDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDescuentoActionPerformed
+        // TODO add your handling code here:
+        EntityManager em = descuentosDAO.getEntityManager();
+        String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
+        Query query = em.createQuery(hql);
+        query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
+        descuentos results = (descuentos)query.getSingleResult();
+        //List<descuentos> results = query.getResultList();
+        descuentoFactura = results;
+        
+        for(int i = 0; i < tablaFactura.getRowCount() ; i++)
+        {
+           tablaFactura.setValueAt(results.getValor(),i,4); 
+        }
+        calcularTotalFila();
+        calcularSubtotal();
+    }//GEN-LAST:event_cbDescuentoActionPerformed
 
     
     /**
@@ -994,21 +1414,6 @@ public class PantallaFactura extends javax.swing.JFrame {
         
         
     }
-    
-   private void insertarImagen(JLabel lbl,String ruta)
-    {
-        this.imagen = new ImageIcon(ruta);
-        this.icono = new ImageIcon(
-                this.imagen.getImage().getScaledInstance(
-                        lbl.getWidth(), 
-                        lbl.getHeight(),
-                        Image.SCALE_DEFAULT)
-        );
-        lbl.setIcon(this.icono);
-        this.repaint();
-    }
-    
-    
     private String convertirDates(String Fecha)
     {
         String[] palabras  = Fecha.split("-");
@@ -1021,9 +1426,10 @@ public class PantallaFactura extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAnadir;
     private javax.swing.JButton botonBuscar;
-    private javax.swing.JButton botonBuscar1;
+    private javax.swing.JButton botonCantidad;
     private javax.swing.JButton botonFacturar;
     private javax.swing.JButton botonQuitar;
+    private javax.swing.JButton botonReiniciar;
     private javax.swing.JTextField buscarTxt;
     private javax.swing.JLabel caiLabel;
     private javax.swing.JTextField cajeroTxt;

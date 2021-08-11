@@ -8,19 +8,28 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.bonosempleadomensualJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.deduccionesempleadomensualJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.planillasJpaController;
 import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
 import com.mycompany.sistemabarberia.bonosempleadomensual;
+import com.mycompany.sistemabarberia.planillas;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -30,14 +39,15 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Planilla extends javax.swing.JFrame {
     
+    private String periodoActual;
+    
     private empleadoJpaController empleadoDAO =  new empleadoJpaController();
     private List<empleado> empleadosBD =  empleadoDAO.findempleadoEntities();
     private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController();
-    private List<deduccionesempleadomensual> deduccionsBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
     private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
-    private List<salariohistoricoempleados> salariosBD = salarioDAO.findsalariohistoricoempleadosEntities();
     private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController();
-    private List<bonosempleadomensual> bonosBD = bonosDAO.findbonosempleadomensualEntities();
+    private planillasJpaController planillaDAO = new planillasJpaController();
+    
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
     String currentTime = sdf.format(dt);
@@ -52,37 +62,79 @@ public class Planilla extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(dt);
+        int anio = calendar.get(Calendar.YEAR);
+        int mes = calendar.get(Calendar.MONTH) + 1;
+        
+        periodoActual = mes<10? anio+"0"+mes: Integer.toString(anio)+mes;
         fechaLabel.setText("Fecha: " + currentTime);
-        cargarTabla();
     }
     
-    private void cargarTabla()
+    private void cargarTablaPlanilla()
     {
+        EntityManager em = empleadoDAO.getEntityManager();
+        //Deducciones para el perido actual
+        String hqlDeducciones = "FROM deduccionesempleadomensual E WHERE E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado";
+        Query queryDeducciones = em.createQuery(hqlDeducciones);
+        queryDeducciones.setParameter("periodo",periodoActual);
         
-        String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)planilla.getModel();
+        //Bonos para el periodo actual
+        String hqlBonos = "FROM bonosempleadomensual E WHERE E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado";
+        Query queryBonos = em.createQuery(hqlBonos);
+        queryBonos.setParameter("periodo",periodoActual);
+        
+        //Salario de empleados
+        String hqlSalarios = "FROM salariohistoricoempleados E WHERE E.Activo = 1 AND E.IDEmpleado = :idEmpleado";
+        Query querySalarios = em.createQuery(hqlSalarios);
+        
+        DefaultTableModel modelo = (DefaultTableModel)tablaPlanilla.getModel();
         modelo.setRowCount(0);
-        planilla.setModel(modelo);
+        tablaPlanilla.setModel(modelo);
+        
         List<empleado> empleados = empleadoDAO.findempleadoEntities();
             for(empleado empleado : empleados){
-                if(empleado.isActivo())
-                {
-                activo = "Sí";   
-                }else
-                {
-                    activo = "No";
+                //no incluir empleados desactivados
+                if(!empleado.isActivo())
+                { 
+                    continue;
                 }
+                Double totalDeducciones = 0.00;
+                Double totalBonos = 0.00;
+                //total de deducciones
+                queryDeducciones.setParameter("idEmpleado",empleado.getIdempleado());
+                List<deduccionesempleadomensual> deduccionesPorEmpleado = queryDeducciones.getResultList();
+                for(deduccionesempleadomensual deducciones : deduccionesPorEmpleado)
+                {
+                    totalDeducciones = totalDeducciones + deducciones.getValor();
+                }
+                //total de bonos
+                queryBonos.setParameter("idEmpleado",empleado.getIdempleado());
+                List<bonosempleadomensual> bonosPorEmpleado = queryBonos.getResultList();
+                for(bonosempleadomensual bonos : bonosPorEmpleado)
+                {
+                    totalBonos = totalBonos + bonos.getValor();
+                }
+                //Salario actual
+                querySalarios.setParameter("idEmpleado",empleado.getIdempleado());
+                salariohistoricoempleados salario = (salariohistoricoempleados)querySalarios.getSingleResult();
+                Double salarioActual =  salario.getSalario();
+                
                     modelo.addRow(
                     new Object[]{
                         empleado.getIdempleado(),
                         empleado.getNomEmpleado(),
                         empleado.getApeEmpleado(),
-                        empleado.getGenEmpleado(),
-                        convertirDates(empleado.getFechaInicio().toString()),
-                        empleado.getNumCelular(),
-                        activo
+                        periodoActual,
+                        totalBonos,
+                        totalDeducciones,
+                        salarioActual,
+                        salarioActual-totalDeducciones+totalBonos
                     }
                 );
+                    totalDeducciones = 0.00;
+                    totalBonos = 0.00;
             } 
     }
 
@@ -101,9 +153,9 @@ public class Planilla extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        planilla = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        tablaPlanilla = new javax.swing.JTable();
+        limpiar = new javax.swing.JButton();
+        generar = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
         fechaLabel = new javax.swing.JLabel();
@@ -129,11 +181,11 @@ public class Planilla extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        planilla.setAutoCreateRowSorter(true);
-        planilla.setBackground(new java.awt.Color(30, 33, 34));
-        planilla.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        planilla.setForeground(new java.awt.Color(255, 255, 255));
-        planilla.setModel(new javax.swing.table.DefaultTableModel(
+        tablaPlanilla.setAutoCreateRowSorter(true);
+        tablaPlanilla.setBackground(new java.awt.Color(30, 33, 34));
+        tablaPlanilla.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        tablaPlanilla.setForeground(new java.awt.Color(255, 255, 255));
+        tablaPlanilla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -156,35 +208,45 @@ public class Planilla extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        planilla.setGridColor(new java.awt.Color(255, 255, 255));
-        planilla.setRowHeight(32);
-        planilla.getTableHeader().setReorderingAllowed(false);
-        planilla.addFocusListener(new java.awt.event.FocusAdapter() {
+        tablaPlanilla.setGridColor(new java.awt.Color(255, 255, 255));
+        tablaPlanilla.setRowHeight(32);
+        tablaPlanilla.getTableHeader().setReorderingAllowed(false);
+        tablaPlanilla.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                planillaFocusGained(evt);
+                tablaPlanillaFocusGained(evt);
             }
         });
-        planilla.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaPlanilla.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                planillaMouseClicked(evt);
+                tablaPlanillaMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(planilla);
+        jScrollPane1.setViewportView(tablaPlanilla);
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
         MyHeaderRender.setForeground(Color.BLACK);
-        for(int i = 0; i < planilla.getColumnCount();i++)
+        for(int i = 0; i < tablaPlanilla.getColumnCount();i++)
         {
-            planilla.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+            tablaPlanilla.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
         }
-        planilla.setShowGrid(true);
-        planilla.setGridColor(Color.BLACK);
+        tablaPlanilla.setShowGrid(true);
+        tablaPlanilla.setGridColor(Color.BLACK);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/limpiar.png"))); // NOI18N
-        jButton1.setContentAreaFilled(false);
+        limpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/limpiar.png"))); // NOI18N
+        limpiar.setContentAreaFilled(false);
+        limpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarActionPerformed(evt);
+            }
+        });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/generar.png"))); // NOI18N
-        jButton2.setContentAreaFilled(false);
+        generar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/generar.png"))); // NOI18N
+        generar.setContentAreaFilled(false);
+        generar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generarActionPerformed(evt);
+            }
+        });
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/imprimirReporte.png"))); // NOI18N
         jButton3.setContentAreaFilled(false);
@@ -197,9 +259,9 @@ public class Planilla extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(generar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(limpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
@@ -214,9 +276,9 @@ public class Planilla extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton2)
+                    .addComponent(generar)
                     .addComponent(jButton3)
-                    .addComponent(jButton1))
+                    .addComponent(limpiar))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -303,13 +365,13 @@ public class Planilla extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void planillaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_planillaMouseClicked
+    private void tablaPlanillaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPlanillaMouseClicked
 
-    }//GEN-LAST:event_planillaMouseClicked
+    }//GEN-LAST:event_tablaPlanillaMouseClicked
 
-    private void planillaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_planillaFocusGained
+    private void tablaPlanillaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tablaPlanillaFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_planillaFocusGained
+    }//GEN-LAST:event_tablaPlanillaFocusGained
 
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
@@ -320,6 +382,38 @@ public class Planilla extends javax.swing.JFrame {
         });
         this.dispose();
     }//GEN-LAST:event_botonRegresarActionPerformed
+
+    private void generarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarActionPerformed
+        // TODO add your handling code here:
+        int confirmacion = JOptionPane.showConfirmDialog(null,"¿Seguro que deseas generar la planilla para el periodo "+periodoActual+ "?",
+                "Generación de planilla",
+                JOptionPane.YES_NO_OPTION);
+        if(confirmacion == 0)
+        {
+            cargarTablaPlanilla();
+            
+            for(int i = 0 ; i < tablaPlanilla.getRowCount() ; i++)
+            {
+                planillas planilla = new planillas();
+                planilla.setIDEmpleado(Integer.parseInt(tablaPlanilla.getValueAt(i,0).toString()));
+                planilla.setPeriodo(periodoActual);
+                planilla.setTotalPagar(Double.parseDouble(tablaPlanilla.getValueAt(i,7).toString()));
+                planilla.setActivo(true);
+                try {
+                    planillaDAO.create(planilla);
+                } catch (Exception ex) {
+                    Logger.getLogger(Planilla.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_generarActionPerformed
+
+    private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
+        // TODO add your handling code here:
+         DefaultTableModel modelo = (DefaultTableModel)tablaPlanilla.getModel();
+        modelo.setRowCount(0);
+        tablaPlanilla.setModel(modelo);
+    }//GEN-LAST:event_limpiarActionPerformed
 
     
     /**
@@ -398,15 +492,15 @@ public class Planilla extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonRegresar;
     private javax.swing.JLabel fechaLabel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton generar;
     private javax.swing.JButton jButton3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton limpiar;
     private javax.swing.JLabel logo;
-    private javax.swing.JTable planilla;
+    private javax.swing.JTable tablaPlanilla;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

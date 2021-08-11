@@ -25,7 +25,7 @@ public class planillas implements Serializable{
     @Column
     private double TotalPagar;
     @Column
-    private boolean planilla;
+    private boolean Activo;
 
     public int getIdplanilla() {
         return idplanilla;
@@ -59,11 +59,11 @@ public class planillas implements Serializable{
         this.TotalPagar = TotalPagar;
     }
 
-    public boolean isPlanilla() {
-        return planilla;
+    public boolean isActivo() {
+        return Activo;
     }
 
-    public void setPlanilla(boolean planilla) {
-        this.planilla = planilla;
+    public void setActivo(boolean Activo) {
+        this.Activo = Activo;
     } 
 }

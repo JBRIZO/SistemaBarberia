@@ -203,18 +203,22 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="confirmarContrasena" max="32767" attributes="0"/>
-                                  <Component id="formatoInvalido3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="formatoInvalido2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="nombreUsuario" max="32767" attributes="0"/>
-                                  <Component id="formatoInvalido1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="cbEmpleados" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="contrasena" max="32767" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="confirmarContrasena" max="32767" attributes="0"/>
+                                      <Component id="formatoInvalido3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                                      <Component id="formatoInvalido2" min="-2" max="-2" attributes="0"/>
+                                      <Component id="nombreUsuario" max="32767" attributes="0"/>
+                                      <Component id="formatoInvalido1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cbEmpleados" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="contrasena" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="mostrar" min="-2" pref="29" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="0" pref="57" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="22" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -232,7 +236,10 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                          <Component id="contrasena" min="-2" pref="42" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="mostrar" max="32767" attributes="0"/>
+                              <Component id="contrasena" pref="42" max="32767" attributes="0"/>
+                          </Group>
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Component id="formatoInvalido2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -375,6 +382,20 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Confirmar Contrase&#xf1;a:"/>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JToggleButton" name="mostrar">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/show.png"/>
+                    </Property>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
+                    <Property name="selectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/hide.png"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="mostrarStateChanged"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

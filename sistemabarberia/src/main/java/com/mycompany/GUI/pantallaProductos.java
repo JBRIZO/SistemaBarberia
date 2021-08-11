@@ -80,6 +80,14 @@ public class pantallaProductos extends javax.swing.JFrame {
         modelo.setRowCount(0);
         tablaProductos.setModel(modelo);
         List<productos> productosEnBD = productosDAO.findproductosEntities();
+        
+        if(productosEnBD.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun producto en la base datos. Agrega nuevos productos",
+                    "No se encuentran productos",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(productos producto : productosEnBD){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
@@ -126,6 +134,15 @@ public class pantallaProductos extends javax.swing.JFrame {
                 productosFiltrados.add(productosEnBD.get(i));
             }
         }
+        
+        if(productosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun producto con ese ID.",
+                    "ID inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
             for(productos producto : productosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
@@ -165,6 +182,13 @@ public class pantallaProductos extends javax.swing.JFrame {
         List<productos> productosEnBD = productosDAO.findproductosEntities();
         List<productos> productosFiltrados = new ArrayList();
         
+        if(productosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun producto con ese Nombre.",
+                    "Nombre Inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         for(int i = 0; i < productosEnBD.size();i++)
         {
             if(productosEnBD.get(i).getNomProducto().equalsIgnoreCase(Nombre))
@@ -211,6 +235,14 @@ public class pantallaProductos extends javax.swing.JFrame {
         List<productos> productosEnBD = productosDAO.findproductosEntities();
         List<productos> productosFiltrados = new ArrayList();
         
+        if(productosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun producto con ese Stock actual.",
+                    "Stock inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         for(int i = 0; i < productosEnBD.size();i++)
         {
             if(productosEnBD.get(i).getStockActual() == Stock)
@@ -256,7 +288,13 @@ public class pantallaProductos extends javax.swing.JFrame {
         tablaProductos.setModel(modelo);
         List<productos> productosEnBD = productosDAO.findproductosEntities();
         List<productos> productosFiltrados = new ArrayList();
-        
+        if(productosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun producto con ese Stock Maximo.",
+                    "Stock maximo inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         for(int i = 0; i < productosEnBD.size();i++)
         {
             if(productosEnBD.get(i).getStockMaximo() == Stock)
@@ -303,7 +341,6 @@ public class pantallaProductos extends javax.swing.JFrame {
         List<productos> productosEnBD = productosDAO.findproductosEntities();
         List<productos> productosFiltrados = new ArrayList();
         List<precioshistoricosproductos> preciosFiltrados = new ArrayList();
-        
         for(int i = 0 ; i < preciosBD.size() ; i++)
         {
             if(preciosBD.get(i).isActivo())
@@ -321,6 +358,14 @@ public class pantallaProductos extends javax.swing.JFrame {
                     productosFiltrados.add(productosEnBD.get(i));
                 }
             }
+        }
+        
+        if(productosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun producto con ese precio.",
+                    "Precio inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
         }
             for(productos producto : productosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
@@ -680,7 +725,7 @@ public class pantallaProductos extends javax.swing.JFrame {
                 .addComponent(fechaLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
         );
@@ -695,9 +740,7 @@ public class pantallaProductos extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -764,7 +807,6 @@ public class pantallaProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_nuevoProductoActionPerformed
 
     private void modificarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarProductoActionPerformed
-        List<productos> productosBD = productosDAO.findproductosEntities();
         for(int i = 0 ; i < productosBD.size() ; i++ )
         {
             if(tablaProductos.getSelectedRow() == -1)
