@@ -19,7 +19,6 @@ public class bonosempleadomensual implements Serializable {
     
     @Id
     private int numbono;
-    
     @Column
     private int IDEmpleado;
     @Column

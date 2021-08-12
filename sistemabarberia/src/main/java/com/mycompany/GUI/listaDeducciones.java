@@ -49,7 +49,9 @@ public class listaDeducciones extends javax.swing.JFrame {
 
     private void cargarPeriodosCb()
     {
-        List<String> periodosEnBD = new ArrayList<>();
+        if(deduccionesBD.size() > 0)
+        {
+          List<String> periodosEnBD = new ArrayList<>();
          periodosEnBD.add(deduccionesBD.get(deduccionesBD.size()-1).getPeriodo());
         for(int i = deduccionesBD.size()-1 ; i > 0; i--)
         {
@@ -59,11 +61,11 @@ public class listaDeducciones extends javax.swing.JFrame {
                 periodosEnBD.add(deduccionesBD.get(i-1).getPeriodo());
             }
         }
-        
-        for(int i = 0; i < periodosEnBD.size() ; i++)
+           for(int i = 0; i < periodosEnBD.size() ; i++)
         {
             cbPeriodos.addItem(periodosEnBD.get(i));
-        }  
+        } 
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.

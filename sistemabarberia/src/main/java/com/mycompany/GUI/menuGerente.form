@@ -54,28 +54,26 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="logo" alignment="0" min="-2" pref="92" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
-                          <Component id="botonRegresar" min="-2" pref="176" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
+                  <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
+                  <Component id="botonRegresar" min="-2" pref="176" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jPanel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="365" pref="365" max="-2" attributes="0"/>
-                              <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jPanel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="365" pref="365" max="-2" attributes="0"/>
+                          <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="bienvenido" min="-2" pref="342" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="0" pref="48" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="logo" min="-2" pref="92" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="bienvenido" min="-2" pref="378" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -83,11 +81,11 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                      <Component id="logo" min="-2" pref="98" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                           <Component id="bienvenido" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="logo" min="-2" pref="98" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="tituloPantalla" min="-2" max="-2" attributes="0"/>
@@ -181,23 +179,29 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="botonPlanilla" min="-2" pref="176" max="-2" attributes="0"/>
-                              <Component id="botonAtributosFactura" min="-2" pref="176" max="-2" attributes="0"/>
-                              <Component id="botonBonos" min="-2" pref="176" max="-2" attributes="0"/>
-                              <Component id="botonDeducciones" min="-2" pref="176" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="134" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="botonDescuentos" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
-                              <Component id="botonEmpleados" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
-                              <Component id="botonServicios" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
-                              <Component id="botonProductos" alignment="0" min="-2" pref="176" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="botonBonos" max="32767" attributes="0"/>
+                              <Component id="botonDeducciones" alignment="0" pref="0" max="32767" attributes="0"/>
+                              <Component id="botonAtributosFactura" alignment="0" pref="192" max="32767" attributes="0"/>
+                              <Component id="botonPlanilla" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="118" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="botonUsuarios" alignment="1" min="-2" pref="176" max="-2" attributes="0"/>
-                              <Component id="botonClientes" alignment="1" min="-2" pref="176" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="botonServicios" max="32767" attributes="0"/>
+                                      <Component id="botonProductos" pref="192" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="86" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="botonUsuarios" pref="192" max="32767" attributes="0"/>
+                                      <Component id="botonClientes" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="botonEmpleados" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="botonDescuentos" alignment="0" pref="192" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace pref="22" max="32767" attributes="0"/>
                       </Group>
@@ -249,6 +253,9 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
                     </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/planilla.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="PLANILLA"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
@@ -265,6 +272,9 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
                     </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/productos.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="PRODUCTOS"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
@@ -279,9 +289,12 @@
                       <Color blue="4c" green="9e" red="bd" type="rgb"/>
                     </Property>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="12" style="1"/>
+                      <Font name="Tahoma" size="14" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="ATRIBUTOS FACTURA"/>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/config.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="CONFIGURACION"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
@@ -296,6 +309,9 @@
                     </Property>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/servicios.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="SERVICIOS"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
@@ -313,6 +329,9 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
                     </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/deducciones.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="DEDUCCIONES"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
@@ -328,6 +347,9 @@
                     </Property>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/empleado.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="EMPLEADOS"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
@@ -345,6 +367,9 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
                     </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/bonos.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="BONOS"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
@@ -360,6 +385,9 @@
                     </Property>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/descuento.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="DESCUENTOS"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
@@ -377,6 +405,9 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
                     </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/user.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="USUARIOS"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
                   </Properties>
@@ -392,6 +423,9 @@
                     </Property>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="18" style="1"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/cliente.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="CLIENTES"/>
                     <Property name="requestFocusEnabled" type="boolean" value="false"/>
@@ -413,7 +447,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="CERRAR SESI&#xd3;N"/>
+            <Property name="text" type="java.lang.String" value="FACTURACION"/>
             <Property name="requestFocusEnabled" type="boolean" value="false"/>
           </Properties>
           <Events>

@@ -13,13 +13,18 @@ import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
+import com.mycompany.sistemabarberia.PlanillaDataSource;
 import com.mycompany.sistemabarberia.bonosempleadomensual;
 import com.mycompany.sistemabarberia.planillas;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +37,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -47,7 +58,9 @@ public class Planilla extends javax.swing.JFrame {
     private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
     private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController();
     private planillasJpaController planillaDAO = new planillasJpaController();
+    private EntityManager em = empleadoDAO.getEntityManager();
     
+    private PlanillaDataSource dataSource;
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
     String currentTime = sdf.format(dt);
@@ -72,9 +85,83 @@ public class Planilla extends javax.swing.JFrame {
         fechaLabel.setText("Fecha: " + currentTime);
     }
     
+     public void imprimirPlanilla()
+    {
+        //filtrar la planilla por periodo
+        String hql = "FROM planillas E WHERE E.Periodo = :periodo";
+        Query query = em.createQuery(hql);
+        query.setParameter("periodo",periodoActual);
+        List<planillas> planillasPeriodo = (List<planillas>)query.getResultList();
+        
+        //llenar los detalles en la factura
+      Object[][] arrayPlanilla;
+      arrayPlanilla = new Object[planillasPeriodo.size()][7];
+      
+    for(int i = 0; i < planillasPeriodo.size();i++)
+    {
+        //llamar procedimiento almacenado para obtener la suma de los bonos por empleado
+        Query queryBonos =  em.createNativeQuery("CALL sumaBonos(:idEmpleado,:periodo)");
+        queryBonos.setParameter("idEmpleado",planillasPeriodo.get(i).getIDEmpleado());
+        queryBonos.setParameter("periodo", periodoActual);
+        double sumabonos = (double)queryBonos.getSingleResult();
+        //llamar procedimiento almacendao para obtenre la suma delas deducciones para un empleado
+         Query queryDeducciones =  em.createNativeQuery("CALL sumaDeducciones(:idEmpleado,:periodo)");
+        queryDeducciones.setParameter("idEmpleado",planillasPeriodo.get(i).getIDEmpleado());
+        queryDeducciones.setParameter("periodo", periodoActual);
+        double sumadeducciones = (double)queryDeducciones.getSingleResult();
+        System.out.println(sumadeducciones);
+        
+        for(int j = 0; j < 7 ; j++)
+        {
+            switch(j)
+            {
+                case 0:
+                arrayPlanilla[i][0] = planillasPeriodo.get(i).getIDEmpleado();
+                break;
+                case 1:
+                arrayPlanilla[i][1] = empleadoDAO.findempleado(planillasPeriodo.get(i).getIDEmpleado()).getNomEmpleado();
+                break;
+                case 2:
+                arrayPlanilla[i][2] = empleadoDAO.findempleado(planillasPeriodo.get(i).getIDEmpleado()).getApeEmpleado();
+                break;
+                case 3:
+                arrayPlanilla[i][3] = sumabonos;
+                break;
+                case 4:
+                arrayPlanilla[i][4] = sumadeducciones;
+                break;
+                case 5:
+                arrayPlanilla[i][5] = Double.parseDouble(tablaPlanilla.getValueAt(i,6).toString());
+                break;
+                case 6:
+                arrayPlanilla[i][6] = Double.parseDouble(tablaPlanilla.getValueAt(i,7).toString());    
+            }
+            
+        }
+    }     
+        //para ponerles valor a los parametros
+        HashMap param = new HashMap();
+        
+        param.put("periodo",  periodoActual);
+       
+        try {
+            //compilar reporte
+            JasperReport reporteFactura = JasperCompileManager.compileReport("src/main/resources/Reportes/reportePlanilla.jrxml");
+            JasperPrint print = JasperFillManager.fillReport(
+                    reporteFactura,
+                    param, 
+                    dataSource.getDataSource(arrayPlanilla));
+            //view es un jframe dondes e muestra la factura
+            JasperViewer view = new JasperViewer(print,false);
+            view.setVisible(true);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+        } catch (JRException ex) {
+            Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     private void cargarTablaPlanilla()
     {
-        EntityManager em = empleadoDAO.getEntityManager();
         //Deducciones para el perido actual
         String hqlDeducciones = "FROM deduccionesempleadomensual E WHERE E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado";
         Query queryDeducciones = em.createQuery(hqlDeducciones);
@@ -156,7 +243,7 @@ public class Planilla extends javax.swing.JFrame {
         tablaPlanilla = new javax.swing.JTable();
         limpiar = new javax.swing.JButton();
         generar = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        imprimirReporte = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
         fechaLabel = new javax.swing.JLabel();
 
@@ -248,8 +335,13 @@ public class Planilla extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/imprimirReporte.png"))); // NOI18N
-        jButton3.setContentAreaFilled(false);
+        imprimirReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/imprimirReporte.png"))); // NOI18N
+        imprimirReporte.setContentAreaFilled(false);
+        imprimirReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -263,7 +355,7 @@ public class Planilla extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(limpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -277,7 +369,7 @@ public class Planilla extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(generar)
-                    .addComponent(jButton3)
+                    .addComponent(imprimirReporte)
                     .addComponent(limpiar))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
@@ -415,6 +507,11 @@ public class Planilla extends javax.swing.JFrame {
         tablaPlanilla.setModel(modelo);
     }//GEN-LAST:event_limpiarActionPerformed
 
+    private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
+        // TODO add your handling code here:
+       imprimirPlanilla();
+    }//GEN-LAST:event_imprimirReporteActionPerformed
+
     
     /**
      * @param args the command line arguments
@@ -493,7 +590,7 @@ public class Planilla extends javax.swing.JFrame {
     private javax.swing.JButton botonRegresar;
     private javax.swing.JLabel fechaLabel;
     private javax.swing.JButton generar;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton imprimirReporte;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

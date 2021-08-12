@@ -8,6 +8,7 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.FacturaDataSource;
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.detalleproductoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.estadofacturaJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.facturaencabezadoJpaController;
@@ -49,6 +50,7 @@ import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -80,6 +82,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
     private empleadoJpaController empleadoDAO = new empleadoJpaController();
     private parametrosJpaController parametrosDAO = new parametrosJpaController();
     private descuentosJpaController descuentosDAO = new descuentosJpaController();
+    private detalleproductoJpaController detallesProdDao = new detalleproductoJpaController();
         
     private FacturaDataSource dataSource;
     private ImageIcon imagen;
@@ -96,7 +99,6 @@ public class BusquedaFactura extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        cargarTabla();
         for(int i = 0 ; i <estadosFacturaBD.size() ; i++)
         {
             cbEstados.addItem(estadosFacturaBD.get(i).toString());
@@ -106,13 +108,16 @@ public class BusquedaFactura extends javax.swing.JFrame {
             cbParametros.addItem(tablaFactura.getColumnName(i));
         }
         fechaLabel.setText("Fecha: " + currentTime);
-        busquedaTabla();
+        TableColumnModel columnModel = tablaFactura.getColumnModel();
+        columnModel.removeColumn(columnModel.getColumn(0));
+        cargarTabla();
+
     }
     
     public void imprimirFactura()
     {
-        facturaencabezado factura = facturaDAO.findfacturaencabezado(Integer.parseInt(tablaFactura.getValueAt(tablaFactura.getSelectedRow(),0).toString()));
-        
+        DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
+        facturaencabezado factura = facturaDAO.findfacturaencabezado(Integer.parseInt(modelo.getValueAt(tablaFactura.getSelectedRow(),0).toString()));
         //detalles producto
         EntityManager em = descuentosDAO.getEntityManager();
         
@@ -120,7 +125,6 @@ public class BusquedaFactura extends javax.swing.JFrame {
         Query queryDetalleProd = em.createQuery(hqlDetalleProd);
         queryDetalleProd.setParameter("idFactura",factura.getIdfacturaencabezado());
         List<detalleproducto> detallesProd = queryDetalleProd.getResultList();
-        
         //detalles servicios
         
         String hqlDetalleServ = "FROM detalleservicio E WHERE E.IDFacturaEncabezado = :idFactura";
@@ -178,7 +182,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
         List<descuentofactura> descuento = query.getResultList();
     
         HashMap param = new HashMap();
-        param.put("IDFactura", factura.getIdfacturaencabezado());
+        param.put("IDFactura", parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
         param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente());
         param.put("ApellidoCliente", clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
         param.put("NumDocumento", clientesDAO.findclientes(factura.getIDCliente()).getNumDocumento());
@@ -214,6 +218,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
                     modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
+                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                        empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
@@ -353,14 +358,14 @@ public class BusquedaFactura extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Número", "Vendedor", "Barbero", "Cliente", "Fecha", "Tipo de Pago", "Estado"
+                "IDFactura", "Número", "Vendedor", "Barbero", "Cliente", "Fecha", "Tipo de Pago", "Estado"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                true, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -386,6 +391,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             tablaFactura.getColumnModel().getColumn(4).setResizable(false);
             tablaFactura.getColumnModel().getColumn(5).setResizable(false);
             tablaFactura.getColumnModel().getColumn(6).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(7).setResizable(false);
         }
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));

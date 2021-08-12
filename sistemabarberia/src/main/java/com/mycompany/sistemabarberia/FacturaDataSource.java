@@ -13,6 +13,7 @@ import net.sf.jasperreports.engine.JRField;
  *
  * @author Jonathan Laux
  */
+//data source para poder llenar los datos de la factura
 public class FacturaDataSource implements JRDataSource{
 
     private final Object[][] detallesFactura;
