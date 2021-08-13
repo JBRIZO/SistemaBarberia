@@ -8,7 +8,6 @@ package com.mycompany.sistemabarberia;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Date;
 import javax.persistence.Column;
 
 /**
@@ -23,8 +22,10 @@ public class facturaencabezado implements Serializable{
     private int IDCliente;
     @Column
     private int IDVendedor;
-    @Column
-    private int IDBarbero;
+    
+    @Column(nullable=true)
+    private Integer IDBarbero;
+    
     @Column
     private int IDTipoPago;
     @Column
@@ -33,6 +34,17 @@ public class facturaencabezado implements Serializable{
     private int IDEstado;
     @Column
     private String FechaFactura;
+    
+    @Column(nullable=true)
+    private String NumTarjeta;
+
+    public String getNumTarjeta() {
+        return NumTarjeta;
+    }
+
+    public void setNumTarjeta(String NumTarjeta) {
+        this.NumTarjeta = NumTarjeta;
+    }
 
     public int getIdfacturaencabezado() {
         return idfacturaencabezado;
@@ -58,11 +70,11 @@ public class facturaencabezado implements Serializable{
         this.IDVendedor = IDVendedor;
     }
 
-    public int getIDBarbero() {
+    public Integer getIDBarbero() {
         return IDBarbero;
     }
 
-    public void setIDBarbero(int IDBarbero) {
+    public void setIDBarbero(Integer IDBarbero) {
         this.IDBarbero = IDBarbero;
     }
     

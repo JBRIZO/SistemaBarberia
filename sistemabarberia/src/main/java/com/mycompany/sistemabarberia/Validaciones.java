@@ -189,7 +189,6 @@ public class Validaciones {
         }  
     }
     
-    
     //Compara el resultado de dos validaciones, y devuelve TRUE si ambas son ciertas, sino FALSE.
     public boolean validar(boolean validacion1, boolean validacion2)
     {

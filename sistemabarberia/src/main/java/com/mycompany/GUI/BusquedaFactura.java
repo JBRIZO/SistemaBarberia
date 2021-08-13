@@ -188,7 +188,9 @@ public class BusquedaFactura extends javax.swing.JFrame {
         param.put("NumDocumento", clientesDAO.findclientes(factura.getIDCliente()).getNumDocumento());
         param.put("FechaFactura", factura.getFechaFactura());
         param.put("NomVendedor",empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado());
-        param.put("NomBarbero",empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado());
+        param.put("NomBarbero",tablaFactura.getValueAt(tablaFactura.getSelectedRow(),2).toString().equals("No Aplica")?
+                "No Aplica":
+                empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado());
         param.put("Cai", parametrosDAO.findparametros(factura.getIDParametro()).getLlave());
         param.put("Impuesto",0.15);
         param.put("Descuento",descuento.isEmpty() ? 0.00 : descuento.get(descuento.size()-1).getValor());
@@ -220,7 +222,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
                         factura.getIdfacturaencabezado(),
                         parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
-                       empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
+                        factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
                         factura.getFechaFactura(),
                        tipopagoDAO.findtipopago(factura.getIDTipoPago()).getTipoPago(),
@@ -365,7 +367,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
                 java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {

@@ -51,8 +51,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -84,7 +86,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     private descuentofacturaJpaController descuentosDAO = new descuentofacturaJpaController();
    
     private precioshistoricosproductosJpaController preciosProductosDAO= new precioshistoricosproductosJpaController();
-    List<precioshistoricosproductos> preciosProductosBD = preciosProductosDAO.findprecioshistoricosproductosEntities();
+    private List<precioshistoricosproductos> preciosProductosBD = preciosProductosDAO.findprecioshistoricosproductosEntities();
     private precioshistoricoserviciosJpaController preciosServiciosDAO = new precioshistoricoserviciosJpaController();
     
     private empleadoJpaController empleadosDAO = new empleadoJpaController();
@@ -109,6 +111,9 @@ public class PantallaFactura extends javax.swing.JFrame {
     private java.text.SimpleDateFormat sdfSql = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     String currentTime = sdf.format(dt);
     String currentTimeSql = sdfSql.format(dt);
+     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
+    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
+    Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -127,7 +132,10 @@ public class PantallaFactura extends javax.swing.JFrame {
         columnModel.removeColumn(columnModel.getColumn(1));
         for(int i = 0; i < clientesBD.size() ; i++)
         {
-            cbCliente.addItem(clientesBD.get(i).toString());
+            if(clientesBD.get(i).isActivo())
+            {
+                cbCliente.addItem(clientesBD.get(i).toString());
+            } 
         }  
         for(int i = 0; i < tipospagoBD.size() ; i++)
         {
@@ -141,15 +149,18 @@ public class PantallaFactura extends javax.swing.JFrame {
         fecha.setText(currentTime);
         numFactura();
         isvTxt.setText("0.15");
+        
+       
     }
     
     private void numFactura()
     {
+        List<facturaencabezado> listaFacturasBD = encabezadoDAO.findfacturaencabezadoEntities();
         parametros numFacturaBD = parametrosDAO.findparametros(2);
         
         numFactura.setText(encabezadoDAO.getfacturaencabezadoCount() == 0 
-                    ?numFacturaBD.getLlave()+ String.format("%0" + 8 + "d",1 )
-                    :numFacturaBD.getLlave() + String.format("%0" + 8 + "d", encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado()+1) );
+            ?numFacturaBD.getLlave()+ String.format("%0" + 8 + "d",1 )
+            :numFacturaBD.getLlave() + String.format("%0" + 8 + "d", listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() + 1));
     }
     
     //busqeuda de servicio o producto runtime
@@ -204,6 +215,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     public void imprimirFactura()
     {
         //llenar los detalles en la factura
+      HashMap param = new HashMap();
       Object[][] arrayDetallesFactura;
       arrayDetallesFactura = new Object[tablaFactura.getRowCount()][3];
       
@@ -226,27 +238,37 @@ public class PantallaFactura extends javax.swing.JFrame {
             
         }
     }
-    //descuento
      //descuento de factura
-        EntityManager em = productosDAO.getEntityManager();
+     if(cbDescuento.getSelectedIndex() != 0) 
+     {
+          EntityManager em = productosDAO.getEntityManager();
         String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
         Query query = em.createQuery(hql);
         query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
         descuentos descuentoValor = (descuentos)query.getSingleResult();
-        
+         param.put("Descuento",cbDescuento.getSelectedIndex()==0?0:descuentoValor.getValor());
+     }else
+     {
+         param.put("Descuento",0.00);
+     }
         //para ponerles valor a los parametros
-        HashMap param = new HashMap();
-        
         param.put("IDFactura",  numFactura.getText());
-        param.put("NombreCliente", cbCliente.getSelectedIndex()==0?"CONSUMIDOR FINAL":clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNomCliente());
-        param.put("ApellidoCliente",cbCliente.getSelectedIndex()==0?null:clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getApeCliente());
-        param.put("NumDocumento",cbCliente.getSelectedIndex()==0?"9999999999":clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNumDocumento());
+        param.put("NombreCliente", cbCliente.getSelectedIndex()==0 ? 
+                clientesDAO.findclientes(0).getNomCliente(): 
+                clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNomCliente());
+        param.put("ApellidoCliente",cbCliente.getSelectedIndex()==0 ?
+                clientesDAO.findclientes(0).getApeCliente() :
+                clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getApeCliente());
+        param.put("NumDocumento",cbCliente.getSelectedIndex()==0 ?
+                clientesDAO.findclientes(0).getNumDocumento() :
+                clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNumDocumento());
         param.put("FechaFactura",fecha.getText());
         param.put("NomVendedor",empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado()).getNomEmpleado());
-        param.put("NomBarbero",empleadosDAO.findempleado(Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0))).getNomEmpleado());
+        param.put("NomBarbero",cbBarbero.getSelectedIndex() == 0 ? "No Aplica" :
+                empleadosDAO.findempleado(Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0))).getNomEmpleado());
         param.put("Cai",CAI.getLlave());
         param.put("Impuesto",0.15);
-        param.put("Descuento",cbDescuento.getSelectedIndex()==0?0:descuentoValor.getValor());
+       
         //param.put("Descuento",0.12);
         try {
             //compilcar reporte
@@ -305,15 +327,24 @@ public class PantallaFactura extends javax.swing.JFrame {
     public void cargarProductos()
     {       
         double precioActual = 0;
-        DefaultTableModel modelo = new DefaultTableModel();
-        modelo.setRowCount(0);
-        modelo.addColumn("Id Producto");
-        modelo.addColumn("Nombre");
-        modelo.addColumn("Precio");
-        modelo.addColumn("Stock Actual");
-        tablaProductosServicios.setModel(modelo);
-        List<productos> productosEnBD = productosDAO.findproductosEntities();
+        tablaProductosServicios.setModel(new javax.swing.table.DefaultTableModel(
+                new Object [][] {
+                },
+                new String [] {
+                    "ID Producto", "Nombre", "Precio", "Stock Actual"
+                }
+            ) {
+                boolean[] canEdit = new boolean [] {
+                    false, false, false, false
+                };
+
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit [columnIndex];
+                }
+            });
+        DefaultTableModel modelo = (DefaultTableModel) tablaProductosServicios.getModel();
         
+        List<productos> productosEnBD = productosDAO.findproductosEntities();
             for(productos producto : productosEnBD){
                 if(producto.isActivo())
                 {
@@ -325,7 +356,6 @@ public class PantallaFactura extends javax.swing.JFrame {
                             precioActual = preciosProductosBD.get(i).getPrecio();
                         }
                     }
-                
                     modelo.addRow(
                     new Object[]{
                         producto.getIdproducto(),
@@ -344,11 +374,23 @@ public class PantallaFactura extends javax.swing.JFrame {
         
         List<precioshistoricoservicios> preciosServicioBD = preciosServiciosDAO.findprecioshistoricoserviciosEntities();
         double precioActual = 0;
-        DefaultTableModel modelo = new DefaultTableModel();
-        modelo.setRowCount(0);
-        modelo.addColumn("Id Servicio");
-        modelo.addColumn("Nombre");
-        modelo.addColumn("Precio");
+        tablaProductosServicios.setModel(new javax.swing.table.DefaultTableModel(
+                new Object [][] {
+                },
+                new String [] {
+                    "ID Servicio", "Nombre", "Precio"
+                }
+            ) {
+                boolean[] canEdit = new boolean [] {
+                    false, false, false
+                };
+
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit [columnIndex];
+                }
+            });
+        
+        DefaultTableModel modelo = (DefaultTableModel) tablaProductosServicios.getModel();
         tablaProductosServicios.setModel(modelo);
         List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
         
@@ -423,11 +465,14 @@ public class PantallaFactura extends javax.swing.JFrame {
         isvTxt = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         noTarjeta = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        montoTarjeta = new javax.swing.JTextField();
         titulo = new javax.swing.JLabel();
         menuGerente = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
@@ -466,6 +511,11 @@ public class PantallaFactura extends javax.swing.JFrame {
         jLabel3.setText("Cliente:");
 
         cbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CONSUMIDOR FINAL" }));
+        cbCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbClienteActionPerformed(evt);
+            }
+        });
 
         registrarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/anadirCliente.png"))); // NOI18N
         registrarCliente.setContentAreaFilled(false);
@@ -480,6 +530,11 @@ public class PantallaFactura extends javax.swing.JFrame {
         jLabel4.setText("Tipo de Pago:");
 
         cbTipoPago.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+        cbTipoPago.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTipoPagoActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
@@ -727,6 +782,12 @@ public class PantallaFactura extends javax.swing.JFrame {
             }
         });
         jScrollPane2.setViewportView(tablaProductosServicios);
+        if (tablaProductosServicios.getColumnModel().getColumnCount() > 0) {
+            tablaProductosServicios.getColumnModel().getColumn(0).setResizable(false);
+            tablaProductosServicios.getColumnModel().getColumn(1).setResizable(false);
+            tablaProductosServicios.getColumnModel().getColumn(2).setResizable(false);
+            tablaProductosServicios.getColumnModel().getColumn(3).setResizable(false);
+        }
 
         buscarTxt.setBackground(new java.awt.Color(30, 33, 34));
         buscarTxt.setDocument(new JTextFieldLimit(25));
@@ -824,7 +885,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         jLabel11.setText("No. Tarjeta:");
 
         noTarjeta.setBackground(new java.awt.Color(30, 33, 34));
-        noTarjeta.setDocument(new JTextFieldLimit(25));
+        noTarjeta.setDocument(new JTextFieldLimit(16));
         noTarjeta.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         noTarjeta.setForeground(new java.awt.Color(255, 255, 255));
         noTarjeta.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -843,42 +904,41 @@ public class PantallaFactura extends javax.swing.JFrame {
             }
         });
 
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel12.setText("Monto Tarjeta:");
+
+        montoTarjeta.setBackground(new java.awt.Color(30, 33, 34));
+        montoTarjeta.setDocument(new JTextFieldLimit(8));
+        montoTarjeta.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        montoTarjeta.setForeground(new java.awt.Color(255, 255, 255));
+        montoTarjeta.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        montoTarjeta.setEnabled(false);
+        montoTarjeta.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                montoTarjetaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                montoTarjetaFocusLost(evt);
+            }
+        });
+        montoTarjeta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                montoTarjetaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonReiniciar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jLabel10))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(botonCantidad)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ISV)
-                                .addGap(18, 18, 18)
-                                .addComponent(isvTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel9)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(totalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(subTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addComponent(jLabel8)
@@ -916,10 +976,15 @@ public class PantallaFactura extends javax.swing.JFrame {
                                         .addComponent(jLabel11)
                                         .addGap(18, 18, 18)
                                         .addComponent(noTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGap(291, 291, 291)
+                                .addComponent(jLabel3))
+                            .addComponent(caiLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(caiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel3)))
+                                .addComponent(jLabel12)
+                                .addGap(18, 18, 18)
+                                .addComponent(montoTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(40, 40, 40)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -930,7 +995,35 @@ public class PantallaFactura extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(cbOpciones, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(botonAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(botonAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonReiniciar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(jLabel10))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(botonCantidad)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(ISV)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(isvTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel9)))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(totalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(subTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addGap(16, 16, 16))
         );
         jPanel3Layout.setVerticalGroup(
@@ -949,7 +1042,7 @@ public class PantallaFactura extends javax.swing.JFrame {
                     .addComponent(registrarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbOpciones, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cbTipoPago, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -962,19 +1055,17 @@ public class PantallaFactura extends javax.swing.JFrame {
                             .addComponent(jLabel5)
                             .addComponent(jLabel7)
                             .addComponent(cajeroTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(jLabel8))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel11)
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(cbBarbero, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(noTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(caiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cbBarbero, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(noTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel8))
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(montoTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12)
+                            .addComponent(caiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1026,17 +1117,18 @@ public class PantallaFactura extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(341, 341, 341)
-                .addComponent(titulo)
-                .addGap(298, 298, 298)
-                .addComponent(menuGerente)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(341, 341, 341)
+                        .addComponent(titulo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(menuGerente))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(25, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(28, 28, 28))
         );
         jPanel1Layout.setVerticalGroup(
@@ -1068,26 +1160,10 @@ public class PantallaFactura extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonFacturarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonFacturarActionPerformed
-
+        List<facturaencabezado> listaFacturasBD = encabezadoDAO.findfacturaencabezadoEntities();
         EntityManager em = productosDAO.getEntityManager();
         //modelo para obtener valores del campo oculto
         DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
-        
-        for(int i = 0 ; i < tablaFactura.getRowCount() ; i++)
-        {
-            if(Integer.parseInt(modelo.getValueAt(i,1).toString()) == 1 && cbBarbero.getSelectedIndex() == 0)
-            {
-                JOptionPane.showMessageDialog(null,"Seleccione un barbero para llevar a cabo los servicios.","Selecciona un barbero",JOptionPane.ERROR_MESSAGE);
-            return;
-            }
-            if(Integer.parseInt(modelo.getValueAt(i,1).toString()) == 0 && cbBarbero.getSelectedIndex() != 0)
-            {
-                JOptionPane.showMessageDialog(null,"No puedes seleccionar un barbero cuando no hay servicios por facturar.","Barbero inválido",JOptionPane.ERROR_MESSAGE);
-            return;
-            }
-            
-        }
-        
         //validar que se haya ingresado productos y servicios para facturar
         if(tablaFactura.getRowCount() == 0)
         {
@@ -1100,7 +1176,57 @@ public class PantallaFactura extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Debes seleccionar un método de pago.","Selecciona un método de pago",JOptionPane.ERROR_MESSAGE);
             return;
         }
-   facturaencabezadoJpaController encabezadoDAO = new facturaencabezadoJpaController();
+        
+        //validar tipos de pago y valores
+         if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 2 && noTarjeta.getText().equals(""))
+        {
+           JOptionPane.showMessageDialog(null,"Debes introducir un número de tarjeta o cambiar el tipo de pago.","Numero de tarjeta vacío",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3 && noTarjeta.getText().equals("") && montoTarjeta.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null,"Debes introducir un número de tarjeta y el monto que se pagara con la tarjeta.","Pago mixto incompleto",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 2 || Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3)
+        {
+            if(validarMontoTarjeta(montoTarjeta))
+        {
+            JOptionPane.showMessageDialog(null,"El formato del monto es inválido, recuerda que el monto es la cantidad de dinero que se pagará con la tarjeta. \n "
+                    + "Debe ser mayor a 0, con el formato 0000.00","Monto Inválido",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        //validar que el numero de tarjeta ingresado sae valido
+        if(!validarTarjetaCredito(noTarjeta))
+        {
+            JOptionPane.showMessageDialog(null,"Ese es un número de tarjeta inválido, por favor ingresa un número de tarjeta válido. \n"
+                    + "Ejemplo: 5390700823285988",
+                    "Tarjeta Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        }
+        
+        //validar que no se pueda facrturar servicios cuando no hay barberos,
+        //tampoco se debe dejar facturar cuando no hay servicios pero si barbero
+        int contadorServicios = 0;
+        for(int i = 0 ; i < tablaFactura.getRowCount() ; i++)
+        {
+            if(Integer.parseInt(modelo.getValueAt(i,1).toString()) == 1){contadorServicios++;}
+            if(Integer.parseInt(modelo.getValueAt(i,1).toString()) == 1 && cbBarbero.getSelectedIndex() == 0)
+            {
+                JOptionPane.showMessageDialog(null,"Seleccione un barbero para llevar a cabo los servicios.","Selecciona un barbero",JOptionPane.ERROR_MESSAGE);
+            return;
+            }
+        }
+        if(contadorServicios == 0 && cbBarbero.getSelectedIndex() != 0)
+            {
+                JOptionPane.showMessageDialog(null,"No puedes seleccionar un barbero cuando no hay servicios por facturar.","Barbero inválido",JOptionPane.ERROR_MESSAGE);
+            return;
+            }
+        
+        
    detalleproductoJpaController detalleProdDAO = new detalleproductoJpaController();
    detalleservicioJpaController detalleServicioDAO = new detalleservicioJpaController();
    boolean procesoConExito = true;
@@ -1109,11 +1235,13 @@ public class PantallaFactura extends javax.swing.JFrame {
     facturaencabezado encabezado = new facturaencabezado();
     encabezado.setFechaFactura(currentTimeSql);
     encabezado.setIDVendedor(singleton.getCuenta().getIDEmpleado());
-    encabezado.setIDBarbero(Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0)));
-    encabezado.setIDCliente(Character.getNumericValue((cbCliente.getSelectedItem().toString().charAt(0))));
+    encabezado.setIDBarbero(cbBarbero.getSelectedIndex() == 0 ? null : Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0)));
+    //encabezado.setIDBarbero(null);
+    encabezado.setIDCliente(cbCliente.getSelectedIndex() == 0 ? 0 : Character.getNumericValue((cbCliente.getSelectedItem().toString().charAt(0))));
     encabezado.setIDTipoPago(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)));
     encabezado.setIDParametro(CAI.getIdparametro());
     encabezado.setIDEstado(1);
+    encabezado.setNumTarjeta(noTarjeta.getText().equals("") ? null : noTarjeta.getText());
         try {
             encabezadoDAO.create(encabezado);
         } catch (Exception ex) {
@@ -1138,9 +1266,9 @@ public class PantallaFactura extends javax.swing.JFrame {
             //creacion de objeto para JPA Hibernate y seteando los atributos
             detalleproducto detalleProductos = new detalleproducto();
             detalleProductos.setCantidad(Integer.parseInt(tablaFactura.getValueAt(i,0).toString()));
-            detalleProductos.setIDFacturaEncabezado(encabezadoDAO.getfacturaencabezadoCount() == 0 
+            detalleProductos.setIDFacturaEncabezado(listaFacturasBD.isEmpty()
                     ?1 
-                    :encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado());
+                    :listaFacturasBD.get(listaFacturasBD.size() - 1).getIdfacturaencabezado() + 1);
             detalleProductos.setIDProducto(Integer.parseInt(tablaFactura.getValueAt(i,1).toString()));
             detalleProductos.setPrecio(precio.getPrecio());
               //disminuir inventario
@@ -1174,9 +1302,9 @@ public class PantallaFactura extends javax.swing.JFrame {
             //creacion de objeto JPA
             detalleservicio detalleServicios = new detalleservicio();
             detalleServicios.setCantidad(Integer.parseInt(tablaFactura.getValueAt(i,0).toString()));
-            detalleServicios.setIDFacturaEncabezado(encabezadoDAO.getfacturaencabezadoCount() == 0 
+            detalleServicios.setIDFacturaEncabezado(listaFacturasBD.isEmpty() 
                     ? 1 
-                    :encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado());
+                    :listaFacturasBD.get(listaFacturasBD.size() - 1).getIdfacturaencabezado() + 1);
             detalleServicios.setIDServicio(Integer.parseInt(tablaFactura.getValueAt(i,1).toString()));
             detalleServicios.setPrecio(precio.getPrecio());
             try {
@@ -1189,15 +1317,17 @@ public class PantallaFactura extends javax.swing.JFrame {
         }
     }
     //descuento de factura
-        String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
+    if(cbDescuento.getSelectedIndex() != 0)
+    {
+        //valor del descuento en la bd
+       String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
         Query query = em.createQuery(hql);
         query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
         descuentos descuentoValor = (descuentos)query.getSingleResult();
-        
     descuentofactura descuento = new descuentofactura();
-    descuento.setIDFactura(encabezadoDAO.getfacturaencabezadoCount() == 0 
+    descuento.setIDFactura(listaFacturasBD.isEmpty() 
                     ? 1 
-                    :encabezadoDAO.findfacturaencabezado(encabezadoDAO.getfacturaencabezadoCount()).getIdfacturaencabezado());
+                    :listaFacturasBD.get(listaFacturasBD.size() - 1).getIdfacturaencabezado() + 1);
     descuento.setIDDescuento(Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
     descuento.setValor(descuentoValor.getValor());
     descuento.setActivo(true);
@@ -1208,8 +1338,9 @@ public class PantallaFactura extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
             procesoConExito = false;
-        }
-        
+        } 
+    }
+    
      if(procesoConExito)
     {
         JOptionPane.showMessageDialog(null,"Proceso realizado con Exito");
@@ -1513,7 +1644,9 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void cbDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDescuentoActionPerformed
         // TODO add your handling code here:
-        EntityManager em = descuentosDAO.getEntityManager();
+        if(cbDescuento.getSelectedIndex() != 0)
+        {
+            EntityManager em = descuentosDAO.getEntityManager();
         String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
         Query query = em.createQuery(hql);
         query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
@@ -1526,7 +1659,8 @@ public class PantallaFactura extends javax.swing.JFrame {
            tablaFactura.setValueAt(results.getValor(),i,4); 
         }
         calcularTotalFila();
-        calcularSubtotal();
+        calcularSubtotal(); 
+        }
     }//GEN-LAST:event_cbDescuentoActionPerformed
 
     private void isvTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_isvTxtFocusGained
@@ -1567,11 +1701,96 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void noTarjetaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_noTarjetaFocusLost
         // TODO add your handling code here:
+        validarTarjetaCredito(noTarjeta);
     }//GEN-LAST:event_noTarjetaFocusLost
 
     private void noTarjetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noTarjetaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_noTarjetaActionPerformed
+
+    private void cbTipoPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoPagoActionPerformed
+        // TODO add your handling code here:
+        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 2)
+        {
+            noTarjeta.setEnabled(true);
+        }
+        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3)
+        {
+           noTarjeta.setEnabled(true);
+           montoTarjeta.setEnabled(true);
+        }
+        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 1 || cbTipoPago.getSelectedIndex() == 0)
+        {
+            montoTarjeta.setText("");
+            noTarjeta.setText("");
+            noTarjeta.setEnabled(false);
+            montoTarjeta.setEnabled(false);
+        }
+    }//GEN-LAST:event_cbTipoPagoActionPerformed
+
+    private void montoTarjetaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_montoTarjetaFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_montoTarjetaFocusGained
+
+    private void montoTarjetaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_montoTarjetaFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_montoTarjetaFocusLost
+
+    private void montoTarjetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_montoTarjetaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_montoTarjetaActionPerformed
+
+    private void cbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbClienteActionPerformed
+        // TODO add your handling code here:
+        if(cbCliente.getSelectedIndex() != 0)
+        {
+           List<precioshistoricoservicios> preciosServicioBD = preciosServiciosDAO.findprecioshistoricoserviciosEntities();
+        servicios servicio = serviciosDAO.findservicios(clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getIDServicio());
+        DefaultTableModel modelo = (DefaultTableModel)tablaFactura.getModel();
+        double precioActual = 0;
+        //descuentos en base de datos
+        EntityManager em = descuentosDAO.getEntityManager();
+        String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
+        Query query = em.createQuery(hql);
+        query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
+        List<descuentos> results = query.getResultList();
+        
+        for(int i = 0 ; i < tablaFactura.getRowCount() ; i++)
+        {
+            if(Integer.parseInt(modelo.getValueAt(i,1).toString()) == 1)
+            {
+                if(Integer.parseInt(modelo.getValueAt(i,2).toString()) == servicio.getIdservicio())
+                {
+                    modelo.removeRow(i);
+                }
+            }
+        }
+        if(servicio.isActivo())
+        {
+             for(int i = 0; i < preciosServicioBD.size() ; i++)
+        {
+            if(preciosServicioBD.get(i).getIDServicio() == servicio.getIdservicio() && preciosServicioBD.get(i).isActivo())
+                {
+                    precioActual = preciosServicioBD.get(i).getPrecio();
+                }
+        }
+        
+       modelo.addRow(
+                    new Object[]{
+                        1,
+                        1,
+                        servicio.getIdservicio(),
+                        servicio.getNomServicio(),
+                        precioActual,
+                        cbDescuento.getSelectedIndex() == 0 ? 0.00 : results.get(results.size()-1).getValor(),
+                        1 * precioActual
+                    });
+        }else
+        {
+              JOptionPane.showMessageDialog(null,"El servicio favorito del cliente ha sido desactivado","Sevicio favorito desactivado",JOptionPane.WARNING_MESSAGE);
+        } 
+        }  
+    }//GEN-LAST:event_cbClienteActionPerformed
 
     
     /**
@@ -1622,11 +1841,41 @@ public class PantallaFactura extends javax.swing.JFrame {
     return bd.doubleValue();
 }
     
-    private String convertirDates(String Fecha)
+//metodo para claidar el campo de numero de tarjeta
+    private boolean validarTarjetaCredito(javax.swing.JTextField jText)
     {
-        String[] palabras  = Fecha.split("-");
-       
-        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
+        if(!validar.validacionNumEntero(jText.getText()))
+        {
+            jText.setBorder(redBorder);
+            return false;
+        }
+        if(validar.validacionLetrasRepetidas(jText.getText()))
+        {
+            jText.setBorder(redBorder);
+            return false;
+        }else
+        {
+            return true;
+        }
+    }
+    
+    private boolean validarMontoTarjeta(javax.swing.JTextField jText)
+    {
+        if(!validar.validacionCampoNumerico(jText.getText()))
+        {
+            jText.setBorder(redBorder);
+            return false;
+        }
+        if(Double.parseDouble(jText.getText()) <= 0)
+        {
+            jText.setBorder(redBorder);
+            return false;
+        }
+         if(!validar.validacionDecimal(jText.getText()))
+        {
+            jText.setBorder(redBorder);
+            return false;
+        }else{return true;}
     }
     
     
@@ -1653,6 +1902,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1666,6 +1916,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton menuGerente;
+    private javax.swing.JTextField montoTarjeta;
     private javax.swing.JTextField noTarjeta;
     private javax.swing.JTextField numFactura;
     private javax.swing.JButton registrarCliente;
