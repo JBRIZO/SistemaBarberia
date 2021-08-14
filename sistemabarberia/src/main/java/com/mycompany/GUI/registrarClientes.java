@@ -381,7 +381,7 @@ public class registrarClientes extends javax.swing.JFrame {
                                 .addComponent(apellidosLabel)
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(telefonoLabel)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,7 +401,7 @@ public class registrarClientes extends javax.swing.JFrame {
                                         .addComponent(jLabel1))
                                     .addComponent(fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(servicioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(servicioProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(formatoInvalidoFechaNac))
                         .addGap(0, 29, Short.MAX_VALUE))))
         );
@@ -596,8 +596,6 @@ public class registrarClientes extends javax.swing.JFrame {
         registrarClientes.setIDServicio(Character.getNumericValue(servicioProducto.getSelectedItem().toString().charAt(0)));
         registrarClientes.setFechaNacimiento(Date.valueOf(fechaNac));
         registrarClientes.setActivo(true);
-        
-
         
         LocalDate date = convertToLocalDateViaInstant(birthDate);
         Period periodo = Period.between(date,LocalDate.now());

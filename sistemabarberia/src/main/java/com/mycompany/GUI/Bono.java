@@ -8,19 +8,20 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.bonosempleadomensualJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
 import com.mycompany.sistemabarberia.bonosempleadomensual;
+import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.tiposbono;
-import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -44,49 +45,79 @@ public class Bono extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
         cargarTabla();
+        cargarPeriodosCb();
 
+    }
+    
+    private void cargarPeriodosCb()
+    {
+        List<bonosempleadomensual> bonosBD = bonosDAO.findbonosempleadomensualEntities();
+        
+        if(bonosBD.size() > 0)
+        {
+          List<String> periodosEnBD = new ArrayList<>();
+         periodosEnBD.add(bonosBD.get(bonosBD.size()-1).getPeriodo());
+        for(int i = bonosBD.size()-1 ; i > 0; i--)
+        {
+            if(!bonosBD.get(i).getPeriodo().equals(bonosBD.get(i-1).getPeriodo()))
+            {
+                periodosEnBD.add(bonosBD.get(i-1).getPeriodo());
+            }
+        }
+           for(int i = 0; i < periodosEnBD.size() ; i++)
+        {
+            cbPeriodos.addItem(periodosEnBD.get(i));
+        } 
+        }
     }
 
     List<empleado> empleadoBono = empleado.findempleadoEntities();
     List<tiposbono> bonoTipo = tipoBono.findtiposbonoEntities();
 
     private void cargarTabla() {
-        String activo = "";
-        String nombreEmpleado = "";
-        String nombreBono = "";
         DefaultTableModel modelo = (DefaultTableModel) tablaBonos.getModel();
         modelo.setRowCount(0);
         tablaBonos.setModel(modelo);
         List<bonosempleadomensual> bonosempleadomensual = bonosDAO.findbonosempleadomensualEntities();
-        for (bonosempleadomensual bono : bonosempleadomensual) {
-            if (bono.getActivo()) {
-                activo = "Sí";
-            } else {
-                activo = "No";
-            }
-            for (int j = 0; j < empleadoBono.size(); j++) {
-                if (empleadoBono.get(j).getIdempleado() == bono.getIdEmpleado()) {
-                    nombreEmpleado = empleadoBono.get(j).getNomEmpleado();
-                }
-            }
-
-            for (int j = 0; j < bonoTipo.size(); j++) {
-                if (bonoTipo.get(j).getIdtipobono() == bono.getIDTipoBono()) {
-                    nombreBono = bonoTipo.get(j).getNomBono();
-                }
-            }
-
+        
+        bonosempleadomensual.forEach((bono) -> {
             modelo.addRow(
                     new Object[]{
-                        bono.getNumbono(),
-                        nombreEmpleado,
-                        nombreBono,
+                        empleado.findempleado(bono.getIdEmpleado()).getNomEmpleado(),
+                        tipoBono.findtiposbono(bono.getIdEmpleado()),
                         bono.getValor(),
                         bono.getPeriodo(),
-                        activo
                     }
             );
-        }
+        });
+    }
+    
+      private void cargarTablaPeriodo(String periodo)
+    {
+        empleadoJpaController empleadoDAO = new empleadoJpaController();
+        DefaultTableModel modelo = (DefaultTableModel)tablaBonos.getModel();
+        modelo.setRowCount(0);
+        tablaBonos.setModel(modelo);
+        
+        EntityManager em = bonosDAO.getEntityManager();
+        String hql = "FROM bonosempleadomensual E WHERE E.Periodo = :Periodo";
+        Query query = em.createQuery(hql);
+        query.setParameter("Periodo",periodo);
+        List<bonosempleadomensual> results = (List<bonosempleadomensual>)query.getResultList();
+        em.close();
+        
+
+        results.forEach((bonoActual) -> {
+            modelo.addRow(
+                    new Object[]{
+                        bonoActual.getIdEmpleado(),
+                        empleadoDAO.findempleado(bonoActual.getIdEmpleado()).getNomEmpleado(),
+                        tipoBono.findtiposbono(bonoActual.getIDTipoBono()).getNomBono(),
+                        bonoActual.getPeriodo(),
+                        bonoActual.getValor()
+                    }
+            );
+                });
     }
 
     /**
@@ -108,6 +139,8 @@ public class Bono extends javax.swing.JFrame {
         btnNuevoTipo = new javax.swing.JButton();
         btnNuevoBono = new javax.swing.JButton();
         Aceptar = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        cbPeriodos = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -140,14 +173,14 @@ public class Bono extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Num", "ID Empleado", "Tipo Bono", "Valor", "Periodo"
+                "ID Empleado", "Tipo Bono", "Valor", "Periodo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -167,6 +200,12 @@ public class Bono extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tablaBonos);
+        if (tablaBonos.getColumnModel().getColumnCount() > 0) {
+            tablaBonos.getColumnModel().getColumn(0).setResizable(false);
+            tablaBonos.getColumnModel().getColumn(1).setResizable(false);
+            tablaBonos.getColumnModel().getColumn(2).setResizable(false);
+            tablaBonos.getColumnModel().getColumn(3).setResizable(false);
+        }
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
         MyHeaderRender.setForeground(Color.BLACK);
@@ -177,7 +216,7 @@ public class Bono extends javax.swing.JFrame {
         tablaBonos.setShowGrid(true);
         tablaBonos.setGridColor(Color.BLACK);
 
-        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 14, 680, 287));
+        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 680, 287));
 
         btnNuevoTipo.setBackground(new java.awt.Color(30, 33, 34));
         btnNuevoTipo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -191,7 +230,7 @@ public class Bono extends javax.swing.JFrame {
                 btnNuevoTipoActionPerformed(evt);
             }
         });
-        jPanel3.add(btnNuevoTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 310, -1, -1));
+        jPanel3.add(btnNuevoTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 360, -1, -1));
 
         btnNuevoBono.setBackground(new java.awt.Color(30, 33, 34));
         btnNuevoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -205,7 +244,7 @@ public class Bono extends javax.swing.JFrame {
                 btnNuevoBonoActionPerformed(evt);
             }
         });
-        jPanel3.add(btnNuevoBono, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, -1, -1));
+        jPanel3.add(btnNuevoBono, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 360, -1, -1));
 
         Aceptar.setBackground(new java.awt.Color(189, 158, 76));
         Aceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -216,7 +255,19 @@ public class Bono extends javax.swing.JFrame {
                 AceptarActionPerformed(evt);
             }
         });
-        jPanel3.add(Aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 310, 110, 40));
+        jPanel3.add(Aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 360, 110, 40));
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Bonos por periodo:");
+        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+
+        cbPeriodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbPeriodosActionPerformed(evt);
+            }
+        });
+        jPanel3.add(cbPeriodos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 115, 35));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -231,8 +282,8 @@ public class Bono extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -246,23 +297,19 @@ public class Bono extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(292, 292, 292)
+                        .addGap(280, 280, 280)
                         .addComponent(tituloPantalla)))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(tituloPantalla)
-                        .addGap(43, 43, 43)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tituloPantalla))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(88, 88, 88))
+                .addGap(55, 55, 55))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -302,6 +349,11 @@ public class Bono extends javax.swing.JFrame {
         ntb.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnNuevoTipoActionPerformed
+
+    private void cbPeriodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPeriodosActionPerformed
+        // TODO add your handling code here:
+        cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
+    }//GEN-LAST:event_cbPeriodosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -371,6 +423,8 @@ public class Bono extends javax.swing.JFrame {
     private javax.swing.JButton Aceptar;
     private javax.swing.JButton btnNuevoBono;
     private javax.swing.JButton btnNuevoTipo;
+    private javax.swing.JComboBox<String> cbPeriodos;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

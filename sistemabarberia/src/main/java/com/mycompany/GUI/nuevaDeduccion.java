@@ -111,6 +111,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         logo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
 
@@ -297,7 +298,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(122, 122, 122)
+                        .addGap(94, 94, 94)
                         .addComponent(tituloPantalla))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(37, 37, 37)
@@ -581,7 +582,6 @@ public class nuevaDeduccion extends javax.swing.JFrame {
              formatoInvalidoPeriodo.setText("El mes del periodo debe concordar con el mes actual.");
            return false; 
          }
-         System.out.println(mes);
          if(!validar.validacionCampoNumerico(jText.getText()))
          {
              jText.setBorder(redBorder);

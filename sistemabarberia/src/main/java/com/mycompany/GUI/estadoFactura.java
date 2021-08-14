@@ -42,6 +42,7 @@ public class estadoFactura extends javax.swing.JFrame {
      */
     public estadoFactura() {
         initComponents();
+        this.setLocationRelativeTo(null);
         formatoInvalido.setVisible(false);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");

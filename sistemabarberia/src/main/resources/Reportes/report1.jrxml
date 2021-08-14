@@ -30,18 +30,18 @@
 	<title>
 		<band height="63" splitType="Stretch">
 			<image>
-				<reportElement x="0" y="0" width="43" height="35"/>
+				<reportElement x="0" y="0" width="43" height="35" />
 				<imageExpression><![CDATA["C:\\Users\\Jonathan Laux\\Documents\\NetBeansProjects\\SistemaBarberia\\sistemabarberia\\src\\main\\resources\\Reportes\\logoBarberia.jpeg"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="43" y="7" width="107" height="19"/>
+				<reportElement x="43" y="7" width="107" height="19" />
 				<textElement>
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Barberia Izcano]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="-19" y="42" width="259" height="20" backcolor="#000000"/>
+				<reportElement x="-19" y="42" width="259" height="20" backcolor="#000000" />
 			</rectangle>
 			<staticText>
 				<reportElement x="252" y="39" width="78" height="23"/>
@@ -58,7 +58,7 @@
 	<pageHeader>
 		<band height="102" splitType="Stretch">
 			<textField>
-				<reportElement x="260" y="30" width="100" height="20"/>
+				<reportElement x="260" y="30" width="100" height="20" />
 				<textElement>
 					<font size="9"/>
 				</textElement>
@@ -93,14 +93,14 @@
 				<textFieldExpression><![CDATA[$P{ApellidoCliente}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="200" y="30" width="52" height="20"/>
+				<reportElement x="200" y="30" width="52" height="20" />
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Factura:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="200" y="50" width="52" height="20"/>
+				<reportElement x="200" y="50" width="52" height="20" />
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
@@ -108,6 +108,9 @@
 			</staticText>
 			<textField>
 				<reportElement x="260" y="50" width="100" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{FechaFactura}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -122,13 +125,13 @@
 				<textFieldExpression><![CDATA[$P{NomVendedor}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="200" y="77" width="52" height="14"/>
+				<reportElement x="200" y="77" width="52" height="14" />
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Barbero:]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="260" y="77" width="100" height="14"/>
 				<textFieldExpression><![CDATA[$P{NomBarbero}]]></textFieldExpression>
 			</textField>
@@ -142,7 +145,7 @@
 			<staticText>
 				<reportElement x="0" y="3" width="127" height="13" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Center"/>
-				<text><![CDATA[Descripcion]]></text>
+				<text><![CDATA[Descripción]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="132" y="3" width="61" height="13" forecolor="#FFFFFF" />
@@ -150,12 +153,12 @@
 				<text><![CDATA[Cantidad]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="197" y="3" width="77" height="13" forecolor="#FFFFFF"/>
+				<reportElement x="197" y="3" width="77" height="13" forecolor="#FFFFFF" />
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Precio Unitario]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="281" y="3" width="74" height="13" forecolor="#FFFFFF"/>
+				<reportElement x="281" y="3" width="74" height="13" forecolor="#FFFFFF" />
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[TOTAL]]></text>
 			</staticText>
@@ -188,7 +191,7 @@
 	<columnFooter>
 		<band height="102" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="74" width="360" height="28" backcolor="#000000"/>
+				<reportElement x="0" y="74" width="360" height="28" backcolor="#000000" />
 			</rectangle>
 			<line>
 				<reportElement x="0" y="0" width="360" height="1"/>
@@ -202,7 +205,7 @@
 				<text><![CDATA[Impuesto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="240" y="80" width="50" height="15" forecolor="#FFFFFF"/>
+				<reportElement x="240" y="80" width="41" height="15" forecolor="#FFFFFF"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
@@ -225,8 +228,8 @@
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{Descuento}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="290" y="80" width="65" height="15" forecolor="#FFFFFF"/>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="293" y="80" width="62" height="15" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{subTotal}+($V{subTotal}*$P{Impuesto})-($V{subTotal}*$P{Descuento})]]></textFieldExpression>
 			</textField>
@@ -235,6 +238,13 @@
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{subTotal}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="281" y="80" width="12" height="15" forecolor="#FFFFFF"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[L.]]></text>
+			</staticText>
 		</band>
 	</columnFooter>
 	<pageFooter>
@@ -251,7 +261,7 @@
 				<text><![CDATA[Barberia Izcano]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="240" y="21" width="115" height="12" />
+				<reportElement x="240" y="21" width="115" height="12"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>

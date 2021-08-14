@@ -109,7 +109,6 @@ public class Planilla extends javax.swing.JFrame {
         queryDeducciones.setParameter("idEmpleado",planillasPeriodo.get(i).getIDEmpleado());
         queryDeducciones.setParameter("periodo", periodoActual);
         double sumadeducciones = (double)queryDeducciones.getSingleResult();
-        System.out.println(sumadeducciones);
         
         for(int j = 0; j < 7 ; j++)
         {

@@ -57,6 +57,11 @@ public class pantallaClientes extends javax.swing.JFrame {
         tablaClientes.setModel(modelo);
         List<clientes> clientes = clienteDAO.findclientesEntities();
             for(clientes cliente : clientes){
+                //consumidor final no se agrega a la tabla
+                if(cliente.getIdcliente() == 0)
+                {
+                    continue;
+                }
                 if(cliente.isActivo())
                 {
                 activo = "Sí";   

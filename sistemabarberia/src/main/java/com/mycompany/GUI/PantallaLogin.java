@@ -111,6 +111,11 @@ public class PantallaLogin extends javax.swing.JFrame {
         password.setBackground(new java.awt.Color(30, 33, 34));
         password.setForeground(new java.awt.Color(255, 255, 255));
         password.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passwordActionPerformed(evt);
+            }
+        });
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Contraseña:");
@@ -205,11 +210,15 @@ public class PantallaLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void iniciarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iniciarSesionMouseClicked
+                     
+    }//GEN-LAST:event_iniciarSesionMouseClicked
+
+    private void iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarSesionActionPerformed
         // TODO add your handling code here:
-        List<usuarios> usuariosBD = usuariosDAO.findusuariosEntities();
+         List<usuarios> usuariosBD = usuariosDAO.findusuariosEntities();
         String contrasena = new String(password.getPassword());
         String contraEncriptada = DigestUtils.md5Hex(contrasena);
-        usuarios usuarioActual = new usuarios();
+        usuarios usuarioActual = null;
 
         //encontrar usuario en la base de datos
         for(int i = 0; i < usuariosBD.size(); i++)
@@ -217,11 +226,15 @@ public class PantallaLogin extends javax.swing.JFrame {
             if(nombreUsuario.getText().equals(usuariosBD.get(i).getNomCuenta()))
             {
                 usuarioActual = usuariosBD.get(i);
-                break;
-            }
+            }  
+        }
+        //verificar contrasena
+        if(usuarioActual == null)
+        {
             JOptionPane.showMessageDialog(null,"Contraseña o usuario incorrectos.", "Credenciales incorrectas", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
         if(usuarioActual.getIntentos() == 3)
                 {
                     JOptionPane.showMessageDialog(null,"Alguien intento acceder a tu cuenta sin éxito 3 veces, "
@@ -279,10 +292,6 @@ public class PantallaLogin extends javax.swing.JFrame {
                 }
         }
         contrasena = "";
-    }//GEN-LAST:event_iniciarSesionMouseClicked
-
-    private void iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarSesionActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_iniciarSesionActionPerformed
 
     private void nombreUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusGained
@@ -317,6 +326,11 @@ public class PantallaLogin extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_exitActionPerformed
+
+    private void passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordActionPerformed
+        // TODO add your handling code here:
+        iniciarSesionActionPerformed(evt);
+    }//GEN-LAST:event_passwordActionPerformed
 
     /**
      * @param args the command line arguments
