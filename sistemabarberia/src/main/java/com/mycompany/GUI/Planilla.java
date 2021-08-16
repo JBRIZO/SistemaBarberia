@@ -576,12 +576,7 @@ public class Planilla extends javax.swing.JFrame {
         this.repaint();
     }
     
-    private String convertirDates(String Fecha)
-    {
-        String[] palabras  = Fecha.split("-");
-       
-        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
-    }
+   
     
     
 

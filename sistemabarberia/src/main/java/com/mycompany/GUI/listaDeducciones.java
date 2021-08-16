@@ -55,7 +55,6 @@ public class listaDeducciones extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        cargarTabla();
         cargarPeriodosCb();
         
         Calendar calendar = new GregorianCalendar();
@@ -65,6 +64,8 @@ public class listaDeducciones extends javax.swing.JFrame {
         periodoActual = mes<10? anio+"0"+mes: Integer.toString(anio)+mes;
          TableColumnModel model = tablaDeducciones.getColumnModel();
         model.removeColumn(model.getColumn(0));
+        cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
+
         
     }
 
@@ -336,29 +337,7 @@ public class listaDeducciones extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cargarTabla()
-    {
-        empleadoJpaController empleadoDAO = new empleadoJpaController();
-        DefaultTableModel modelo = (DefaultTableModel)tablaDeducciones.getModel();
-        modelo.setRowCount(0);
-        tablaDeducciones.setModel(modelo);
-        List<deduccionesempleadomensual> deduccionesempleadomensu = deduccionesDAO.finddeduccionesempleadomensualEntities();
-        
-        deduccionesempleadomensu.forEach((deduccionActual) -> {
-            modelo.addRow(
-                    new Object[]{
-                        deduccionActual.getNumdeduccion(),
-                        deduccionActual.getIDEmpleado(),
-                        empleadoDAO.findempleado(deduccionActual.getIDEmpleado()).getNomEmpleado(),
-                        tipodeduccionDAO.findtipodeduccion(deduccionActual.getIDTipoDeduccion()).getNombre(),
-                        deduccionActual.getPeriodo(),
-                        deduccionActual.getValor()
-                    }
-            );
-        });
-        eliminar.setEnabled(false);
-        empleadoDAO.close();
-    }
+
     
     private void cargarTablaPeriodo(String periodo)
     {
@@ -435,10 +414,11 @@ public class listaDeducciones extends javax.swing.JFrame {
 
     private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
         // TODO add your handling code here:
+        
         DefaultTableModel modelo = (DefaultTableModel) tablaDeducciones.getModel();
         if(!cbPeriodos.getSelectedItem().toString().equals(periodoActual))
         {
-           JOptionPane.showMessageDialog(null,"Solo puedes borrar las deducciones de este periodo "+periodoActual+"."," ",JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null,"Esas deducciones pertenecen a otro periodo, solo puedes borrar las deducciones del periodo actual ("+periodoActual+").","Deducciones ya aplicadas.",JOptionPane.ERROR_MESSAGE);
            return;
         }
         int confirmar = JOptionPane.showConfirmDialog(null,"¿Estás seguro que deseas eliminar la deducciones del periodo "+periodoActual+"?",
@@ -473,7 +453,7 @@ public class listaDeducciones extends javax.swing.JFrame {
                 try {
                 deduccionesDAO.destroy(Integer.parseInt(modelo.getValueAt(tablaDeducciones.getSelectedRow(),0).toString()));
                 JOptionPane.showMessageDialog(null,"Deduccion Eliminada");
-                cargarTabla();
+                cargarTablaPeriodo(periodoActual);
             } catch (NonexistentEntityException ex) {
                 Logger.getLogger(listaDeducciones.class.getName()).log(Level.SEVERE, null, ex);
             } 
@@ -482,7 +462,7 @@ public class listaDeducciones extends javax.swing.JFrame {
 
     private void tablaDeduccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaDeduccionesMouseClicked
         // TODO add your handling code here:
-        if(tablaDeducciones.getSelectedRow() != -1)
+        if(tablaDeducciones.getSelectedRow() != -1 && cbPeriodos.getSelectedItem().equals(periodoActual))
         {
             eliminar.setEnabled(true);
         }else

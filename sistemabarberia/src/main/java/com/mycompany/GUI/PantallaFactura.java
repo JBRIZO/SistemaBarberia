@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.FacturaDataSource;
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.datosempresaJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.descuentofacturaJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.detalleproductoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.detalleservicioJpaController;
@@ -23,6 +24,7 @@ import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.clientes;
+import com.mycompany.sistemabarberia.datosempresa;
 import com.mycompany.sistemabarberia.descuentofactura;
 import com.mycompany.sistemabarberia.descuentos;
 import com.mycompany.sistemabarberia.detalleproducto;
@@ -84,6 +86,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     private productosJpaController productosDAO =  new productosJpaController();
     private serviciosJpaController serviciosDAO = new serviciosJpaController();
     private descuentofacturaJpaController descuentosDAO = new descuentofacturaJpaController();
+    private datosempresaJpaController datosempresaDAO = new datosempresaJpaController();
    
     private precioshistoricosproductosJpaController preciosProductosDAO= new precioshistoricosproductosJpaController();
     private List<precioshistoricosproductos> preciosProductosBD = preciosProductosDAO.findprecioshistoricosproductosEntities();
@@ -143,17 +146,40 @@ public class PantallaFactura extends javax.swing.JFrame {
         numFactura();
         isvTxt.setText("0.15");
         
-       
+//        if(puestoEmpleadoActual(singleton.getCuenta().getIDEmpleado()) != 1)
+//        {
+//            menuGerente.setEnabled(false);
+//        }else
+//        {
+//            menuGerente.setEnabled(true);
+//        }
+    }
+    
+    private void validarCAI()
+    {
+        
+        
+    }
+    
+    private int puestoEmpleadoActual(int idEmpleados)
+    {
+        EntityManager em = empleadosDAO.getEntityManager();
+        String hql = "SELECT IDPuesto FROM puestohistoricoempleado E WHERE E.IDEmpleado = :idEmpleado AND E.Activo = 1";
+        Query query = em.createQuery(hql);
+        query.setParameter("idEmpleado", idEmpleados);
+        int idPuesto = (int)query.getSingleResult();
+        
+        return idPuesto;
     }
     
     private void numFactura()
     {
         List<facturaencabezado> listaFacturasBD = encabezadoDAO.findfacturaencabezadoEntities();
-        parametros numFacturaBD = parametrosDAO.findparametros(2);
+        datosempresa numFacturaBD = datosempresaDAO.finddatosempresa(5);
         
         numFactura.setText(encabezadoDAO.getfacturaencabezadoCount() == 0 
-            ?numFacturaBD.getLlave()+ String.format("%0" + 8 + "d",1 )
-            :numFacturaBD.getLlave() + String.format("%0" + 8 + "d", listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() + 1));
+            ?numFacturaBD.getValor()+ String.format("%0" + 8 + "d",1 )
+            :numFacturaBD.getValor() + String.format("%0" + 8 + "d", listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() + 1));
     }
     
     private void cargarClientes()
@@ -168,36 +194,7 @@ public class PantallaFactura extends javax.swing.JFrame {
             } 
         }  
     }
-    //busqeuda de servicio o producto runtime
-    private void busquedaTabla()
-    {
-        DefaultTableModel modelo = (DefaultTableModel) tablaProductosServicios.getModel();
-        TableRowSorter sorter = new TableRowSorter<>(modelo);
-        tablaProductosServicios.setRowSorter(sorter);
-        
-      buscarTxt.getDocument().addDocumentListener(new DocumentListener() {
-         @Override
-         public void insertUpdate(DocumentEvent e) {
-            search(buscarTxt.getText());
-         }
-         @Override
-         public void removeUpdate(DocumentEvent e) {
-            search(buscarTxt.getText());
-         }
-         @Override
-         public void changedUpdate(DocumentEvent e) {
-            search(buscarTxt.getText());
-         }
-         public void search(String str) {
-            if (str.length() == 0) {
-               sorter.setRowFilter(null);
-            } else {
-               sorter.setRowFilter(RowFilter.regexFilter(str));
-            }
-         }
-      });
-   }
-
+   
     public void calcularTotal()
     {
         double total = 0.00;
@@ -294,7 +291,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     public void imprimirFactura()
     {
         List<facturaencabezado> listaFacturasBD = encabezadoDAO.findfacturaencabezadoEntities();
-        //DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
+        java.text.SimpleDateFormat formatoFecha = new java.text.SimpleDateFormat("dd/MM/yyyy");
         facturaencabezado factura = listaFacturasBD.get(listaFacturasBD.size()-1);
         //detalles producto
         EntityManager em = descuentosDAO.getEntityManager();
@@ -360,7 +357,10 @@ public class PantallaFactura extends javax.swing.JFrame {
         List<descuentofactura> descuento = query.getResultList();
     
         HashMap param = new HashMap();
-        param.put("IDFactura", parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
+        param.put("LimiteEmision",formatoFecha.format(parametrosDAO.findparametros(parametrosDAO.getparametrosCount()).getFechaFinal()));
+        param.put("NoTarjeta",factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
+        param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
+        param.put("IDFactura", datosempresaDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
         param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente());
         param.put("ApellidoCliente", clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
         param.put("NumDocumento", clientesDAO.findclientes(factura.getIDCliente()).getNumDocumento());
@@ -1283,14 +1283,26 @@ public class PantallaFactura extends javax.swing.JFrame {
         {
            JOptionPane.showMessageDialog(null,"Debes introducir un número de tarjeta o cambiar el tipo de pago.","Numero de tarjeta vacío",JOptionPane.ERROR_MESSAGE);
             return;
-        }
-        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3 && noTarjeta.getText().equals("") && montoTarjeta.getText().equals(""))
+        }else if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3 && noTarjeta.getText().equals("") && montoTarjeta.getText().equals(""))
         {
             JOptionPane.showMessageDialog(null,"Debes introducir un número de tarjeta y el monto que se pagara con la tarjeta.","Pago mixto incompleto",JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 2 || Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3)
+         
+         if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 2)
+        {
+        //validar que el numero de tarjeta ingresado sae valido
+        if(!validarTarjetaCredito(noTarjeta))
+        {
+            JOptionPane.showMessageDialog(null,"Ese es un número de tarjeta inválido, por favor ingresa un número de tarjeta válido. \n"
+                    + "Ejemplo: 5390700823285988",
+                    "Tarjeta Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        }
+         
+        if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3)
         {
             if(!validarMontoTarjeta(montoTarjeta))
         {
@@ -1534,8 +1546,8 @@ public class PantallaFactura extends javax.swing.JFrame {
         // TODO add your handling code here:
         cargarClientes();
         cbBarbero.setSelectedIndex(0);
-        cbDescuento.setSelectedIndex(0);
         cbCliente.setSelectedIndex(0);
+        cbDescuento.setSelectedIndex(0);
         cbTipoPago.setSelectedIndex(0);
         cbOpciones.setSelectedIndex(0);
         DefaultTableModel modelo = (DefaultTableModel)tablaFactura.getModel();
@@ -1548,6 +1560,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         montoTarjeta.setText("");
         noTarjeta.setEnabled(false);
         montoTarjeta.setEnabled(false);
+        numFactura();
     }//GEN-LAST:event_botonReiniciarActionPerformed
 
     private void buscarTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscarTxtFocusGained
@@ -1758,19 +1771,19 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void cbDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDescuentoActionPerformed
         // TODO add your handling code here:
-        if(cbCliente.getSelectedIndex() == 0)
+        if(cbCliente.getSelectedIndex() == 0 && cbDescuento.getSelectedIndex() != 0)
         {
             JOptionPane.showMessageDialog(null,"Solo los clientes registrados pueden recibir descuentos, selecciona un cliente o registra uno nuevo.","Selecciona un cliente",JOptionPane.ERROR_MESSAGE);
             cbDescuento.setSelectedIndex(0);
         }else{
         if(cbDescuento.getSelectedIndex() != 0)
         {
-            EntityManager em = descuentosDAO.getEntityManager();
+        EntityManager em = descuentosDAO.getEntityManager();
         String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
         Query query = em.createQuery(hql);
         query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
         descuentos results = (descuentos)query.getSingleResult();
-        //List<descuentos> results = query.getResultList();
+        em.close();
         descuentoFactura = results;
         
         for(int i = 0; i < tablaFactura.getRowCount() ; i++)
@@ -1965,20 +1978,15 @@ public class PantallaFactura extends javax.swing.JFrame {
     
 //metodo para claidar el campo de numero de tarjeta
     private boolean validarTarjetaCredito(javax.swing.JTextField jText)
-    {
-        if(!validar.validacionNumEntero(jText.getText()))
-        {
-            jText.setBorder(redBorder);
-            return false;
-        }
-        if(validar.validacionLetrasRepetidas(jText.getText()))
-        {
-            jText.setBorder(redBorder);
-            return false;
-        }else
+    {        
+        if(validar.validarNoTarjeta(jText.getText()))
         {
             jText.setBorder(greenBorder);
             return true;
+        }else
+        {
+            jText.setBorder(redBorder);
+            return false;
         }
     }
     

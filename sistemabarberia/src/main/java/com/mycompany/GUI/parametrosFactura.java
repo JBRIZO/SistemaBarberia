@@ -6,6 +6,7 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.parametrosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.parametros;
 import java.awt.Color;
 import java.awt.Image;
@@ -17,6 +18,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 
 /**
  *
@@ -27,6 +34,7 @@ public class parametrosFactura extends javax.swing.JFrame {
     private ImageIcon imagen;
     private Icon icono;
     parametrosJpaController parametros = new parametrosJpaController();
+    private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -68,7 +76,6 @@ public class parametrosFactura extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         txtFechaFinal = new javax.swing.JTextField();
         txtIdParametro = new javax.swing.JTextField();
-        txtValor = new javax.swing.JTextField();
         txtLlave = new javax.swing.JTextField();
         txtFechaInicio = new javax.swing.JTextField();
         lbIdParametro = new javax.swing.JLabel();
@@ -132,27 +139,8 @@ public class parametrosFactura extends javax.swing.JFrame {
             }
         });
 
-        txtValor.setBackground(new java.awt.Color(30, 33, 34));
-        txtValor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtValor.setForeground(new java.awt.Color(153, 153, 153));
-        txtValor.setText("Valor");
-        txtValor.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        txtValor.setSelectionColor(new java.awt.Color(55, 53, 53));
-        txtValor.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtValorFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtValorFocusLost(evt);
-            }
-        });
-        txtValor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtValorActionPerformed(evt);
-            }
-        });
-
         txtLlave.setBackground(new java.awt.Color(30, 33, 34));
+        txtLlave.setDocument(new JTextFieldLimit(30));
         txtLlave.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtLlave.setForeground(new java.awt.Color(153, 153, 153));
         txtLlave.setText("Llave");
@@ -217,7 +205,6 @@ public class parametrosFactura extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtFechaFinal)
-                            .addComponent(txtValor)
                             .addComponent(txtLlave)
                             .addComponent(txtFechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                             .addComponent(txtIdParametro)
@@ -244,9 +231,7 @@ public class parametrosFactura extends javax.swing.JFrame {
                 .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addComponent(lbFechaFinal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
+                .addGap(55, 55, 55)
                 .addComponent(lbValor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtLlave, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -361,8 +346,6 @@ public class parametrosFactura extends javax.swing.JFrame {
         txtFechaInicio.setForeground(new Color(153, 153, 153));
         txtFechaFinal.setText("Fecha Final");
         txtFechaFinal.setForeground(new Color(153, 153, 153));
-        txtValor.setText("Valor");
-        txtValor.setForeground(new Color(153, 153, 153));
         txtLlave.setText("Llave");
         txtLlave.setForeground(new Color(153, 153, 153));
         lbFechaInicio.setText("");
@@ -371,19 +354,49 @@ public class parametrosFactura extends javax.swing.JFrame {
         lbLlave.setText("");
         txtFechaInicio.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-        txtValor.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         txtLlave.setBorder(BorderFactory.createLineBorder(Color.black, 1));   
     }
     
     private void botonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGuardarActionPerformed
-        if (txtFechaInicio.getText().isEmpty() || txtFechaFinal.getText().isEmpty() || txtValor.getText().isEmpty() || txtLlave.getText().isEmpty()) {
+        java.util.Date startDate = new Date(0000000000);
+        java.util.Date fechaFinal = new Date(0000000000);
+        String fechaIni = "00-00-0000";
+        String fechaFin = "00-00-0000";
+       
+        if (txtFechaInicio.getText().isEmpty() || txtFechaFinal.getText().isEmpty() ||  txtLlave.getText().isEmpty()) {
             JOptionPane.showConfirmDialog(null, "Debes de llenar todos los campos", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        } else if (!txtFechaInicio.getText().matches("^\\d{2}[/]{1}\\d{2}[/]{1}\\d{4}$")) {
+            return;
+        }
+         if(!isDateValid(txtFechaInicio.getText()) || !isDateValid(txtFechaFinal.getText()))
+        {
+            JOptionPane.showMessageDialog(null,"Por favor corrige las fechas con los campos en rojo.",
+                    "Fecha Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+          try {
+                startDate = sdf.parse(convertirFecha(txtFechaInicio.getText()));  
+                fechaIni = sdf.format(startDate);
+                fechaFinal = sdf.parse(convertirFecha(txtFechaFinal.getText()));
+                fechaFin = sdf.format(fechaFinal);
+                } catch (ParseException ex) {
+                   ex.printStackTrace();
+                }
+                //validar fecha de inicio del empleado
+                    LocalDate fecha = convertToLocalDateViaInstant(startDate);
+                    LocalDate fecha2 = convertToLocalDateViaInstant(fechaFinal);
+                    if(fecha.isAfter(fecha2))
+                    {
+                       JOptionPane.showMessageDialog(null,"La fecha final no puede ser mayor a la fecha inicial.", 
+                               "Fecha Inválida",
+                               JOptionPane.ERROR_MESSAGE); 
+                       txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+                       return;
+                    }
+            if (!txtFechaInicio.getText().matches("^\\d{2}[/]{1}\\d{2}[/]{1}\\d{4}$")) {
             JOptionPane.showConfirmDialog(null, "Formato de fecha inicio inválido\nFormato correcto: dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (!txtFechaFinal.getText().matches("^\\d{2}[/]{1}\\d{2}[/]{1}\\d{4}$")) {
             JOptionPane.showConfirmDialog(null, "Formato de fecha final inválido\nFormato correcto: dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (!txtValor.getText().equals("CAI")) {
-            JOptionPane.showConfirmDialog(null, "En este campo se debe escribir: CAI ", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (!txtLlave.getText().matches("^[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{2}$")) {
             JOptionPane.showConfirmDialog(null, "El CAI debe contener 26 caracteres\nDeben ser numeros y letras\nFormato correcto: XXXXXX-XXXXXX-XXXXXX-XXXXXX-XX ", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -391,7 +404,6 @@ public class parametrosFactura extends javax.swing.JFrame {
 
             pm.setFechaInicio(Date.valueOf(convertirFecha(txtFechaInicio.getText())));
             pm.setFechaFinal(Date.valueOf(convertirFecha(txtFechaFinal.getText())));
-            pm.setValor(txtValor.getText());
             pm.setLlave(txtLlave.getText());
             pm.setActivo(true);
             try {
@@ -418,10 +430,6 @@ public class parametrosFactura extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFechaFinalActionPerformed
 
-    private void txtValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtValorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorActionPerformed
-
     private void txtLlaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLlaveActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtLlaveActionPerformed
@@ -436,6 +444,7 @@ public class parametrosFactura extends javax.swing.JFrame {
 
     private void txtFechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaInicioFocusGained
         if (txtFechaInicio.getText().equals("Fecha de Inicio")) {
+            txtFechaInicio.setDocument(new JTextFieldLimit(10));
             txtFechaInicio.setText("");
             txtFechaInicio.setForeground(new Color(255, 255, 255));
         }
@@ -443,6 +452,7 @@ public class parametrosFactura extends javax.swing.JFrame {
 
     private void txtFechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaInicioFocusLost
         if (txtFechaInicio.getText().equals("")) {
+            txtFechaInicio.setDocument(new JTextFieldLimit(25));
             txtFechaInicio.setText("Fecha de Inicio");
             txtFechaInicio.setForeground(new Color(153, 153, 153));
             txtFechaInicio.setBorder(BorderFactory.createLineBorder(Color.black, 1));
@@ -451,6 +461,15 @@ public class parametrosFactura extends javax.swing.JFrame {
             txtFechaInicio.setBorder(BorderFactory.createLineBorder(Color.red, 1));
             lbFechaInicio.setText("Formato incorrecto: dd/mm/aaaa");
         } else {
+             if(!isDateValid(txtFechaInicio.getText()))
+        {
+            txtFechaInicio.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+            lbFechaInicio.setVisible(true);
+            JOptionPane.showMessageDialog(null,"Esa fecha es inválida, por favor revisa que la cantidad de dias concuerde con el mes.\nEjemplo de fecha inválida: 30/02/2021",
+                    "Fecha Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             txtFechaInicio.setBorder(BorderFactory.createLineBorder(Color.green, 1));
             lbFechaInicio.setText("Formato correcto");
         }
@@ -458,6 +477,7 @@ public class parametrosFactura extends javax.swing.JFrame {
 
     private void txtFechaFinalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaFinalFocusGained
         if (txtFechaFinal.getText().equals("Fecha Final")) {
+            txtFechaFinal.setDocument(new JTextFieldLimit(10));
             txtFechaFinal.setText("");
             txtFechaFinal.setForeground(new Color(255, 255, 255));
         }
@@ -465,6 +485,7 @@ public class parametrosFactura extends javax.swing.JFrame {
 
     private void txtFechaFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaFinalFocusLost
         if (txtFechaFinal.getText().equals("")) {
+            txtFechaFinal.setDocument(new JTextFieldLimit(25));
             txtFechaFinal.setText("Fecha Final");
             txtFechaFinal.setForeground(new Color(153, 153, 153));
             txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.black, 1));
@@ -473,32 +494,19 @@ public class parametrosFactura extends javax.swing.JFrame {
             txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.red, 1));
             lbFechaFinal.setText("Formato incorrecto: dd/mm/aaaa");
         } else {
+            if(!isDateValid(txtFechaFinal.getText()))
+        {
+            txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+            lbFechaFinal.setVisible(true);
+            JOptionPane.showMessageDialog(null,"Esa fecha es inválida, por favor revisa que la cantidad de dias concuerde con el mes.\nEjemplo de fecha inválida: 30/02/2021",
+                    "Fecha Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.green, 1));
             lbFechaFinal.setText("Formato correcto");
         }
     }//GEN-LAST:event_txtFechaFinalFocusLost
-
-    private void txtValorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorFocusGained
-        if (txtValor.getText().equals("Valor")) {
-            txtValor.setText("");
-            txtValor.setForeground(new Color(255, 255, 255));
-        }
-    }//GEN-LAST:event_txtValorFocusGained
-
-    private void txtValorFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorFocusLost
-        if (txtValor.getText().equals("")) {
-            txtValor.setText("Valor");
-            txtValor.setForeground(new Color(153, 153, 153));
-            txtValor.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-            lbValor.setText("");
-        } else if (!txtValor.getText().equals("CAI")) {
-            txtValor.setBorder(BorderFactory.createLineBorder(Color.red, 1));
-            lbValor.setText("Debes escribir CAI");
-        } else {
-            txtValor.setBorder(BorderFactory.createLineBorder(Color.green, 1));
-            lbValor.setText("Formato correcto");
-        }
-    }//GEN-LAST:event_txtValorFocusLost
 
     private void txtLlaveFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtLlaveFocusGained
         if (txtLlave.getText().equals("Llave")) {
@@ -581,6 +589,24 @@ public class parametrosFactura extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
+    
+     public static boolean isDateValid(String date) 
+        {
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+        }
+     
+      public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonGuardar;
@@ -599,6 +625,5 @@ public class parametrosFactura extends javax.swing.JFrame {
     private javax.swing.JTextField txtFechaInicio;
     private javax.swing.JTextField txtIdParametro;
     private javax.swing.JTextField txtLlave;
-    private javax.swing.JTextField txtValor;
     // End of variables declaration//GEN-END:variables
 }

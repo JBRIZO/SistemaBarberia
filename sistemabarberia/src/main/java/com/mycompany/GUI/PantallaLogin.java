@@ -32,10 +32,7 @@ public class PantallaLogin extends javax.swing.JFrame {
     private Icon icono;
     
     public PantallaLogin() {
-        this.setVisible(false);
-        this.setUndecorated(true);
         initComponents();
-        this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
@@ -66,6 +63,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         exit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
 

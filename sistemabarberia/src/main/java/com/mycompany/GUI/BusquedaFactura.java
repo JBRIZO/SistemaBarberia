@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.FacturaDataSource;
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.datosempresaJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.detalleproductoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
@@ -87,6 +88,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
     private descuentosJpaController descuentosDAO = new descuentosJpaController();
     private detalleproductoJpaController detallesProdDao = new detalleproductoJpaController();
     private facturasanuladasJpaController facturaAnuladaDAO = new facturasanuladasJpaController();
+    private datosempresaJpaController datosDAO = new datosempresaJpaController();
     
     private usuarios usuarios = new usuarios(); 
     private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
@@ -123,6 +125,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
     
     public void imprimirFactura()
     {
+        java.text.SimpleDateFormat formatoFecha = new java.text.SimpleDateFormat("dd/MM/yyyy");
         DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
         facturaencabezado factura = facturaDAO.findfacturaencabezado(Integer.parseInt(modelo.getValueAt(tablaFactura.getSelectedRow(),0).toString()));
         //detalles producto
@@ -189,7 +192,10 @@ public class BusquedaFactura extends javax.swing.JFrame {
         List<descuentofactura> descuento = query.getResultList();
     
         HashMap param = new HashMap();
-        param.put("IDFactura", parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
+        param.put("LimiteEmision", formatoFecha.format(parametrosDAO.findparametros(parametrosDAO.getparametrosCount()).getFechaFinal()));
+        param.put("NoTarjeta", factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
+        param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
+        param.put("IDFactura", datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
         param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente());
         param.put("ApellidoCliente", clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
         param.put("NumDocumento", clientesDAO.findclientes(factura.getIDCliente()).getNumDocumento());
@@ -228,7 +234,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
-                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
+                        datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                         factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
@@ -257,20 +263,20 @@ public class BusquedaFactura extends javax.swing.JFrame {
                 facturasFiltradas.add(facturasBD.get(i));
             }
         }
-            for(facturaencabezado factura : facturasFiltradas){
-                    modelo.addRow(
+        facturasFiltradas.forEach((factura) -> {
+            modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
-                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
+                        datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                         factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
                         convertirDates(factura.getFechaFactura()),
-                       tipopagoDAO.findtipopago(factura.getIDTipoPago()).getTipoPago(),
-                       estadoFacturaDAO.findestadofactura(factura.getIDEstado()).getNombreEstado(),
+                        tipopagoDAO.findtipopago(factura.getIDTipoPago()).getTipoPago(),
+                        estadoFacturaDAO.findestadofactura(factura.getIDEstado()).getNombreEstado(),
                     }
-                );
-            }    
+            );
+        });    
     }
     
     private void cargarTablaBusquedaVendedor(String NomVendedor)
@@ -292,7 +298,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
-                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
+                        datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                         factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
@@ -358,7 +364,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
-                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
+                        datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                         factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
@@ -400,7 +406,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
-                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
+                        datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                         factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
@@ -431,7 +437,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
-                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
+                       datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                         factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
@@ -462,7 +468,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             modelo.addRow(
                     new Object[]{
                         factura.getIdfacturaencabezado(),
-                        parametrosDAO.findparametros(2).getLlave() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
+                        datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()),
                         empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado(),
                         factura.getIDBarbero() == null ? "No Aplica" :empleadoDAO.findempleado(factura.getIDBarbero()).getNomEmpleado(),
                         clientesDAO.findclientes(factura.getIDCliente()).getNomCliente(),
@@ -506,6 +512,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
         fechaLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));

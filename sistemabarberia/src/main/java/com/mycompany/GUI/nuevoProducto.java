@@ -15,7 +15,6 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -74,8 +73,8 @@ public class nuevoProducto extends javax.swing.JFrame {
         this.productoModificar = productoModificar;
         stockInicial.setEnabled(false);
         precioInicial.setEnabled(false);
-        cargarDatosEmpleadoModificar();
-        idProducto.setText("Id de prodcuto: " + productoModificar.getIdproducto());
+        cargarDatosProducto();
+        idProducto.setText("Id de producto: " + productoModificar.getIdproducto());
     }
     
     public void Reiniciar()
@@ -99,9 +98,12 @@ public class nuevoProducto extends javax.swing.JFrame {
         formatoInvalido1.setVisible(false);
         formatoInvalido2.setVisible(false);
         formatoInvalido3.setVisible(false);
+        stockInicial.setText("");
+        stockMinimo.setText("");
+        stockMaximo.setText("");
     }
     
-    public void cargarDatosEmpleadoModificar()
+    public void cargarDatosProducto()
     {
         nombreProducto.setText(productoModificar.getNomProducto());
         stockMinimo.setText(Integer.toString(productoModificar.getStockMinimo()));
@@ -143,6 +145,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(486, 696));
         setMinimumSize(new java.awt.Dimension(486, 696));
+        setUndecorated(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
@@ -503,10 +506,14 @@ public class nuevoProducto extends javax.swing.JFrame {
         precioshistoricosproductos precioUno = new precioshistoricosproductos();
         precioUno.setFechaInicial(Date.valueOf(currentTime));
         precioUno.setFechaFinal(null);
-        precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
-        precioUno.setActivo(true);  
+        try{
+         precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));}catch(NumberFormatException ex)
+        {
+            JOptionPane.showMessageDialog(this,"Ingresa un numero valido");
+            return;
+        }
+        precioUno.setActivo(true);
         
-       
        validacionCamposStock();
        validacionCampos();
        validarCampoNumerico();
@@ -536,7 +543,7 @@ public class nuevoProducto extends javax.swing.JFrame {
             precioUno.setIDProducto((productos.get(productos.size()-1)).getIdproducto());  
             preciosDAO.create(precioUno);    
             JOptionPane.showMessageDialog(null,"Operación Exitosa.");
-                    Reiniciar();
+            Reiniciar();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el producto, excepción: " + ex.getMessage());
         }
@@ -774,9 +781,9 @@ public class nuevoProducto extends javax.swing.JFrame {
     
     public boolean validacionStock()
     {
-        int inicial = Integer.parseInt(stockInicial.getText());
-        int minimo = Integer.parseInt(stockMinimo.getText());
-        int maximo = Integer.parseInt(stockMaximo.getText());
+        int inicial = Integer.parseInt(stockInicial.getText().equals("")?"0":stockInicial.getText());
+        int minimo = Integer.parseInt(stockMinimo.getText().equals("")?"0":stockMinimo.getText());
+        int maximo = Integer.parseInt(stockMaximo.getText().equals("")?"0":stockMaximo.getText());
         
         if(inicial > maximo)
         {
