@@ -6,6 +6,7 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.clientes;
 import java.awt.Color;
 import java.awt.Image;
@@ -16,6 +17,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -99,6 +101,13 @@ public class pantallaClientes extends javax.swing.JFrame {
                 clientesFiltrados.add(clientes.get(i));
             }
         }
+         if(clientesFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun cliente con ese ID.",
+                    "ID inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(clientes cliente : clientesFiltrados){
                 if(cliente.isActivo())
                 {
@@ -113,7 +122,7 @@ public class pantallaClientes extends javax.swing.JFrame {
                         cliente.getNomCliente(),
                         cliente.getApeCliente(),
                         cliente.getNumDocumento(),
-                        cliente.getFechaNacimiento(),
+                        convertirDates(cliente.getFechaNacimiento().toString()),
                         cliente.getNumTelefono(),
                         activo
                     }
@@ -137,6 +146,13 @@ public class pantallaClientes extends javax.swing.JFrame {
                 clientesFiltrados.add(clientes.get(i));
             }
         }
+        if(clientesFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun cliente con ese nombre.",
+                    "Nombre inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(clientes cliente : clientesFiltrados){
                 if(cliente.isActivo())
                 {
@@ -151,7 +167,7 @@ public class pantallaClientes extends javax.swing.JFrame {
                         cliente.getNomCliente(),
                         cliente.getApeCliente(),
                         cliente.getNumDocumento(),
-                        cliente.getFechaNacimiento(),
+                        convertirDates(cliente.getFechaNacimiento().toString()),
                         cliente.getNumTelefono(),
                         activo
                     }
@@ -170,10 +186,17 @@ public class pantallaClientes extends javax.swing.JFrame {
         
         for(int i = 0; i < clientes.size();i++)
         {
-            if(clientes.get(i).getNomCliente().equalsIgnoreCase(apeCliente))
+            if(clientes.get(i).getApeCliente().equalsIgnoreCase(apeCliente))
             {
                 clientesFiltrados.add(clientes.get(i));
             }
+        }
+        if(clientesFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun cliente con ese apellido.",
+                    "Apellido inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
         }
             for(clientes cliente : clientesFiltrados){
                 if(cliente.isActivo())
@@ -189,7 +212,7 @@ public class pantallaClientes extends javax.swing.JFrame {
                         cliente.getNomCliente(),
                         cliente.getApeCliente(),
                         cliente.getNumDocumento(),
-                        cliente.getFechaNacimiento(),
+                        convertirDates(cliente.getFechaNacimiento().toString()),
                         cliente.getNumTelefono(),
                         activo
                     }
@@ -213,6 +236,13 @@ public class pantallaClientes extends javax.swing.JFrame {
                 clientesFiltrados.add(clientes.get(i));
             }
         }
+        if(clientesFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun cliente con ese número de documento.",
+                    "Documento inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(clientes cliente : clientesFiltrados){
                 if(cliente.isActivo())
                 {
@@ -227,7 +257,7 @@ public class pantallaClientes extends javax.swing.JFrame {
                         cliente.getNomCliente(),
                         cliente.getApeCliente(),
                         cliente.getNumDocumento(),
-                        cliente.getFechaNacimiento(),
+                        convertirDates(cliente.getFechaNacimiento().toString()),
                         cliente.getNumTelefono(),
                         activo
                     }
@@ -244,12 +274,19 @@ public class pantallaClientes extends javax.swing.JFrame {
         List<clientes> clientes = clienteDAO.findclientesEntities();
         List<clientes> clientesFiltrados = new ArrayList();
         
-        for(int i = 0; i < clientes.size();i++)
+        for(int i = 1; i < clientes.size();i++)
         {
             if(convertirDates(clientes.get(i).getFechaNacimiento().toString()).equals(fechaNac))
             {
                 clientesFiltrados.add(clientes.get(i));
             }
+        }
+        if(clientesFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun cliente que haya nacido ese día.",
+                    "Fecha de nacimiento inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
         }
             for(clientes cliente : clientesFiltrados){
                 if(cliente.isActivo())
@@ -265,7 +302,7 @@ public class pantallaClientes extends javax.swing.JFrame {
                         cliente.getNomCliente(),
                         cliente.getApeCliente(),
                         cliente.getNumDocumento(),
-                        cliente.getFechaNacimiento(),
+                        convertirDates(cliente.getFechaNacimiento().toString()),
                         cliente.getNumTelefono(),
                         activo
                     }
@@ -289,6 +326,13 @@ public class pantallaClientes extends javax.swing.JFrame {
                 clientesFiltrados.add(clientes.get(i));
             }
         }
+        if(clientesFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun cliente con ese número de teléfono.",
+                    "Número de telefono inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(clientes cliente : clientesFiltrados){
                 if(cliente.isActivo())
                 {
@@ -303,7 +347,7 @@ public class pantallaClientes extends javax.swing.JFrame {
                         cliente.getNomCliente(),
                         cliente.getApeCliente(),
                         cliente.getNumDocumento(),
-                        cliente.getFechaNacimiento(),
+                        convertirDates(cliente.getFechaNacimiento().toString()),
                         cliente.getNumTelefono(),
                         activo
                     }
@@ -367,7 +411,7 @@ public class pantallaClientes extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID Cliente", "Nombres", "Apellidos", "Numero Id.", "Fecha Nacimiento", "Num. Teléfono", "Activo"
+                "ID Cliente", "Nombres", "Apellidos", "Numero Doc.", "Fecha Nacimiento", "Num. Teléfono", "Activo"
             }
         ) {
             Class[] types = new Class [] {
@@ -454,6 +498,8 @@ public class pantallaClientes extends javax.swing.JFrame {
         jLabel1.setText("Buscar Por:");
 
         buscarTxt.setBackground(new java.awt.Color(30, 33, 34));
+        buscarTxt.setDocument(new JTextFieldLimit(25));
+        buscarTxt.setForeground(new java.awt.Color(255, 255, 255));
         buscarTxt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/lupa.png"))); // NOI18N
@@ -676,6 +722,11 @@ public class pantallaClientes extends javax.swing.JFrame {
 
     private void activarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activarActionPerformed
         // TODO add your handling code here:
+        if(tablaClientes.getSelectedRow() == -1)
+        {
+            JOptionPane.showMessageDialog(this,"Debes seleccionar un cliente para poder desactivarlo","Selecciona un cliente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         clientes modificar = new clientes();
         List<clientes> empleados = clienteDAO.findclientesEntities();
         for(int i=0 ; i<empleados.size();i++)
@@ -711,24 +762,45 @@ public class pantallaClientes extends javax.swing.JFrame {
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-
+ if(buscarTxt.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(this,"Debes ingresar un " + cbParametros.getSelectedItem().toString() + ".","Campo vacío",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         switch(cbParametros.getSelectedItem().toString())
         {
             case "ID Cliente":
-            cargarTablaIdCliente(Integer.parseInt(buscarTxt.getText()));
+                try{
+                    cargarTablaIdCliente(Integer.parseInt(buscarTxt.getText()));
+                }catch(NumberFormatException ex)
+                {
+                   JOptionPane.showMessageDialog(this,"El Id debe de ser un número entero","ID Inválido",JOptionPane.ERROR_MESSAGE); 
+                   return;
+                }
             return;
             case "Nombres":
-            cargarTablaNomCliente(buscarTxt.getText());
-            return;
+                 if(!buscarTxt.getText().matches("^[\\w\\s]+[^\\d]$"))
+                {
+                    JOptionPane.showMessageDialog(this,"Un nombre no lleva números.","Nombre inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                    cargarTablaNomCliente(buscarTxt.getText());
+                return;
             case "Apellidos":
-            cargarTablaApeCliente(buscarTxt.getText());
-            case "Numero Id.":
+                 if(!buscarTxt.getText().matches("^[\\w\\s]+[^\\d]$"))
+                {
+                    JOptionPane.showMessageDialog(this,"Un apellido no lleva números.","Apellido inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                    cargarTablaApeCliente(buscarTxt.getText());
+                    return;
+            case "Numero Doc.":
             cargarTablaNumDoc(buscarTxt.getText());
             return;
             case "Fecha Nacimiento":
             cargarTablaFechaNacimiento(buscarTxt.getText());
             return;
-            case "Num. Télefono":
+            case "Num. Teléfono":
             cargarTablaNumTelefono(buscarTxt.getText());    
         }
     }//GEN-LAST:event_botonBuscarActionPerformed

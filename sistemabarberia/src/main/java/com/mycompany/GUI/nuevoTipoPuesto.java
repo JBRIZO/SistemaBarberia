@@ -44,7 +44,6 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();  
     }
     
@@ -81,11 +80,9 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
         idPuesto = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
         nombrePuesto = new javax.swing.JTextField();
-        jPanel9 = new javax.swing.JPanel();
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(496, 547));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
@@ -177,7 +174,7 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(idPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addGap(18, 56, Short.MAX_VALUE)
                 .addComponent(nombrePuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido)
@@ -198,83 +195,64 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
-        jPanel9.setBackground(new java.awt.Color(20, 17, 17));
-
-        salir.setText("jLabel2");
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
         salir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salirMouseClicked(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(347, 347, 347)
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tituloPantalla))))
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(327, 327, 327)
+                        .addComponent(salir))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(95, 95, 95)
+                            .addComponent(tituloPantalla))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(37, 37, 37)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(103, 103, 103)
+                            .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(tituloPantalla)
-                        .addGap(30, 30, 30)))
+                        .addContainerGap()
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tituloPantalla)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addGap(35, 35, 35)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addGap(29, 29, 29))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -288,7 +266,11 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
         puestoNuevo.setNomPuesto(nombrePuesto.getText());
         puestoNuevo.setActivo(true);
         
-        validacionCampos();
+        if(nombrePuesto.getText().equals("")||nombrePuesto.getText().equals("Nombre del nuevo puesto"))
+        {
+            JOptionPane.showMessageDialog(this,"Debes introducir un nombre para el puesto.","Campo sin datos",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         for(int i=0; i < puestosEnBd.size();i++)
         {
             if(nombrePuesto.getText().equalsIgnoreCase(puestosEnBd.get(i).getNomPuesto()))
@@ -300,7 +282,7 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
             }
         }
         
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionCantidadMinima(txt,4)){
+        if(validacionCampos()){
             try {
             puestoDAO.create(puestoNuevo);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
@@ -408,46 +390,54 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
         this.repaint();
     }
     
-    private void validacionCampos()
+    private boolean  validacionCampos()
     {
-        if(validar.validacionCampoNumerico(nombrePuesto.getText()))
+        if(nombrePuesto.getText().equals(""))
+        {
+            nombrePuesto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Debes ingresar un dato.");
+            return false;
+        }
+        if(nombrePuesto.getText().matches("^.*\\d+.*$"))
         {
             nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Solo se permite texto en este campo.");
-            return;
+            return false;
         }
-        
-        if(!validar.validacionMayusculaInicial(nombrePuesto.getText()))
+        if(!nombrePuesto.getText().matches("^[A-Z]{1}[\\w\\s]+$"))
         {
             nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El puesto debe iniciar con mayuscula.");
-            return;
+            formatoInvalido.setText("El tipo de puesto debe iniciar con mayuscula.");
+            return false;
         }
-        if(!validar.validacionCantidadMinima(nombrePuesto.getText(),4))
-            {
+        if(validar.validacionLetrasRepetidas(nombrePuesto.getText()))
+        {
             nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El nuevo puesto debe ser de minimo 4 letras.");
-            return;
-            }
+            formatoInvalido.setText("No puedes repetir tantas letras.");
+            return false;
+        }
         
-         
-        if(validar.validacionCadenaPalabras(nombrePuesto.getText()))
-        {    
-            nombrePuesto.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
+        if(!validar.validacionCadenaPalabras(nombrePuesto.getText()))
         {
             nombrePuesto.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Esa no es una palabra válida.");
+            return false;
         }
-        
-        
+        if(!validar.validacionCantidadMinima(nombrePuesto.getText(), 3))
+        {
+            nombrePuesto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El tipo de puesto debe ser de mínimo 3 letras.");
+            return false;
+        }
+        nombrePuesto.setBorder(greenBorder);
+        formatoInvalido.setVisible(false);
+        return true;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -457,7 +447,6 @@ public class nuevoTipoPuesto extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JLabel logo;
     private javax.swing.JTextField nombrePuesto;
     private javax.swing.JLabel salir;

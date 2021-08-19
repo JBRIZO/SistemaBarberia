@@ -6,6 +6,7 @@
 package com.mycompany.sistemabarberia;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,6 +25,8 @@ public class facturasanuladas implements Serializable{
     private int IDEmpleado;
     @Column
     private String Motivo;
+    @Column
+    private Date FechaAnulacion;
 
     public int getIdfacturaanulada() {
         return idfacturaanulada;
@@ -56,6 +59,15 @@ public class facturasanuladas implements Serializable{
     public void setMotivo(String Motivo) {
         this.Motivo = Motivo;
     }
+
+    public Date getFechaAnulacion() {
+        return FechaAnulacion;
+    }
+
+    public void setFechaAnulacion(Date FechaAnulacion) {
+        this.FechaAnulacion = FechaAnulacion;
+    }
+    
     
     
 }

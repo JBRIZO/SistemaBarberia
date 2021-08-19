@@ -48,6 +48,11 @@ import com.mycompany.sistemabarberia.tipopago;
 import com.mycompany.sistemabarberia.usuarios;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,7 +104,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     private tipodescuentoJpaController tipoDescuentosDAO = new tipodescuentoJpaController();
     private List<tipodescuento>  descuentosBD = tipoDescuentosDAO.findtipodescuentoEntities();
     private parametrosJpaController parametrosDAO = new parametrosJpaController();
-    private parametros CAI = parametrosDAO.findparametros(1);
+    private parametros CAI = null;
     private facturaencabezadoJpaController encabezadoDAO = new facturaencabezadoJpaController();
 
     
@@ -110,6 +115,7 @@ public class PantallaFactura extends javax.swing.JFrame {
     private Icon icono;
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    private java.text.SimpleDateFormat formatoEspanol = new java.text.SimpleDateFormat("dd/MM/yyyy");
     private java.text.SimpleDateFormat sdfSql = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     String currentTime = sdf.format(dt);
     String currentTimeSql = sdfSql.format(dt);
@@ -125,8 +131,10 @@ public class PantallaFactura extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.setTitle("Facturación");
+        advertenciaCAI.setVisible(false);
+        validarCAI();
         empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
-        cajeroTxt.setText(empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+        //cajeroTxt.setText(empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
         cargarBarberos();
         cbOpciones.setSelectedIndex(0);
         //ocultar columnas de servicio/producto
@@ -141,7 +149,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         {
             cbDescuento.addItem(descuentosBD.get(i).toString());
         }
-        caiLabel.setText("CAI: " + CAI.getLlave());
+//        caiLabel.setText("CAI: " + CAI.getLlave());
         fecha.setText(currentTime);
         numFactura();
         isvTxt.setText("0.15");
@@ -157,8 +165,46 @@ public class PantallaFactura extends javax.swing.JFrame {
     
     private void validarCAI()
     {
+        List<parametros> parametrosBD = parametrosDAO.findparametrosEntities();
+        List<facturaencabezado> listaFacturasBD = encabezadoDAO.findfacturaencabezadoEntities();
         
-        
+        Date fechaHoy = new Date(000000000);
+        try {
+            fechaHoy = formatoEspanol.parse(currentTime);
+        } catch (ParseException ex) {
+            Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println(fechaHoy.compareTo(parametrosBD.get(0).getFechaFinal()));
+        System.out.println(fechaHoy.toString());
+        System.out.println(parametrosBD.get(0).getFechaFinal().toString());
+        for(int i = 0 ; i < parametrosBD.size() ; i++)
+        {
+            if(fechaHoy.compareTo(parametrosBD.get(i).getFechaInicio()) > 0 && fechaHoy.compareTo(parametrosBD.get(i).getFechaFinal()) <= 0  && 
+                    listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() < parametrosBD.get(i).getRangoFinal() &&
+                    listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() > parametrosBD.get(i).getRangoInicial())
+            {
+                CAI = parametrosBD.get(i);
+                botonFacturar.setEnabled(true);
+                break;
+            }else
+            {
+                botonFacturar.setEnabled(false);
+            }
+        }
+        if(CAI == null)
+        {
+            return;
+        }
+        LocalDate fechaFinal = convertToLocalDateViaInstant(CAI.getFechaFinal());
+        Period periodo = Period.between(LocalDate.now(),fechaFinal);
+        System.out.println(periodo.getDays());
+        if(periodo.getDays() < 3 )
+        {
+           JOptionPane.showMessageDialog(null,"El CAI actual esta a punto de vencer, por favor ingresa uno nuevo.", 
+                   "CAI Próximo a Vencer",
+                   JOptionPane.WARNING_MESSAGE); 
+           advertenciaCAI.setVisible(true);
+        }   
     }
     
     private int puestoEmpleadoActual(int idEmpleados)
@@ -361,8 +407,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         param.put("NoTarjeta",factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
         param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
         param.put("IDFactura", datosempresaDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
-        param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente());
-        param.put("ApellidoCliente", clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
+        param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente() + " " + clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
         param.put("NumDocumento", clientesDAO.findclientes(factura.getIDCliente()).getNumDocumento());
         param.put("FechaFactura", factura.getFechaFactura());
         param.put("NomVendedor",empleadosDAO.findempleado(factura.getIDVendedor()).getNomEmpleado());
@@ -568,6 +613,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         noTarjeta = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         montoTarjeta = new javax.swing.JTextField();
+        advertenciaCAI = new javax.swing.JLabel();
         titulo = new javax.swing.JLabel();
         menuGerente = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
@@ -1029,6 +1075,14 @@ public class PantallaFactura extends javax.swing.JFrame {
             }
         });
 
+        advertenciaCAI.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        advertenciaCAI.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/advertencia.png"))); // NOI18N
+        advertenciaCAI.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                advertenciaCAIMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -1105,6 +1159,8 @@ public class PantallaFactura extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botonReiniciar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(advertenciaCAI, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1185,11 +1241,13 @@ public class PantallaFactura extends javax.swing.JFrame {
                     .addComponent(jLabel10)
                     .addComponent(totalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonReiniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(botonReiniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(advertenciaCAI, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16))
         );
 
         titulo.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -1927,6 +1985,19 @@ public class PantallaFactura extends javax.swing.JFrame {
         } 
     }//GEN-LAST:event_cbClienteActionPerformed
 
+    private void advertenciaCAIMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_advertenciaCAIMouseClicked
+        // TODO add your handling code here:
+        if(botonFacturar.isEnabled())
+        {
+            JOptionPane.showMessageDialog(null,"El CAI vence el " + convertirDates(CAI.getFechaFinal().toString()) + ",se recomienda ingresar otro, al pasar de la fecha no se le dejará facturar.",
+            "CAI a punto de vencer",
+            JOptionPane.WARNING_MESSAGE);
+        }else
+        {
+            JOptionPane.showMessageDialog(null,"EL CAI ha vencido, si quieres seguir facturando, deberas ingresar otro desde el menu de gerente.","El CAI ha vencido",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_advertenciaCAIMouseClicked
+
     
     /**
      * @param args the command line arguments
@@ -2016,10 +2087,24 @@ public class PantallaFactura extends javax.swing.JFrame {
              return true;}
     }
     
+     public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+    }
+     
+     private String convertirDates(String Fecha)
+    {
+        String[] palabras  = Fecha.split("-");
+       
+        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
+    }
+    
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ISV;
+    private javax.swing.JLabel advertenciaCAI;
     private javax.swing.JButton botonAnadir;
     private javax.swing.JButton botonBuscar;
     private javax.swing.JButton botonCantidad;

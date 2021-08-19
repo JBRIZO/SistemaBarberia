@@ -5,6 +5,7 @@
  */
 package com.mycompany.GUI;
 
+import static com.mycompany.GUI.AgregarEmpleado.isDateValid;
 import com.mycompany.sistemabarberia.JPACOntrollers.clientesJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodocumentoJpaController;
@@ -17,7 +18,9 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -44,6 +47,7 @@ public class registrarClientes extends javax.swing.JFrame {
     private serviciosJpaController serviciosDAO = new serviciosJpaController();
     private List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+    private java.text.SimpleDateFormat formatoFecha = new java.text.SimpleDateFormat("dd/MM/yyyy");
     private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
     private Icon icono;
@@ -361,49 +365,40 @@ public class registrarClientes extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(nombreCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(174, 174, 174))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(nombresLabel)
-                                    .addComponent(formatoInvalidoNombre))
-                                .addGap(338, 338, 338)))
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(formatoInvalidoApellido)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(apellidosCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(apellidosLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addGap(437, 437, 437)
+                                .addComponent(jLabel1))
+                            .addComponent(fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(servicioProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(telefonoLabel)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(telefonoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(formatoInvalidoTelefono))
+                        .addGap(174, 174, 174)
+                        .addComponent(cbTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(formatoInvalidoIdDocumento)
+                            .addComponent(numDoc)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(telefonoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(formatoInvalidoTelefono))
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(nombresLabel)
+                                    .addComponent(formatoInvalidoNombre)
+                                    .addComponent(nombreCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(174, 174, 174)
-                                .addComponent(cbTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(formatoInvalidoIdDocumento)
-                                    .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(apellidosCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(formatoInvalidoApellido)
+                                    .addComponent(apellidosLabel)))
+                            .addComponent(telefonoLabel)
                             .addComponent(nacimientoLabel)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGap(437, 437, 437)
-                                        .addComponent(jLabel1))
-                                    .addComponent(fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(servicioProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(formatoInvalidoFechaNac))
-                        .addGap(0, 29, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(0, 25, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -452,14 +447,14 @@ public class registrarClientes extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(25, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 770, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(20, 20, 20)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(23, Short.MAX_VALUE))
         );
@@ -476,16 +471,18 @@ public class registrarClientes extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(datosPersonales)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addComponent(crearPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(205, 205, 205)
-                        .addComponent(Cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                        .addComponent(Cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(datosPersonales))))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -498,8 +495,8 @@ public class registrarClientes extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addComponent(datosPersonales)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Cancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(crearPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -576,10 +573,11 @@ public class registrarClientes extends javax.swing.JFrame {
         java.util.Date birthDate = new Date(0000000000);
         String fechaNac = "00-00-0000";
         try {
-        birthDate = sdf.parse(convertirFecha(fechaNacimiento.getText()));
+        birthDate = sdf.parse(fechaNacimiento.getText());
         fechaNac = sdf.format(birthDate);
     } catch (ParseException ex) {
-       ex.printStackTrace();
+       JOptionPane.showMessageDialog(this, "Ingresa una fecha con formato válido.","Fecha inválida",JOptionPane.ERROR_MESSAGE);
+               return;
     }
         clientes registrarClientes = new clientes();
         
@@ -604,30 +602,7 @@ public class registrarClientes extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(null,"El cliente debe tener 18 años para registrarse.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
            return;
         }
-        
-        //validar pasaporte o identidad
-        if(registrarClientes.getIDTipoDocumento() == 1)
-        {
-            if(!validar.validarPasaporte(registrarClientes.getNumDocumento()))
-            {
-                numDoc.setBorder(redBorder);
-                formatoInvalidoIdDocumento.setText("Número inválido.");
-                return;
-            }
-        }else
-        {
-            if(registrarClientes.getIDTipoDocumento() == 2)
-            {
-                if(!validar.validacionIdentidad(registrarClientes.getNumDocumento()))
-                {
-                    numDoc.setBorder(redBorder);
-                    formatoInvalidoIdDocumento.setText("Número inválido.");
-                    return; 
-                }
-            }
-        }
-        
-        if(validarNombre() && validarApellido() &&  validarCamposNumero(telefonoCliente,formatoInvalidoTelefono) &&
+        if(validarDocumento() && validarNombre() && validarApellido() &&  validarCamposNumero(telefonoCliente,formatoInvalidoTelefono) &&
            validarFecha(fechaNacimiento,formatoInvalidoFechaNac))
         {   
             if(modificar)
@@ -650,7 +625,7 @@ public class registrarClientes extends javax.swing.JFrame {
         }
             }
             
-        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.");}
+        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_crearPerfilActionPerformed
 
     private void numDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numDocActionPerformed
@@ -751,7 +726,7 @@ public class registrarClientes extends javax.swing.JFrame {
             numDoc.setText("Número de Documento");
         }else
         {
-            
+            validarDocumento();
         }
         
     }//GEN-LAST:event_numDocFocusLost
@@ -844,10 +819,35 @@ public class registrarClientes extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
-    
+    private boolean validarDocumento()
+    {
+         //validar pasaporte o identidad
+        if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 1)
+        {
+            if(!validar.validarPasaporte(numDoc.getText()))
+            {
+                numDoc.setBorder(redBorder);
+                formatoInvalidoIdDocumento.setText("Número inválido.");
+                return false;
+            }
+        }else
+        {
+            if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 2)
+            {
+                if(!validar.validacionIdentidad(numDoc.getText()))
+                {
+                    numDoc.setBorder(redBorder);
+                    formatoInvalidoIdDocumento.setText("Número inválido.");
+                    return false; 
+                }
+            }
+        }
+        numDoc.setBorder(greenBorder);
+        return true;
+    }
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
-        if(!validar.validacionFormatoFecha(fecha.getText()) )
+       if(!validar.validacionFormatoFecha(fecha.getText()) )
         {
             fecha.setBorder(redBorder);
             label.setVisible(true);
@@ -860,29 +860,55 @@ public class registrarClientes extends javax.swing.JFrame {
             label.setVisible(true);
             label.setText("La fecha introducida es inválida.");
             return false;
-            }else
+            }
+        
+        if(!isDateValid(fecha.getText()))
+        {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            JOptionPane.showMessageDialog(null,"Esa fecha es inválida, por favor revisa que la cantidad de dias concuerde con el mes.\nEjemplo de fecha inválida: 30/02/2021",
+                    "Fecha Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        else
         {
             fecha.setBorder(greenBorder);
             label.setText(" ");
             return true;
         }
     }
+        
     
      private boolean validarApellido()
     {
-        if(!validar.validacionCantidadMinima(apellidosCliente.getText(),6))
+        if(apellidosCliente.getText().matches("^.*\\d+.*$"))
+        {
+            apellidosCliente.setBorder(redBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("Solo se permite texto en este campo.");
+            return false;
+        }
+        if(!validar.validacionCantidadMinima(apellidosCliente.getText(),2))
             {
             apellidosCliente.setBorder(redBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText("El apellido debe ser de minimo 6 letras.");
+            formatoInvalidoApellido.setText("El apellido debe ser de minimo 2 letras.");
             return false;
             }
         if (!validar.validacionNombres(apellidosCliente.getText()))
         {
             apellidosCliente.setBorder(redBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText("Cada apellido debe empezar en mayuscula.");
+            formatoInvalidoApellido.setText("Cada apellido debe empezar en mayúscula.");
             return false;
+        }
+        if(validar.validarRepeticionCadena(apellidosCliente.getText()))
+        {
+            apellidosCliente.setBorder(redBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("No puedes repetir tantas letras.");
+            return false; 
         }
         if(validar.validacionCadenaPalabras(apellidosCliente.getText()))
         {    
@@ -895,7 +921,7 @@ public class registrarClientes extends javax.swing.JFrame {
         {
             apellidosCliente.setBorder(redBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText("No puedes repetir letras.");
+            formatoInvalidoApellido.setText("Ese es un apellido inválido.");
             return false;
         }
      
@@ -903,11 +929,18 @@ public class registrarClientes extends javax.swing.JFrame {
      
      private boolean validarNombre()
     {
-        if(!validar.validacionCantidadMinima(nombreCliente.getText(),6))
+        if(nombreCliente.getText().matches("^.*\\d+.*$"))
+        {
+            nombreCliente.setBorder(redBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("Solo se permite texto en este campo.");
+            return false;
+        }
+        if(!validar.validacionCantidadMinima(nombreCliente.getText(),3))
             {
             nombreCliente.setBorder(redBorder);
             formatoInvalidoNombre.setVisible(true);
-            formatoInvalidoNombre.setText("El nombre debe ser de minimo 6 letras.");
+            formatoInvalidoNombre.setText("El nombre debe ser de minimo 3 letras.");
             return false;
             }
         if (!validar.validacionNombres(nombreCliente.getText()))
@@ -916,6 +949,13 @@ public class registrarClientes extends javax.swing.JFrame {
             formatoInvalidoNombre.setVisible(true);
             formatoInvalidoNombre.setText("Cada nombre debe empezar en mayuscula.");
             return false;
+        }
+        if(validar.validarRepeticionCadena(nombreCliente.getText()))
+        {
+           nombreCliente.setBorder(redBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("No puedes repetir tantas letras.");
+            return false; 
         }
         if(validar.validacionCadenaPalabras(nombreCliente.getText()))
         {    
@@ -928,7 +968,7 @@ public class registrarClientes extends javax.swing.JFrame {
         {
             nombreCliente.setBorder(redBorder);
             formatoInvalidoNombre.setVisible(true);
-            formatoInvalidoNombre.setText("No puedes repetir letras.");
+            formatoInvalidoNombre.setText("Ese es un nombre inválido.");
             return false;
         }
     }
@@ -975,6 +1015,18 @@ public class registrarClientes extends javax.swing.JFrame {
        
         return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
+     
+      public static boolean isDateValid(String date) 
+{
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+}
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

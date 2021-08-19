@@ -36,6 +36,11 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -196,8 +201,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
         param.put("NoTarjeta", factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
         param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
         param.put("IDFactura", datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
-        param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente());
-        param.put("ApellidoCliente", clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
+        param.put("NombreCliente", clientesDAO.findclientes(factura.getIDCliente()).getNomCliente() + " " + clientesDAO.findclientes(factura.getIDCliente()).getApeCliente());
         param.put("NumDocumento", clientesDAO.findclientes(factura.getIDCliente()).getNumDocumento());
         param.put("FechaFactura", factura.getFechaFactura());
         param.put("NomVendedor",empleadoDAO.findempleado(factura.getIDVendedor()).getNomEmpleado());
@@ -854,8 +858,18 @@ public class BusquedaFactura extends javax.swing.JFrame {
 
     private void modificarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarEstadoActionPerformed
         // TODO add your handling code here:
-
         DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
+         //target factura seleccionada
+        facturaSeleccionada = facturaDAO.findfacturaencabezado(Integer.parseInt(modelo.getValueAt(tablaFactura.getSelectedRow(),0).toString()));
+        
+        Date fechaFactura = new Date(00000000000);
+        try {
+            fechaFactura = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(facturaSeleccionada.getFechaFactura());
+        } catch (ParseException ex) {
+            System.out.println(ex.getMessage());
+            Logger.getLogger(BusquedaFactura.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         if(tablaFactura.getSelectedRow() == -1)
         {
             JOptionPane.showMessageDialog(null,
@@ -865,9 +879,6 @@ public class BusquedaFactura extends javax.swing.JFrame {
             return;
         }
         
-        //target factura seleccionada
-        facturaSeleccionada = facturaDAO.findfacturaencabezado(Integer.parseInt(modelo.getValueAt(tablaFactura.getSelectedRow(),0).toString()));
-        
         if(cbEstados.getSelectedIndex() == 0)
         {
             JOptionPane.showMessageDialog(null,
@@ -876,7 +887,27 @@ public class BusquedaFactura extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        //no se puede devolver la factura luego de 30 dias
+        Instant fromInstant = fechaFactura.toInstant();
+        Instant toInstant = dt.toInstant();
+        Duration duration = Duration.between(fromInstant, toInstant);
+        final Duration TREINTA_DIAS = Duration.ofDays(30);
+
+        if(duration.compareTo(TREINTA_DIAS) < 0) {
+        } else if(duration.compareTo(TREINTA_DIAS) > 0) {
+             JOptionPane.showMessageDialog(null,"La política de devolución de la empresa impide devolución de facturas luego de 30 días.", 
+                   "No se puede anular",
+                   JOptionPane.ERROR_MESSAGE); 
+           return;
+        } else {
+            JOptionPane.showMessageDialog(null,"La política de devolución de la empresa impide devolución de facturas luego de 30 días.", 
+                   "No se puede anular",
+                   JOptionPane.ERROR_MESSAGE); 
+           return;
+        }
        String motivo = "";
+       int agregarProductos = 1000;
         if(cbEstados.getSelectedIndex() == 2)
         {
             int confirmacion = JOptionPane.showConfirmDialog(null,"¿Estás seguro de que deseas anular esta factura?\nUna vez anulada no podras cambiar su estado.",
@@ -888,23 +919,70 @@ public class BusquedaFactura extends javax.swing.JFrame {
             if(!validarMotivo(motivo))
             {
                 JOptionPane.showMessageDialog(null,"El motivo que has introducido no tiene el formato correcto, "
-                        + "\nel motivo debe iniciar en mayuscula, ser de mínimo 6 carácteres y no puedes repetir la misma letra 3 veces."
+                        + "el motivo debe iniciar en mayuscula, /nser de mínimo 6 carácteres y no puedes repetir la misma letra 3 veces."
                         + "\nNo se permite ingresar letras al azar ni palabras que no sean válidas.","Motivo Inválido",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+             if(confirmacion == 0)
+            {
+              agregarProductos = JOptionPane.showConfirmDialog(this, "¿Deseas agregar los productos de la factura al inventario?",
+                "Validación Productos",
+                JOptionPane.YES_NO_OPTION);
             }
+            }else
+            {
+            return;}
         }
         //anadir en facturas anuladas
         facturasanuladas facturaAnulada = new facturasanuladas();
         facturaAnulada.setIDEmpleado(singleton.getCuenta().getIDEmpleado());
         facturaAnulada.setIDFacturaEncabezado(facturaSeleccionada.getIdfacturaencabezado());
         facturaAnulada.setMotivo(motivo);
+        facturaAnulada.setFechaAnulacion(dt);
         facturaSeleccionada.setIDEstado(Character.getNumericValue(cbEstados.getSelectedItem().toString().charAt(0)));
+        //detalles producto factura
+         EntityManager em = descuentosDAO.getEntityManager();
+         String productosAgregados ="";
+        
+        String hqlDetalleProd = "FROM detalleproducto E WHERE E.IDFacturaEncabezado = :idFactura";
+        Query queryDetalleProd = em.createQuery(hqlDetalleProd);
+        queryDetalleProd.setParameter("idFactura",facturaSeleccionada.getIdfacturaencabezado());
+        List<detalleproducto> detallesProd = queryDetalleProd.getResultList();
+        if(agregarProductos == 0)
+        {
+            for(detalleproducto detalle : detallesProd)
+            {
+                productos producto = new productos();
+                producto.setIdproducto(detalle.getIDProducto());
+                producto.setNomProducto(productosDAO.findproductos(detalle.getIDProducto()).getNomProducto());
+                producto.setStockActual(productosDAO.findproductos(detalle.getIDProducto()).getStockActual() + detalle.getCantidad());
+                producto.setStockMinimo(productosDAO.findproductos(detalle.getIDProducto()).getStockMinimo());
+                producto.setStockMaximo(productosDAO.findproductos(detalle.getIDProducto()).getStockMaximo());
+                producto.setActivo(true);
+                productosAgregados = productosAgregados + detalle.getCantidad() + " " + productosDAO.findproductos(detalle.getIDProducto()).getNomProducto() +"\n";
+                try{
+                    productosDAO.edit(producto);
+                }catch(Exception Ex)
+                {
+                    Ex.getMessage();
+                    JOptionPane.showMessageDialog(null, "No se pudieron agregar las unidades del producto con Id "+ producto.getIdproducto());
+                }
+            }
+        }
         try {
             facturaAnuladaDAO.create(facturaAnulada);
             facturaDAO.edit(facturaSeleccionada);
             cargarTabla();
             cbEstados.setSelectedIndex(0);
+            if(agregarProductos == 0)
+            {
+                JOptionPane.showMessageDialog(null,"Factura Anulada Exitosamente.\nLos siguientes productos han sido agregados al inventario:\n " + productosAgregados);
+                
+            }else
+            {
+               JOptionPane.showMessageDialog(null,"Factura Anulada Exitosamente."); 
+            }
+             
         } catch (Exception ex) {
             Logger.getLogger(BusquedaFactura.class.getName()).log(Level.SEVERE, null, ex);
         }  
@@ -952,7 +1030,8 @@ public class BusquedaFactura extends javax.swing.JFrame {
         query.setParameter("idFactura",modelo.getValueAt(tablaFactura.getSelectedRow(),0));
         facturasanuladas facturaAnulada = (facturasanuladas) query.getSingleResult();
         em.close();
-        JOptionPane.showMessageDialog(null,facturaAnulada.getMotivo());
+        JOptionPane.showMessageDialog(null,"Factura anulada por:" + empleadoDAO.findempleado(facturaAnulada.getIDEmpleado()).getNomEmpleado() + " " + empleadoDAO.findempleado(facturaAnulada.getIDEmpleado()).getApeEmpleado()  + 
+                "\nMotivo:" + facturaAnulada.getMotivo() + "\nFecha: " + convertirDates(facturaAnulada.getFechaAnulacion().toString()));
     }//GEN-LAST:event_motivoActionPerformed
 
     
@@ -1034,7 +1113,11 @@ public class BusquedaFactura extends javax.swing.JFrame {
         }
     }
     
-    
+     public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+    }
     
   
     

@@ -206,14 +206,10 @@ public class Validaciones {
     public boolean validacionCadenaPalabras(String cadena)
     {
           String[] palabras  = cadena.split("\\s+");
-          boolean mayusculaInicial = false;
           boolean palabraValida = false;
           
           
-         if(validacionMayusculaInicial(palabras[0]))
-          {
-              mayusculaInicial = true;
-          }
+        
           for (int i = 0; i < palabras.length; i++)
           {
               if(!validacionLetrasRepetidas(palabras[i]) && 
@@ -227,7 +223,7 @@ public class Validaciones {
                   return false;
               }
           }
-          if(mayusculaInicial && palabraValida )
+          if(palabraValida)
           {
               return true;
           }else
@@ -335,7 +331,7 @@ public class Validaciones {
     
     public static boolean validacionConsonantesSeguidas(String palabra)
             { 
-            String patron = String.format("^(|\\w+)[b-df-hj-np-tv-z]{4,}(|\\w+)$");
+            String patron = String.format("^(|\\w+)[B-Db-dF-Hf-hJ-Nj-nP-Tp-tV-Zv-z]{4,}(|\\w+)$");
             Pattern patt = Pattern.compile(patron);
             Matcher comparador = patt.matcher(palabra);
             if(comparador.matches()){
@@ -348,7 +344,7 @@ public class Validaciones {
     
     public static boolean validacionVocalesSeguidas(String palabra)
     {
-            String patron = String.format("^(|\\w+)[AaEeIiOoUu]{3,}(|\\w+)$");
+            String patron = String.format("^(|\\w+)[AaEeIiOoUu]{4,}(|\\w+)$");
             Pattern patt = Pattern.compile(patron);
             Matcher comparador = patt.matcher(palabra);
             if(comparador.matches()){
@@ -357,5 +353,19 @@ public class Validaciones {
             {
                 return false;
             }       
+    }
+    
+    public boolean validarRepeticionCadena(String cadena)
+    {
+        String[] palabras = cadena.split("\\s");
+        
+        for(String palabra:palabras)
+        {
+            if(validacionLetrasRepetidas(palabra))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

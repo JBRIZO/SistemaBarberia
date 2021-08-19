@@ -5,10 +5,9 @@
  */
 package com.mycompany.GUI;
 
-import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
-import com.mycompany.sistemabarberia.Validaciones;
-import com.mycompany.sistemabarberia.tiposbono;
+import com.mycompany.sistemabarberia.JPACOntrollers.tipopagoJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
+import com.mycompany.sistemabarberia.Validaciones;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -19,16 +18,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import com.mycompany.sistemabarberia.tipopago;
 
 /**
  *
  * @author Jonathan Laux
  */
-public class nuevoTipoBono extends javax.swing.JFrame {
-
-    private tiposbonoJpaController tipoBonoDAO = new tiposbonoJpaController();
+public class tipoPago extends javax.swing.JFrame {
+    
+    private tipopagoJpaController tipopagoDAO = new tipopagoJpaController();
     private Validaciones validar = new Validaciones();
-    private List<tiposbono> descuentosEnBd = tipoBonoDAO.findtiposbonoEntities();
+    private List<tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
     private ImageIcon imagen;
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
@@ -38,27 +38,29 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     /**
      * Creates new form nuevoTipoDescuento
      */
-    public nuevoTipoBono() {
+    public tipoPago() {
         initComponents();
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.setLocationRelativeTo(null);
-        formatoInvalido.setVisible(false);
-        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
-        Reiniciar();
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");      
+        Reiniciar();   
     }
-
-    public void Reiniciar() {
-        List<tiposbono> bonosEnBd = tipoBonoDAO.findtiposbonoEntities();
-        if (bonosEnBd.isEmpty()) {
-            idTipoBono.setText("  ID Tipo de Bono: 1");
-        } else {
-            idTipoBono.setText("  ID Tipo de Bono: " + Integer.toString(bonosEnBd.get(bonosEnBd.size() - 1).getIdtipobono() + 1));
-        }
-
-        tipoBono.setBorder(defaultBorder);
-        tipoBono.setText("Nuevo Tipo de Bono");
+    
+    public void Reiniciar()
+    {
+        List<com.mycompany.sistemabarberia.tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
+        if (tipopagoEnBd.isEmpty())
+        {
+            idtipopago.setText("  ID de tipo de pago: 1");
+        }else
+        {
+            idtipopago.setText("  ID de tipo de pago: " + Integer.toString(tipopagoEnBd.get(tipopagoEnBd.size()-1).getIdtipopago()+1));
+        } 
+        
+        
+        tipoDePago.setBorder(defaultBorder);
+        tipoDePago.setText("Nombre del Tipo de Pago");
         formatoInvalido.setVisible(false);
-
     }
 
     /**
@@ -72,33 +74,24 @@ public class nuevoTipoBono extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         tituloPantalla = new javax.swing.JLabel();
-        botonAceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        idTipoBono = new javax.swing.JTextField();
+        idtipopago = new javax.swing.JTextField();
         formatoInvalido = new javax.swing.JLabel();
-        tipoBono = new javax.swing.JTextField();
+        tipoDePago = new javax.swing.JTextField();
         salir = new javax.swing.JLabel();
+        botonAceptar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
+        jPanel1.setPreferredSize(new java.awt.Dimension(479, 539));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("NUEVO TIPO DE BONO");
-
-        botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
-        botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        botonAceptar.setText("ACEPTAR");
-        botonAceptar.setRequestFocusEnabled(false);
-        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAceptarActionPerformed(evt);
-            }
-        });
+        tituloPantalla.setText("TIPO DE PAGO");
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -112,46 +105,45 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        idTipoBono.setEditable(false);
-        idTipoBono.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoBono.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoBono.setText("ID Tipo de Descuento");
-        idTipoBono.setToolTipText("");
-        idTipoBono.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoBono.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoBono.addActionListener(new java.awt.event.ActionListener() {
+        idtipopago.setEditable(false);
+        idtipopago.setBackground(new java.awt.Color(30, 33, 34));
+        idtipopago.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        idtipopago.setForeground(new java.awt.Color(255, 255, 255));
+        idtipopago.setText("ID de tipo de pago");
+        idtipopago.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        idtipopago.setSelectionColor(new java.awt.Color(55, 53, 53));
+        idtipopago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoBonoActionPerformed(evt);
+                idtipopagoActionPerformed(evt);
             }
         });
 
         formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido.setText("Formato no valido.");
 
-        tipoBono.setBackground(new java.awt.Color(30, 33, 34));
-        tipoBono.setDocument(new JTextFieldLimit(25));
-        tipoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        tipoBono.setForeground(new java.awt.Color(255, 255, 255));
-        tipoBono.setText("  Nombre del Tipo de Bono");
-        tipoBono.setToolTipText("Ingrese un tipo de bono válido.");
-        tipoBono.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        tipoBono.addFocusListener(new java.awt.event.FocusAdapter() {
+        tipoDePago.setBackground(new java.awt.Color(30, 33, 34));
+        tipoDePago.setDocument(new JTextFieldLimit(25));
+        tipoDePago.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tipoDePago.setForeground(new java.awt.Color(255, 255, 255));
+        tipoDePago.setText("Nombre de Tipo de Pago");
+        tipoDePago.setToolTipText("Ingrese un tipo de pago válido.");
+        tipoDePago.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        tipoDePago.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tipoBonoFocusGained(evt);
+                tipoDePagoFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                tipoBonoFocusLost(evt);
+                tipoDePagoFocusLost(evt);
             }
         });
-        tipoBono.addActionListener(new java.awt.event.ActionListener() {
+        tipoDePago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tipoBonoActionPerformed(evt);
+                tipoDePagoActionPerformed(evt);
             }
         });
-        tipoBono.addKeyListener(new java.awt.event.KeyAdapter() {
+        tipoDePago.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                tipoBonoKeyTyped(evt);
+                tipoDePagoKeyTyped(evt);
             }
         });
 
@@ -163,20 +155,20 @@ public class nuevoTipoBono extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(formatoInvalido)
-                    .addComponent(tipoBono, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idTipoBono, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tipoDePago, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(idtipopago, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(idTipoBono, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(formatoInvalido)
+                .addGap(46, 46, 46)
+                .addComponent(idtipopago, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                .addComponent(tipoDePago, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tipoBono, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addComponent(formatoInvalido)
+                .addGap(20, 20, 20))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -193,7 +185,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
@@ -203,13 +195,23 @@ public class nuevoTipoBono extends javax.swing.JFrame {
             }
         });
 
+        botonAceptar.setBackground(new java.awt.Color(189, 158, 76));
+        botonAceptar.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        botonAceptar.setText("ACEPTAR");
+        botonAceptar.setRequestFocusEnabled(false);
+        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAceptarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(67, 67, 67)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -220,25 +222,25 @@ public class nuevoTipoBono extends javax.swing.JFrame {
                             .addGap(27, 27, 27)
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(101, 101, 101)
+                            .addGap(104, 104, 104)
                             .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(27, 27, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(salir)
+                        .addGap(17, 17, 17)
                         .addComponent(tituloPantalla)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(29, 29, 29)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -249,165 +251,152 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
+    private void idtipopagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idtipopagoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_idtipopagoActionPerformed
+//a;adir validaciones botonaceptar
+    private void tipoDePagoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDePagoFocusLost
+        validacionCampos();
+    }//GEN-LAST:event_tipoDePagoFocusLost
+
+    private void tipoDePagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoDePagoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipoDePagoActionPerformed
+
+    private void tipoDePagoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tipoDePagoKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipoDePagoKeyTyped
+
+    private void tipoDePagoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDePagoFocusGained
+        // TODO add your handling code here:
+        tipoDePago.selectAll();
+    }//GEN-LAST:event_tipoDePagoFocusGained
+
+    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new atributosFactura().setVisible(true);
+            }
+        });
+        this.setVisible(false);
+        this.dispose(); 
+        tipopagoDAO.close();
+    }//GEN-LAST:event_salirMouseClicked
+
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        List<tiposbono> bonosEnBD = tipoBonoDAO.findtiposbonoEntities();
-        tiposbono tipoBonoNuevo = new tiposbono();
-        tipoBonoNuevo.setNomBono(tipoBono.getText());
-        tipoBonoNuevo.setActivo(true);
+       List<tipopago> tipopagoEnBd = tipopagoDAO.findtipopagoEntities();
+        tipopago tipoPago = new com.mycompany.sistemabarberia.tipopago();
+        tipoPago.setTipoPago(tipoDePago.getText());
+        tipoPago.setActivo(true);
         
-        if(tipoBono.getText().equals("")||tipoBono.getText().equals("Nuevo Tipo de Bono"))
+        if(tipoDePago.getText().equals("")||tipoDePago.getText().equals("Nombre del Tipo de Pago"))
         {
-            JOptionPane.showMessageDialog(this,"Debes de ingresasr un tipo de bono.","Campos sin rellenar",JOptionPane.ERROR_MESSAGE);
-            tipoBono.setBorder(redBorder);
+            JOptionPane.showMessageDialog(this,"Debes de llenar el campo de tipo de pago.","Campo sin datos",JOptionPane.ERROR_MESSAGE);
             return;
         }
-        for (int i = 0; i < bonosEnBD.size(); i++) {
-            if (tipoBonoNuevo.getNomBono().equalsIgnoreCase(bonosEnBD.get(i).getNomBono())) {
-                tipoBono.setBorder(redBorder);
+        
+        for(int i=0; i < tipopagoEnBd.size();i++)
+        {
+            if(tipoPago.getTipoPago().equalsIgnoreCase(tipopagoEnBd.get(i).getTipoPago()))
+            {
+                Border border = BorderFactory.createLineBorder(Color.RED, 1);
+                tipoDePago.setBorder(border);
                 formatoInvalido.setVisible(true);
-                formatoInvalido.setText("Ese tipo de bono ya existe.");
+                formatoInvalido.setText("Ese tipo de pago ya existe.");
                 return;
             }
         }
-
-        if (validacionCampos()) {
+        if(validacionCampos()){
             try {
-                tipoBonoDAO.create(tipoBonoNuevo);
-                JOptionPane.showMessageDialog(null, "Operación Exitosa");
-                Reiniciar();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "No se pudo guardar, excepción: " + ex.getMessage());
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
+            tipopagoDAO.create(tipoPago);
+            JOptionPane.showMessageDialog(null,"Operacion Exitosa");
+                    Reiniciar();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
+     }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
     }//GEN-LAST:event_botonAceptarActionPerformed
-
-
-    private void idTipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoBonoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoBonoActionPerformed
-//a;adir validaciones botonaceptar
-    private void tipoBonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusLost
-        validacionCampos();
-    }//GEN-LAST:event_tipoBonoFocusLost
-
-    private void tipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoBonoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tipoBonoActionPerformed
-
-    private void tipoBonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tipoBonoKeyTyped
-
-    }//GEN-LAST:event_tipoBonoKeyTyped
-
-    private void tipoBonoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusGained
-        // TODO add your handling code here:
-        tipoBono.selectAll();
-    }//GEN-LAST:event_tipoBonoFocusGained
-
-    private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
-        Bono bono = new Bono();
-        bono.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_salirMouseClicked
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(nuevoTipoBono.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(nuevoTipoBono.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(nuevoTipoBono.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(nuevoTipoBono.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
+       
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new nuevoTipoBono().setVisible(true);
+                new tipoPago().setVisible(true);
             }
         });
-
+        
+        
     }
-
-    private boolean validacionCampos() {
-        if(tipoBono.getText().equals(""))
+    
+    private boolean validacionCampos()
+    {
+        if(tipoDePago.getText().equals(""))
         {
-            tipoBono.setBorder(redBorder);
+            tipoDePago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Debes ingresar un dato.");
             return false;
         }
-        if(tipoBono.getText().matches("^.*\\d+.*$"))
+         if(tipoDePago.getText().matches("^.*\\d+.*$"))
         {
-            tipoBono.setBorder(redBorder);
+            tipoDePago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Solo se permite texto en este campo.");
             return false;
         }
-        if(!tipoBono.getText().matches("^[A-Z]{1}[\\w\\s]+$"))
+        if(!tipoDePago.getText().matches("^[A-Z]{1}[\\w\\s]+$"))
         {
-            tipoBono.setBorder(redBorder);
+            tipoDePago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de bono debe iniciar con mayúscula.");
+            formatoInvalido.setText("El tipo de documento debe iniciar con mayuscula.");
             return false;
         }
-        if(validar.validacionLetrasRepetidas(tipoBono.getText()))
+         if(validar.validacionLetrasRepetidas(tipoDePago.getText()))
         {
-            tipoBono.setBorder(redBorder);
+            tipoDePago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("No puedes repetir tantas letras.");
             return false;
         }
-        
-        if(!validar.validacionCadenaPalabras(tipoBono.getText()))
+       if(!validar.validacionCadenaPalabras(tipoDePago.getText()))
         {
-            tipoBono.setBorder(redBorder);
+            tipoDePago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Esa no es una palabra válida.");
             return false;
-        }
-        if(!validar.validacionCantidadMinima(tipoBono.getText(), 3))
-        {
-            tipoBono.setBorder(redBorder);
+        }   
+       if(!validar.validacionCantidadMinima(tipoDePago.getText(), 4))
+            {
+            tipoDePago.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de bono debe ser de mínimo 3 letras.");
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
             return false;
-        }
-        tipoBono.setBorder(greenBorder);
-        formatoInvalido.setVisible(false);
-        return true;
+            }
+       tipoDePago.setBorder(greenBorder);
+       formatoInvalido.setText("");
+       return true;
     }
-
-    private void insertarImagen(JLabel lbl, String ruta) {
+    
+    private void insertarImagen(JLabel lbl,String ruta)
+    {
         this.imagen = new ImageIcon(ruta);
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
-                        lbl.getWidth(),
+                        lbl.getWidth(), 
                         lbl.getHeight(),
                         Image.SCALE_DEFAULT)
         );
@@ -418,13 +407,13 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
-    private javax.swing.JTextField idTipoBono;
+    private javax.swing.JTextField idtipopago;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
     private javax.swing.JLabel salir;
-    private javax.swing.JTextField tipoBono;
+    private javax.swing.JTextField tipoDePago;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -42,6 +43,7 @@ public class tipoDocumento extends javax.swing.JFrame {
      */
     public tipoDocumento() {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
@@ -60,7 +62,7 @@ public class tipoDocumento extends javax.swing.JFrame {
             idtipodocumento.setText("  ID Tipo de Documento: " + Integer.toString(tipodocumentoEnBd.get(tipodocumentoEnBd.size()-1).getIdtipodocumento()+1));
         } 
         TipoDocumento.setBorder(defaultBorder);
-        TipoDocumento.setText("  Nombre de Documento");
+        TipoDocumento.setText("Nombre de Documento");
         formatoInvalido.setVisible(false);
 
     }
@@ -78,7 +80,6 @@ public class tipoDocumento extends javax.swing.JFrame {
         tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         idtipodocumento = new javax.swing.JTextField();
@@ -92,6 +93,7 @@ public class tipoDocumento extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
+        jPanel1.setPreferredSize(new java.awt.Dimension(478, 528));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -108,8 +110,6 @@ public class tipoDocumento extends javax.swing.JFrame {
         });
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setText("jLabel1");
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -138,10 +138,10 @@ public class tipoDocumento extends javax.swing.JFrame {
         formatoInvalido.setText("Formato no valido.");
 
         TipoDocumento.setBackground(new java.awt.Color(30, 33, 34));
-        TipoDocumento.setDocument(new JTextFieldLimit(25));
+        TipoDocumento.setDocument(new JTextFieldLimit(20));
         TipoDocumento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         TipoDocumento.setForeground(new java.awt.Color(255, 255, 255));
-        TipoDocumento.setText("  Nombre de Documento");
+        TipoDocumento.setText("Nombre Documento");
         TipoDocumento.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         TipoDocumento.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -193,7 +193,7 @@ public class tipoDocumento extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
-        salir.setText("jLabel2");
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
         salir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salirMouseClicked(evt);
@@ -205,37 +205,38 @@ public class tipoDocumento extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tituloPantalla))
+                        .addGap(39, 39, 39)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(355, 355, 355)
-                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(363, 363, 363)
-                .addComponent(jLabel1))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(110, 110, 110)
+                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(tituloPantalla))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
-                        .addComponent(tituloPantalla))
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(salir)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tituloPantalla)
+                        .addGap(18, 18, 18)))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41))
@@ -245,9 +246,7 @@ public class tipoDocumento extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -256,37 +255,6 @@ public class tipoDocumento extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntities();
-        tipodocumento tipoDocumentoNuevo = new tipodocumento();
-        tipoDocumentoNuevo.setTipoDocumento(TipoDocumento.getText());
-        tipoDocumentoNuevo.setActivo(true);
-        
-        validarCampos();
-       
-        for(int i=0; i < tipodocumentosEnBd.size();i++)
-        {
-            if(tipoDocumentoNuevo.getTipoDocumento().equalsIgnoreCase(tipodocumentosEnBd.get(i).getTipoDocumento()))
-            {
-                Border border = BorderFactory.createLineBorder(Color.RED, 1);
-                TipoDocumento.setBorder(border);
-                formatoInvalido.setVisible(true);
-                formatoInvalido.setText("Ese tipo de documento ya existe.");
-                return;
-            }
-        }
-        
-        if(validar.validacionCadenaPalabras(TipoDocumento.getText()) && validar.validacionCantidadMinima(TipoDocumento.getText(),4)){
-            try {
-            tipodocumentoDAO.create(tipoDocumentoNuevo);
-            JOptionPane.showMessageDialog(null,"Operación Exitosa");
-                    Reiniciar();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
-        }
-        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
-    }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     
@@ -315,6 +283,41 @@ public class tipoDocumento extends javax.swing.JFrame {
         // TODO add your handling code here:
         TipoDocumento.selectAll();
     }//GEN-LAST:event_TipoDocumentoFocusGained
+
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntities();
+        tipodocumento tipoDocumentoNuevo = new tipodocumento();
+        tipoDocumentoNuevo.setTipoDocumento(TipoDocumento.getText());
+        tipoDocumentoNuevo.setActivo(true);
+        if(TipoDocumento.getText().equals("")||TipoDocumento.getText().equals("Nombre de Documento"))
+        {
+            JOptionPane.showMessageDialog(this,"Debes de ingresar un nombre de documento.","Campo sin datos",JOptionPane.ERROR_MESSAGE);
+            TipoDocumento.setBorder(redBorder);
+            return;
+        }
+       
+        for(int i=0; i < tipodocumentosEnBd.size();i++)
+        {
+            if(tipoDocumentoNuevo.getTipoDocumento().equalsIgnoreCase(tipodocumentosEnBd.get(i).getTipoDocumento()))
+            {
+                Border border = BorderFactory.createLineBorder(Color.RED, 1);
+                TipoDocumento.setBorder(border);
+                formatoInvalido.setVisible(true);
+                formatoInvalido.setText("Ese tipo de documento ya existe.");
+                return;
+            }
+        }
+        
+        if(validarCampos()){
+            try {
+            tipodocumentoDAO.create(tipoDocumentoNuevo);
+            JOptionPane.showMessageDialog(null,"Operación Exitosa");
+                    Reiniciar();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
+        }
+        }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+    }//GEN-LAST:event_botonAceptarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -353,41 +356,55 @@ public class tipoDocumento extends javax.swing.JFrame {
         
         
     }
-    private void validarCampos()
+    private boolean validarCampos()
     {
-        if(validar.validacionCampoNumerico(TipoDocumento.getText()))
+        if(TipoDocumento.getText().equals(""))
+        {
+            TipoDocumento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Debes ingresar un dato.");
+            return false;
+        }
+        if(TipoDocumento.getText().matches("^.*\\d+.*$"))
         {
             TipoDocumento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Solo se permite texto en este campo.");
-            return;
+            return false;
         }
-        if(!validar.validacionMayusculaInicial(TipoDocumento.getText()))
+        if(!TipoDocumento.getText().matches("^[A-Z]{1}[\\w\\s]+$"))
         {
             TipoDocumento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de documento debe iniciar con mayuscula.");
-            return;
+            return false;
         }
-        if(validar.validacionCadenaPalabras(TipoDocumento.getText()))
-        {    
-            TipoDocumento.setBorder(greenBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
+        
+        if(validar.validacionLetrasRepetidas(TipoDocumento.getText()))
         {
             TipoDocumento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Esa no es una palabra válida.");
-            return;
+            formatoInvalido.setText("No puedes repetir tantas letras.");
+            return false;
         }
-        if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 4))
+        if(!validar.validacionCadenaPalabras(TipoDocumento.getText()))
+        {    
+             TipoDocumento.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Esa no es una palabra válida.");
+            return false;
+            
+        }
+        if(!validar.validacionCantidadMinima(TipoDocumento.getText(), 3))
             {
             TipoDocumento.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de pago debe ser de minimo 4 letras.");
+            formatoInvalido.setText("El tipo de pago debe ser de minimo 3 letras.");
+            return false;
             }
+        formatoInvalido.setText("");
+        TipoDocumento.setBorder(greenBorder);
+        return true;
     }
     
     private void insertarImagen(JLabel lbl,String ruta)
@@ -408,7 +425,6 @@ public class tipoDocumento extends javax.swing.JFrame {
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
     private javax.swing.JTextField idtipodocumento;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

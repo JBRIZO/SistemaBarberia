@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.parametrosJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
+import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.parametros;
 import java.awt.Color;
 import java.awt.Image;
@@ -22,8 +23,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.ZoneId;
+import javax.swing.JTextField;
 
 /**
  *
@@ -31,6 +32,7 @@ import java.time.ZoneId;
  */
 public class parametrosFactura extends javax.swing.JFrame {
 
+    private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
     private Icon icono;
     parametrosJpaController parametros = new parametrosJpaController();
@@ -83,10 +85,16 @@ public class parametrosFactura extends javax.swing.JFrame {
         lbFechaFinal = new javax.swing.JLabel();
         lbValor = new javax.swing.JLabel();
         lbLlave = new javax.swing.JLabel();
+        rangoInicial = new javax.swing.JTextField();
+        rangoFinal = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         botonGuardar = new javax.swing.JButton();
         salir1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
@@ -109,7 +117,7 @@ public class parametrosFactura extends javax.swing.JFrame {
 
         txtFechaFinal.setBackground(new java.awt.Color(30, 33, 34));
         txtFechaFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtFechaFinal.setForeground(new java.awt.Color(153, 153, 153));
+        txtFechaFinal.setForeground(new java.awt.Color(255, 255, 255));
         txtFechaFinal.setText("Fecha Final");
         txtFechaFinal.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         txtFechaFinal.setSelectionColor(new java.awt.Color(55, 53, 53));
@@ -129,7 +137,7 @@ public class parametrosFactura extends javax.swing.JFrame {
 
         txtIdParametro.setBackground(new java.awt.Color(30, 33, 34));
         txtIdParametro.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtIdParametro.setForeground(new java.awt.Color(153, 153, 153));
+        txtIdParametro.setForeground(new java.awt.Color(255, 255, 255));
         txtIdParametro.setText("ID Parametro");
         txtIdParametro.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         txtIdParametro.setSelectionColor(new java.awt.Color(55, 53, 53));
@@ -142,7 +150,7 @@ public class parametrosFactura extends javax.swing.JFrame {
         txtLlave.setBackground(new java.awt.Color(30, 33, 34));
         txtLlave.setDocument(new JTextFieldLimit(30));
         txtLlave.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtLlave.setForeground(new java.awt.Color(153, 153, 153));
+        txtLlave.setForeground(new java.awt.Color(255, 255, 255));
         txtLlave.setText("Llave");
         txtLlave.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         txtLlave.setSelectionColor(new java.awt.Color(55, 53, 53));
@@ -162,7 +170,7 @@ public class parametrosFactura extends javax.swing.JFrame {
 
         txtFechaInicio.setBackground(new java.awt.Color(30, 33, 34));
         txtFechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtFechaInicio.setForeground(new java.awt.Color(153, 153, 153));
+        txtFechaInicio.setForeground(new java.awt.Color(255, 255, 255));
         txtFechaInicio.setText("Fecha de Inicio");
         txtFechaInicio.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         txtFechaInicio.setSelectionColor(new java.awt.Color(55, 53, 53));
@@ -195,6 +203,56 @@ public class parametrosFactura extends javax.swing.JFrame {
         lbLlave.setForeground(new java.awt.Color(255, 255, 255));
         lbLlave.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        rangoInicial.setBackground(new java.awt.Color(30, 33, 34));
+        rangoInicial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        rangoInicial.setForeground(new java.awt.Color(255, 255, 255));
+        rangoInicial.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        rangoInicial.setSelectionColor(new java.awt.Color(55, 53, 53));
+        rangoInicial.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                rangoInicialFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                rangoInicialFocusLost(evt);
+            }
+        });
+        rangoInicial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rangoInicialActionPerformed(evt);
+            }
+        });
+
+        rangoFinal.setBackground(new java.awt.Color(30, 33, 34));
+        rangoFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        rangoFinal.setForeground(new java.awt.Color(255, 255, 255));
+        rangoFinal.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        rangoFinal.setSelectionColor(new java.awt.Color(55, 53, 53));
+        rangoFinal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                rangoFinalFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                rangoFinalFocusLost(evt);
+            }
+        });
+        rangoFinal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rangoFinalActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Inicio:");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Final:");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Rango Factura:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -202,24 +260,34 @@ public class parametrosFactura extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtFechaFinal)
-                            .addComponent(txtLlave)
-                            .addComponent(txtFechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                            .addComponent(txtIdParametro)
-                            .addComponent(lbFechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(lbFechaFinal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbIdParametro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbValor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbLlave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbLlave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtIdParametro)
+                    .addComponent(lbFechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbFechaFinal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtLlave)
+                                .addComponent(jLabel3)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addComponent(jLabel1)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(rangoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabel2)
+                                    .addGap(23, 23, 23)
+                                    .addComponent(rangoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtFechaInicio))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addContainerGap(28, Short.MAX_VALUE)
                 .addComponent(txtIdParametro, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addComponent(lbIdParametro)
@@ -229,15 +297,22 @@ public class parametrosFactura extends javax.swing.JFrame {
                 .addComponent(lbFechaInicio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(lbFechaFinal)
-                .addGap(55, 55, 55)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(rangoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rangoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(19, 19, 19)
+                .addComponent(txtLlave, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(lbValor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtLlave, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbLlave)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addComponent(lbLlave))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -247,14 +322,14 @@ public class parametrosFactura extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
+                .addGap(97, 97, 97))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addGap(17, 17, 17)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         botonGuardar.setBackground(new java.awt.Color(189, 158, 76));
@@ -272,7 +347,6 @@ public class parametrosFactura extends javax.swing.JFrame {
             }
         });
 
-        salir1.setText("jLabel2");
         salir1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salir1MouseClicked(evt);
@@ -287,49 +361,51 @@ public class parametrosFactura extends javax.swing.JFrame {
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(tituloPantalla))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tituloPantalla)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 318, Short.MAX_VALUE)
-                        .addComponent(salir1))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(salir1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(54, 54, 54)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(104, 104, 104)
-                .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(salir1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(tituloPantalla))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 7, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(salir1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addComponent(tituloPantalla)))
                 .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -387,7 +463,7 @@ public class parametrosFactura extends javax.swing.JFrame {
                     LocalDate fecha2 = convertToLocalDateViaInstant(fechaFinal);
                     if(fecha.isAfter(fecha2))
                     {
-                       JOptionPane.showMessageDialog(null,"La fecha final no puede ser mayor a la fecha inicial.", 
+                       JOptionPane.showMessageDialog(null,"La fecha final no puede ser menor a la fecha inicial.", 
                                "Fecha Inválida",
                                JOptionPane.ERROR_MESSAGE); 
                        txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.red, 1));
@@ -396,22 +472,30 @@ public class parametrosFactura extends javax.swing.JFrame {
             if (!txtFechaInicio.getText().matches("^\\d{2}[/]{1}\\d{2}[/]{1}\\d{4}$")) {
             JOptionPane.showConfirmDialog(null, "Formato de fecha inicio inválido\nFormato correcto: dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (!txtFechaFinal.getText().matches("^\\d{2}[/]{1}\\d{2}[/]{1}\\d{4}$")) {
-            JOptionPane.showConfirmDialog(null, "Formato de fecha final inválido\nFormato correcto: dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Formato de fecha final inválido\nFormato correcto: dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (!txtLlave.getText().matches("^[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{2}$")) {
-            JOptionPane.showConfirmDialog(null, "El CAI debe contener 26 caracteres\nDeben ser numeros y letras\nFormato correcto: XXXXXX-XXXXXX-XXXXXX-XXXXXX-XX ", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El CAI debe contener 26 caracteres\nDeben ser numeros y letras\nFormato correcto: XXXXXX-XXXXXX-XXXXXX-XXXXXX-XX ", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         } else {
+            if(!validarRangos(rangoInicial,rangoFinal))
+            {
+                return;
+            }
             parametros pm = new parametros();
 
             pm.setFechaInicio(Date.valueOf(convertirFecha(txtFechaInicio.getText())));
             pm.setFechaFinal(Date.valueOf(convertirFecha(txtFechaFinal.getText())));
             pm.setLlave(txtLlave.getText());
+            pm.setRangoInicial(Integer.parseInt(rangoInicial.getText()));
+            pm.setRangoFinal(Integer.parseInt(rangoFinal.getText()));
             pm.setActivo(true);
             try {
                 parametros.create(pm);
                 limpiar();
-                JOptionPane.showConfirmDialog(null, "El registro se ha almacenado correctamente", "Notificación", JOptionPane.OK_OPTION);
+                JOptionPane.showMessageDialog(null, "El registro se ha almacenado correctamente");
             } catch (Exception e) {
-                JOptionPane.showConfirmDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                //JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_botonGuardarActionPerformed
@@ -471,7 +555,7 @@ public class parametrosFactura extends javax.swing.JFrame {
             return;
         }
             txtFechaInicio.setBorder(BorderFactory.createLineBorder(Color.green, 1));
-            lbFechaInicio.setText("Formato correcto");
+            lbFechaInicio.setText("");
         }
     }//GEN-LAST:event_txtFechaInicioFocusLost
 
@@ -504,7 +588,7 @@ public class parametrosFactura extends javax.swing.JFrame {
             return;
         }
             txtFechaFinal.setBorder(BorderFactory.createLineBorder(Color.green, 1));
-            lbFechaFinal.setText("Formato correcto");
+            lbFechaFinal.setText("");
         }
     }//GEN-LAST:event_txtFechaFinalFocusLost
 
@@ -523,10 +607,10 @@ public class parametrosFactura extends javax.swing.JFrame {
             lbLlave.setText("");
         } else if (!txtLlave.getText().matches("^[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{6}[-]{1}[A-Z,0-9]{2}$")) {
             txtLlave.setBorder(BorderFactory.createLineBorder(Color.red, 1));
-            lbLlave.setText("Formato incorrecto: XXXXXX-XXXXXX-XXXXXX-XXXXXX-XX \"");
+            //lbLlave.setText("Formato incorrecto: XXXXXX-XXXXXX-XXXXXX-XXXXXX-XX \"");
         } else {
             txtLlave.setBorder(BorderFactory.createLineBorder(Color.green, 1));
-            lbLlave.setText("Formato correcto");
+            //lbLlave.setText("Formato correcto");
         }
     }//GEN-LAST:event_txtLlaveFocusLost
 
@@ -541,6 +625,30 @@ public class parametrosFactura extends javax.swing.JFrame {
         this.dispose();
         parametros.close();
     }//GEN-LAST:event_salir1MouseClicked
+
+    private void rangoInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rangoInicialFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rangoInicialFocusGained
+
+    private void rangoInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rangoInicialFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rangoInicialFocusLost
+
+    private void rangoInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rangoInicialActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rangoInicialActionPerformed
+
+    private void rangoFinalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rangoFinalFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rangoFinalFocusGained
+
+    private void rangoFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rangoFinalFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rangoFinalFocusLost
+
+    private void rangoFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rangoFinalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rangoFinalActionPerformed
 
     /**
      * @param args the command line arguments
@@ -577,6 +685,50 @@ public class parametrosFactura extends javax.swing.JFrame {
         });
 
     }
+    
+    private boolean validarRangos(javax.swing.JTextField rangoInicial, javax.swing.JTextField rangoFinal)
+    {
+        List<parametros> parametrosBD = parametros.findparametrosEntities();
+        if(!validar.validacionEntero(rangoInicial.getText()))
+        {
+            rangoInicial.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+            JOptionPane.showMessageDialog(null,"El formato del rango inicial está equivocado, recuerda que en este campo solo puedes ingresar números enteros.","Error de formato",JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if(!validar.validacionEntero(rangoFinal.getText()))
+        {
+           rangoFinal.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+            JOptionPane.showMessageDialog(null,"El formato del rango final está~ equivocado, recuerda que en este campo solo puedes ingresar números enteros.","Error de formato",JOptionPane.ERROR_MESSAGE);
+            return false; 
+        }
+        try
+        {
+        int rangoInicio = Integer.parseInt(rangoInicial.getText());
+        int rangoFin = Integer.parseInt(rangoFinal.getText());
+        
+        if(rangoInicio >= rangoFin)
+        {
+            JOptionPane.showMessageDialog(this,"El rango inicial debe ser menor al rango final.","",JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        if(parametrosBD.get(parametrosBD.size()-1).getRangoFinal() >= rangoInicio)
+        {
+            JOptionPane.showMessageDialog(this,"El rango inicial de este nuevo parámetro no puede ser menor o igual al rango final del parametro anterior.",
+                    "Rango inválido",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        }catch(NumberFormatException ex)
+                {
+                JOptionPane.showMessageDialog(null,"Ese no es un número.","Error de formato",JOptionPane.ERROR_MESSAGE);
+                return false;
+                }
+        if(validar.validacionEntero(rangoFinal.getText()) && validar.validacionEntero(rangoInicial.getText()))
+        {
+            return true;
+        }else{return false;}
+    }
 
     private void insertarImagen(JLabel lbl, String ruta) {
         this.imagen = new ImageIcon(ruta);
@@ -610,6 +762,9 @@ public class parametrosFactura extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonGuardar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -619,6 +774,8 @@ public class parametrosFactura extends javax.swing.JFrame {
     private javax.swing.JLabel lbLlave;
     private javax.swing.JLabel lbValor;
     private javax.swing.JLabel logo;
+    private javax.swing.JTextField rangoFinal;
+    private javax.swing.JTextField rangoInicial;
     private javax.swing.JLabel salir1;
     private javax.swing.JLabel tituloPantalla;
     private javax.swing.JTextField txtFechaFinal;

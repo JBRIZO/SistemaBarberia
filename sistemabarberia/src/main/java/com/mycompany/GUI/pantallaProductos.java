@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
@@ -554,11 +555,17 @@ public class pantallaProductos extends javax.swing.JFrame {
         jLabel1.setText("Buscar por:");
 
         buscarTxt.setBackground(new java.awt.Color(30, 33, 34));
+        buscarTxt.setDocument(new JTextFieldLimit(25));
         buscarTxt.setForeground(new java.awt.Color(255, 255, 255));
         buscarTxt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         buscarTxt.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 buscarTxtFocusGained(evt);
+            }
+        });
+        buscarTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarTxtActionPerformed(evt);
             }
         });
 
@@ -889,23 +896,53 @@ public class pantallaProductos extends javax.swing.JFrame {
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-        
+        if(buscarTxt.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(this,"Debes ingresar un " + cbParametros.getSelectedItem().toString() + ".","Campo vacío",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         switch(cbParametros.getSelectedItem().toString())
         {
             case "ID Producto":
-                    cargarTablaBusquedaId(Integer.parseInt(buscarTxt.getText()));
-                 return;
+                try{
+                     cargarTablaBusquedaId(Integer.parseInt(buscarTxt.getText()));
+                }catch(NumberFormatException Ex)
+                {
+                    JOptionPane.showMessageDialog(this,"Un Id debe ser un número entero.","ID inválido",JOptionPane.ERROR_MESSAGE);
+                }
+                 break;
             case "Nombre":
+                if(!buscarTxt.getText().matches("^[\\w]+[^\\d]$"))
+                {
+                    JOptionPane.showMessageDialog(this,"Un nombre no lleva números.","Nombre inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                     cargarTablaBusquedaNombre(buscarTxt.getText());
                 return;
             case "Stock Actual":
+                 try{
                     cargarTablaBusquedaStock(Integer.parseInt(buscarTxt.getText()));
-                return;
+                 }catch(NumberFormatException Ex)
+                {
+                    JOptionPane.showMessageDialog(this,"El stock debe ser un número entero.","Stock inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             case "Precio Actual":
+                try{
                     cargarTablaBusquedaPrecio(Double.parseDouble(buscarTxt.getText()));
-                return;
+                }catch(NumberFormatException Ex)
+                {
+                    JOptionPane.showMessageDialog(this, "Ese no es un precio válido","Precio Inválido",JOptionPane.ERROR_MESSAGE);
+                }
+                break;
             case "Stock Maximo":
+                try{
                     cargarTablaBusquedaStockMaximo(Integer.parseInt(buscarTxt.getText()));
+                }catch(NumberFormatException Ex)
+                {
+                    JOptionPane.showMessageDialog(this, "El stock debe ser un número entero.","Stock inválido",JOptionPane.ERROR_MESSAGE);
+                }
+                   
         }
     }//GEN-LAST:event_botonBuscarActionPerformed
 
@@ -1012,6 +1049,10 @@ public class pantallaProductos extends javax.swing.JFrame {
         buscarTxt.setText("");
         anadirProductos.setVisible(false);
     }//GEN-LAST:event_listarActionPerformed
+
+    private void buscarTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscarTxtActionPerformed
 
     
     /**

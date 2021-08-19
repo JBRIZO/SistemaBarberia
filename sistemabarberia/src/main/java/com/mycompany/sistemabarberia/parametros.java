@@ -30,13 +30,30 @@ public class parametros implements Serializable {
         private Date FechaFinal;
         
         @Column
-        private String Valor;
+        private int RangoInicial;
+        
+        @Column
+        private int RangoFinal;
         
         @Column
         private boolean Activo;
-        
-       
 
+    public int getRangoInicial() {
+        return RangoInicial;
+    }
+
+    public void setRangoInicial(int RangoInicial) {
+        this.RangoInicial = RangoInicial;
+    }
+
+    public int getRangoFinal() {
+        return RangoFinal;
+    }
+
+    public void setRangoFinal(int RangoFinal) {
+        this.RangoFinal = RangoFinal;
+    }
+    
     public int getIdparametro() {
         return idparametro;
     }
@@ -67,14 +84,6 @@ public class parametros implements Serializable {
 
     public void setFechaFinal(Date FechaFinal) {
         this.FechaFinal = FechaFinal;
-    }
-
-    public String getValor() {
-        return Valor;
-    }
-
-    public void setValor(String Valor) {
-        this.Valor = Valor;
     }
 
     public boolean isActivo() {

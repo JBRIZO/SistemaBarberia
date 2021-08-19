@@ -55,8 +55,6 @@ public class nuevoProducto extends javax.swing.JFrame {
          this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-
         Reiniciar();    
     }
     
@@ -88,14 +86,14 @@ public class nuevoProducto extends javax.swing.JFrame {
             idProducto.setText("  ID de Producto: " + Integer.toString(productosEnBd.get(productosEnBd.size()-1).getIdproducto()+1));
         } 
         
-        nombreProducto.setText("  Nuevo Producto");
-        precioInicial.setText(" Precio");
+        nombreProducto.setText("Nuevo Producto");
+        precioInicial.setText("Precio");
         nombreProducto.setBorder(defaultBorder);
         precioInicial.setBorder(defaultBorder);
         stockInicial.setBorder(defaultBorder);
         stockMinimo.setBorder(defaultBorder);
         stockMaximo.setBorder(defaultBorder);
-        formatoInvalido1.setVisible(false);
+        formatoInvalido.setVisible(false);
         formatoInvalido2.setVisible(false);
         formatoInvalido3.setVisible(false);
         stockInicial.setText("");
@@ -124,11 +122,10 @@ public class nuevoProducto extends javax.swing.JFrame {
         tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         idProducto = new javax.swing.JTextField();
-        formatoInvalido1 = new javax.swing.JLabel();
+        formatoInvalido = new javax.swing.JLabel();
         precioInicial = new javax.swing.JTextField();
         nombreProducto = new javax.swing.JTextField();
         formatoInvalido2 = new javax.swing.JLabel();
@@ -143,14 +140,10 @@ public class nuevoProducto extends javax.swing.JFrame {
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(486, 696));
-        setMinimumSize(new java.awt.Dimension(486, 696));
         setUndecorated(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-        jPanel1.setMaximumSize(new java.awt.Dimension(486, 680));
-        jPanel1.setMinimumSize(new java.awt.Dimension(486, 680));
         jPanel1.setPreferredSize(new java.awt.Dimension(486, 680));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
@@ -168,8 +161,6 @@ public class nuevoProducto extends javax.swing.JFrame {
         });
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setText("jLabel1");
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -194,8 +185,8 @@ public class nuevoProducto extends javax.swing.JFrame {
             }
         });
 
-        formatoInvalido1.setForeground(new java.awt.Color(255, 255, 255));
-        formatoInvalido1.setText("Formato no valido.");
+        formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalido.setText("Formato no valido.");
 
         precioInicial.setBackground(new java.awt.Color(30, 33, 34));
         precioInicial.setDocument(new JTextFieldLimit(7));
@@ -352,7 +343,7 @@ public class nuevoProducto extends javax.swing.JFrame {
                     .addComponent(formatoInvalido3)
                     .addComponent(formatoInvalido2)
                     .addComponent(precioInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(formatoInvalido1)
+                    .addComponent(formatoInvalido)
                     .addComponent(idProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(nombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -377,7 +368,7 @@ public class nuevoProducto extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addComponent(idProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
-                .addComponent(formatoInvalido1)
+                .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24)
@@ -415,10 +406,10 @@ public class nuevoProducto extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47))
+                .addGap(26, 26, 26))
         );
 
-        salir.setText("jLabel2");
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
         salir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salirMouseClicked(evt);
@@ -430,39 +421,39 @@ public class nuevoProducto extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(396, 396, 396)
-                .addComponent(jLabel1))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(380, 380, 380)
-                        .addComponent(salir))
+                        .addGap(29, 29, 29)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addComponent(tituloPantalla))))
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(49, 49, 49)
+                                .addComponent(tituloPantalla))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(27, 27, 27))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(116, 116, 116))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tituloPantalla, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tituloPantalla)))
                 .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jLabel1))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -470,14 +461,12 @@ public class nuevoProducto extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 695, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -485,8 +474,8 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
        
-        if(nombreProducto.getText().equals("Nombre del Producto") || stockInicial.getText().equals("") ||
-                stockMinimo.getText().equals("") || stockMaximo.getText().equals("") || precioInicial.getText().equals("Precio Inicial"))
+        if(nombreProducto.getText().equals("Nuevo Producto") || stockInicial.getText().equals("") ||
+                stockMinimo.getText().equals("") || stockMaximo.getText().equals("") || precioInicial.getText().equals("Precio"))
         {
             JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
             return;
@@ -509,21 +498,17 @@ public class nuevoProducto extends javax.swing.JFrame {
         try{
          precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));}catch(NumberFormatException ex)
         {
-            JOptionPane.showMessageDialog(this,"Ingresa un numero valido");
+            JOptionPane.showMessageDialog(this,"Ingresa un precio válido","Formato de precio incorrecto",JOptionPane.ERROR_MESSAGE);
             return;
         }
         precioUno.setActivo(true);
-        
-       validacionCamposStock();
-       validacionCampos();
-       validarCampoNumerico();
         for(int i=0; i < productosEnBd.size();i++)
         {
             if(productoNuevo.getNomProducto().equalsIgnoreCase(productosEnBd.get(i).getNomProducto()))
             {
             nombreProducto.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Ese producto ya existe.");
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Ese producto ya existe.");
             return;
             }
         } 
@@ -535,7 +520,7 @@ public class nuevoProducto extends javax.swing.JFrame {
             formatoInvalido2.setText("El precio debe ser mayor a 0.");
             return;
         }
-        if(validar.validacionCadenaPalabras(nombreProducto.getText()) && validar.validacionDecimal(precioInicial.getText()) && validacionStock())
+        if(validacionCampos() && validarCampoNumerico() && validacionStock())
         {   
             try {
             productoDAO.create(productoNuevo); 
@@ -610,7 +595,7 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void stockInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockInicialFocusLost
         // TODO add your handling code here:
-     validacionCamposStock();
+     validacionStock();
     }//GEN-LAST:event_stockInicialFocusLost
 
     private void stockInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockInicialActionPerformed
@@ -627,7 +612,7 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void stockMinimoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockMinimoFocusLost
         // TODO add your handling code here:
-      validacionCamposStock();  
+      validacionStock();  
     }//GEN-LAST:event_stockMinimoFocusLost
 
     private void stockMinimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockMinimoActionPerformed
@@ -644,7 +629,7 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void stockMaximoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockMaximoFocusLost
         // TODO add your handling code here:
-        validacionCamposStock(); 
+        validacionStock(); 
     }//GEN-LAST:event_stockMaximoFocusLost
 
     private void stockMaximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockMaximoActionPerformed
@@ -655,159 +640,182 @@ public class nuevoProducto extends javax.swing.JFrame {
         // TODO add your handling code here      
     }//GEN-LAST:event_stockMaximoKeyTyped
 
-    public void validacionCampos()
+    public boolean validacionCampos()
     {
-        if(validar.validacionCampoNumerico(nombreProducto.getText()))
+        if(nombreProducto.getText().equals(""))
         {
             nombreProducto.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Solo se permite texto en este campo.");
-            return;
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Debes ingresar un dato.");
+            return false;
         }
-        if(!validar.validacionMayusculaInicial(nombreProducto.getText()))
+        if(nombreProducto.getText().matches("^.*\\d+.*$"))
         {
             nombreProducto.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("El nombre debe iniciar con mayúscula.");
-            return;
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return false;
         }
-        
+        if(!nombreProducto.getText().matches("^[A-Z]{1}[\\w\\s]+$"))
+        {
+            nombreProducto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El producto debe iniciar con mayúscula.");
+            return false;
+        }
         if(validar.validacionLetrasRepetidas(nombreProducto.getText()))
         {
             nombreProducto.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("No puedes repetir tantas letras.");
-            return;
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("No puedes repetir tantas letras.");
+            return false;
         }
-       
-        if(validar.validacionCadenaPalabras(nombreProducto.getText()))
-        {    
-            nombreProducto.setBorder(greenBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato válido");
-            
-        }else
-        {
-            nombreProducto.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Esa no es una palabra válida.");
-            return;
-        }
-        if(!validar.validacionCantidadMinima(nombreProducto.getText(),4))
-            {
-            nombreProducto.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("El nombre del producto debe ser de minimo 4 letras.");
-            }
-    }
-    public void validacionCamposStock()
-    {
-        if(Integer.parseInt(stockInicial.getText()) == 0)
-        {
-            stockInicial.setBorder(greenBorder);
-        }
-        if(validar.validacionEntero(stockInicial.getText()))
-            {    
-              stockInicial.setBorder(greenBorder);
-            }else
-            {
-                stockInicial.setBorder(redBorder);
-            }  
-
-          
-           if(validar.validacionEntero(stockMaximo.getText()))
-        {    
-            stockMaximo.setBorder(greenBorder);
-            
-        }else
-        {
-            stockMaximo.setBorder(redBorder);
-        }
-       
-          if(validar.validacionEntero(stockMinimo.getText()))
-        {    
-            stockMinimo.setBorder(greenBorder);   
-        }else
-        {
-            stockMinimo.setBorder(redBorder);
-        }
-          if(!validacionStock())
-            {
-                stockInicial.setBorder(redBorder);
-                stockMinimo.setBorder(redBorder);
-                stockMaximo.setBorder(redBorder);
-                
-            }else
-            {
-                stockInicial.setBorder(greenBorder);
-                stockMinimo.setBorder(greenBorder);
-                stockMaximo.setBorder(greenBorder);
-                formatoInvalido3.setVisible(false);
-
-            }
-       
         
+        if(!validar.validacionCadenaPalabras(nombreProducto.getText()))
+        {
+            nombreProducto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Esa no es una palabra válida.");
+            return false;
+        }
+        if(!validar.validacionCantidadMinima(nombreProducto.getText(), 4))
+        {
+            nombreProducto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El producto debe ser de mínimo 4 letras.");
+            return false;
+        }
+        nombreProducto.setBorder(greenBorder);
+        formatoInvalido.setVisible(false);
+        return true;
     }
     
-    public void validarCampoNumerico()
+//    public boolean validacionCamposStock()
+//    {
+//         if(!validacionStock())
+//            {
+//                stockInicial.setBorder(redBorder);
+//                stockMinimo.setBorder(redBorder);
+//                stockMaximo.setBorder(redBorder);
+//                return false;
+//                
+//            }else
+//            {
+//                stockInicial.setBorder(greenBorder);
+//                stockMinimo.setBorder(greenBorder);
+//                stockMaximo.setBorder(greenBorder);
+//            }   
+//        if(Integer.parseInt(stockInicial.getText()) == 0)
+//        {
+//            stockInicial.setBorder(greenBorder);
+//        }
+//        if(validar.validacionEntero(stockInicial.getText()))
+//            {    
+//              stockInicial.setBorder(greenBorder);
+//            }else
+//            {
+//                stockInicial.setBorder(redBorder);
+//            }  
+//
+//          
+//           if(validar.validacionEntero(stockMaximo.getText()))
+//        {    
+//            stockMaximo.setBorder(greenBorder);
+//            
+//        }else
+//        {
+//            stockMaximo.setBorder(redBorder);
+//        }
+//       
+//          if(validar.validacionEntero(stockMinimo.getText()))
+//        {    
+//            stockMinimo.setBorder(greenBorder);   
+//        }else
+//        {
+//            stockMinimo.setBorder(redBorder);
+//        }
+//         
+//    }
+    
+    public boolean validarCampoNumerico()
     {  
-        if (!validar.validacionCampoNumerico(precioInicial.getText()))
+      double precio = 0 ;
+        try{
+            precio = Double.parseDouble(precioInicial.getText());
+        }catch(NumberFormatException ex)
         {
-            precioInicial.setBorder(redBorder);
             formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Solo se permiten numeros en este campo.");
-            return;
+            formatoInvalido2.setText("Solo puedes ingresar números en este campo.");
+            precioInicial.setBorder(redBorder);
+            return false;
         }
-        if(Double.parseDouble(precioInicial.getText()) <= 0.00)
+       
+        if(precio <= 0)
         {
             precioInicial.setBorder(redBorder);
             formatoInvalido2.setVisible(true);
             formatoInvalido2.setText("El precio debe ser mayor a 0.");
-            return;
+            return false;
         }
         
-        if(validar.validacionDecimal(precioInicial.getText()))
-        {
-            precioInicial.setBorder(greenBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato válido");
-        }else
-        {
-            precioInicial.setBorder(redBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("El formato debe ser 0000.00");
-        }
+         precioInicial.setBorder(greenBorder);
+         formatoInvalido2.setVisible(false);
+         return true;
     }
     
     public boolean validacionStock()
     {
-        int inicial = Integer.parseInt(stockInicial.getText().equals("")?"0":stockInicial.getText());
-        int minimo = Integer.parseInt(stockMinimo.getText().equals("")?"0":stockMinimo.getText());
-        int maximo = Integer.parseInt(stockMaximo.getText().equals("")?"0":stockMaximo.getText());
-        
+        int inicial = 0;
+        int minimo = 0;
+        int maximo = 0;
+        try{
+        inicial = Integer.parseInt(stockInicial.getText().equals("")?"0":stockInicial.getText());
+        minimo = Integer.parseInt(stockMinimo.getText().equals("")?"0":stockMinimo.getText());
+        maximo = Integer.parseInt(stockMaximo.getText().equals("")?"0":stockMaximo.getText());
+        }catch(NumberFormatException ex)
+        {
+            formatoInvalido3.setVisible(true);
+            formatoInvalido3.setText("Solo puedes ingresar número enteros.");
+            stockInicial.setBorder(redBorder);
+            stockMinimo.setBorder(redBorder);
+            stockMaximo.setBorder(redBorder);
+            return false;
+        }
         if(inicial > maximo)
         {
             formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("Stock Inicial no puede ser mayor al máximo.");
+            formatoInvalido3.setText("Stock Inicial debe ser menor al máximo.");
+            stockInicial.setBorder(redBorder);
+            return false;
         }
-        if(minimo < 0)
+        if(minimo <= 0)
         {
            formatoInvalido3.setVisible(true);
            formatoInvalido3.setText("Stock minimo debe ser mayor a 0."); 
+           stockMinimo.setBorder(redBorder);
+           return false;
         }
-        if(maximo < 0)
+        if(maximo <= 0)
         {
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("Stock máximo debe ser mayor a 0.");
+            stockMaximo.setBorder(redBorder);
+            return false;
         }
         if(minimo > maximo)
         {
             formatoInvalido3.setVisible(true);
             formatoInvalido3.setText("Stock mínimo no puede ser mayor al máximo.");
+            stockMinimo.setBorder(redBorder);
+            return false;
         }
         
         if( minimo < maximo && inicial <= maximo && minimo>0 && inicial>=0 && maximo>0)
         {
+            stockInicial.setBorder(greenBorder);
+            stockMinimo.setBorder(greenBorder);
+            stockMaximo.setBorder(greenBorder);
+            formatoInvalido3.setVisible(false);
             return true;   
         }else{return false;}
     }
@@ -867,11 +875,10 @@ public class nuevoProducto extends javax.swing.JFrame {
     private javax.swing.JLabel Stock;
     private javax.swing.JLabel actualLabel;
     private javax.swing.JButton botonAceptar;
-    private javax.swing.JLabel formatoInvalido1;
+    private javax.swing.JLabel formatoInvalido;
     private javax.swing.JLabel formatoInvalido2;
     private javax.swing.JLabel formatoInvalido3;
     private javax.swing.JTextField idProducto;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

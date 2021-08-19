@@ -267,7 +267,7 @@ public class atributosFactura extends javax.swing.JFrame {
         // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new tipopago().setVisible(true);
+                new tipoPago().setVisible(true);
             }
         });
         this.setVisible(false);

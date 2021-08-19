@@ -54,7 +54,6 @@ public class nuevoServicio extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();    
     }
     
@@ -70,7 +69,7 @@ public class nuevoServicio extends javax.swing.JFrame {
        tituloPantalla.setText("MODIFICAR SERVICIO");
        idServicio.setText("Id de Servicio: " + servicioModificar.getIdservicio());
        nombreServicio.setText(servicioModificar.getNomServicio());
-       formatoInvalido1.setVisible(false);
+       formatoInvalido.setVisible(false);
     }
     
     public void Reiniciar()
@@ -84,11 +83,11 @@ public class nuevoServicio extends javax.swing.JFrame {
             idServicio.setText("  ID de Servicio: " + Integer.toString(serviciosEnBd.get(serviciosEnBd.size()-1).getIdservicio()+1));
         } 
         
-        nombreServicio.setText("  Nombre Servicio");
-        precioInicial.setText(" Precio");
+        nombreServicio.setText("Nombre Servicio");
+        precioInicial.setText("Precio");
         nombreServicio.setBorder(defaultBorder);
         precioInicial.setBorder(defaultBorder);
-        formatoInvalido1.setVisible(false);
+        formatoInvalido.setVisible(false);
         formatoInvalido2.setVisible(false);
 
     }
@@ -106,11 +105,10 @@ public class nuevoServicio extends javax.swing.JFrame {
         tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         idServicio = new javax.swing.JTextField();
-        formatoInvalido1 = new javax.swing.JLabel();
+        formatoInvalido = new javax.swing.JLabel();
         precioInicial = new javax.swing.JTextField();
         nombreServicio = new javax.swing.JTextField();
         formatoInvalido2 = new javax.swing.JLabel();
@@ -119,7 +117,6 @@ public class nuevoServicio extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-        jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -136,8 +133,6 @@ public class nuevoServicio extends javax.swing.JFrame {
         });
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setText("jLabel1");
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -162,8 +157,8 @@ public class nuevoServicio extends javax.swing.JFrame {
             }
         });
 
-        formatoInvalido1.setForeground(new java.awt.Color(255, 255, 255));
-        formatoInvalido1.setText("Formato no valido.");
+        formatoInvalido.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalido.setText("Formato no valido.");
 
         precioInicial.setBackground(new java.awt.Color(30, 33, 34));
         precioInicial.setDocument(new JTextFieldLimit(7));
@@ -230,7 +225,7 @@ public class nuevoServicio extends javax.swing.JFrame {
                     .addComponent(formatoInvalido2)
                     .addComponent(precioInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(nombreServicio, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(formatoInvalido1)
+                    .addComponent(formatoInvalido)
                     .addComponent(idServicio, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 42, Short.MAX_VALUE))
         );
@@ -240,7 +235,7 @@ public class nuevoServicio extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addComponent(idServicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48)
-                .addComponent(formatoInvalido1)
+                .addComponent(formatoInvalido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nombreServicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
@@ -267,7 +262,7 @@ public class nuevoServicio extends javax.swing.JFrame {
                 .addContainerGap(36, Short.MAX_VALUE))
         );
 
-        salir.setText("jLabel2");
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
         salir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salirMouseClicked(evt);
@@ -279,47 +274,48 @@ public class nuevoServicio extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(tituloPantalla))
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46)
+                        .addComponent(tituloPantalla)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(349, 349, 349)
-                        .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(27, 27, 27)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 35, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(405, 405, 405)
-                .addComponent(jLabel1))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(102, 102, 102)
+                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(25, 25, 25)
-                        .addComponent(tituloPantalla)))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                        .addGap(49, 49, 49))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tituloPantalla)
+                        .addGap(18, 18, 18)))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 486, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,6 +327,12 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
         
+        if(nombreServicio.getText().equals("")||nombreServicio.getText().equals("Nombre Servicio")||
+                precioInicial.getText().equals("Precio")||precioInicial.getText().equals(""))
+        {
+           JOptionPane.showMessageDialog(this,"Debes de rellenar todos los campos","Campos incompletos",JOptionPane.ERROR_MESSAGE);
+           return;
+        }
         //anadir servicio
         List<servicios> serviciosEnBd = servicioDAO.findserviciosEntities();
         String txt = nombreServicio.getText();
@@ -342,26 +344,23 @@ public class nuevoServicio extends javax.swing.JFrame {
         precioshistoricoservicios precioUno = new precioshistoricoservicios();
         precioUno.setFechaInicial(Date.valueOf(currentTime));
         precioUno.setFechaFinal(null);
-        precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
-        precioUno.setActivo(true);  
+        precioUno.setActivo(true);
         
-        validacionCamposTexto();
-        validacionNumerica();
-       
         for(int i=0; i < serviciosEnBd.size();i++)
         {
             if(servicioNuevo.getNomServicio().equalsIgnoreCase(serviciosEnBd.get(i).getNomServicio()))
             {
             Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
             nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Ese servicio ya existe.");
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Ese servicio ya existe.");
             return;
             }
         }
            
-        if(validar.validacionCadenaPalabras(txt) && validar.validacionDecimal(precioInicial.getText()) && validar.validacionCantidadMinima(nombreServicio.getText(),5)){
+        if(validacionCamposTexto() && validacionNumerica()){
             try {
+            precioUno.setPrecio(Double.parseDouble(precioInicial.getText()));
             servicioDAO.create(servicioNuevo); 
             List<servicios> servicios = servicioDAO.findserviciosEntities();
             precioUno.setIDServicio((servicios.get(servicios.size()-1)).getIdservicio());  
@@ -470,73 +469,81 @@ public class nuevoServicio extends javax.swing.JFrame {
         
     }
     
-    private void validacionNumerica()
+    private boolean validacionNumerica()
     {
-        if(!validar.validacionCampoNumerico(precioInicial.getText()))
+         double precio = 0 ;
+        try{
+            precio = Double.parseDouble(precioInicial.getText());
+        }catch(NumberFormatException ex)
         {
-            precioInicial.setBorder(redBorder);
             formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Solo se permiten numeros en este campo.");
-            return;
+            formatoInvalido2.setText("Solo puedes ingresar números en este campo.");
+            precioInicial.setBorder(redBorder);
+            return false;
         }
-        if(Double.parseDouble(precioInicial.getText()) <= 0)
+       
+        if(precio <= 0)
         {
             precioInicial.setBorder(redBorder);
             formatoInvalido2.setVisible(true);
             formatoInvalido2.setText("El precio debe ser mayor a 0.");
-            return;
+            return false;
         }
-         if(validar.validacionDecimal(precioInicial.getText()))
-        {
-            precioInicial.setBorder(greenBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("Formato válido");
-        }else
-        {
-            precioInicial.setBorder(redBorder);
-            formatoInvalido2.setVisible(true);
-            formatoInvalido2.setText("El formato debe de ser 0000.00");
-        }
+        
+         precioInicial.setBorder(greenBorder);
+         formatoInvalido2.setVisible(false);
+         return true;
         
     }
     
-    private void validacionCamposTexto()
+    private boolean validacionCamposTexto()
     {
-        if(validar.validacionCampoNumerico(nombreServicio.getText()))
+        if(nombreServicio.getText().equals(""))
         {
             nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Solo se permite texto en este campo.");
-            return;
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Debes ingresar un dato.");
+            return false;
+        }
+        if(nombreServicio.getText().matches("^.*\\d+.*$"))
+        {
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Solo se permite texto en este campo.");
+            return false;
+        }
+        if(!nombreServicio.getText().matches("^[A-Z]{1}[\\w\\s]+$"))
+        {
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El servicio debe iniciar con mayúscula.");
+            return false;
+        }
+        if(validar.validacionLetrasRepetidas(nombreServicio.getText()))
+        {
+            nombreServicio.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("No puedes repetir tantas letras.");
+            return false;
         }
         
-        if(!validar.validacionMayusculaInicial(nombreServicio.getText()))
+        if(!validar.validacionCadenaPalabras(nombreServicio.getText()))
         {
             nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("El servicio debe iniciar con mayuscula.");
-            return;
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Esa no es una palabra válida.");
+            return false;
         }
-         if(validar.validacionCadenaPalabras(nombreServicio.getText()))
-        {    
-            nombreServicio.setBorder(greenBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Formato válido");   
-        }else
+        if(!validar.validacionCantidadMinima(nombreServicio.getText(), 4))
         {
             nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("Esa no es una palabra válida.");
-            return;
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("El servicio debe ser de mínimo 4 letras.");
+            return false;
         }
-        if(!validar.validacionCantidadMinima(nombreServicio.getText(),4))
-            {
-            System.out.println(nombreServicio.getText());
-            nombreServicio.setBorder(redBorder);
-            formatoInvalido1.setVisible(true);
-            formatoInvalido1.setText("El nombre de servicio debe ser de minimo 5 letras.");
-            return;
-            }
+        nombreServicio.setBorder(greenBorder);
+        formatoInvalido.setVisible(false);
+        return true;
       
     }
     
@@ -555,10 +562,9 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
-    private javax.swing.JLabel formatoInvalido1;
+    private javax.swing.JLabel formatoInvalido;
     private javax.swing.JLabel formatoInvalido2;
     private javax.swing.JTextField idServicio;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

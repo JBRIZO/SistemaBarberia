@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.servicios;
@@ -121,6 +122,11 @@ public class pantallaServicios extends javax.swing.JFrame {
                 serviciosFiltrados.add(serviciosEnBd.get(i));
             }
         }
+        if(serviciosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this,"No se encontraron servicios con Id de Servicio '" + buscarTxt.getText() + "'","Error de búsqueda",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(servicios servicio : serviciosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
@@ -158,12 +164,19 @@ public class pantallaServicios extends javax.swing.JFrame {
         List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
         List<servicios> serviciosFiltrados = new ArrayList();
         
+        
+        
         for(int i = 0; i < serviciosEnBd.size();i++)
         {
             if(serviciosEnBd.get(i).getNomServicio().equalsIgnoreCase(Nombre))
             {
                 serviciosFiltrados.add(serviciosEnBd.get(i));
             }
+        }
+         if(serviciosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this,"No se encontraron servicios con el Nombre '" + buscarTxt.getText() + "'","Error de búsqueda",JOptionPane.ERROR_MESSAGE);
+            return;
         }
             for(servicios servicio : serviciosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
@@ -211,6 +224,12 @@ public class pantallaServicios extends javax.swing.JFrame {
             }
         }     
         
+         if(serviciosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this,"No se encontraron servicios con un precio de '" + buscarTxt.getText() + "'","Error de búsqueda",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+         
         for(int i = 0; i < serviciosEnBd.size() ; i++)
         {
             for(int j = 0 ; j < preciosFiltrados.size(); j++)
@@ -405,6 +424,7 @@ public class pantallaServicios extends javax.swing.JFrame {
         jLabel1.setText("Buscar por:");
 
         buscarTxt.setBackground(new java.awt.Color(30, 33, 34));
+        buscarTxt.setDocument(new JTextFieldLimit(25));
         buscarTxt.setForeground(new java.awt.Color(255, 255, 255));
         buscarTxt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         buscarTxt.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -719,18 +739,37 @@ public class pantallaServicios extends javax.swing.JFrame {
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-
+         if(buscarTxt.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(this,"Debes ingresar un " + cbParametros.getSelectedItem().toString() + ".","Campo vacío",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         switch(cbParametros.getSelectedItem().toString())
         {
             case "ID Servicio":
+                try{
                     cargarTablaBusquedaId(Integer.parseInt(buscarTxt.getText()));
+                }catch(NumberFormatException ex)
+                {
+                    JOptionPane.showMessageDialog(this,"Un Id es un numero entero.","ID Inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                } 
                  return;
             case "Nombre":
+                 if(!buscarTxt.getText().matches("^[\\w]+[^\\d]$"))
+                {
+                    JOptionPane.showMessageDialog(this,"Un nombre no lleva números.","Nombre inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                     cargarTablaBusquedaNombre(buscarTxt.getText());
                 return;
             case "Precio Actual":
+                try{
                     cargarTablaBusquedaPrecio(Double.parseDouble(buscarTxt.getText()));
-                return;
+                }catch(NumberFormatException Ex)
+                {
+                    JOptionPane.showMessageDialog(this, "Ese no es um precio válido","Precio Inválido",JOptionPane.ERROR_MESSAGE);
+                }
         }
     }//GEN-LAST:event_botonBuscarActionPerformed
 

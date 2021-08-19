@@ -7,6 +7,7 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
@@ -97,6 +98,14 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 empleadosFiltrados.add(empleadosEnBd.get(i));
             }
         }
+        
+         if(empleadosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun empleado con ese ID.",
+                    "ID inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(empleado empleado : empleadosFiltrados){
                 if(empleado.isActivo())
                 {
@@ -135,6 +144,13 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 empleadosFiltrados.add(empleadosEnBd.get(i));
             }
         }
+        if(empleadosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun empleado con esos nombres.",
+                    "Empleado inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(empleado empleado : empleadosFiltrados){
                 if(empleado.isActivo())
                 {
@@ -172,6 +188,14 @@ public class pantallaEmpleados extends javax.swing.JFrame {
             {
                 empleadosFiltrados.add(empleadosEnBd.get(i));
             }
+        }
+        
+        if(empleadosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun empleado con esos apellidos.",
+                    "Empleado inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
         }
             for(empleado empleado : empleadosFiltrados){
                 if(empleado.isActivo())
@@ -249,6 +273,13 @@ public class pantallaEmpleados extends javax.swing.JFrame {
                 empleadosFiltrados.add(empleadosEnBd.get(i));
             }
         }
+        if(empleadosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun empleado que haya iniciado ese día.",
+                    "Empleado inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
             for(empleado empleado : empleadosFiltrados){
                 if(empleado.isActivo())
                 {
@@ -286,6 +317,14 @@ public class pantallaEmpleados extends javax.swing.JFrame {
             {
                 empleadosFiltrados.add(empleadosEnBd.get(i));
             }
+        }
+        
+        if(empleadosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró ningun empleado con ese numero de teléfono.",
+                    "Empleado inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
         }
             for(empleado empleado : empleadosFiltrados){
                 if(empleado.isActivo())
@@ -478,6 +517,7 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         jLabel1.setText("Buscar Por:");
 
         buscarTxt.setBackground(new java.awt.Color(30, 33, 34));
+        buscarTxt.setDocument(new JTextFieldLimit(25));
         buscarTxt.setForeground(new java.awt.Color(255, 255, 255));
         buscarTxt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -733,6 +773,13 @@ public class pantallaEmpleados extends javax.swing.JFrame {
         // TODO add your handling code here:
         empleado modificar = new empleado();
         List<empleado> empleados = empleadoDAO.findempleadoEntities();
+        
+        if(tablaEmpleados.getSelectedRow() == -1)
+        {
+            JOptionPane.showMessageDialog(this,"Debes seleccionar un empleado para poder desactivarlo.","Selecciona un empleado",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         for(int i=0 ; i<empleados.size();i++)
         {
             if(Integer.parseInt(tablaEmpleados.getValueAt(tablaEmpleados.getSelectedRow(),0).toString()) == empleados.get(i).getIdempleado())
@@ -783,28 +830,45 @@ public class pantallaEmpleados extends javax.swing.JFrame {
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
 
+        if(buscarTxt.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(this,"Debes ingresar un " + cbParametros.getSelectedItem().toString() + ".","Campo vacío",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         switch(cbParametros.getSelectedItem().toString())
         {
             case "ID Empleado":
-            cargarTablaBusquedaId(Integer.parseInt(buscarTxt.getText()));
+                try{
+                   cargarTablaBusquedaId(Integer.parseInt(buscarTxt.getText())); 
+                }
+                catch(NumberFormatException Ex)
+                {
+                    JOptionPane.showMessageDialog(this,"El Id debe de ser un número entero.","ID inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             return;
-
             case "Nombres":
-            cargarTablaBusquedaNombres(buscarTxt.getText());
-            return;
-
+                 if(!buscarTxt.getText().matches("^[\\w\\s]+[^\\d]$"))
+                {
+                    JOptionPane.showMessageDialog(this,"Un nombre no lleva números.","Nombre inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                    cargarTablaBusquedaNombres(buscarTxt.getText());
+                return;
             case "Apellidos":
-            cargarTablaBusquedaApellidos(buscarTxt.getText());
-            return;
-
+                if(!buscarTxt.getText().matches("^[\\w\\s]+[^\\d]$"))
+                {
+                    JOptionPane.showMessageDialog(this,"Un apellido no lleva números.","Apellido inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                    cargarTablaBusquedaApellidos(buscarTxt.getText());
+                return;
             case "Género":
             cargarTablaBusquedaGenero(buscarTxt.getText().charAt(0));
                 return;
-
             case "Fecha Inicio":
             cargarTablaFechaInicio(buscarTxt.getText());
             return;
-
             case "Num. Teléfono":
             cargarTablaNumeroTelefono(buscarTxt.getText());
         }

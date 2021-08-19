@@ -42,9 +42,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
-        
+        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");        
         Reiniciar();  
     }
     
@@ -60,7 +58,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
         } 
         
         nombreDeduccion.setBorder(defaultBorder);
-        nombreDeduccion.setText("  Nuevo Tipo Deduccion");
+        nombreDeduccion.setText("Nuevo Tipo Deduccion");
         formatoInvalido.setVisible(false);
     }
 
@@ -77,7 +75,6 @@ public class tipoDeduccion extends javax.swing.JFrame {
         tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         idDeduccion = new javax.swing.JTextField();
@@ -88,7 +85,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-        jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
+        jPanel1.setPreferredSize(new java.awt.Dimension(487, 538));
 
         tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
@@ -105,8 +102,6 @@ public class tipoDeduccion extends javax.swing.JFrame {
         });
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setText("jLabel1");
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -190,7 +185,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
-        salir.setText("jLabel2");
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
         salir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salirMouseClicked(evt);
@@ -202,26 +197,25 @@ public class tipoDeduccion extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(tituloPantalla))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(349, 349, 349)
-                        .addComponent(salir)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(tituloPantalla)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(salir))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(372, 372, 372)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(110, 110, 110)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(35, 35, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(104, 104, 104)
+                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,27 +228,21 @@ public class tipoDeduccion extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tituloPantalla)))
                 .addGap(24, 24, 24)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -267,7 +255,12 @@ public class tipoDeduccion extends javax.swing.JFrame {
         tipoDeduccion.setNombre(nombreDeduccion.getText());
         tipoDeduccion.setActivo(true);
         
-       validarCampos();
+         if(nombreDeduccion.getText().equals("")||nombreDeduccion.getText().equals("Nuevo Tipo Deduccion"))
+        {
+            JOptionPane.showMessageDialog(this,"Debes de ingresar un nombre para el tipo de deducción.","Campo sin datos",JOptionPane.ERROR_MESSAGE);
+            nombreDeduccion.setBorder(redBorder);
+            return;
+        }
        
         for(int i=0; i < tipodeduccionEnBd.size();i++)
         {
@@ -280,7 +273,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
                 return;
             }
         }
-        if(validar.validacionCadenaPalabras(nombreDeduccion.getText()) && validar.validacionCantidadMinima(nombreDeduccion.getText(),3)){
+        if(validarCampos()){
             try {
             tipodeduccionDAO.create(tipoDeduccion);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
@@ -358,41 +351,53 @@ public class tipoDeduccion extends javax.swing.JFrame {
         
         
     }
-    private void validarCampos()
+    private boolean validarCampos()
     {
-        if(validar.validacionCampoNumerico(nombreDeduccion.getText()))
+        if(nombreDeduccion.getText().equals(""))
+        {
+            nombreDeduccion.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Debes ingresar un dato.");
+            return false;
+        }
+        if(nombreDeduccion.getText().matches("^.*\\d+.*$"))
         {
             nombreDeduccion.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Solo se permite texto en este campo.");
-            return;
+            return false;
         }
-        if(!validar.validacionMayusculaInicial(nombreDeduccion.getText()))
+        if(!nombreDeduccion.getText().matches("^[A-Z]{1}[\\w\\s]+$"))
         {
             nombreDeduccion.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("El tipo de deduccion debe iniciar con mayuscula.");
-            return;
+            formatoInvalido.setText("El tipo de documento debe iniciar con mayuscula.");
+            return false;
         }
-        if(validar.validacionCadenaPalabras(nombreDeduccion.getText()))
-        {    
-            nombreDeduccion.setBorder(greenBorder);
+         if(validar.validacionLetrasRepetidas(nombreDeduccion.getText()))
+        {
+            nombreDeduccion.setBorder(redBorder);
             formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Formato válido");
-            
-        }else
+            formatoInvalido.setText("No puedes repetir tantas letras.");
+            return false;
+        }
+        if(!validar.validacionCadenaPalabras(nombreDeduccion.getText()))
         {
             nombreDeduccion.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("Esa no es una palabra válida.");
-            return;
+            return false;
         }
         if(!validar.validacionCantidadMinima(nombreDeduccion.getText(), 3))
         {
             nombreDeduccion.setBorder(redBorder);
             formatoInvalido.setVisible(true);
             formatoInvalido.setText("El tipo de deducción debe ser de mínimo 3 letras.");
+            return false;
         }
+        nombreDeduccion.setBorder(greenBorder);
+        formatoInvalido.setText("");
+        return true;
         
     }
     
@@ -413,7 +418,6 @@ public class tipoDeduccion extends javax.swing.JFrame {
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
     private javax.swing.JTextField idDeduccion;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
