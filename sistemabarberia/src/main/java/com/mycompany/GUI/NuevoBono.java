@@ -15,6 +15,7 @@ import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.tiposbono;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -53,8 +54,8 @@ public class NuevoBono extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         formatoInvalidoPeriodo.setText("");
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir, "src/main/resources/Imagenes/x.png");
         obtenerEmpleados();
         obtenerTipoBono();
         formatoInvalidoCantidad.setText("");
@@ -86,6 +87,7 @@ public class NuevoBono extends javax.swing.JFrame {
         jLabel = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         salir = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
@@ -136,7 +138,6 @@ public class NuevoBono extends javax.swing.JFrame {
         periodo.setDocument(new JTextFieldLimit(6));
         periodo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         periodo.setForeground(new java.awt.Color(255, 255, 255));
-        periodo.setText("Periodo");
         periodo.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         periodo.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -193,7 +194,7 @@ public class NuevoBono extends javax.swing.JFrame {
                 cantidadKeyTyped(evt);
             }
         });
-        jPanel3.add(cantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, 110, 42));
+        jPanel3.add(cantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 110, 42));
 
         cbTipoBono.setBackground(new java.awt.Color(30, 33, 34));
         cbTipoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -203,11 +204,11 @@ public class NuevoBono extends javax.swing.JFrame {
                 cbTipoBonoActionPerformed(evt);
             }
         });
-        jPanel3.add(cbTipoBono, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, 110, 40));
+        jPanel3.add(cbTipoBono, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, 110, 40));
 
         formatoInvalidoCantidad.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoCantidad.setText("Formato no valido.");
-        jPanel3.add(formatoInvalidoCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 230, 110, 20));
+        jPanel3.add(formatoInvalidoCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 240, 110, 20));
 
         Cancelar.setBackground(new java.awt.Color(189, 158, 76));
         Cancelar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -218,7 +219,7 @@ public class NuevoBono extends javax.swing.JFrame {
                 CancelarActionPerformed(evt);
             }
         });
-        jPanel3.add(Cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 110, 30));
+        jPanel3.add(Cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 290, 110, 30));
 
         aceptar.setBackground(new java.awt.Color(189, 158, 76));
         aceptar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -229,7 +230,7 @@ public class NuevoBono extends javax.swing.JFrame {
                 aceptarActionPerformed(evt);
             }
         });
-        jPanel3.add(aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 280, 110, 30));
+        jPanel3.add(aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 290, 110, 30));
 
         jLabel.setForeground(new java.awt.Color(255, 255, 255));
         jLabel.setText("ID Empleado:");
@@ -237,11 +238,15 @@ public class NuevoBono extends javax.swing.JFrame {
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Tipo Bono:");
-        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, -1, -1));
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Periodo:");
         jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, -1, -1));
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Cantidad:");
+        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, -1, -1));
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(31, 28, 460, 340));
 
@@ -331,10 +336,23 @@ public class NuevoBono extends javax.swing.JFrame {
 
     private void cantidadFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cantidadFocusGained
         // TODO add your handling code here:
+        if(cantidad.getText().equals("Cantidad"))
+        {
+            cantidad.setText("");
+            jLabel2.setText("Cantidad:");
+        }
     }//GEN-LAST:event_cantidadFocusGained
 
     private void cantidadFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cantidadFocusLost
         // TODO add your handling code here:
+        if(cantidad.getText().equals(""))
+        {
+            cantidad.setText("Cantidad");
+            jLabel2.setText("");
+        }else
+        {
+            validarDecimal();
+        }
     }//GEN-LAST:event_cantidadFocusLost
 
     private void cantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantidadActionPerformed
@@ -370,6 +388,21 @@ public class NuevoBono extends javax.swing.JFrame {
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
        List<empleado> empleadosActivos = new ArrayList();
         
+        if ( periodo.getText().equals("") || periodo.getText().equals("") || cbTipoBono.getSelectedIndex() == 0 || cantidad.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debes llenar todos los datos", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (idEmpleado.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(this,"Debes seleccionar un empleado","Selecciona un empleado",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(cbTipoBono.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(this,"Debes seleccionar un tipo de bono.","Selecciona un tipo de bono",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         for(int i=0 ; i < empleadosBD.size();i++)
         {
             if(empleadosBD.get(i).isActivo())
@@ -380,13 +413,6 @@ public class NuevoBono extends javax.swing.JFrame {
         
        if(idEmpleado.getSelectedIndex() == 1)
        {
-           if(periodo.getText().equals("") || cantidad.getText().equals(""))
-        {
-            JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.",
-                    "Campos Incompletos",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
            int contador = 0;
            for(empleado empleado:empleadosBD)
            {
@@ -407,7 +433,7 @@ public class NuevoBono extends javax.swing.JFrame {
                     }
                 }else
                 {
-                    JOptionPane.showMessageDialog(null,"Por favor corrige campos en rojo.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,"Por favor corrige los campos en rojo.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
                 }
            }
            if(contador == empleadosActivos.size())
@@ -417,14 +443,9 @@ public class NuevoBono extends javax.swing.JFrame {
            {
               JOptionPane.showMessageDialog(null,"Error al aplicar deducción al empleado con Id número " + contador); 
            }
-           return;
            
-       }
-       
-        if (idEmpleado.getSelectedIndex() == 0 || periodo.getText().isEmpty()
-                || cbTipoBono.getSelectedIndex() == 0 || cantidad.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Debes llenar todos los datos", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        } else {
+       }else
+       {
             bonosempleadomensual bonos = new bonosempleadomensual();
             bonos.setIdEmpleado(Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
             bonos.setPeriodo(periodo.getText());
@@ -436,7 +457,7 @@ public class NuevoBono extends javax.swing.JFrame {
             } catch (Exception e) {
                 
             }
-        }
+       } 
     }//GEN-LAST:event_aceptarActionPerformed
 
     private void cbTipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoBonoActionPerformed
@@ -496,34 +517,28 @@ public class NuevoBono extends javax.swing.JFrame {
     
      private boolean validarDecimal()
      {
-         if(!validar.validacionCampoNumerico(cantidad.getText()))
-         {
-             cantidad.setBorder(redBorder);
-             formatoInvalidoCantidad.setVisible(true);
-             formatoInvalidoCantidad.setText("Solo puedes ingresar numeros en este campo.");
-             return false;
-         }
-         
-         if(Double.parseDouble(cantidad.getText()) <= 0)
+          double precio1 = 0 ;
+        try{
+            precio1 = Double.parseDouble(cantidad.getText());
+        }catch(NumberFormatException ex)
+        {
+            formatoInvalidoCantidad.setVisible(true);
+            formatoInvalidoCantidad.setText("Solo puedes ingresar números en este campo.");
+            cantidad.setBorder(redBorder);
+            return false;
+        }
+       
+        if(precio1 <= 0)
         {
             cantidad.setBorder(redBorder);
+            formatoInvalidoCantidad.setVisible(true);
             formatoInvalidoCantidad.setText("La cantidad debe ser mayor a 0.");
             return false;
         }
         
-        if(validar.validacionDecimal(cantidad.getText()))
-        {
-            cantidad.setBorder(greenBorder);
-            formatoInvalidoCantidad.setText(" ");
-            return true;
-        }else
-        {
-            cantidad.setBorder(redBorder);
-            formatoInvalidoCantidad.setText("El formato debe ser 000000.00");
-            return false;
-        }  
-         
-     
+         cantidad.setBorder(greenBorder);
+         formatoInvalidoCantidad.setVisible(false);
+         return true;
      }
 
     private boolean validacionPeriodo(javax.swing.JTextField jText, JLabel label)
@@ -531,16 +546,30 @@ public class NuevoBono extends javax.swing.JFrame {
          Calendar calendar = new GregorianCalendar();
         calendar.setTime(dt);
         int mes = calendar.get(Calendar.MONTH) + 1;
-        
-         String mesCampo = Character.toString(jText.getText().charAt(4)) + jText.getText().charAt(5);
+        String mesCampo = "";
+        try
+        {
+            mesCampo = Character.toString(jText.getText().charAt(4)) + jText.getText().charAt(5);
+        }catch(StringIndexOutOfBoundsException Ex)
+                {
+                periodo.setBorder(redBorder);
+                label.setText("Un periodo debe tener 6 caracteres.");
+                return false;
+                }
          
-         if(Integer.parseInt(mesCampo) > mes)
+         try{
+             if(Integer.parseInt(mesCampo) > mes || Integer.parseInt(mesCampo) < mes)
          {
              jText.setBorder(redBorder);
-             formatoInvalidoPeriodo.setText("El mes del periodo debe concordar con el mes actual.");
+             label.setText("El mes del periodo debe concordar con el mes actual.");
            return false; 
+         } 
+         }catch(NumberFormatException Ex)
+         {
+            jText.setBorder(redBorder); 
+            formatoInvalidoPeriodo.setText("Un periodo se compone solo de números.");
          }
-         System.out.println(mes);
+        
          if(!validar.validacionCampoNumerico(jText.getText()))
          {
              jText.setBorder(redBorder);
@@ -573,6 +602,7 @@ public class NuevoBono extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> idEmpleado;
     private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;

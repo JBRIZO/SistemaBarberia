@@ -66,7 +66,6 @@ public class nuevoProducto extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar(); 
         this.productoModificar = productoModificar;
         stockInicial.setEnabled(false);

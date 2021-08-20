@@ -60,13 +60,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
 import javax.swing.border.Border;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableRowSorter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -134,7 +130,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         advertenciaCAI.setVisible(false);
         validarCAI();
         empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
-        //cajeroTxt.setText(empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+        cajeroTxt.setText(empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
         cargarBarberos();
         cbOpciones.setSelectedIndex(0);
         //ocultar columnas de servicio/producto
@@ -149,24 +145,35 @@ public class PantallaFactura extends javax.swing.JFrame {
         {
             cbDescuento.addItem(descuentosBD.get(i).toString());
         }
-//        caiLabel.setText("CAI: " + CAI.getLlave());
+        caiLabel.setText(CAI == null? "CAI INVÁLIDO": "CAI: " + CAI.getLlave());
         fecha.setText(currentTime);
         numFactura();
         isvTxt.setText("0.15");
         
-//        if(puestoEmpleadoActual(singleton.getCuenta().getIDEmpleado()) != 1)
-//        {
-//            menuGerente.setEnabled(false);
-//        }else
-//        {
-//            menuGerente.setEnabled(true);
-//        }
+        if(puestoEmpleadoActual(singleton.getCuenta().getIDEmpleado()) != 1)
+        {
+            menuGerente.setEnabled(false);
+        }else
+        {
+            menuGerente.setEnabled(true);
+        }
     }
     
     private void validarCAI()
     {
         List<parametros> parametrosBD = parametrosDAO.findparametrosEntities();
-        List<facturaencabezado> listaFacturasBD = encabezadoDAO.findfacturaencabezadoEntities();
+        
+        //ultima factura
+        Query query = parametrosDAO.getEntityManager().createQuery("FROM facturaencabezado ORDER BY idfacturaencabezado DESC");
+        query.setMaxResults(1);
+        int numeroFactura = 0;
+        try{
+            facturaencabezado lastFactura = (facturaencabezado) query.getSingleResult();
+            numeroFactura = lastFactura.getIdfacturaencabezado()+1;
+        }catch(javax.persistence.NoResultException Ex)
+        {
+            numeroFactura = 1;
+        }
         
         Date fechaHoy = new Date(000000000);
         try {
@@ -174,28 +181,50 @@ public class PantallaFactura extends javax.swing.JFrame {
         } catch (ParseException ex) {
             Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println(fechaHoy.compareTo(parametrosBD.get(0).getFechaFinal()));
-        System.out.println(fechaHoy.toString());
-        System.out.println(parametrosBD.get(0).getFechaFinal().toString());
+        
         for(int i = 0 ; i < parametrosBD.size() ; i++)
         {
-            if(fechaHoy.compareTo(parametrosBD.get(i).getFechaInicio()) > 0 && fechaHoy.compareTo(parametrosBD.get(i).getFechaFinal()) <= 0  && 
-                    listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() < parametrosBD.get(i).getRangoFinal() &&
-                    listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() > parametrosBD.get(i).getRangoInicial())
+            if(parametrosBD.get(i).getFechaFinal().before(fechaHoy) || parametrosBD.get(i).getRangoFinal() < numeroFactura)
             {
-                CAI = parametrosBD.get(i);
+             parametros parametro = parametrosDAO.findparametros(parametrosBD.get(i).getIdparametro());
+             parametro.setActivo(false);
+                try {
+                    parametrosDAO.edit(parametro);
+                } catch (Exception ex) {
+                    Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+            //encontrar los paramertros que pueden ser validos
+        Query queryParametrosActivos = parametrosDAO.getEntityManager().createQuery("FROM parametros E WHERE E.Activo = :idEstado");
+        queryParametrosActivos.setParameter("idEstado",true);
+        List<parametros> parametrosActivos = (List<parametros>) queryParametrosActivos.getResultList();
+        
+        for(parametros parametro : parametrosActivos)
+        {
+            if(fechaHoy.compareTo(parametro.getFechaInicio()) >= 0 && fechaHoy.compareTo(parametro.getFechaFinal()) <= 0  && 
+                    numeroFactura >= parametro.getRangoInicial() &&
+                    numeroFactura <= parametro.getRangoFinal())
+            {
+                CAI = parametro;
                 botonFacturar.setEnabled(true);
-                break;
             }else
             {
                 botonFacturar.setEnabled(false);
             }
         }
+            
         if(CAI == null)
         {
+            JOptionPane.showMessageDialog(this,"No has añadido un CAI válido con el que puedas facturar.\n"
+                    + "Agrega uno en parametros en el menu de configuracion de factura.",
+                    "CAI vencido",JOptionPane.ERROR_MESSAGE);
+            botonFacturar.setEnabled(false);
+            advertenciaCAI.setVisible(true);
             return;
-        }
-        LocalDate fechaFinal = convertToLocalDateViaInstant(CAI.getFechaFinal());
+        }else
+        {
+         LocalDate fechaFinal = convertToLocalDateViaInstant(CAI.getFechaFinal());
         Period periodo = Period.between(LocalDate.now(),fechaFinal);
         System.out.println(periodo.getDays());
         if(periodo.getDays() < 3 )
@@ -204,8 +233,10 @@ public class PantallaFactura extends javax.swing.JFrame {
                    "CAI Próximo a Vencer",
                    JOptionPane.WARNING_MESSAGE); 
            advertenciaCAI.setVisible(true);
-        }   
-    }
+        }     
+        }    
+}
+    
     
     private int puestoEmpleadoActual(int idEmpleados)
     {
@@ -403,7 +434,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         List<descuentofactura> descuento = query.getResultList();
     
         HashMap param = new HashMap();
-        param.put("LimiteEmision",formatoFecha.format(parametrosDAO.findparametros(parametrosDAO.getparametrosCount()).getFechaFinal()));
+        param.put("LimiteEmision",formatoFecha.format(parametrosDAO.findparametros(CAI.getIdparametro()).getFechaFinal()));
         param.put("NoTarjeta",factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
         param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
         param.put("IDFactura", datosempresaDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));
@@ -1407,12 +1438,22 @@ public class PantallaFactura extends javax.swing.JFrame {
     encabezado.setFechaFactura(currentTimeSql);
     encabezado.setIDVendedor(singleton.getCuenta().getIDEmpleado());
     encabezado.setIDBarbero(cbBarbero.getSelectedIndex() == 0 ? null : Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0)));
-    //encabezado.setIDBarbero(null);
     encabezado.setIDCliente(cbCliente.getSelectedIndex() == 0 ? 0 : Character.getNumericValue((cbCliente.getSelectedItem().toString().charAt(0))));
     encabezado.setIDTipoPago(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)));
     encabezado.setIDParametro(CAI.getIdparametro());
     encabezado.setIDEstado(1);
     encabezado.setNumTarjeta(noTarjeta.getText().equals("") ? null : noTarjeta.getText());
+    encabezado.setTotalFactura(Double.parseDouble(totalTxt.getText()));
+    if(cbTipoPago.getSelectedIndex() == 2)
+    {
+        encabezado.setMontoTarjeta(Double.parseDouble(totalTxt.getText()));
+    }else
+    {
+        if(cbTipoPago.getSelectedIndex() == 3)
+        {
+            encabezado.setMontoTarjeta(Double.parseDouble(montoTarjeta.getText()));  
+        }
+    }
         try {
             encabezadoDAO.create(encabezado);
         } catch (Exception ex) {
@@ -1619,6 +1660,9 @@ public class PantallaFactura extends javax.swing.JFrame {
         noTarjeta.setEnabled(false);
         montoTarjeta.setEnabled(false);
         numFactura();
+        noTarjeta.setBorder(defaultBorder);
+        montoTarjeta.setBorder(defaultBorder);
+        
     }//GEN-LAST:event_botonReiniciarActionPerformed
 
     private void buscarTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscarTxtFocusGained
@@ -1987,9 +2031,10 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void advertenciaCAIMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_advertenciaCAIMouseClicked
         // TODO add your handling code here:
+        
         if(botonFacturar.isEnabled())
         {
-            JOptionPane.showMessageDialog(null,"El CAI vence el " + convertirDates(CAI.getFechaFinal().toString()) + ",se recomienda ingresar otro, al pasar de la fecha no se le dejará facturar.",
+            JOptionPane.showMessageDialog(null,"El CAI vence el " + formatoEspanol.format(CAI.getFechaFinal()) + ",se recomienda ingresar otro, al pasar de la fecha no se le dejará facturar.",
             "CAI a punto de vencer",
             JOptionPane.WARNING_MESSAGE);
         }else
@@ -2063,28 +2108,28 @@ public class PantallaFactura extends javax.swing.JFrame {
     
     private boolean validarMontoTarjeta(javax.swing.JTextField jText)
     {
-        if(!validar.validacionCampoNumerico(jText.getText()))
+       double monto = 0 ;
+        try{
+            monto = Double.parseDouble(jText.getText());
+        }catch(NumberFormatException ex)
         {
             jText.setBorder(redBorder);
             return false;
         }
-        if(Double.parseDouble(jText.getText()) <= 0)
+       
+        if(monto <= 0)
         {
             jText.setBorder(redBorder);
             return false;
         }
-        if(Double.parseDouble(jText.getText()) >= Double.parseDouble(totalTxt.getText()))
+        
+        if(monto > Double.parseDouble(totalTxt.getText()))
         {
             jText.setBorder(redBorder);
             return false;
         }
-         if(!validar.validacionDecimal(jText.getText()))
-        {
-            jText.setBorder(redBorder);
-            return false;
-        }else{
-             jText.setBorder(greenBorder);
-             return true;}
+         jText.setBorder(greenBorder);
+         return true;
     }
     
      public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {

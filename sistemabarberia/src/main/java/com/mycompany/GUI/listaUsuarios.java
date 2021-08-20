@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableModel;
 public class listaUsuarios extends javax.swing.JFrame {
     
 
+    private empleadoJpaController empleadoDAO = new empleadoJpaController();
     private usuariosJpaController usuarioDAO =  new usuariosJpaController();
     private ImageIcon imagen;
     private Icon icono;
@@ -45,9 +46,9 @@ public class listaUsuarios extends javax.swing.JFrame {
         cargarTabla();
         for(int i = 0; i < tablaUsuarios.getColumnCount()-2;i++)
         {
-            parametros.addItem(tablaUsuarios.getColumnName(i));
+            cbParametros.addItem(tablaUsuarios.getColumnName(i));
         }
-           
+        modificarUsuario.setEnabled(false);
     }
     
     private void cargarTabla()
@@ -68,7 +69,7 @@ public class listaUsuarios extends javax.swing.JFrame {
                     modelo.addRow(
                     new Object[]{
                         usuario.getIdusuario(),
-                        usuario.getIDEmpleado(),
+                        empleadoDAO.findempleado(usuario.getIDEmpleado()).getNomEmpleado(),
                         usuario.getNomCuenta(),
                         usuario.getContrasena(),
                         activo
@@ -93,41 +94,11 @@ public class listaUsuarios extends javax.swing.JFrame {
                 usuariosFiltrados.add(usuarios.get(i));
             }
         }
-            for(usuarios usuario : usuariosFiltrados){
-                if(usuario.getActivo())
-                {
-                activo = "Sí";   
-                }else
-                {
-                    activo = "No";
-                }
-                    modelo.addRow(
-                    new Object[]{
-                        usuario.getIdusuario(),
-                        usuario.getIDEmpleado(),
-                        usuario.getNomCuenta(),
-                        usuario.getContrasena(),
-                        activo
-                    }
-                );
-            } 
-    }
-     
-     private void cargarTablaIDEmpleado(int IdEmpleado)
-    {
-        String activo = "";
-        DefaultTableModel modelo = (DefaultTableModel)tablaUsuarios.getModel();
-        modelo.setRowCount(0);
-        tablaUsuarios.setModel(modelo);
-        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
-        List<usuarios> usuariosFiltrados = new ArrayList();
         
-        for(int i = 0; i < usuarios.size();i++)
+        if(usuariosFiltrados.isEmpty())
         {
-            if(usuarios.get(i).getIDEmpleado() == IdEmpleado)
-            {
-                usuariosFiltrados.add(usuarios.get(i));
-            }
+            JOptionPane.showMessageDialog(this,"No se encontraron usuarios con ese Id.","ID inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
         }
             for(usuarios usuario : usuariosFiltrados){
                 if(usuario.getActivo())
@@ -140,7 +111,48 @@ public class listaUsuarios extends javax.swing.JFrame {
                     modelo.addRow(
                     new Object[]{
                         usuario.getIdusuario(),
-                        usuario.getIDEmpleado(),
+                        empleadoDAO.findempleado(usuario.getIDEmpleado()).getNomEmpleado(),
+                        usuario.getNomCuenta(),
+                        usuario.getContrasena(),
+                        activo
+                    }
+                );
+            } 
+    }
+     
+     private void cargarTablaIDEmpleado(String IdEmpleado)
+    {
+        String activo = "";
+        DefaultTableModel modelo = (DefaultTableModel)tablaUsuarios.getModel();
+        modelo.setRowCount(0);
+        tablaUsuarios.setModel(modelo);
+        List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
+        List<usuarios> usuariosFiltrados = new ArrayList();
+        
+        for(int i = 0; i < usuarios.size();i++)
+        {
+            if(empleadoDAO.findempleado(usuarios.get(i).getIDEmpleado()).getNomEmpleado().equalsIgnoreCase(IdEmpleado))
+            {
+                usuariosFiltrados.add(usuarios.get(i));
+            }
+        }
+         if(usuariosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this,"No se encontraron usarios con ese nombre de empleado.","Empleado inexistente",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+            for(usuarios usuario : usuariosFiltrados){
+                if(usuario.getActivo())
+                {
+                activo = "Sí";   
+                }else
+                {
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        usuario.getIdusuario(),
+                        empleadoDAO.findempleado(usuario.getIDEmpleado()).getNomEmpleado(),
                         usuario.getNomCuenta(),
                         usuario.getContrasena(),
                         activo
@@ -165,6 +177,12 @@ public class listaUsuarios extends javax.swing.JFrame {
                 usuariosFiltrados.add(usuarios.get(i));
             }
         }
+        
+        if(usuariosFiltrados.isEmpty())
+        {
+        JOptionPane.showMessageDialog(this,"No se un usuario con ese nombre de usuario.","Nombre de usuario inexistente",JOptionPane.ERROR_MESSAGE);
+        return;
+        }
             for(usuarios usuario : usuariosFiltrados){
                 if(usuario.getActivo())
                 {
@@ -176,7 +194,7 @@ public class listaUsuarios extends javax.swing.JFrame {
                     modelo.addRow(
                     new Object[]{
                         usuario.getIdusuario(),
-                        usuario.getIDEmpleado(),
+                        empleadoDAO.findempleado(usuario.getIDEmpleado()).getNomEmpleado(),
                         usuario.getNomCuenta(),
                         usuario.getContrasena(),
                         activo
@@ -205,7 +223,7 @@ public class listaUsuarios extends javax.swing.JFrame {
         nuevoUsuario = new javax.swing.JButton();
         modificarUsuario = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        parametros = new javax.swing.JComboBox<>();
+        cbParametros = new javax.swing.JComboBox<>();
         buscarTxt = new javax.swing.JTextField();
         botonBuscar = new javax.swing.JButton();
         recargar = new javax.swing.JButton();
@@ -241,11 +259,11 @@ public class listaUsuarios extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID Usuario", "ID Empleado", "Usuario", "Contraseña", "Activo"
+                "ID Usuario", "Empleado", "Usuario", "Contraseña", "Activo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false
@@ -358,7 +376,7 @@ public class listaUsuarios extends javax.swing.JFrame {
                         .addGap(14, 14, 14)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(parametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -383,7 +401,7 @@ public class listaUsuarios extends javax.swing.JFrame {
                     .addComponent(buscarTxt)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
-                        .addComponent(parametros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(botonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(recargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(21, 21, 21)
@@ -483,9 +501,11 @@ public class listaUsuarios extends javax.swing.JFrame {
         if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
         {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
+            modificarUsuario.setEnabled(true);
         }else
         {
             this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+            modificarUsuario.setEnabled(false);
         }
     }//GEN-LAST:event_tablaUsuariosMouseClicked
 
@@ -517,6 +537,12 @@ public class listaUsuarios extends javax.swing.JFrame {
 
     private void modificarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarUsuarioActionPerformed
         // TODO add your handling code here:
+        if(tablaUsuarios.getSelectedRow() == -1)
+        {
+            JOptionPane.showMessageDialog(this,"Debes seleccionar un usuario para poder modificarlo.","Selecciona un empleado",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
     }//GEN-LAST:event_modificarUsuarioActionPerformed
 
     private void buscarTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscarTxtFocusGained
@@ -526,13 +552,24 @@ public class listaUsuarios extends javax.swing.JFrame {
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-        switch(parametros.getSelectedItem().toString())
+         if(buscarTxt.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(this,"Debes ingresar un " + cbParametros.getSelectedItem().toString() + ".","Campo vacío",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        switch(cbParametros.getSelectedItem().toString())
         {
             case "ID Usuario":
-            cargarTablaIdUsuario(Integer.parseInt(buscarTxt.getText()));
+                try{
+                    cargarTablaIdUsuario(Integer.parseInt(buscarTxt.getText()));
+                }catch(NumberFormatException Ex)
+                {
+                    JOptionPane.showMessageDialog(this,"El id debe ser un número entero.","ID inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             return;
-            case "ID Empleado":
-            cargarTablaIDEmpleado(Integer.parseInt(buscarTxt.getText()));
+            case "Empleado":
+            cargarTablaIDEmpleado(buscarTxt.getText()); 
             return;
             case "Usuario":
             cargarTablaUsuario(buscarTxt.getText());
@@ -543,11 +580,17 @@ public class listaUsuarios extends javax.swing.JFrame {
         // TODO add your handling code here:
         cargarTabla();
         buscarTxt.setText("");
+        modificarUsuario.setEnabled(false);
     }//GEN-LAST:event_recargarActionPerformed
 
     private void activarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activarActionPerformed
         // TODO add your handling code here:
         //Si el empleado esta desactivado no puede activarse su usuario.
+        if(tablaUsuarios.getSelectedRow() == -1)
+        {
+            JOptionPane.showMessageDialog(this,"Debes seleccionar un usuario para desactivarlo","Selecciona un usuario",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         empleadoJpaController empleadoDAO = new empleadoJpaController();
         
         usuarios modificar = new usuarios();
@@ -661,6 +704,7 @@ public class listaUsuarios extends javax.swing.JFrame {
     private javax.swing.JButton botonBuscar;
     private javax.swing.JButton botonRegresar;
     private javax.swing.JTextField buscarTxt;
+    private javax.swing.JComboBox<String> cbParametros;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -669,7 +713,6 @@ public class listaUsuarios extends javax.swing.JFrame {
     private javax.swing.JLabel logo;
     private javax.swing.JButton modificarUsuario;
     private javax.swing.JButton nuevoUsuario;
-    private javax.swing.JComboBox<String> parametros;
     private javax.swing.JButton recargar;
     private javax.swing.JTable tablaUsuarios;
     private javax.swing.JLabel tituloPantalla;

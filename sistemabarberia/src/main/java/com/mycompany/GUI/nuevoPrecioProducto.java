@@ -15,7 +15,9 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -55,7 +57,6 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-         this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();   
         for(int i = 0; i < productosBD.size(); i++)
         {
@@ -89,7 +90,6 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         tituloPantalla = new javax.swing.JLabel();
         botonAceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         formatoInvalido1 = new javax.swing.JLabel();
@@ -120,8 +120,6 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         });
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setText("jLabel1");
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -249,7 +247,7 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
                 .addContainerGap(38, Short.MAX_VALUE))
         );
 
-        salir.setText("jLabel2");
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
         salir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salirMouseClicked(evt);
@@ -261,53 +259,48 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(853, 853, 853)
-                .addComponent(jLabel1))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(339, 339, 339)
-                        .addComponent(salir))
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(tituloPantalla))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(301, 301, 301)
+                                .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(tituloPantalla))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(99, 99, 99)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(20, 20, 20)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(99, 99, 99)
+                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tituloPantalla)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addGap(175, 175, 175))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(32, Short.MAX_VALUE))))
+                .addGap(13, 13, 13)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 486, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -356,7 +349,13 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
         nuevoPrecio.setFechaInicial(Date.valueOf(fechaIni));
         nuevoPrecio.setFechaFinal(null);
         nuevoPrecio.setIDProducto(Character.getNumericValue(cbProductos.getSelectedItem().toString().charAt(0)));
-        nuevoPrecio.setPrecio(Double.parseDouble(precio.getText()));
+        try{
+            nuevoPrecio.setPrecio(Double.parseDouble(precio.getText()));
+        }catch(NumberFormatException ex)
+        {
+            JOptionPane.showMessageDialog(this,"Debes introducir un precio válido.","Precio Inválido",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         nuevoPrecio.setActivo(true);
         
         precioshistoricosproductos precioAnterior = new precioshistoricosproductos();
@@ -518,45 +517,33 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
     
     private boolean validacionNumerica()
     {
-        if (!validar.validacionCampoNumerico(precio.getText()) )
+       double precio1 = 0 ;
+        try{
+            precio1 = Double.parseDouble(precio.getText());
+        }catch(NumberFormatException ex)
         {
-            precio.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("Solo se permiten números.");
+            formatoInvalido3.setText("Solo puedes ingresar números en este campo.");
+            precio.setBorder(redBorder);
             return false;
         }
-        if(Double.parseDouble(precio.getText()) <= 0  )
+       
+        if(precio1 <= 0)
         {
             precio.setBorder(redBorder);
             formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("El precio debe ser mayor a 0");
-            return false;
-        } 
-         if(validar.validacionDecimal(precio.getText()))
-        {
-            precio.setBorder(greenBorder);
-            formatoInvalido3.setVisible(false);
-            formatoInvalido3.setText("Formato válido");
-            return true;
-        }else
-        {
-            precio.setBorder(redBorder);
-            formatoInvalido3.setVisible(true);
-            formatoInvalido3.setText("El formato debe de ser 0000.00");
+            formatoInvalido3.setText("El precio debe ser mayor a 0.");
             return false;
         }
+        
+         precio.setBorder(greenBorder);
+         formatoInvalido3.setVisible(false);
+         return true;
         
     }
     
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
-        if(!validar.validacionCampoNumerico(fecha.getText()))
-        {
-            fecha.setBorder(redBorder);
-            label.setVisible(true);
-            label.setText("Solo puedes ingresar fechas en este campo.");
-            return false;
-        }
         if(!validar.validacionFormatoFecha(fecha.getText()) )
         {
             fecha.setBorder(redBorder);
@@ -570,10 +557,21 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
             label.setVisible(true);
             label.setText("La fecha introducida es inválida.");
             return false;
-            }else
+            }
+        
+        if(!isDateValid(fecha.getText()))
+        {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            JOptionPane.showMessageDialog(null,"Esa fecha es inválida, por favor revisa que la cantidad de dias concuerde con el mes.\nEjemplo de fecha inválida: 30/02/2021",
+                    "Fecha Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        else
         {
             fecha.setBorder(greenBorder);
-            label.setText("");
+            label.setText(" ");
             return true;
         }
         
@@ -606,6 +604,18 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
       .atZone(ZoneId.systemDefault())
       .toLocalDate();
     }
+    
+     public static boolean isDateValid(String date) 
+{
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
@@ -613,7 +623,6 @@ public class nuevoPrecioProducto extends javax.swing.JFrame {
     private javax.swing.JTextField fechaInicio;
     private javax.swing.JLabel formatoInvalido1;
     private javax.swing.JLabel formatoInvalido3;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

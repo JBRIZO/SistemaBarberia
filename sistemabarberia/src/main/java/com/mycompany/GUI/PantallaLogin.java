@@ -38,6 +38,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
         this.insertarImagen(this.imgLogin,"src/main/resources/Imagenes/loginImage.png");
         mostrar.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/hide.png")));
+        usuarioLbl.setText(" ");
     }
 
     
@@ -61,6 +62,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         mostrar = new javax.swing.JToggleButton();
         exit = new javax.swing.JButton();
+        usuarioLbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -134,6 +136,9 @@ public class PantallaLogin extends javax.swing.JFrame {
             }
         });
 
+        usuarioLbl.setForeground(new java.awt.Color(255, 255, 255));
+        usuarioLbl.setText("Nombre de Usuario:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -151,16 +156,18 @@ public class PantallaLogin extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(nombreUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(iniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel2))
-                                        .addGap(2, 2, 2)
-                                        .addComponent(mostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(111, 111, 111)))
+                                        .addGap(111, 111, 111))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(usuarioLbl)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(nombreUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(iniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel2))
+                                            .addGap(2, 2, 2)
+                                            .addComponent(mostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(30, 30, 30))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(exit, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -175,7 +182,9 @@ public class PantallaLogin extends javax.swing.JFrame {
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(76, 76, 76)
+                .addGap(56, 56, 56)
+                .addComponent(usuarioLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
                 .addComponent(jLabel2)
@@ -213,10 +222,16 @@ public class PantallaLogin extends javax.swing.JFrame {
 
     private void iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarSesionActionPerformed
         // TODO add your handling code here:
+        
          List<usuarios> usuariosBD = usuariosDAO.findusuariosEntities();
         String contrasena = new String(password.getPassword());
         String contraEncriptada = DigestUtils.md5Hex(contrasena);
         usuarios usuarioActual = null;
+        if(nombreUsuario.getText().equals("Nombre de Usuario") || contrasena.equals("") || nombreUsuario.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(this,"Ingresa un usuario y una contraseña","Credenciales vacías",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         //encontrar usuario en la base de datos
         for(int i = 0; i < usuariosBD.size(); i++)
@@ -297,6 +312,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         if(nombreUsuario.getText().equals("Nombre de Usuario"))
         {
             nombreUsuario.setText("");
+            usuarioLbl.setText("Nombre de Usuario:");
         }
     }//GEN-LAST:event_nombreUsuarioFocusGained
 
@@ -305,6 +321,7 @@ public class PantallaLogin extends javax.swing.JFrame {
         if(nombreUsuario.getText().equals(""))
         {
             nombreUsuario.setText("Nombre de Usuario");
+            usuarioLbl.setText(" ");
         }
     }//GEN-LAST:event_nombreUsuarioFocusLost
 
@@ -389,5 +406,6 @@ public class PantallaLogin extends javax.swing.JFrame {
     private javax.swing.JToggleButton mostrar;
     private javax.swing.JTextField nombreUsuario;
     private javax.swing.JPasswordField password;
+    private javax.swing.JLabel usuarioLbl;
     // End of variables declaration//GEN-END:variables
 }

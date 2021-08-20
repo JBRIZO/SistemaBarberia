@@ -5,6 +5,7 @@
  */
 package com.mycompany.GUI;
 
+import static com.mycompany.GUI.registrarClientes.isDateValid;
 import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
@@ -16,7 +17,9 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -53,7 +56,6 @@ public class descuento extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
         Reiniciar();
         for(int i = 0; i < tipodescuentoBD.size(); i++)
         {
@@ -284,7 +286,7 @@ public class descuento extends javax.swing.JFrame {
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
 
-        salir.setText("jLabel2");
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/x.png"))); // NOI18N
         salir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 salirMouseClicked(evt);
@@ -304,7 +306,7 @@ public class descuento extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(74, 74, 74)
+                                .addGap(65, 65, 65)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
@@ -319,14 +321,16 @@ public class descuento extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                        .addGap(25, 25, 25)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addGap(24, 24, 24)
+                        .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addComponent(Aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -366,7 +370,7 @@ public class descuento extends javax.swing.JFrame {
 
     private void AceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarActionPerformed
         // TODO add your handling code here:
-        if(fechaInicio.getText().equals("Fecha Inicial") || fechaFinal.getText().equals("Fecha Final") || Valor.getText().equals("Valor") || Valor.getText().isEmpty())
+        if(fechaInicio.getText().equals("Fecha Inicial") || fechaInicio.getText().equals("") || fechaFinal.getText().equals("Fecha Final") || fechaFinal.getText().equals("") || Valor.getText().equals("Valor") || Valor.getText().isEmpty())
         {
             JOptionPane.showMessageDialog(null," Debes rellenar todos los campos.", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
             return;
@@ -382,6 +386,8 @@ public class descuento extends javax.swing.JFrame {
             fechaFin = sdf.format(endDate);
         } catch (ParseException ex) {
             ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Debes ingresar una fecha válida","Fecha inválida",JOptionPane.ERROR_MESSAGE);
+            return;
         }
         //creacion de objeto
         descuentos descuentoNuevo = new descuentos();
@@ -579,16 +585,34 @@ public class descuento extends javax.swing.JFrame {
     
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
+        if(!validar.validacionFormatoFecha(fecha.getText()) )
+        {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            label.setText("El formato de fecha es: dd/mm/aaaa");
+            return false;
+        }
         if(!validar.validacionFechaValida(fecha.getText()))
             {
             fecha.setBorder(redBorder);
             label.setVisible(true);
-            label.setText("El formato de fecha es: dd-mm-aaaa");
+            label.setText("La fecha introducida es inválida.");
             return false;
-            }else
+            }
+        
+        if(!isDateValid(fecha.getText()))
+        {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            JOptionPane.showMessageDialog(null,"Esa fecha es inválida, por favor revisa que la cantidad de dias concuerde con el mes.\nEjemplo de fecha inválida: 30/02/2021",
+                    "Fecha Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        else
         {
             fecha.setBorder(greenBorder);
-            label.setText("");
+            label.setText(" ");
             return true;
         }
         
@@ -666,6 +690,18 @@ public class descuento extends javax.swing.JFrame {
     return dateToConvert.toInstant()
       .atZone(ZoneId.systemDefault())
       .toLocalDate();
+}
+    
+     public static boolean isDateValid(String date) 
+{
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
 }
  
      

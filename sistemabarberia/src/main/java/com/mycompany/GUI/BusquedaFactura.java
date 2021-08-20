@@ -197,7 +197,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
         List<descuentofactura> descuento = query.getResultList();
     
         HashMap param = new HashMap();
-        param.put("LimiteEmision", formatoFecha.format(parametrosDAO.findparametros(parametrosDAO.getparametrosCount()).getFechaFinal()));
+        param.put("LimiteEmision", formatoFecha.format(parametrosDAO.findparametros(factura.getIDParametro()).getFechaFinal()));
         param.put("NoTarjeta", factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
         param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
         param.put("IDFactura", datosDAO.finddatosempresa(5).getValor() + String.format("%0" + 8 + "d",factura.getIdfacturaencabezado()));

@@ -36,6 +36,11 @@ public class facturaencabezado implements Serializable{
     private String FechaFactura;
     
     @Column(nullable=true)
+    private double MontoTarjeta;
+    @Column
+    private double TotalFactura;
+    
+    @Column(nullable=true)
     private String NumTarjeta;
 
     public String getNumTarjeta() {
@@ -108,6 +113,22 @@ public class facturaencabezado implements Serializable{
 
     public void setFechaFactura(String FechaFactura) {
         this.FechaFactura = FechaFactura;
+    }
+
+    public double getMontoTarjeta() {
+        return MontoTarjeta;
+    }
+
+    public void setMontoTarjeta(double MontoTarjeta) {
+        this.MontoTarjeta = MontoTarjeta;
+    }
+
+    public double getTotalFactura() {
+        return TotalFactura;
+    }
+
+    public void setTotalFactura(double TotalFactura) {
+        this.TotalFactura = TotalFactura;
     }
     
     

@@ -151,6 +151,11 @@ public class listaPreciosProducto extends javax.swing.JFrame {
         });
         listaPrecios.setRowHeight(32);
         jScrollPane1.setViewportView(listaPrecios);
+        if (listaPrecios.getColumnModel().getColumnCount() > 0) {
+            listaPrecios.getColumnModel().getColumn(0).setResizable(false);
+            listaPrecios.getColumnModel().getColumn(1).setResizable(false);
+            listaPrecios.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         cbProductos.setBackground(new java.awt.Color(30, 33, 34));
         cbProductos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N

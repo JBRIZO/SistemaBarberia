@@ -59,7 +59,8 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        Reiniciar();   
+        Reiniciar(); 
+        cantidadLbl.setText(" ");
         for(int i = 0; i < empleadosBD.size(); i++)
         {
             if(empleadosBD.get(i).isActivo())
@@ -105,9 +106,10 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         cantidad = new javax.swing.JTextField();
         botonAceptar = new javax.swing.JButton();
         botonCancelar = new javax.swing.JButton();
-        formatoInvalidoCantidad = new javax.swing.JLabel();
         periodo = new javax.swing.JTextField();
         formatoInvalidoPeriodo = new javax.swing.JLabel();
+        formatoInvalidoCantidad = new javax.swing.JLabel();
+        cantidadLbl = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -158,6 +160,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
         cantidad.setEditable(true);
         cantidad.setBackground(new java.awt.Color(30, 33, 34));
+        cantidad.setDocument(new JTextFieldLimit(7));
         cantidad.setForeground(new java.awt.Color(255, 255, 255));
         cantidad.setText("Cantidad");
         cantidad.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -198,9 +201,6 @@ public class nuevaDeduccion extends javax.swing.JFrame {
             }
         });
 
-        formatoInvalidoCantidad.setForeground(new java.awt.Color(255, 255, 255));
-        formatoInvalidoCantidad.setText("Formato Invalido.");
-
         periodo.setBackground(new java.awt.Color(30, 33, 34));
         periodo.setDocument(new JTextFieldLimit(6));
         periodo.setForeground(new java.awt.Color(255, 255, 255));
@@ -218,6 +218,12 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         formatoInvalidoPeriodo.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoPeriodo.setText("Formato Invalido.");
 
+        formatoInvalidoCantidad.setForeground(new java.awt.Color(255, 255, 255));
+        formatoInvalidoCantidad.setText("Formato invalido.");
+
+        cantidadLbl.setForeground(new java.awt.Color(255, 255, 255));
+        cantidadLbl.setText("Cantidad:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -229,20 +235,25 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(jLabel))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(formatoInvalidoPeriodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(botonAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(tipoDeduccion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(formatoInvalidoCantidad)
-                            .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonCancelar)))
-                    .addComponent(idEmpleado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(periodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(64, 64, 64))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(formatoInvalidoPeriodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(idEmpleado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(periodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(botonAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(tipoDeduccion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(cantidadLbl)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                        .addComponent(botonCancelar)
+                                        .addGap(6, 6, 6))
+                                    .addComponent(cantidad, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addComponent(formatoInvalidoCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(34, 34, 34))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,7 +268,9 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                     .addComponent(periodo, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalidoPeriodo)
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cantidadLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(tipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -303,7 +316,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(37, 37, 37)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -352,6 +365,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         if(cantidad.getText().equals(""))
         {
             cantidad.setText("Cantidad");
+            cantidadLbl.setText(" ");
         }else
         {
          validarDecimal();   
@@ -393,7 +407,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         //para todos los empleados
        if(idEmpleado.getSelectedIndex() == 1)
        {
-           if(periodo.getText().equals("") || cantidad.getText().equals(""))
+           if(periodo.getText().equals("") || cantidad.getText().equals("") || cantidad.getText().equals("Cantidad"))
         {
             JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.",
                     "Campos Incompletos",
@@ -459,7 +473,12 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         nuevaDeduccion.setIDEmpleado(Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
         nuevaDeduccion.setIDTipoDeduccion(Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
         nuevaDeduccion.setPeriodo(periodo.getText());
-        nuevaDeduccion.setValor(Double.parseDouble(cantidad.getText()));
+        try{
+            nuevaDeduccion.setValor(Double.parseDouble(cantidad.getText()));
+        }catch(NumberFormatException Ex)
+        {
+            return;
+        }
         nuevaDeduccion.setActivo(true);
         
         if(validarDecimal() && validacionPeriodo(periodo,formatoInvalidoPeriodo))
@@ -538,34 +557,28 @@ public class nuevaDeduccion extends javax.swing.JFrame {
      
      private boolean validarDecimal()
      {
-         if(!validar.validacionCampoNumerico(cantidad.getText()))
-         {
-             cantidad.setBorder(redBorder);
-             formatoInvalidoCantidad.setVisible(true);
-             formatoInvalidoCantidad.setText("Solo puedes ingresar numeros en este campo.");
-             return false;
-         }
-         
-         if(Double.parseDouble(cantidad.getText()) <= 0)
+         double precio1 = 0 ;
+        try{
+            precio1 = Double.parseDouble(cantidad.getText());
+        }catch(NumberFormatException ex)
+        {
+            formatoInvalidoCantidad.setVisible(true);
+            formatoInvalidoCantidad.setText("Solo puedes ingresar números en este campo.");
+            cantidad.setBorder(redBorder);
+            return false;
+        }
+       
+        if(precio1 <= 0)
         {
             cantidad.setBorder(redBorder);
+            formatoInvalidoCantidad.setVisible(true);
             formatoInvalidoCantidad.setText("La cantidad debe ser mayor a 0.");
             return false;
         }
         
-        if(validar.validacionDecimal(cantidad.getText()))
-        {
-            cantidad.setBorder(greenBorder);
-            formatoInvalidoCantidad.setText(" ");
-            return true;
-        }else
-        {
-            cantidad.setBorder(redBorder);
-            formatoInvalidoCantidad.setText("El formato debe ser 000000.00");
-            return false;
-        }  
-         
-     
+         cantidad.setBorder(greenBorder);
+         formatoInvalidoCantidad.setVisible(false);
+         return true;
      }
      
      private boolean validacionPeriodo(javax.swing.JTextField jText, JLabel label)
@@ -576,12 +589,19 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         
          String mesCampo = Character.toString(jText.getText().charAt(4)) + jText.getText().charAt(5);
          
-         if(Integer.parseInt(mesCampo) > mes)
+         try{
+             if(Integer.parseInt(mesCampo) > mes || Integer.parseInt(mesCampo) < mes)
          {
              jText.setBorder(redBorder);
              formatoInvalidoPeriodo.setText("El mes del periodo debe concordar con el mes actual.");
            return false; 
+         } 
+         }catch(NumberFormatException Ex)
+         {
+            jText.setBorder(redBorder); 
+            formatoInvalidoPeriodo.setText("Un periodo se compone solo de números.");
          }
+        
          if(!validar.validacionCampoNumerico(jText.getText()))
          {
              jText.setBorder(redBorder);
@@ -615,6 +635,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
     private javax.swing.JTextField cantidad;
+    private javax.swing.JLabel cantidadLbl;
     private javax.swing.JLabel formatoInvalidoCantidad;
     private javax.swing.JLabel formatoInvalidoPeriodo;
     private javax.swing.JComboBox<String> idEmpleado;

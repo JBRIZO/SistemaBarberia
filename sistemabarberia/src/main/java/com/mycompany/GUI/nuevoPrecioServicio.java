@@ -366,7 +366,13 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
         nuevoPrecio.setFechaInicial(Date.valueOf(fechaIni));
         nuevoPrecio.setFechaFinal(null);
         nuevoPrecio.setIDServicio(Character.getNumericValue(cbServicios.getSelectedItem().toString().charAt(0)));
-        nuevoPrecio.setPrecio(Double.parseDouble(precio.getText()));
+        try{
+            nuevoPrecio.setPrecio(Double.parseDouble(precio.getText()));
+        }catch(NumberFormatException Ex)
+        {
+            JOptionPane.showMessageDialog(this,"Debes introducir un precio válido.","Precio inválido",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         nuevoPrecio.setActivo(true);
         
         precioAnterior.setNumprecioservicio(preciosAnteriores.get(preciosAnteriores.size()-1).getNumprecioservicio());

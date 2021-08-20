@@ -58,11 +58,11 @@ public class listaDescuentos extends javax.swing.JFrame {
         logo = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        idTipoDescuento3 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaDescuentos = new javax.swing.JTable();
-        idTipoDescuento4 = new javax.swing.JTextField();
-        idTipoDescuento5 = new javax.swing.JTextField();
+        nuevoDescuento = new javax.swing.JButton();
+        nuevoDescuento1 = new javax.swing.JButton();
+        nuevoTipoDesc = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -85,25 +85,6 @@ public class listaDescuentos extends javax.swing.JFrame {
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
 
-        idTipoDescuento3.setEditable(false);
-        idTipoDescuento3.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento3.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento3.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        idTipoDescuento3.setText("Nuevo Tipo");
-        idTipoDescuento3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento3.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                idTipoDescuento3MouseClicked(evt);
-            }
-        });
-        idTipoDescuento3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuento3ActionPerformed(evt);
-            }
-        });
-
         tablaDescuentos.setBackground(new java.awt.Color(30, 33, 34));
         tablaDescuentos.setForeground(new java.awt.Color(255, 255, 255));
         tablaDescuentos.setModel(new javax.swing.table.DefaultTableModel(
@@ -118,7 +99,7 @@ public class listaDescuentos extends javax.swing.JFrame {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -130,7 +111,13 @@ public class listaDescuentos extends javax.swing.JFrame {
             }
         });
         tablaDescuentos.setRowHeight(32);
+        tablaDescuentos.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tablaDescuentos);
+        if (tablaDescuentos.getColumnModel().getColumnCount() > 0) {
+            tablaDescuentos.getColumnModel().getColumn(1).setResizable(false);
+            tablaDescuentos.getColumnModel().getColumn(2).setResizable(false);
+            tablaDescuentos.getColumnModel().getColumn(4).setResizable(false);
+        }
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
         MyHeaderRender.setForeground(Color.BLACK);
@@ -141,41 +128,48 @@ public class listaDescuentos extends javax.swing.JFrame {
         tablaDescuentos.setShowGrid(true);
         tablaDescuentos.setGridColor(Color.BLACK);
 
-        idTipoDescuento4.setEditable(false);
-        idTipoDescuento4.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento4.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento4.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        idTipoDescuento4.setText("Nuevo");
-        idTipoDescuento4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento4.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento4.addMouseListener(new java.awt.event.MouseAdapter() {
+        nuevoDescuento.setBackground(new java.awt.Color(189, 158, 76));
+        nuevoDescuento.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        nuevoDescuento.setText("NUEVO");
+        nuevoDescuento.setRequestFocusEnabled(false);
+        nuevoDescuento.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                idTipoDescuento4MouseClicked(evt);
+                nuevoDescuentoMouseClicked(evt);
             }
         });
-        idTipoDescuento4.addActionListener(new java.awt.event.ActionListener() {
+        nuevoDescuento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuento4ActionPerformed(evt);
+                nuevoDescuentoActionPerformed(evt);
             }
         });
 
-        idTipoDescuento5.setEditable(false);
-        idTipoDescuento5.setBackground(new java.awt.Color(30, 33, 34));
-        idTipoDescuento5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idTipoDescuento5.setForeground(new java.awt.Color(255, 255, 255));
-        idTipoDescuento5.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        idTipoDescuento5.setText("Regresar");
-        idTipoDescuento5.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        idTipoDescuento5.setSelectionColor(new java.awt.Color(55, 53, 53));
-        idTipoDescuento5.addMouseListener(new java.awt.event.MouseAdapter() {
+        nuevoDescuento1.setBackground(new java.awt.Color(189, 158, 76));
+        nuevoDescuento1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        nuevoDescuento1.setText("REGRESAR");
+        nuevoDescuento1.setRequestFocusEnabled(false);
+        nuevoDescuento1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                idTipoDescuento5MouseClicked(evt);
+                nuevoDescuento1MouseClicked(evt);
             }
         });
-        idTipoDescuento5.addActionListener(new java.awt.event.ActionListener() {
+        nuevoDescuento1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTipoDescuento5ActionPerformed(evt);
+                nuevoDescuento1ActionPerformed(evt);
+            }
+        });
+
+        nuevoTipoDesc.setBackground(new java.awt.Color(189, 158, 76));
+        nuevoTipoDesc.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        nuevoTipoDesc.setText("NUEVO TIPO");
+        nuevoTipoDesc.setRequestFocusEnabled(false);
+        nuevoTipoDesc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nuevoTipoDescMouseClicked(evt);
+            }
+        });
+        nuevoTipoDesc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoTipoDescActionPerformed(evt);
             }
         });
 
@@ -187,25 +181,25 @@ public class listaDescuentos extends javax.swing.JFrame {
                 .addGap(0, 27, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(idTipoDescuento4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nuevoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(idTipoDescuento5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(44, 44, 44)
-                        .addComponent(idTipoDescuento3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(nuevoDescuento1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(nuevoTipoDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(44, 44, 44)
+                .addGap(29, 29, 29)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(idTipoDescuento4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idTipoDescuento5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idTipoDescuento3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(49, Short.MAX_VALUE))
+                    .addComponent(nuevoDescuento)
+                    .addComponent(nuevoDescuento1)
+                    .addComponent(nuevoTipoDesc))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -233,7 +227,7 @@ public class listaDescuentos extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(97, 97, 97)
+                        .addGap(82, 82, 82)
                         .addComponent(tituloPantalla))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
@@ -304,20 +298,13 @@ public class listaDescuentos extends javax.swing.JFrame {
     }
 
     
-    private void idTipoDescuento3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento3ActionPerformed
+    private void nuevoDescuentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoDescuentoMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuento3ActionPerformed
+    }//GEN-LAST:event_nuevoDescuentoMouseClicked
 
-    private void idTipoDescuento4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento4ActionPerformed
+    private void nuevoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoDescuentoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuento4ActionPerformed
-
-    private void idTipoDescuento5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTipoDescuento5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_idTipoDescuento5ActionPerformed
-
-    private void idTipoDescuento4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idTipoDescuento4MouseClicked
-        // TODO add your handling code here:
+       // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new descuento().setVisible(true);
@@ -325,29 +312,37 @@ public class listaDescuentos extends javax.swing.JFrame {
         });
         this.dispose();
         descuentos.close();
-    }//GEN-LAST:event_idTipoDescuento4MouseClicked
+    }//GEN-LAST:event_nuevoDescuentoActionPerformed
 
-    private void idTipoDescuento5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idTipoDescuento5MouseClicked
+    private void nuevoDescuento1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoDescuento1MouseClicked
         // TODO add your handling code here:
-         java.awt.EventQueue.invokeLater(new Runnable() {
+    }//GEN-LAST:event_nuevoDescuento1MouseClicked
+
+    private void nuevoDescuento1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoDescuento1ActionPerformed
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new menuGerente().setVisible(true);
             }
         });
         this.dispose();
         descuentos.close();
-    }//GEN-LAST:event_idTipoDescuento5MouseClicked
+    }//GEN-LAST:event_nuevoDescuento1ActionPerformed
 
-    private void idTipoDescuento3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idTipoDescuento3MouseClicked
+    private void nuevoTipoDescMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoTipoDescMouseClicked
         // TODO add your handling code here:
-         java.awt.EventQueue.invokeLater(new Runnable() {
+    }//GEN-LAST:event_nuevoTipoDescMouseClicked
+
+    private void nuevoTipoDescActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoTipoDescActionPerformed
+        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoTipoDescuento().setVisible(true);
             }
         });
         this.dispose();
         descuentos.close();
-    }//GEN-LAST:event_idTipoDescuento3MouseClicked
+    }//GEN-LAST:event_nuevoTipoDescActionPerformed
 
     
     /**
@@ -412,14 +407,14 @@ public class listaDescuentos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField idTipoDescuento3;
-    private javax.swing.JTextField idTipoDescuento4;
-    private javax.swing.JTextField idTipoDescuento5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel logo;
+    private javax.swing.JButton nuevoDescuento;
+    private javax.swing.JButton nuevoDescuento1;
+    private javax.swing.JButton nuevoTipoDesc;
     private javax.swing.JTable tablaDescuentos;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

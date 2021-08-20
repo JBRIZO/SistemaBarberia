@@ -357,6 +357,12 @@ public class pantallaServicios extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tablaServicios);
+        if (tablaServicios.getColumnModel().getColumnCount() > 0) {
+            tablaServicios.getColumnModel().getColumn(0).setResizable(false);
+            tablaServicios.getColumnModel().getColumn(1).setResizable(false);
+            tablaServicios.getColumnModel().getColumn(2).setResizable(false);
+            tablaServicios.getColumnModel().getColumn(3).setResizable(false);
+        }
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
         MyHeaderRender.setForeground(Color.BLACK);

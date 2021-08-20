@@ -83,8 +83,24 @@ public class Planilla extends javax.swing.JFrame {
         
         periodoActual = mes<10? anio+"0"+mes: Integer.toString(anio)+mes;
         fechaLabel.setText("Fecha: " + currentTime);
+        periodo.setText("Periodo: " + periodoActual);
     }
     
+    public void verificarUltimaPlanillaGenerada()
+    {
+        String hql = "FROM planillas E WHERE E.Periodo = :periodo";
+        Query query = em.createQuery(hql);
+        query.setParameter("periodo",periodoActual);
+        List<planillas> planillasPeriodo = (List<planillas>)query.getResultList();
+        
+        if(planillasPeriodo.isEmpty())
+        {
+            return;
+        }else
+        {
+            cargarTablaPlanilla();
+        }
+    }
      public void imprimirPlanilla()
     {
         //filtrar la planilla por periodo
@@ -165,11 +181,21 @@ public class Planilla extends javax.swing.JFrame {
         String hqlDeducciones = "FROM deduccionesempleadomensual E WHERE E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado";
         Query queryDeducciones = em.createQuery(hqlDeducciones);
         queryDeducciones.setParameter("periodo",periodoActual);
-        
+        //verificar si hay deducciones para este periodo
+        if(!verificarDeduccionesPeriodo())
+        {
+            return;
+        }
         //Bonos para el periodo actual
         String hqlBonos = "FROM bonosempleadomensual E WHERE E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado";
         Query queryBonos = em.createQuery(hqlBonos);
         queryBonos.setParameter("periodo",periodoActual);
+        
+        //verificar si hay bonos para este periodo
+        if(!verificarBonosPeriodo())
+        {
+            return;
+        }
         
         //Salario de empleados
         String hqlSalarios = "FROM salariohistoricoempleados E WHERE E.Activo = 1 AND E.IDEmpleado = :idEmpleado";
@@ -221,7 +247,46 @@ public class Planilla extends javax.swing.JFrame {
                 );
                     totalDeducciones = 0.00;
                     totalBonos = 0.00;
-            } 
+            }
+            guardar.setEnabled(true);
+    }
+    
+    private boolean verificarDeduccionesPeriodo()
+    {
+        //Deducciones para el perido actual
+        String hqlDeducciones = "FROM deduccionesempleadomensual E WHERE E.Periodo =:periodo";
+        Query queryDeducciones = em.createQuery(hqlDeducciones);
+        queryDeducciones.setParameter("periodo",periodoActual);
+         List<deduccionesempleadomensual> deduccionesPorEmpleado = queryDeducciones.getResultList();
+                if(deduccionesPorEmpleado.isEmpty())
+                {
+                    int confirmacion = JOptionPane.showConfirmDialog(this,"Parece que no hay deducciones para este periodo \n¿Seguro que deseas continuar?",
+                            "Periodo sin deducciones",JOptionPane.YES_NO_OPTION);
+                    if(confirmacion != 0)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+    }
+    
+    private boolean verificarBonosPeriodo()
+    {
+         //Bonos para el periodo actual
+        String hqlBonos = "FROM bonosempleadomensual E WHERE E.Periodo =:periodo";
+        Query queryBonos = em.createQuery(hqlBonos);
+        queryBonos.setParameter("periodo",periodoActual);
+        List<bonosempleadomensual> bonosPorEmpleado = queryBonos.getResultList();
+        if(bonosPorEmpleado.isEmpty())
+        {
+            int confirmacion = JOptionPane.showConfirmDialog(this,"Parece que no hay bonos para este periodo \n¿Seguro que deseas continuar?",
+                    "Periodo sin bonos",JOptionPane.YES_NO_OPTION);
+            if(confirmacion != 0)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -243,8 +308,10 @@ public class Planilla extends javax.swing.JFrame {
         limpiar = new javax.swing.JButton();
         generar = new javax.swing.JButton();
         imprimirReporte = new javax.swing.JButton();
+        guardar = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
         fechaLabel = new javax.swing.JLabel();
+        periodo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -336,9 +403,19 @@ public class Planilla extends javax.swing.JFrame {
 
         imprimirReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/imprimirReporte.png"))); // NOI18N
         imprimirReporte.setContentAreaFilled(false);
+        imprimirReporte.setEnabled(false);
         imprimirReporte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 imprimirReporteActionPerformed(evt);
+            }
+        });
+
+        guardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/guardar.png"))); // NOI18N
+        guardar.setContentAreaFilled(false);
+        guardar.setEnabled(false);
+        guardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarActionPerformed(evt);
             }
         });
 
@@ -347,17 +424,17 @@ public class Planilla extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGap(19, 19, 19)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(guardar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(generar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(limpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -369,7 +446,8 @@ public class Planilla extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(generar)
                     .addComponent(imprimirReporte)
-                    .addComponent(limpiar))
+                    .addComponent(limpiar)
+                    .addComponent(guardar))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -404,6 +482,10 @@ public class Planilla extends javax.swing.JFrame {
         fechaLabel.setForeground(new java.awt.Color(255, 255, 255));
         fechaLabel.setText("Fecha:");
 
+        periodo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        periodo.setForeground(new java.awt.Color(255, 255, 255));
+        periodo.setText("Periodo:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -420,9 +502,12 @@ public class Planilla extends javax.swing.JFrame {
                         .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fechaLabel)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(fechaLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(periodo)))))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -432,7 +517,9 @@ public class Planilla extends javax.swing.JFrame {
                     .addComponent(tituloPantalla)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fechaLabel)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(fechaLabel)
+                    .addComponent(periodo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -482,19 +569,9 @@ public class Planilla extends javax.swing.JFrame {
         if(confirmacion == 0)
         {
             cargarTablaPlanilla();
-            
-            for(int i = 0 ; i < tablaPlanilla.getRowCount() ; i++)
+            if(tablaPlanilla.getRowCount() > 0 )
             {
-                planillas planilla = new planillas();
-                planilla.setIDEmpleado(Integer.parseInt(tablaPlanilla.getValueAt(i,0).toString()));
-                planilla.setPeriodo(periodoActual);
-                planilla.setTotalPagar(Double.parseDouble(tablaPlanilla.getValueAt(i,7).toString()));
-                planilla.setActivo(true);
-                try {
-                    planillaDAO.create(planilla);
-                } catch (Exception ex) {
-                    Logger.getLogger(Planilla.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                imprimirReporte.setEnabled(true);
             }
         }
     }//GEN-LAST:event_generarActionPerformed
@@ -508,8 +585,31 @@ public class Planilla extends javax.swing.JFrame {
 
     private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
         // TODO add your handling code here:
-       imprimirPlanilla();
+        int confirmacion = JOptionPane.showConfirmDialog(this,"¿Seguro que deseas imprimir la planilla? \nAl imprimirla se guardara automaticamente y no podras generar mas planillas para este periodo.",
+               "Confirmacion",JOptionPane.YES_NO_OPTION);
+       if(confirmacion == 0)
+       {
+          imprimirPlanilla(); 
+       }
     }//GEN-LAST:event_imprimirReporteActionPerformed
+
+    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+        // TODO add your handling code here:
+       
+         for(int i = 0 ; i < tablaPlanilla.getRowCount() ; i++)
+            {
+                planillas planilla = new planillas();
+                planilla.setIDEmpleado(Integer.parseInt(tablaPlanilla.getValueAt(i,0).toString()));
+                planilla.setPeriodo(periodoActual);
+                planilla.setTotalPagar(Double.parseDouble(tablaPlanilla.getValueAt(i,7).toString()));
+                planilla.setActivo(true);
+                try {
+                    planillaDAO.create(planilla);
+                } catch (Exception ex) {
+                    Logger.getLogger(Planilla.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+    }//GEN-LAST:event_guardarActionPerformed
 
     
     /**
@@ -584,6 +684,7 @@ public class Planilla extends javax.swing.JFrame {
     private javax.swing.JButton botonRegresar;
     private javax.swing.JLabel fechaLabel;
     private javax.swing.JButton generar;
+    private javax.swing.JButton guardar;
     private javax.swing.JButton imprimirReporte;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -591,6 +692,7 @@ public class Planilla extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton limpiar;
     private javax.swing.JLabel logo;
+    private javax.swing.JLabel periodo;
     private javax.swing.JTable tablaPlanilla;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

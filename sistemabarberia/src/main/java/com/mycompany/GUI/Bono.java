@@ -250,7 +250,7 @@ public class Bono extends javax.swing.JFrame {
                 btnNuevoTipoActionPerformed(evt);
             }
         });
-        jPanel3.add(btnNuevoTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 360, -1, -1));
+        jPanel3.add(btnNuevoTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 360, -1, -1));
 
         btnNuevoBono.setBackground(new java.awt.Color(30, 33, 34));
         btnNuevoBono.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
