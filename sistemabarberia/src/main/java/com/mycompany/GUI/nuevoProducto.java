@@ -14,8 +14,17 @@ import com.mycompany.sistemabarberia.productos;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -29,12 +38,12 @@ import javax.swing.border.Border;
  */
 public class nuevoProducto extends javax.swing.JFrame {
     
-    
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     private productos productoModificar;
     private boolean modificar;
     
-    private precioshistoricosproductosJpaController preciosDAO = new precioshistoricosproductosJpaController();
-    private productosJpaController productoDAO = new productosJpaController();
+    private precioshistoricosproductosJpaController preciosDAO = new precioshistoricosproductosJpaController(emf);
+    private productosJpaController productoDAO = new productosJpaController(emf);
     private Validaciones validar = new Validaciones();
     private List<productos> productosEnBd = productoDAO.findproductosEntities();
     private ImageIcon imagen;
@@ -53,8 +62,9 @@ public class nuevoProducto extends javax.swing.JFrame {
     public nuevoProducto() {
         initComponents();
          this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar();    
     }
     
@@ -64,8 +74,9 @@ public class nuevoProducto extends javax.swing.JFrame {
         initComponents();
         tituloPantalla.setText("MODIFICAR PRODUCTO");
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+       Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoLogin.png")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar(); 
         this.productoModificar = productoModificar;
         stockInicial.setEnabled(false);
@@ -472,8 +483,50 @@ public class nuevoProducto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-       
-        if(nombreProducto.getText().equals("Nuevo Producto") || stockInicial.getText().equals("") ||
+       try{
+       if(productoModificar!=null)
+        {
+             if(nombreProducto.getText().equals("Nuevo Producto") || stockMinimo.getText().equals("") || 
+                     stockMaximo.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+             
+             if(!validacionStock() || !validacionCampos())
+             {
+                 JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
+                 return;
+             }
+             productoModificar.setNomProducto(nombreProducto.getText());
+             productoModificar.setStockMaximo(Integer.parseInt(stockMaximo.getText()));
+             productoModificar.setStockMinimo(Integer.parseInt(stockMinimo.getText()));
+              for(int i=0; i < productosEnBd.size();i++)
+        {
+            if(productoModificar.getNomProducto().equalsIgnoreCase(productosEnBd.get(i).getNomProducto()))
+            {
+                if(productoModificar.getIdproducto() == productosEnBd.get(i).getIdproducto())
+                {
+                    
+                }else
+                {
+                   nombreProducto.setBorder(redBorder);
+            formatoInvalido.setVisible(true);
+            formatoInvalido.setText("Ese producto ya existe.");
+            return;  
+                }
+            }
+        } 
+            try {
+                productoDAO.edit(productoModificar);
+                JOptionPane.showMessageDialog(this, "¡Producto Modificado!");
+            } catch (Exception ex) {
+                Logger.getLogger(nuevoProducto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+             
+        }else
+        {
+             if(nombreProducto.getText().equals("Nuevo Producto") || stockInicial.getText().equals("") ||
                 stockMinimo.getText().equals("") || stockMaximo.getText().equals("") || precioInicial.getText().equals("Precio"))
         {
             JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
@@ -501,16 +554,7 @@ public class nuevoProducto extends javax.swing.JFrame {
             return;
         }
         precioUno.setActivo(true);
-        for(int i=0; i < productosEnBd.size();i++)
-        {
-            if(productoNuevo.getNomProducto().equalsIgnoreCase(productosEnBd.get(i).getNomProducto()))
-            {
-            nombreProducto.setBorder(redBorder);
-            formatoInvalido.setVisible(true);
-            formatoInvalido.setText("Ese producto ya existe.");
-            return;
-            }
-        } 
+       
         
         if(Double.parseDouble(precioInicial.getText()) <= 0.00)
         {
@@ -532,6 +576,10 @@ public class nuevoProducto extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el producto, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }
+       }catch(Exception ex){
+           log(ex);
+       }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -564,7 +612,11 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void nombreProductoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreProductoFocusLost
         // TODO add your handling code here:
-      validacionCampos();   
+        try{
+        validacionCampos();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_nombreProductoFocusLost
 
     private void nombreProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreProductoActionPerformed
@@ -577,15 +629,20 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaProductos().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         preciosDAO.close();
         productoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_salirMouseClicked
 
     private void stockInicialFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockInicialFocusGained
@@ -594,7 +651,11 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void stockInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockInicialFocusLost
         // TODO add your handling code here:
-     validacionStock();
+        try{
+            validacionStock();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_stockInicialFocusLost
 
     private void stockInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockInicialActionPerformed
@@ -611,7 +672,11 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void stockMinimoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockMinimoFocusLost
         // TODO add your handling code here:
-      validacionStock();  
+        try{
+        validacionStock(); 
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_stockMinimoFocusLost
 
     private void stockMinimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockMinimoActionPerformed
@@ -628,7 +693,11 @@ public class nuevoProducto extends javax.swing.JFrame {
 
     private void stockMaximoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stockMaximoFocusLost
         // TODO add your handling code here:
+        try{
         validacionStock(); 
+        }catch(Exception ex){
+        log(ex);
+        }
     }//GEN-LAST:event_stockMaximoFocusLost
 
     private void stockMaximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockMaximoActionPerformed
@@ -639,7 +708,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         // TODO add your handling code here      
     }//GEN-LAST:event_stockMaximoKeyTyped
 
-    public boolean validacionCampos()
+    private boolean validacionCampos()
     {
         if(nombreProducto.getText().equals(""))
         {
@@ -689,54 +758,7 @@ public class nuevoProducto extends javax.swing.JFrame {
         return true;
     }
     
-//    public boolean validacionCamposStock()
-//    {
-//         if(!validacionStock())
-//            {
-//                stockInicial.setBorder(redBorder);
-//                stockMinimo.setBorder(redBorder);
-//                stockMaximo.setBorder(redBorder);
-//                return false;
-//                
-//            }else
-//            {
-//                stockInicial.setBorder(greenBorder);
-//                stockMinimo.setBorder(greenBorder);
-//                stockMaximo.setBorder(greenBorder);
-//            }   
-//        if(Integer.parseInt(stockInicial.getText()) == 0)
-//        {
-//            stockInicial.setBorder(greenBorder);
-//        }
-//        if(validar.validacionEntero(stockInicial.getText()))
-//            {    
-//              stockInicial.setBorder(greenBorder);
-//            }else
-//            {
-//                stockInicial.setBorder(redBorder);
-//            }  
-//
-//          
-//           if(validar.validacionEntero(stockMaximo.getText()))
-//        {    
-//            stockMaximo.setBorder(greenBorder);
-//            
-//        }else
-//        {
-//            stockMaximo.setBorder(redBorder);
-//        }
-//       
-//          if(validar.validacionEntero(stockMinimo.getText()))
-//        {    
-//            stockMinimo.setBorder(greenBorder);   
-//        }else
-//        {
-//            stockMinimo.setBorder(redBorder);
-//        }
-//         
-//    }
-    
-    public boolean validarCampoNumerico()
+    private boolean validarCampoNumerico()
     {  
       double precio = 0 ;
         try{
@@ -859,7 +881,7 @@ public class nuevoProducto extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -868,6 +890,32 @@ public class nuevoProducto extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    public boolean validarCamposEnBlanco(){
+         if(nombreProducto.getText().equals("") || stockMinimo.getText().equals("") || 
+                     stockMaximo.getText().equals("") || stockInicial.getText().equals("") || precioInicial.getText().equals(""))
+        {
+            return false;
+        }else{return true;}
+    }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -884,12 +932,12 @@ public class nuevoProducto extends javax.swing.JFrame {
     private javax.swing.JLabel logo;
     private javax.swing.JLabel maximoLabel;
     private javax.swing.JLabel minimoLabel;
-    private javax.swing.JTextField nombreProducto;
-    private javax.swing.JTextField precioInicial;
+    public javax.swing.JTextField nombreProducto;
+    public javax.swing.JTextField precioInicial;
     private javax.swing.JLabel salir;
-    private javax.swing.JTextField stockInicial;
-    private javax.swing.JTextField stockMaximo;
-    private javax.swing.JTextField stockMinimo;
+    public javax.swing.JTextField stockInicial;
+    public javax.swing.JTextField stockMaximo;
+    public javax.swing.JTextField stockMinimo;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

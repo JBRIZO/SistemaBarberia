@@ -26,6 +26,14 @@ public class estadofactura implements Serializable {
     @Column
     private boolean Activo;
 
+    public estadofactura(int idestado, String NombreEstado, boolean Activo) {
+        this.idestado = idestado;
+        this.NombreEstado = NombreEstado;
+        this.Activo = Activo;
+    }
+
+    public estadofactura(){}
+    
     public int getIdestado() {
         return idestado;
     }

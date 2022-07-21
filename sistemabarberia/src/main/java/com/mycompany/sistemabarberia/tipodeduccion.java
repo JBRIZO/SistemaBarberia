@@ -26,6 +26,17 @@ public class tipodeduccion implements Serializable{
     @Column
     private boolean Activo;
 
+    public tipodeduccion() {
+    }
+
+    public tipodeduccion(int idtipodeduccion, String Nombre, boolean Activo) {
+        this.idtipodeduccion = idtipodeduccion;
+        this.Nombre = Nombre;
+        this.Activo = Activo;
+    }
+
+    
+    
     public int getIdtipodeduccion() {
         return idtipodeduccion;
     }

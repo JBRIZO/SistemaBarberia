@@ -19,13 +19,19 @@ import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import com.mycompany.sistemabarberia.tipodocumento;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.ZoneId;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -41,14 +47,15 @@ public class AgregarEmpleado extends javax.swing.JFrame {
 
     private empleado modificarEmpleado;
     private boolean modificar = false;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController();
-    private puestoJpaController puestoDAO = new puestoJpaController();
+    private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController(emf);
+    private puestoJpaController puestoDAO = new puestoJpaController(emf);
     private List<puesto> puestosBD = puestoDAO.findpuestoEntities();
-    private tipodocumentoJpaController tipodocumentoDAO = new tipodocumentoJpaController();
+    private tipodocumentoJpaController tipodocumentoDAO = new tipodocumentoJpaController(emf);
     private List<tipodocumento> documentosBD = tipodocumentoDAO.findtipodocumentoEntities();
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
-    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
+    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController(emf);
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     private Validaciones validar = new Validaciones();
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
@@ -65,8 +72,9 @@ public class AgregarEmpleado extends javax.swing.JFrame {
     public AgregarEmpleado() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
+         Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoLogin.png");
         Reiniciar();
             for(int i = 0; i < documentosBD.size(); i++)
         {
@@ -83,20 +91,23 @@ public class AgregarEmpleado extends javax.swing.JFrame {
     {
         initComponents();
         modificar = true;
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
         this.setLocationRelativeTo(null);
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoLogin.png");
+         Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoLogin.png");
         this.modificarEmpleado = empleadoModificar;
         Reiniciar();
         cargarDatosModificarEmpleado();
         botonCancelar.setText("CANCELAR");
         cbPuestos.setEnabled(false);
         salarioInicial.setEnabled(false);
+        
         for(int i = 0; i < documentosBD.size(); i++)
         {
             cbTipoDoc.addItem(documentosBD.get(i).toString());
         }
         cbTipoDoc.setSelectedIndex(modificarEmpleado.getIDTipoDocumento());
+        
         if(modificarEmpleado.getGenEmpleado() == 'M')
         {
             cbGenero.setSelectedIndex(1);
@@ -126,6 +137,23 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         inicioLabel.setText(" ");
         nacimientoLabel.setText(" ");
         direccionLabel.setText(" ");
+        nombreEmpleado.setBorder(defaultBorder);
+        apellidosEmpleado.setBorder(defaultBorder);
+        telefonoEmpleado.setBorder(defaultBorder);
+        fechaInicio.setBorder(defaultBorder);
+        fechaNacimiento.setBorder(defaultBorder);
+        salarioInicial.setBorder(defaultBorder);
+        direccion.setBorder(defaultBorder);
+        nombreEmpleado.setText("Nombre");
+        apellidosEmpleado.setText("Apellidos");
+        telefonoEmpleado.setText("Teléfono");
+        fechaInicio.setText("Fecha de Inicio");
+        fechaNacimiento.setText("Fecha de Nacimiento");
+        salarioInicial.setText("");
+        direccion.setText("Dirección de Domicilio");
+        cbTipoDoc.setSelectedIndex(0);
+        numDoc.setText("Número");
+        
     }
     
     public void cargarDatosModificarEmpleado()
@@ -140,7 +168,7 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         numDoc.setDocument(new JTextFieldLimit(25));
         numDoc.setText(modificarEmpleado.getNumDoc());
         direccion.setText(modificarEmpleado.getDireccion());
-        salarioInicial.setText("10.00");
+        salarioInicial.setText("");
         botonAgregar.setText("MODIFICAR");
         
     }
@@ -156,6 +184,10 @@ public class AgregarEmpleado extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         logo = new javax.swing.JLabel();
+        tituloPantalla = new javax.swing.JLabel();
+        botonAgregar = new javax.swing.JButton();
+        botonCancelar = new javax.swing.JButton();
+        idEmpleado = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         nombreEmpleado = new javax.swing.JTextField();
@@ -186,19 +218,51 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         inicioLabel = new javax.swing.JLabel();
         nacimientoLabel = new javax.swing.JLabel();
         direccionLabel = new javax.swing.JLabel();
-        tituloPantalla = new javax.swing.JLabel();
-        botonAgregar = new javax.swing.JButton();
-        botonCancelar = new javax.swing.JButton();
-        idEmpleado = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(911, 716));
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
-        jPanel1.setMaximumSize(new java.awt.Dimension(911, 716));
-        jPanel1.setMinimumSize(new java.awt.Dimension(911, 716));
+        jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
+
+        tituloPantalla.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
+        tituloPantalla.setText("REGISTRO DE EMPLEADO");
+
+        botonAgregar.setBackground(new java.awt.Color(189, 158, 76));
+        botonAgregar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonAgregar.setText("AGREGAR");
+        botonAgregar.setRequestFocusEnabled(false);
+        botonAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonAgregarMouseClicked(evt);
+            }
+        });
+        botonAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAgregarActionPerformed(evt);
+            }
+        });
+
+        botonCancelar.setBackground(new java.awt.Color(189, 158, 76));
+        botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonCancelar.setText("REGRESAR");
+        botonCancelar.setRequestFocusEnabled(false);
+        botonCancelar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonCancelarMouseClicked(evt);
+            }
+        });
+        botonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCancelarActionPerformed(evt);
+            }
+        });
+
+        idEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        idEmpleado.setForeground(new java.awt.Color(255, 255, 255));
+        idEmpleado.setText("ID Empleado: ");
 
         jPanel2.setBackground(new java.awt.Color(55, 53, 53));
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -375,7 +439,7 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         });
 
         direccion.setBackground(new java.awt.Color(30, 33, 34));
-        direccion.setColumns(20);
+        direccion.setColumns(5);
         direccion.setDocument(new JTextFieldLimit(200));
         direccion.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         direccion.setForeground(new java.awt.Color(255, 255, 255));
@@ -465,112 +529,110 @@ public class AgregarEmpleado extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(formatoInvalidoSalario)
-                        .addGap(620, 692, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(telefonoEmpleado)
-                                .addComponent(fechaNacimiento)
-                                .addComponent(nombreEmpleado)
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(cbTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(formatoInvalidoNumDoc)
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(salarioInicial)
-                                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                                .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(0, 0, Short.MAX_VALUE))))))
-                            .addComponent(formatoInvalidoNombre)
-                            .addComponent(formatoInvalidoTelefono)
-                            .addComponent(formatoInvalidoFechaNac)
-                            .addComponent(nombreLabel)
-                            .addComponent(telefonoLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(apellidosEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(apellidosLabel))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cbPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(formatoInvalidoApellido)
-                            .addComponent(formatoInvalidoFechaIni)
-                            .addComponent(inicioLabel)
-                            .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(26, 26, 26))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nacimientoLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(direccionLabel)
-                        .addGap(255, 255, 255))))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(inicioLabel)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(formatoInvalidoApellido, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(apellidosEmpleado, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(apellidosLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(formatoInvalidoFechaIni, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(fechaInicio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(direccionLabel)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(formatoInvalidoSalario, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(telefonoEmpleado, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fechaNacimiento, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nombreEmpleado, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(cbTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(salarioInicial)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(nombreLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(telefonoLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(formatoInvalidoFechaNac, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(formatoInvalidoTelefono, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(formatoInvalidoNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(formatoInvalidoNumDoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel3)
+                        .addGap(12, 12, 12)
+                        .addComponent(cbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(23, 23, 23))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nombreLabel)
-                    .addComponent(apellidosLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(apellidosEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(formatoInvalidoNombre)
-                    .addComponent(formatoInvalidoApellido))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(telefonoLabel)
-                    .addComponent(inicioLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(telefonoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(formatoInvalidoTelefono)
-                    .addComponent(formatoInvalidoFechaIni))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nacimientoLabel)
-                    .addComponent(direccionLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(nombreLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(formatoInvalidoNombre)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(telefonoLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(telefonoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(formatoInvalidoTelefono)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nacimientoLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(3, 3, 3)
                         .addComponent(formatoInvalidoFechaNac)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cbTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(5, 5, 5)
-                .addComponent(formatoInvalidoNumDoc)
+                            .addComponent(numDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(9, 9, 9)
+                        .addComponent(formatoInvalidoNumDoc))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(apellidosLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(apellidosEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(formatoInvalidoApellido)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(inicioLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(formatoInvalidoFechaIni)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(direccionLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(salarioInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(formatoInvalidoSalario))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cbPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(salarioInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1)
-                        .addComponent(jLabel2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(formatoInvalidoSalario)
+                        .addComponent(cbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addGap(37, 37, 37))
         );
 
@@ -579,9 +641,9 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(45, 45, 45)
+                .addGap(27, 27, 27)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -591,65 +653,25 @@ public class AgregarEmpleado extends javax.swing.JFrame {
                 .addGap(19, 19, 19))
         );
 
-        tituloPantalla.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
-        tituloPantalla.setText("REGISTRO DE EMPLEADO");
-
-        botonAgregar.setBackground(new java.awt.Color(189, 158, 76));
-        botonAgregar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonAgregar.setText("AGREGAR");
-        botonAgregar.setRequestFocusEnabled(false);
-        botonAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                botonAgregarMouseClicked(evt);
-            }
-        });
-        botonAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAgregarActionPerformed(evt);
-            }
-        });
-
-        botonCancelar.setBackground(new java.awt.Color(189, 158, 76));
-        botonCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        botonCancelar.setText("REGRESAR");
-        botonCancelar.setRequestFocusEnabled(false);
-        botonCancelar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                botonCancelarMouseClicked(evt);
-            }
-        });
-        botonCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonCancelarActionPerformed(evt);
-            }
-        });
-
-        idEmpleado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        idEmpleado.setForeground(new java.awt.Color(255, 255, 255));
-        idEmpleado.setText("ID Empleado: ");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(179, 179, 179)
+                .addGap(91, 91, 91)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(68, 68, 68)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(35, 35, 35)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(botonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(idEmpleado)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(43, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(128, 128, 128)
-                .addComponent(botonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(123, 123, 123))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -672,13 +694,11 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -764,7 +784,7 @@ public class AgregarEmpleado extends javax.swing.JFrame {
             telefonoLabel.setText("");
         }else
         {
-            validarCamposNumero(telefonoEmpleado,formatoInvalidoTelefono);
+            validarCamposNumero(telefonoEmpleado);
         }
        
     }//GEN-LAST:event_telefonoEmpleadoFocusLost
@@ -877,6 +897,132 @@ public class AgregarEmpleado extends javax.swing.JFrame {
 
     private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
         // TODO add your handling code here:
+        java.util.Date startDate = new Date(0000000000);
+        java.util.Date birthDate = new Date(0000000000);
+        String fechaIni = "00-00-0000";
+        String fechaNac = "00-00-0000";
+        if(modificar)
+        {
+                //validar que todos los campos esten llenos
+                if(nombreEmpleado.getText().equals("Nombre") || apellidosEmpleado.getText().equals("Apellidos") || telefonoEmpleado.getText().equals("Teléfono") ||
+                        fechaInicio.getText().equals("Fecha de Inicio") || fechaNacimiento.getText().equals("Fecha de Nacimiento") || numDoc.getText().equals("Número") ||
+                        direccion.getText().equals("Dirección de Domicilio"))
+                {
+                    JOptionPane.showMessageDialog(null,"Debes rellenar todos los campos","Datos Faltantes",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if(cbTipoDoc.getSelectedIndex() == 0)
+                {
+                    JOptionPane.showMessageDialog(null,"Debes seleccionar un tipo de documento.", "Tipo de Documento Inválido", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }else
+                {
+                    if(cbGenero.getSelectedIndex() == 0)
+                    {
+                        JOptionPane.showMessageDialog(null,"Debes seleccionar un género para el empleado.","Género Inválido",JOptionPane.ERROR_MESSAGE);
+                        return;
+                    } 
+                }
+                try {
+                    startDate = sdf.parse(convertirFecha(fechaInicio.getText()));  
+                    fechaIni = sdf.format(startDate);
+                    birthDate = sdf.parse(convertirFecha(fechaNacimiento.getText()));
+                    fechaNac = sdf.format(birthDate);
+                    } catch (ParseException ex) {
+                       ex.printStackTrace();
+                    }
+
+                    //validar edad de empleado, debes ser mayor a 18 años para ser admitido
+                    LocalDate date = validar.convertToLocalDateViaInstant(birthDate);
+                    Period periodo = Period.between(date,LocalDate.now());
+                    if(periodo.getYears() < 18)
+                    {
+                       JOptionPane.showMessageDialog(null,"El empleado no puede ser menor a 18 años.", 
+                               "Fecha Inválida",
+                               JOptionPane.ERROR_MESSAGE); 
+                       fechaNacimiento.setBorder(redBorder);
+                       return;
+                    }
+                    
+                    //validar fecha de inicio del empleado
+                    LocalDate fecha = validar.convertToLocalDateViaInstant(startDate);
+                    Period periodoInicio = Period.between(LocalDate.now(),fecha);
+                    if(periodoInicio.getDays() > 4)
+                    {
+                       JOptionPane.showMessageDialog(null,"Solo puedes ingresar un empleado un maximo de 4 dias \nantes de que empiece a trabajar.", 
+                               "Fecha Inválida",
+                               JOptionPane.ERROR_MESSAGE); 
+                       fechaInicio.setBorder(redBorder);
+                       return;
+                    }
+                    //modificar empleado
+                    empleado nuevoEmpleado = new empleado();
+                    nuevoEmpleado.setIdempleado(modificarEmpleado.getIdempleado());
+                    nuevoEmpleado.setNomEmpleado(nombreEmpleado.getText());
+                    nuevoEmpleado.setApeEmpleado(apellidosEmpleado.getText());
+                    nuevoEmpleado.setNumCelular(telefonoEmpleado.getText());
+                    nuevoEmpleado.setFechaInicio(Date.valueOf(fechaIni));
+                    nuevoEmpleado.setFechaNacimiento(Date.valueOf(fechaNac));
+                    nuevoEmpleado.setIDTipoDocumento(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)));
+                    nuevoEmpleado.setGenEmpleado(cbGenero.getSelectedItem().toString().charAt(0));
+                    nuevoEmpleado.setActivo(true);
+                    nuevoEmpleado.setDireccion(direccion.getText());
+                    nuevoEmpleado.setNumDoc(numDoc.getText());
+                    
+                    //validar pasaporte o identidad
+                    if(nuevoEmpleado.getIDTipoDocumento() == 1)
+                    {
+                        if(!validar.validarPasaporte(nuevoEmpleado.getNumDoc()))
+                        {
+                            numDoc.setBorder(redBorder);
+                            formatoInvalidoNumDoc.setText("Número inválido.");
+                            return;
+                        }
+                    }else
+                    {
+                        if(nuevoEmpleado.getIDTipoDocumento() == 2)
+                        {
+                            if(!validar.validacionIdentidad(nuevoEmpleado.getNumDoc()))
+                            {
+                                numDoc.setBorder(redBorder);
+                                formatoInvalidoNumDoc.setText("Número inválido.");
+                                return; 
+                            }
+                        }
+                    }
+                    
+                   if(validarNombre() && validarApellido() && validarFecha(fechaInicio,formatoInvalidoFechaIni) && 
+                   validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validarCamposNumero(telefonoEmpleado))
+                {   
+                    if(modificar)
+                    {
+                     try{
+                            empleadoDAO.edit(nuevoEmpleado);
+                            JOptionPane.showMessageDialog(null,"Empleado modificado exitosamente.");
+                            Reiniciar();
+                        } catch (Exception ex) {
+                            FileHandler fh;                              
+                            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+                            try {
+                                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                                System.out.println(ts);
+                                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                                logger.addHandler(fh);
+                                SimpleFormatter formatter = new SimpleFormatter();
+                                fh.setFormatter(formatter);
+                                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+                            } catch (SecurityException e) {  
+                                e.printStackTrace();  
+                            } catch (IOException e) {  
+                                e.printStackTrace();  
+                            } 
+                            JOptionPane.showMessageDialog(null,"No se pudo modificar el empleado, excepción: " + ex.getMessage());
+                        }
+                    }
+                }         
+        }else{
          //validar que todos los campos esten llenos
         if(nombreEmpleado.getText().equals("Nombre") || apellidosEmpleado.getText().equals("Apellidos") || telefonoEmpleado.getText().equals("Teléfono") ||
                 fechaInicio.getText().equals("Fecha de Inicio") || fechaNacimiento.getText().equals("Fecha de Nacimiento") || numDoc.getText().equals("Número") ||
@@ -903,22 +1049,32 @@ public class AgregarEmpleado extends javax.swing.JFrame {
                 return;
             }
         }
-        
-        java.util.Date startDate = new Date(0000000000);
-        java.util.Date birthDate = new Date(0000000000);
-        String fechaIni = "00-00-0000";
-        String fechaNac = "00-00-0000";
         try {
         startDate = sdf.parse(convertirFecha(fechaInicio.getText()));  
         fechaIni = sdf.format(startDate);
         birthDate = sdf.parse(convertirFecha(fechaNacimiento.getText()));
         fechaNac = sdf.format(birthDate);
-    } catch (ParseException ex) {
-       ex.printStackTrace();
-    }
-        
+        } catch (ParseException ex) {
+            FileHandler fh;                              
+                            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+                            try {
+                                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                                System.out.println(ts);
+                                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                                logger.addHandler(fh);
+                                SimpleFormatter formatter = new SimpleFormatter();
+                                fh.setFormatter(formatter);
+                                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+                            } catch (SecurityException e) {  
+                                e.printStackTrace();  
+                            } catch (IOException e) {  
+                                e.printStackTrace();  
+                            } 
+           ex.printStackTrace();
+        }
         //validar edad de empleado, debes ser mayor a 18 años para ser admitido
-        LocalDate date = convertToLocalDateViaInstant(birthDate);
+        LocalDate date = validar.convertToLocalDateViaInstant(birthDate);
         Period periodo = Period.between(date,LocalDate.now());
         if(periodo.getYears() < 18)
         {
@@ -927,9 +1083,8 @@ public class AgregarEmpleado extends javax.swing.JFrame {
                    JOptionPane.ERROR_MESSAGE); 
            return;
         }
-        
         //validar fecha de inicio del empleado
-        LocalDate fecha = convertToLocalDateViaInstant(startDate);
+        LocalDate fecha = validar.convertToLocalDateViaInstant(startDate);
         Period periodoInicio = Period.between(LocalDate.now(),fecha);
         if(periodoInicio.getDays() > 4)
         {
@@ -938,28 +1093,11 @@ public class AgregarEmpleado extends javax.swing.JFrame {
                    JOptionPane.ERROR_MESSAGE); 
            return;
         }
-        
-        
-        //nuevo empleado o modificar uno existente
         empleado nuevoEmpleado = new empleado();
         salariohistoricoempleados primerSalario = new salariohistoricoempleados();
         puestohistoricoempleado primerPuesto = new puestohistoricoempleado();
-        //primer puesto
-        if(modificar)
-        {
-            nuevoEmpleado.setIdempleado(modificarEmpleado.getIdempleado());
-            nuevoEmpleado.setNomEmpleado(nombreEmpleado.getText());
-            nuevoEmpleado.setApeEmpleado(apellidosEmpleado.getText());
-            nuevoEmpleado.setNumCelular(telefonoEmpleado.getText());
-            nuevoEmpleado.setFechaInicio(Date.valueOf(fechaIni));
-            nuevoEmpleado.setFechaNacimiento(Date.valueOf(fechaNac));
-            nuevoEmpleado.setIDTipoDocumento(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)));
-            nuevoEmpleado.setGenEmpleado(cbGenero.getSelectedItem().toString().charAt(0));
-            nuevoEmpleado.setActivo(true);
-            nuevoEmpleado.setDireccion(direccion.getText());
-            nuevoEmpleado.setNumDoc(numDoc.getText());
-        }else
-        {
+        
+        //nuevo empleado o modificar uno existente
         nuevoEmpleado.setNomEmpleado(nombreEmpleado.getText());
         nuevoEmpleado.setApeEmpleado(apellidosEmpleado.getText());
         nuevoEmpleado.setNumCelular(telefonoEmpleado.getText());
@@ -971,7 +1109,7 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         nuevoEmpleado.setActivo(true);
         nuevoEmpleado.setDireccion(direccion.getText());
         nuevoEmpleado.setNumDoc(numDoc.getText());
-         //primer salario
+        //primer salario
         primerSalario.setFechaInicial(Date.valueOf(fechaIni));
         primerSalario.setFechaFinal(null);
         primerSalario.setSalario(Double.parseDouble(salarioInicial.getText()));
@@ -981,56 +1119,39 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         primerPuesto.setFechaInicial(Date.valueOf(fechaIni));
         primerPuesto.setFechaFinal(null);
         primerPuesto.setActivo(true);
-        }
-        //validar pasaporte o identidad
-        if(nuevoEmpleado.getIDTipoDocumento() == 1)
-        {
-            if(!validar.validarPasaporte(nuevoEmpleado.getNumDoc()))
-            {
-                numDoc.setBorder(redBorder);
-                formatoInvalidoNumDoc.setText("Número inválido.");
-                return;
-            }
-        }else
-        {
-            if(nuevoEmpleado.getIDTipoDocumento() == 2)
-            {
-                if(!validar.validacionIdentidad(nuevoEmpleado.getNumDoc()))
-                {
-                    numDoc.setBorder(redBorder);
-                    formatoInvalidoNumDoc.setText("Número inválido.");
-                    return; 
-                }
-            }
-        }
-        if(validarNombre() && validarApellido() && validarFecha(fechaInicio,formatoInvalidoFechaIni) && 
-           validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validarCamposNumero(telefonoEmpleado,formatoInvalidoTelefono) &&
+        
+        if( validarDocumento() && validarNombre() && validarApellido() && validarFecha(fechaInicio,formatoInvalidoFechaIni) && 
+           validarFecha(fechaNacimiento,formatoInvalidoFechaNac) && validarCamposNumero(telefonoEmpleado) &&
            validarDecimal())
-        {   
-            if(modificar)
-            {
-                try {
-            empleadoDAO.edit(nuevoEmpleado);
-            JOptionPane.showMessageDialog(null,"Empleado modificado exitosamente.");
-                    Reiniciar();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"No se pudo modificar el empleado, excepción: " + ex.getMessage());
-        }
-        }else{
-                try {
+        {
+            try {
             empleadoDAO.create(nuevoEmpleado);
             List<empleado> empleados = empleadoDAO.findempleadoEntities();
-             primerSalario.setIDEmpleado(empleados.get(empleados.size()-1).getIdempleado());
-             primerPuesto.setIDEmpleado(empleados.get(empleados.size()-1).getIdempleado());
-             salarioDAO.create(primerSalario);
-             puestoHistoricoDAO.create(primerPuesto);
+            primerSalario.setIDEmpleado(empleados.get(empleados.size()-1).getIdempleado());
+            primerPuesto.setIDEmpleado(empleados.get(empleados.size()-1).getIdempleado());
+            salarioDAO.create(primerSalario);
+            puestoHistoricoDAO.create(primerPuesto);
             JOptionPane.showMessageDialog(null,"Operación Exitosa.");
-                    Reiniciar();
+            Reiniciar();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el empleado, excepción: " + ex.getMessage());
+            FileHandler fh;                              
+                            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+                            try { 
+                                fh = new FileHandler("../logs.txt",true);
+                                logger.addHandler(fh);
+                                SimpleFormatter formatter = new SimpleFormatter();
+                                fh.setFormatter(formatter);
+                                logger.info(ex.getMessage());
+                            } catch (SecurityException e) {  
+                                e.printStackTrace();  
+                            } catch (IOException e) {  
+                                e.printStackTrace();  
+                            } 
         }
-        } 
-        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.", "Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.", "Datos inválidos",JOptionPane.ERROR_MESSAGE);}  
+        
+        }  
     }//GEN-LAST:event_botonAgregarActionPerformed
 
     private void salarioInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioInicialFocusLost
@@ -1079,14 +1200,17 @@ public class AgregarEmpleado extends javax.swing.JFrame {
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
         // TODO add your handling code here:
+        emf.close();
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     private void numDocFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_numDocFocusLost
         // TODO add your handling code here:
-
         if(numDoc.getText().equals(""))
         {
             numDoc.setText("Número");
+        }else
+        {
+            validarDocumento();
         }
     }//GEN-LAST:event_numDocFocusLost
 
@@ -1132,7 +1256,7 @@ public class AgregarEmpleado extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -1151,13 +1275,20 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         return palabras[2] + "-" + palabras[1] + "-" + palabras[0];
     }
     
-    private boolean validarNombre()
+    public boolean validarNombre()
     {
-        if(!validar.validacionCantidadMinima(nombreEmpleado.getText(),4))
+         if(nombreEmpleado.getText().matches("^.*\\d+.*$"))
+        {
+            nombreEmpleado.setBorder(redBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("Solo se permite texto en este campo.");
+            return false;
+        }
+        if(!validar.validacionCantidadMinima(nombreEmpleado.getText(),3))
             {
             nombreEmpleado.setBorder(redBorder);
             formatoInvalidoNombre.setVisible(true);
-            formatoInvalidoNombre.setText("El nombre debe ser de minimo 4 letras.");
+            formatoInvalidoNombre.setText("El nombre debe ser de minimo 3 letras.");
             return false;
             }
         if (!validar.validacionNombres(nombreEmpleado.getText()))
@@ -1167,24 +1298,38 @@ public class AgregarEmpleado extends javax.swing.JFrame {
             formatoInvalidoNombre.setText("Cada nombre debe empezar en mayuscula.");
             return false;
         }
+        if(validar.validarRepeticionCadena(nombreEmpleado.getText()))
+        {
+           nombreEmpleado.setBorder(redBorder);
+            formatoInvalidoNombre.setVisible(true);
+            formatoInvalidoNombre.setText("No puedes repetir tantas letras.");
+            return false; 
+        }
         if(validar.validacionCadenaPalabras(nombreEmpleado.getText()))
         {    
             nombreEmpleado.setBorder(greenBorder);
             formatoInvalidoNombre.setVisible(true);
-            formatoInvalidoNombre.setText(" ");
+            formatoInvalidoNombre.setText("Formato válido");
             return true;
             
         }else
         {
             nombreEmpleado.setBorder(redBorder);
             formatoInvalidoNombre.setVisible(true);
-            formatoInvalidoNombre.setText("Ese es un nombre invalido.");
+            formatoInvalidoNombre.setText("Ese es un nombre inválido.");
             return false;
         }
     }
     
-    private boolean validarApellido()
+    public boolean validarApellido()
     {
+         if(apellidosEmpleado.getText().matches("^.*\\d+.*$"))
+        {
+            apellidosEmpleado.setBorder(redBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("Solo se permite texto en este campo.");
+            return false;
+        }
         if(!validar.validacionCantidadMinima(apellidosEmpleado.getText(),2))
             {
             apellidosEmpleado.setBorder(redBorder);
@@ -1196,26 +1341,33 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         {
             apellidosEmpleado.setBorder(redBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText("Cada apellido debe empezar en mayuscula.");
+            formatoInvalidoApellido.setText("Cada apellido debe empezar en mayúscula.");
             return false;
+        }
+        if(validar.validarRepeticionCadena(apellidosEmpleado.getText()))
+        {
+            apellidosEmpleado.setBorder(redBorder);
+            formatoInvalidoApellido.setVisible(true);
+            formatoInvalidoApellido.setText("No puedes repetir tantas letras.");
+            return false; 
         }
         if(validar.validacionCadenaPalabras(apellidosEmpleado.getText()))
         {    
             apellidosEmpleado.setBorder(greenBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText(" ");
+            formatoInvalidoApellido.setText("Formato válido");
             return true;
             
         }else
         {
             apellidosEmpleado.setBorder(redBorder);
             formatoInvalidoApellido.setVisible(true);
-            formatoInvalidoApellido.setText("Ese apellido es invalido.");
+            formatoInvalidoApellido.setText("Ese es un apellido inválido.");
             return false;
         }
     }
     
-    private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
+    public boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
         if(!validar.validacionFormatoFecha(fecha.getText()) )
         {
@@ -1230,7 +1382,18 @@ public class AgregarEmpleado extends javax.swing.JFrame {
             label.setVisible(true);
             label.setText("La fecha introducida es inválida.");
             return false;
-            }else
+            }
+        
+        if(!validar.isDateValid(fecha.getText()))
+        {
+            fecha.setBorder(redBorder);
+            label.setVisible(true);
+            JOptionPane.showMessageDialog(null,"Esa fecha es inválida, por favor revisa que la cantidad de dias concuerde con el mes.\nEjemplo de fecha inválida: 30/02/2021",
+                    "Fecha Inválida",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        else
         {
             fecha.setBorder(greenBorder);
             label.setText(" ");
@@ -1239,39 +1402,33 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         
     }
     
-
-    
-    private boolean validarDecimal()
+    public boolean validarDecimal()
     {
-        if(!validar.validacionCampoNumerico(salarioInicial.getText()))
+        double precio1 = 0 ;
+        try{
+            precio1 = Double.parseDouble(salarioInicial.getText());
+        }catch(NumberFormatException ex)
+        {
+            formatoInvalidoSalario.setVisible(true);
+            formatoInvalidoSalario.setText("Solo puedes ingresar números en este campo.");
+            salarioInicial.setBorder(redBorder);
+            return false;
+        }
+       
+        if(precio1 <= 0)
         {
             salarioInicial.setBorder(redBorder);
             formatoInvalidoSalario.setVisible(true);
-            formatoInvalidoSalario.setText("Solo puedes ingresar numeros en este campo.");
+            formatoInvalidoSalario.setText("La cantidad debe ser mayor a 0.");
             return false;
         }
         
-        if(Double.parseDouble(salarioInicial.getText()) <= 0)
-        {
-            salarioInicial.setBorder(redBorder);
-            formatoInvalidoSalario.setText("El salario debe ser mayor a 0.");
-            return false;
-        }
-        
-        if(validar.validacionDecimal(salarioInicial.getText()))
-        {
-            salarioInicial.setBorder(greenBorder);
-            formatoInvalidoSalario.setText(" ");
-            return true;
-        }else
-        {
-            salarioInicial.setBorder(redBorder);
-            formatoInvalidoSalario.setText("El formato debe ser 000000.00");
-            return false;
-        }  
+         salarioInicial.setBorder(greenBorder);
+         formatoInvalidoSalario.setVisible(false);
+         return true;
     }
     
-    private boolean validarCamposNumero(javax.swing.JTextField telefonoEmpleado,JLabel formatoInvalidoTelefono)
+    public boolean validarCamposNumero(javax.swing.JTextField telefonoEmpleado)
     {
         if(!validar.validacionCampoNumerico(telefonoEmpleado.getText()))
         {
@@ -1294,11 +1451,7 @@ public class AgregarEmpleado extends javax.swing.JFrame {
         }
     }
        
-    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
-    return dateToConvert.toInstant()
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate();
-    }
+    
     
     private String convertirDates(String Fecha)
     {
@@ -1309,20 +1462,55 @@ public class AgregarEmpleado extends javax.swing.JFrame {
     
     
     
+    public boolean validarDocumento()
+    {
+         //validar pasaporte o identidad
+        if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 1)
+        {
+            if(!validar.validarPasaporte(numDoc.getText()))
+            {
+                numDoc.setBorder(redBorder);
+                formatoInvalidoNumDoc.setText("Número inválido.");
+                return false;
+            }
+        }else
+        {
+            if(Character.getNumericValue(cbTipoDoc.getSelectedItem().toString().charAt(0)) == 2)
+            {
+                if(!validar.validacionIdentidad(numDoc.getText()))
+                {
+                    numDoc.setBorder(redBorder);
+                    formatoInvalidoNumDoc.setText("Número inválido.");
+                    return false; 
+                }
+            }
+        }
+        numDoc.setBorder(greenBorder);
+        return true;
+    }
     
-
+    public boolean validarCamposEnBlanco()
+    {
+        if(nombreEmpleado.getText().equals("") || apellidosEmpleado.getText().equals("") || telefonoEmpleado.getText().equals("") ||
+                fechaInicio.getText().equals("") || fechaNacimiento.getText().equals("") || numDoc.getText().equals("") ||
+                salarioInicial.getText().equals("") || direccion.getText().equals("")){
+            return false;
+        }else{return true;}
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField apellidosEmpleado;
+    public javax.swing.JTextField apellidosEmpleado;
     private javax.swing.JLabel apellidosLabel;
     private javax.swing.JButton botonAgregar;
     private javax.swing.JButton botonCancelar;
     private javax.swing.JComboBox<String> cbGenero;
     private javax.swing.JComboBox<String> cbPuestos;
     private javax.swing.JComboBox<String> cbTipoDoc;
-    private javax.swing.JTextArea direccion;
+    public javax.swing.JTextArea direccion;
     private javax.swing.JLabel direccionLabel;
-    private javax.swing.JTextField fechaInicio;
-    private javax.swing.JTextField fechaNacimiento;
+    public javax.swing.JTextField fechaInicio;
+    public javax.swing.JTextField fechaNacimiento;
     private javax.swing.JLabel formatoInvalidoApellido;
     private javax.swing.JLabel formatoInvalidoFechaIni;
     private javax.swing.JLabel formatoInvalidoFechaNac;
@@ -1341,11 +1529,11 @@ public class AgregarEmpleado extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel logo;
     private javax.swing.JLabel nacimientoLabel;
-    private javax.swing.JTextField nombreEmpleado;
+    public javax.swing.JTextField nombreEmpleado;
     private javax.swing.JLabel nombreLabel;
-    private javax.swing.JTextField numDoc;
-    private javax.swing.JTextField salarioInicial;
-    private javax.swing.JTextField telefonoEmpleado;
+    public javax.swing.JTextField numDoc;
+    public javax.swing.JTextField salarioInicial;
+    public javax.swing.JTextField telefonoEmpleado;
     private javax.swing.JLabel telefonoLabel;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

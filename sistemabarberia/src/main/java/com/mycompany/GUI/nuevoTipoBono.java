@@ -5,20 +5,43 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.tiposbono;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
+import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
@@ -26,11 +49,16 @@ import javax.swing.border.Border;
  */
 public class nuevoTipoBono extends javax.swing.JFrame {
 
-    private tiposbonoJpaController tipoBonoDAO = new tiposbonoJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private tiposbonoJpaController tipoBonoDAO = new tiposbonoJpaController(emf);
     private Validaciones validar = new Validaciones();
     private List<tiposbono> descuentosEnBd = tipoBonoDAO.findtiposbonoEntities();
     private ImageIcon imagen;
     private Icon icono;
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
@@ -40,10 +68,11 @@ public class nuevoTipoBono extends javax.swing.JFrame {
      */
     public nuevoTipoBono() {
         initComponents();
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+       Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         this.setLocationRelativeTo(null);
         formatoInvalido.setVisible(false);
-        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
         Reiniciar();
     }
 
@@ -80,6 +109,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         formatoInvalido = new javax.swing.JLabel();
         tipoBono = new javax.swing.JTextField();
         salir = new javax.swing.JLabel();
+        imprimirReporteTipoBono = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -203,6 +233,15 @@ public class nuevoTipoBono extends javax.swing.JFrame {
             }
         });
 
+        imprimirReporteTipoBono.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/printIcon.png"))); // NOI18N
+        imprimirReporteTipoBono.setBorderPainted(false);
+        imprimirReporteTipoBono.setContentAreaFilled(false);
+        imprimirReporteTipoBono.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteTipoBonoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -220,7 +259,9 @@ public class nuevoTipoBono extends javax.swing.JFrame {
                             .addGap(27, 27, 27)
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(101, 101, 101)
+                            .addGap(34, 34, 34)
+                            .addComponent(imprimirReporteTipoBono)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(27, 27, Short.MAX_VALUE))
         );
@@ -237,7 +278,9 @@ public class nuevoTipoBono extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(botonAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                    .addComponent(imprimirReporteTipoBono, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
@@ -256,6 +299,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        try{
         List<tiposbono> bonosEnBD = tipoBonoDAO.findtiposbonoEntities();
         tiposbono tipoBonoNuevo = new tiposbono();
         tipoBonoNuevo.setNomBono(tipoBono.getText());
@@ -287,6 +331,9 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
         }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
 
@@ -295,7 +342,11 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_idTipoBonoActionPerformed
 //a;adir validaciones botonaceptar
     private void tipoBonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoBonoFocusLost
+        try{
         validacionCampos();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_tipoBonoFocusLost
 
     private void tipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoBonoActionPerformed
@@ -312,10 +363,64 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoBonoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
+        
+        try{
+        emf.close();
         Bono bono = new Bono();
         bono.setVisible(true);
         this.dispose();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_salirMouseClicked
+
+    private void imprimirReporteTipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteTipoBonoActionPerformed
+        // TODO add your handling code here:
+        try{
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            log(e);
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            log(e);
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteTipoBono.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte de Tipos de Pago");
+            view.setVisible(true);
+        } catch (JRException ex) {
+            log(ex);
+            ex.printStackTrace();
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+    }//GEN-LAST:event_imprimirReporteTipoBonoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -404,7 +509,7 @@ public class nuevoTipoBono extends javax.swing.JFrame {
     }
 
     private void insertarImagen(JLabel lbl, String ruta) {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(),
@@ -415,10 +520,28 @@ public class nuevoTipoBono extends javax.swing.JFrame {
         this.repaint();
     }
 
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
     private javax.swing.JTextField idTipoBono;
+    private javax.swing.JButton imprimirReporteTipoBono;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

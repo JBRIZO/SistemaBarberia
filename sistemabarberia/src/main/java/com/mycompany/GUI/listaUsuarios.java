@@ -7,13 +7,31 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.usuariosJpaController;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +39,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JRSaveContributor;
+import net.sf.jasperreports.view.JRViewer;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -28,11 +54,17 @@ import javax.swing.table.DefaultTableModel;
  */
 public class listaUsuarios extends javax.swing.JFrame {
     
-
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
-    private usuariosJpaController usuarioDAO =  new usuariosJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private permisosusuario permisosUsuario;
+    
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
+    private usuariosJpaController usuarioDAO =  new usuariosJpaController(emf);
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
     private ImageIcon imagen;
     private Icon icono;
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -40,15 +72,51 @@ public class listaUsuarios extends javax.swing.JFrame {
     public listaUsuarios() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.activar,"/Imagenes/desactivar.png");
         cargarTabla();
         for(int i = 0; i < tablaUsuarios.getColumnCount()-2;i++)
         {
             cbParametros.addItem(tablaUsuarios.getColumnName(i));
         }
         modificarUsuario.setEnabled(false);
+        permisosUsuario = verificarPermisos();
+        desactivarBotonesPermisos();
+    }
+    
+    private void desactivarBotonesPermisos(){
+        if(permisosUsuario.isDesactivar()){
+            activar.setEnabled(true);
+        }else{
+            activar.setEnabled(false);
+        }
+        if(permisosUsuario.isImprimir()){
+            imprimirReporte.setEnabled(true);
+        }else{
+            imprimirReporte.setEnabled(false);
+        }
+        if(permisosUsuario.isModificar()){
+            modificarUsuario.setEnabled(true);
+        }else{
+            modificarUsuario.setEnabled(false);
+        }
+        if(permisosUsuario.isNuevo()){
+            nuevoUsuario.setEnabled(true);
+        }else{
+            nuevoUsuario.setEnabled(false);
+        }
+    }
+    
+    private permisosusuario verificarPermisos(){
+        EntityManager em = empleadosDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",9);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
     }
     
     private void cargarTabla()
@@ -227,6 +295,7 @@ public class listaUsuarios extends javax.swing.JFrame {
         buscarTxt = new javax.swing.JTextField();
         botonBuscar = new javax.swing.JButton();
         recargar = new javax.swing.JButton();
+        imprimirReporte = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -234,7 +303,7 @@ public class listaUsuarios extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
 
-        tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
+        tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 48)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
         tituloPantalla.setText("USUARIOS");
 
@@ -253,6 +322,7 @@ public class listaUsuarios extends javax.swing.JFrame {
         tablaUsuarios.setAutoCreateRowSorter(true);
         tablaUsuarios.setBackground(new java.awt.Color(30, 33, 34));
         tablaUsuarios.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        tablaUsuarios.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tablaUsuarios.setForeground(new java.awt.Color(255, 255, 255));
         tablaUsuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -365,6 +435,15 @@ public class listaUsuarios extends javax.swing.JFrame {
             }
         });
 
+        imprimirReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/imprimirReporte.png"))); // NOI18N
+        imprimirReporte.setBorderPainted(false);
+        imprimirReporte.setContentAreaFilled(false);
+        imprimirReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -372,26 +451,28 @@ public class listaUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 875, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(nuevoUsuario)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(modificarUsuario)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(nuevoUsuario)
+                        .addComponent(buscarTxt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(modificarUsuario))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 703, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -406,13 +487,14 @@ public class listaUsuarios extends javax.swing.JFrame {
                     .addComponent(recargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(21, 21, 21)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(nuevoUsuario)
-                    .addComponent(modificarUsuario))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(nuevoUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(modificarUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(imprimirReporte, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -422,14 +504,14 @@ public class listaUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         botonRegresar.setBackground(new java.awt.Color(189, 158, 76));
@@ -447,35 +529,27 @@ public class listaUsuarios extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(335, 335, 335)
-                .addComponent(tituloPantalla)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(85, 85, 85)
+                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(349, 349, 349)
+                        .addComponent(tituloPantalla)
+                        .addGap(250, 250, 250)
                         .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(32, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 13, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(tituloPantalla)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(tituloPantalla)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(79, 79, 79))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -498,15 +572,24 @@ public class listaUsuarios extends javax.swing.JFrame {
 
     private void tablaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaUsuariosMouseClicked
         // TODO add your handling code here:
+        try{
         if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
         {
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
-            modificarUsuario.setEnabled(true);
+            this.insertarImagen(this.activar,"/Imagenes/desactivar.png");
+            if(permisosUsuario.isModificar()){
+                modificarUsuario.setEnabled(true);
+            }
         }else
         {
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
-            modificarUsuario.setEnabled(false);
+            this.insertarImagen(this.activar,"/Imagenes/activar.png");
+            if(permisosUsuario.isModificar()){
+                modificarUsuario.setEnabled(false);
+            }
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_tablaUsuariosMouseClicked
 
     private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
@@ -515,34 +598,57 @@ public class listaUsuarios extends javax.swing.JFrame {
 
     private void nuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoUsuarioActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoUsuario().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         usuarioDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_nuevoUsuarioActionPerformed
 
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new menuGerente().setVisible(true);
             }
         });
+        emf.close();
         this.dispose();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonRegresarActionPerformed
 
     private void modificarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarUsuarioActionPerformed
         // TODO add your handling code here:
-        if(tablaUsuarios.getSelectedRow() == -1)
+        try{
+            if(tablaUsuarios.getSelectedRow() == -1)
         {
             JOptionPane.showMessageDialog(this,"Debes seleccionar un usuario para poder modificarlo.","Selecciona un empleado",JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+        usuarios usuario = usuarioDAO.findusuarios(Integer.parseInt(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),0).toString()));
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoUsuario(usuario).setVisible(true);
+            }
+        });
+        emf.close();
+        this.setVisible(false);
+        this.dispose(); 
+        usuarioDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_modificarUsuarioActionPerformed
 
     private void buscarTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscarTxtFocusGained
@@ -552,7 +658,8 @@ public class listaUsuarios extends javax.swing.JFrame {
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-         if(buscarTxt.getText().equals(""))
+        try{
+        if(buscarTxt.getText().equals(""))
         {
             JOptionPane.showMessageDialog(this,"Debes ingresar un " + cbParametros.getSelectedItem().toString() + ".","Campo vacío",JOptionPane.ERROR_MESSAGE);
             return;
@@ -574,24 +681,34 @@ public class listaUsuarios extends javax.swing.JFrame {
             case "Usuario":
             cargarTablaUsuario(buscarTxt.getText());
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+         
     }//GEN-LAST:event_botonBuscarActionPerformed
 
     private void recargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recargarActionPerformed
         // TODO add your handling code here:
+        try{
         cargarTabla();
         buscarTxt.setText("");
         modificarUsuario.setEnabled(false);
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_recargarActionPerformed
 
     private void activarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activarActionPerformed
         // TODO add your handling code here:
+        try{
         //Si el empleado esta desactivado no puede activarse su usuario.
         if(tablaUsuarios.getSelectedRow() == -1)
         {
             JOptionPane.showMessageDialog(this,"Debes seleccionar un usuario para desactivarlo","Selecciona un usuario",JOptionPane.ERROR_MESSAGE);
             return;
         }
-        empleadoJpaController empleadoDAO = new empleadoJpaController();
+        empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
         
         usuarios modificar = new usuarios();
         List<usuarios> usuarios = usuarioDAO.findusuariosEntities();
@@ -608,12 +725,12 @@ public class listaUsuarios extends javax.swing.JFrame {
         if(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(),4).equals("Sí"))
         {
            modificar.setActivo(false);
-           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+           this.insertarImagen(this.activar,"/Imagenes/activar.png");
            try
            {
                usuarioDAO.edit(modificar);
            }catch(Exception Ex)
-           {}  
+           {log(Ex);}  
         }else
          {
              if(!empleado.isActivo())
@@ -624,15 +741,67 @@ public class listaUsuarios extends javax.swing.JFrame {
              }
             modificar.setIntentos(0);
             modificar.setActivo(true);
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");  
+            this.insertarImagen(this.activar,"/Imagenes/desactivar.png");  
             try
            {
                usuarioDAO.edit(modificar);
            }catch(Exception Ex)
-           {}  
+           {log(Ex);}  
         }
         cargarTabla();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_activarActionPerformed
+
+    private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
+        // TODO add your handling code here:
+        try{
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            log(e);
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            log(e);
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteUsuarios.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte de Usuarios");
+            view.setVisible(true);
+            
+        } catch (JRException ex) {
+            log(ex);
+            ex.printStackTrace();
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+    }//GEN-LAST:event_imprimirReporteActionPerformed
 
     
     /**
@@ -676,7 +845,7 @@ public class listaUsuarios extends javax.swing.JFrame {
     
    private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -688,7 +857,7 @@ public class listaUsuarios extends javax.swing.JFrame {
     }
     private void insertarImagen(JButton checkBox,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         checkBox.getWidth(), 
@@ -699,12 +868,31 @@ public class listaUsuarios extends javax.swing.JFrame {
         this.repaint();
     }
 
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activar;
     private javax.swing.JButton botonBuscar;
     private javax.swing.JButton botonRegresar;
     private javax.swing.JTextField buscarTxt;
     private javax.swing.JComboBox<String> cbParametros;
+    private javax.swing.JButton imprimirReporte;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

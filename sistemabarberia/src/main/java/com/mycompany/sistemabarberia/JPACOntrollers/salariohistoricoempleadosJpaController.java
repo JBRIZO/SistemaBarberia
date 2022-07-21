@@ -24,8 +24,8 @@ import javax.persistence.criteria.Root;
  */
 public class salariohistoricoempleadosJpaController implements Serializable {
 
-    public salariohistoricoempleadosJpaController() {
-               this.emf = Persistence.createEntityManagerFactory("servidorbd");
+    public salariohistoricoempleadosJpaController(EntityManagerFactory emf) {
+               this.emf = emf;
 
     }
     private EntityManagerFactory emf = null;

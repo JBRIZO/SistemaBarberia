@@ -28,7 +28,7 @@ public class descuentos implements Serializable{
     @Column
     private Date FechaInicio;
     
-    @Column
+    @Column (nullable=true)
     private Date FechaFinal;
     
     @Column
@@ -37,6 +37,17 @@ public class descuentos implements Serializable{
     @Column
     private boolean Activo;
 
+    public descuentos(int iddescuento, int IDTipoDescuento, Date FechaInicio, Date FechaFinal, double Valor, boolean Activo) {
+        this.iddescuento = iddescuento;
+        this.IDTipoDescuento = IDTipoDescuento;
+        this.FechaInicio = FechaInicio;
+        this.FechaFinal = FechaFinal;
+        this.Valor = Valor;
+        this.Activo = Activo;
+    }
+
+    public descuentos(){}
+    
     public int getIddescuento() {
         return iddescuento;
     }

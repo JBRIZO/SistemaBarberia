@@ -30,6 +30,18 @@ public class precioshistoricoservicios implements Serializable {
     @Column
     private boolean Activo;
 
+    public precioshistoricoservicios(int numprecioservicio, int IDServicio, Date FechaInicial, Date FechaFinal, double Precio, boolean Activo) {
+        this.numprecioservicio = numprecioservicio;
+        this.IDServicio = IDServicio;
+        this.FechaInicial = FechaInicial;
+        this.FechaFinal = FechaFinal;
+        this.Precio = Precio;
+        this.Activo = Activo;
+    }
+
+    public precioshistoricoservicios() {
+    }
+    
     public int getNumprecioservicio() {
         return numprecioservicio;
     }

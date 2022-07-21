@@ -5,22 +5,38 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.Validaciones;
+import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.servicios;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,12 +56,17 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class pantallaServicios extends javax.swing.JFrame {
     
+    private permisosusuario permisosUsuario;
     private servicios servicioSeleccionado;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
     
     private Validaciones validar = new Validaciones();
-    private serviciosJpaController serviciosDAO =  new serviciosJpaController();
+    private serviciosJpaController serviciosDAO =  new serviciosJpaController(emf);
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
     private List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
-    private precioshistoricoserviciosJpaController preciosDAO= new precioshistoricoserviciosJpaController();
+    private precioshistoricoserviciosJpaController preciosDAO= new precioshistoricoserviciosJpaController(emf);
     List<precioshistoricoservicios> preciosBD = preciosDAO.findprecioshistoricoserviciosEntities();
     private ImageIcon imagen;
     private Icon icono;
@@ -59,15 +80,60 @@ public class pantallaServicios extends javax.swing.JFrame {
     public pantallaServicios() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.activar,"/Imagenes/desactivar.png");
         fechaLabel.setText("Fecha: " + currentTime);
         cargarTabla();
         for(int i = 0; i < tablaServicios.getColumnCount()-1 ; i++)
         {
             cbParametros.addItem(tablaServicios.getColumnName(i));
         }  
+        permisosUsuario = verificarPermisos();
+        desactivarBotonesPermisos();
+    }
+    
+    private void desactivarBotonesPermisos(){
+        if(permisosUsuario.isDesactivar()){
+            activar.setEnabled(true);
+        }else{
+            activar.setEnabled(false);
+        }
+        
+        if(permisosUsuario.isImprimir()){
+            imprimirReporte.setEnabled(true);
+        }else{
+            imprimirReporte.setEnabled(false);
+        }
+        
+        if(permisosUsuario.isLista()){
+            listaPreciosServicios.setEnabled(true);
+        }else{
+            listaPreciosServicios.setEnabled(false);
+        }
+        
+        if(permisosUsuario.isModificar()){
+            modificarServicio.setEnabled(true);
+        }else{
+            modificarServicio.setEnabled(false);
+        }
+        
+        if(permisosUsuario.isNuevo()){
+            nuevoServicio.setEnabled(true);
+        }else{
+            nuevoServicio.setEnabled(false);
+        }
+    }
+    
+    private permisosusuario verificarPermisos(){
+        EntityManager em = empleadoDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",6);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
     }
     
     private void cargarTabla()
@@ -224,12 +290,6 @@ public class pantallaServicios extends javax.swing.JFrame {
             }
         }     
         
-         if(serviciosFiltrados.isEmpty())
-        {
-            JOptionPane.showMessageDialog(this,"No se encontraron servicios con un precio de '" + buscarTxt.getText() + "'","Error de búsqueda",JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-         
         for(int i = 0; i < serviciosEnBd.size() ; i++)
         {
             for(int j = 0 ; j < preciosFiltrados.size(); j++)
@@ -240,10 +300,18 @@ public class pantallaServicios extends javax.swing.JFrame {
                 }
             }
         }
+        
+         if(serviciosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this,"No se encontraron servicios con un precio de '" + buscarTxt.getText() + "'","Error de búsqueda",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+         
+        
             for(servicios servicio : serviciosFiltrados){
                 for(int i = 0; i < preciosBD.size() ; i++)
                     {
-                        //precio actual del producto
+                        //precio actual del servicio
                         if(preciosBD.get(i).getIDServicio() == servicio.getIdservicio() && preciosBD.get(i).isActivo())
                         {
                             precioActual = preciosBD.get(i).getPrecio();
@@ -301,7 +369,7 @@ public class pantallaServicios extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
 
-        tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 36)); // NOI18N
+        tituloPantalla.setFont(new java.awt.Font("Gadugi", 1, 48)); // NOI18N
         tituloPantalla.setForeground(new java.awt.Color(255, 255, 255));
         tituloPantalla.setText("SERVICIOS");
 
@@ -319,6 +387,7 @@ public class pantallaServicios extends javax.swing.JFrame {
 
         tablaServicios.setAutoCreateRowSorter(true);
         tablaServicios.setBackground(new java.awt.Color(30, 33, 34));
+        tablaServicios.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tablaServicios.setForeground(new java.awt.Color(255, 255, 255));
         tablaServicios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -471,54 +540,59 @@ public class pantallaServicios extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nuevoServicio)
-                        .addGap(18, 18, 18)
+                        .addGap(70, 70, 70)
                         .addComponent(modificarServicio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(75, 75, 75)
                         .addComponent(listaPreciosServicios)
-                        .addGap(31, 31, 31)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(buscarTxt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
-                .addGap(24, 24, 24)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 861, Short.MAX_VALUE))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buscarTxt)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 1, Short.MAX_VALUE))
-                    .addComponent(botonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(recargar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(21, 21, 21)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(botonBuscar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(buscarTxt, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel1)
+                                .addComponent(cbParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(recargar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(activar, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(nuevoServicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(modificarServicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(listaPreciosServicios, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(imprimirReporte, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nuevoServicio)
+                    .addComponent(modificarServicio, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(listaPreciosServicios, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -528,14 +602,14 @@ public class pantallaServicios extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         botonRegresar.setBackground(new java.awt.Color(189, 158, 76));
@@ -558,55 +632,57 @@ public class pantallaServicios extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(325, 325, 325)
+                .addGap(344, 344, 344)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(39, 39, 39)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
+                        .addComponent(fechaLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fechaLabel)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(79, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tituloPantalla))
-                .addGap(18, 18, 18)
-                .addComponent(fechaLabel)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tituloPantalla))
+                        .addGap(18, 18, 18)
+                        .addComponent(fechaLabel))
+                    .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(60, 60, 60))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void tablaServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaServiciosMouseClicked
-         
-        for(int i = 0 ; i < serviciosBD.size() ; i++ )
+        if(!permisosUsuario.isModificar()){
+        return;
+        }
+        try{
+         for(int i = 0 ; i < serviciosBD.size() ; i++ )
         {
             if(tablaServicios.getSelectedRow() == -1)
                 {
@@ -623,14 +699,16 @@ public class pantallaServicios extends javax.swing.JFrame {
         }
         if(tablaServicios.getValueAt(tablaServicios.getSelectedRow(),3).equals("Sí"))
         {
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png");
+            this.insertarImagen(this.activar,"/Imagenes/desactivar.png");
             modificarServicio.setEnabled(true);
         }else
         {
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+            this.insertarImagen(this.activar,"/Imagenes/activar.png");
             modificarServicio.setEnabled(false);
         }
-        
+         }catch(Exception ex){
+             log(ex);
+         }
     }//GEN-LAST:event_tablaServiciosMouseClicked
 
     private void activarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activarMouseClicked
@@ -645,26 +723,37 @@ public class pantallaServicios extends javax.swing.JFrame {
 
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new menuGerente().setVisible(true);
             }
         });
+        emf.close();
         this.dispose();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonRegresarActionPerformed
 
     private void nuevoServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoServicioActionPerformed
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoServicio().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         serviciosDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_nuevoServicioActionPerformed
 
     private void modificarServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarServicioActionPerformed
+        try{
         List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
         for(int i = 0 ; i < serviciosBD.size() ; i++ )
         {
@@ -687,10 +776,14 @@ public class pantallaServicios extends javax.swing.JFrame {
         this.setVisible(false);
         this.dispose(); 
         serviciosDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_modificarServicioActionPerformed
 
     private void listaPreciosServiciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listaPreciosServiciosActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaPreciosServicio().setVisible(true);
@@ -699,10 +792,14 @@ public class pantallaServicios extends javax.swing.JFrame {
         this.setVisible(false);
         this.dispose(); 
         serviciosDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_listaPreciosServiciosActionPerformed
 
     private void activarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activarActionPerformed
         // TODO add your handling code here:
+        try{
         servicios modificar = new servicios();
         List<servicios> servicios = serviciosDAO.findserviciosEntities();
         //verificar que el usuario haya seleccionado un servicio
@@ -722,7 +819,7 @@ public class pantallaServicios extends javax.swing.JFrame {
         if(tablaServicios.getValueAt(tablaServicios.getSelectedRow(),3).equals("Sí"))
         {
            modificar.setActivo(false);
-           this.insertarImagen(this.activar,"src/main/resources/Imagenes/activar.png");
+           this.insertarImagen(this.activar,"/Imagenes/activar.png");
            modificarServicio.setEnabled(false);
            try
            {
@@ -732,7 +829,7 @@ public class pantallaServicios extends javax.swing.JFrame {
         }else
          {
             modificar.setActivo(true);
-            this.insertarImagen(this.activar,"src/main/resources/Imagenes/desactivar.png"); 
+            this.insertarImagen(this.activar,"/Imagenes/desactivar.png"); 
             modificarServicio.setEnabled(true);
             try
            {
@@ -741,11 +838,15 @@ public class pantallaServicios extends javax.swing.JFrame {
            {}  
         }
         cargarTabla();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_activarActionPerformed
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-         if(buscarTxt.getText().equals(""))
+        try{
+        if(buscarTxt.getText().equals(""))
         {
             JOptionPane.showMessageDialog(this,"Debes ingresar un " + cbParametros.getSelectedItem().toString() + ".","Campo vacío",JOptionPane.ERROR_MESSAGE);
             return;
@@ -777,6 +878,9 @@ public class pantallaServicios extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Ese no es um precio válido","Precio Inválido",JOptionPane.ERROR_MESSAGE);
                 }
         }
+        }catch(Exception ex){
+            log(ex);
+        } 
     }//GEN-LAST:event_botonBuscarActionPerformed
 
     private void buscarTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscarTxtFocusGained
@@ -786,6 +890,7 @@ public class pantallaServicios extends javax.swing.JFrame {
 
     private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
         // TODO add your handling code here:
+        try{
         Connection conn = null;
          try {
       Class.forName("com.mysql.jdbc.Driver");
@@ -802,27 +907,44 @@ public class pantallaServicios extends javax.swing.JFrame {
       System.out.println("Error de conexión: " + e.getMessage());
       System.exit(4);
     }
+        HashMap logo = new HashMap();
+        empleado empleadoActual = empleadoDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario", empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
         try {
-            JasperReport reporte = JasperCompileManager.compileReport("src/main/resources/Reportes/reporteServicios.jrxml");
+             JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteServicios.jrxml"));
+            //JasperReport reporte = JasperCompileManager.compileReport("src/main/resources/Reportes/reporteServicios.jrxml");
             JasperPrint print = JasperFillManager.fillReport(
                     reporte,
-                    null, 
+                    logo, 
                     conn);
       
       JasperViewer view = new JasperViewer(print,false);
-      view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+      Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+      view.setIconImage(icon);
       view.setTitle("Reporte de Inventario");
       view.setVisible(true);
         } catch (JRException ex) {
             Logger.getLogger(pantallaProductos.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        
+        try {
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(pantallaServicios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }catch(Exception ex){
+            log(ex);
+        }  
     }//GEN-LAST:event_imprimirReporteActionPerformed
 
     private void recargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recargarActionPerformed
         // TODO add your handling code here:
+        try{
         cargarTabla();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_recargarActionPerformed
 
     
@@ -869,7 +991,7 @@ public class pantallaServicios extends javax.swing.JFrame {
     
    private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -881,7 +1003,7 @@ public class pantallaServicios extends javax.swing.JFrame {
     }
     private void insertarImagen(JButton checkBox,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         checkBox.getWidth(), 
@@ -892,13 +1014,24 @@ public class pantallaServicios extends javax.swing.JFrame {
         this.repaint();
     }
     
-    private String convertirDates(String Fecha)
-    {
-        String[] palabras  = Fecha.split("-");
-       
-        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
-    
+ 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

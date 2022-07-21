@@ -38,6 +38,21 @@ public class parametros implements Serializable {
         @Column
         private boolean Activo;
 
+    public parametros(int idparametro, String Llave, Date FechaInicio, Date FechaFinal, int RangoInicial, int RangoFinal, boolean Activo) {
+        this.idparametro = idparametro;
+        this.Llave = Llave;
+        this.FechaInicio = FechaInicio;
+        this.FechaFinal = FechaFinal;
+        this.RangoInicial = RangoInicial;
+        this.RangoFinal = RangoFinal;
+        this.Activo = Activo;
+    }
+
+    public parametros() {
+    }
+
+        
+        
     public int getRangoInicial() {
         return RangoInicial;
     }

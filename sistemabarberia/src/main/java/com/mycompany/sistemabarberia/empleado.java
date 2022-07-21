@@ -42,6 +42,27 @@ public class empleado implements Serializable {
     @Column
     private boolean Activo;
 
+    public empleado() {
+    }
+
+    public empleado(int idempleado, int IDTipoDocumento, String NumDoc, String NomEmpleado, String ApeEmpleado, 
+            Date FechaNacimiento, char GenEmpleado, String Direccion, String NumCelular, Date FechaInicio, Date FechaFinal, boolean Activo) {
+        this.idempleado = idempleado;
+        this.IDTipoDocumento = IDTipoDocumento;
+        this.NumDoc = NumDoc;
+        this.NomEmpleado = NomEmpleado;
+        this.ApeEmpleado = ApeEmpleado;
+        this.FechaNacimiento = FechaNacimiento;
+        this.GenEmpleado = GenEmpleado;
+        this.Direccion = Direccion;
+        this.NumCelular = NumCelular;
+        this.FechaInicio = FechaInicio;
+        this.FechaFinal = FechaFinal;
+        this.Activo = Activo;
+    }
+
+    
+    
     public int getIdempleado() {
         return idempleado;
     }

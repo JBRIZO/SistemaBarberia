@@ -27,6 +27,16 @@ public class descuentofactura implements Serializable{
     @Column
     private boolean Activo;
 
+    public descuentofactura(int numdescuento, int IDFactura, int IDDescuento, double Valor, boolean Activo) {
+        this.numdescuento = numdescuento;
+        this.IDFactura = IDFactura;
+        this.IDDescuento = IDDescuento;
+        this.Valor = Valor;
+        this.Activo = Activo;
+    }
+
+    public descuentofactura(){}
+    
     public int getNumdescuento() {
         return numdescuento;
     }

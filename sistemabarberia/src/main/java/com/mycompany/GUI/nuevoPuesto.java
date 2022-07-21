@@ -16,7 +16,9 @@ import com.mycompany.sistemabarberia.puestohistoricoempleado;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -37,12 +43,14 @@ import javax.swing.border.Border;
  */
 public class nuevoPuesto extends javax.swing.JFrame {
     
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
     private Validaciones validar = new Validaciones();
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
     private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
-    private puestoJpaController tiposPuestoDAO = new puestoJpaController();
+    private puestoJpaController tiposPuestoDAO = new puestoJpaController(emf);
     private List<puesto> tiposPuestoBD = tiposPuestoDAO.findpuestoEntities();
-    private puestohistoricoempleadoJpaController puestoDao = new puestohistoricoempleadoJpaController();
+    private puestohistoricoempleadoJpaController puestoDao = new puestohistoricoempleadoJpaController(emf);
     private List<puestohistoricoempleado> puestosBD = puestoDao.findpuestohistoricoempleadoEntities();
     private ImageIcon imagen;
     private Icon icono;
@@ -50,8 +58,9 @@ public class nuevoPuesto extends javax.swing.JFrame {
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     String currentTime = sdf.format(dt);
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border greenBorder = BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1, true);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+     private java.text.SimpleDateFormat formatoEspanol = new java.text.SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -59,9 +68,10 @@ public class nuevoPuesto extends javax.swing.JFrame {
     public nuevoPuesto() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-         this.insertarImagen(this.agregar,"src/main/resources/Imagenes/agregar.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.agregar,"/Imagenes/agregar.png");
         Reiniciar();   
         for(int i = 0; i < empleadosBD.size(); i++)
         {
@@ -77,6 +87,8 @@ public class nuevoPuesto extends javax.swing.JFrame {
                 cbTipoPuesto.addItem(tiposPuestoBD.get(i).toString());
             }
         }
+        fechaInicio.setText(formatoEspanol.format(dt));
+        fechaInicio.setEditable(false);
     }
     
     public void Reiniciar()
@@ -195,7 +207,6 @@ public class nuevoPuesto extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Tipo de Puesto:");
 
-        agregar.setText("jLabel2");
         agregar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 agregarMouseClicked(evt);
@@ -217,7 +228,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(cbTipoPuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(agregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -325,7 +336,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        
+        try{
         if(fechaInicio.getText().equals("")||fechaInicio.getText().equals("Fecha Inicial"))
         {
             JOptionPane.showMessageDialog(this,"Tienes que ingresar una fecha.","Ingresa una fecha",JOptionPane.ERROR_MESSAGE);
@@ -391,8 +402,8 @@ public class nuevoPuesto extends javax.swing.JFrame {
         
         //validar que la fecha del nuevo puesto sea mayor que la anterior
         java.util.Date utilDate = new java.util.Date(puestoAnterior.getFechaInicial().getTime());
-        LocalDate date = convertToLocalDateViaInstant(startDate);
-        LocalDate date2 = convertToLocalDateViaInstant(utilDate);
+        LocalDate date = validar.convertToLocalDateViaInstant(startDate);
+        LocalDate date2 = validar.convertToLocalDateViaInstant(utilDate);
         if(date.isBefore(date2))
         {
            JOptionPane.showMessageDialog(null,"El nuevo puesto no puede empezar antes del anterior.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
@@ -414,6 +425,9 @@ public class nuevoPuesto extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -421,34 +435,46 @@ public class nuevoPuesto extends javax.swing.JFrame {
     
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaPuestos().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         empleadoDAO.close();
-        puestoDao.close();        
+        puestoDao.close();   
+        }catch(Exception ex){
+            log(ex);
+        }   
     }//GEN-LAST:event_salirMouseClicked
 
     private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
         // TODO add your handling code here:
+        try{
         if(fechaInicio.getText().equals("Fecha Inicio"))
         {
             fechaInicio.setDocument(new JTextFieldLimit(10));
             fechaInicio.setText("");
         }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_fechaInicioFocusGained
 
     private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
         // TODO add your handling code here:
-        if(fechaInicio.getText().equals(""))
+        try{
+            if(fechaInicio.getText().equals(""))
         {
             fechaInicio.setDocument(new JTextFieldLimit(12));
             fechaInicio.setText("Fecha Inicio");
         }else{validarFecha(fechaInicio,formatoInvalido1);}
-        
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_fechaInicioFocusLost
 
     private void fechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaInicioActionPerformed
@@ -461,18 +487,22 @@ public class nuevoPuesto extends javax.swing.JFrame {
 
     private void fechaInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fechaInicioMouseClicked
         // TODO add your handling code here:
-        fechaInicio.setDocument(new JTextFieldLimit (10));
         
     }//GEN-LAST:event_fechaInicioMouseClicked
 
     private void agregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_agregarMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoTipoPuesto().setVisible(true);
             }
         });
         this.dispose();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_agregarMouseClicked
 
     private void cbEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmpleadosActionPerformed
@@ -522,9 +552,6 @@ public class nuevoPuesto extends javax.swing.JFrame {
         
     }
     
-    
-   
-    
     private boolean validarFecha(javax.swing.JTextField fecha, JLabel label)
     {
         if(!validar.validacionFormatoFecha(fecha.getText()) )
@@ -542,7 +569,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
             return false;
             }
         
-        if(!isDateValid(fecha.getText()))
+        if(!validar.isDateValid(fecha.getText()))
         {
             fecha.setBorder(redBorder);
             label.setVisible(true);
@@ -571,7 +598,7 @@ public class nuevoPuesto extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -582,23 +609,23 @@ public class nuevoPuesto extends javax.swing.JFrame {
         this.repaint();
     }
     
-    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
-    return dateToConvert.toInstant()
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate();
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
-    
-     public static boolean isDateValid(String date) 
-{
-        try {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            df.setLenient(false);
-            df.parse(date);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
-}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel agregar;

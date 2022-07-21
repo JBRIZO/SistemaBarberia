@@ -24,8 +24,8 @@ import javax.persistence.criteria.Root;
  */
 public class tipodescuentoJpaController implements Serializable {
 
-    public tipodescuentoJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("servidorbd");
+    public tipodescuentoJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
     private EntityManagerFactory emf = null;
     

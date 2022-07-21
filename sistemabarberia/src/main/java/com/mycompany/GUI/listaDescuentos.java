@@ -6,18 +6,45 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.descuentos;
+import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.tipodescuento;
+import com.mycompany.sistemabarberia.tipopago;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
@@ -25,11 +52,17 @@ import javax.swing.table.DefaultTableModel;
  */
 public class listaDescuentos extends javax.swing.JFrame {
     
-
+    private permisosusuario permisosUsuario;
+    
+    private tipodescuento descuentoModificar;
     private ImageIcon imagen;
     private Icon icono;
-    private descuentosJpaController descuentos = new descuentosJpaController();
-    private tipodescuentoJpaController tiposDescuentoDAO = new tipodescuentoJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    private descuentosJpaController descuentos = new descuentosJpaController(emf);
+    private tipodescuentoJpaController tiposDescuentoDAO = new tipodescuentoJpaController(emf);
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -37,9 +70,36 @@ public class listaDescuentos extends javax.swing.JFrame {
     public listaDescuentos() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         cargarTabla();
+        cargarTablaTiposDescuento();
+        permisosUsuario = verificarPermisos();
+        desactivarBotonesPermisos();
+    }
+    
+    private void desactivarBotonesPermisos(){
+        if(permisosUsuario.isLista()){
+            nuevoTipoDesc.setEnabled(true);
+        }else{
+            nuevoTipoDesc.setEnabled(false);
+        }
+        if(permisosUsuario.isNuevo()){
+            nuevoDescuento.setEnabled(true);
+        }else{
+            nuevoDescuento.setEnabled(false);
+        }
+    }
+    
+    private permisosusuario verificarPermisos(){
+        EntityManager em = empleadosDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",8);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
     }
     
  
@@ -53,16 +113,34 @@ public class listaDescuentos extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         tituloPantalla = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tablaDescuentos = new javax.swing.JTable();
         nuevoDescuento = new javax.swing.JButton();
         nuevoDescuento1 = new javax.swing.JButton();
         nuevoTipoDesc = new javax.swing.JButton();
+        tabPane = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaDescuentos = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tiposDescuento = new javax.swing.JTable();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -84,49 +162,6 @@ public class listaDescuentos extends javax.swing.JFrame {
         jPanel3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
         jPanel3.setMaximumSize(new java.awt.Dimension(358, 219));
         jPanel3.setMinimumSize(new java.awt.Dimension(358, 219));
-
-        tablaDescuentos.setBackground(new java.awt.Color(30, 33, 34));
-        tablaDescuentos.setForeground(new java.awt.Color(255, 255, 255));
-        tablaDescuentos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID Descuento", "Tipo Descuento", "Fecha Inicio", "Fecha Final", "Valor"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tablaDescuentos.setRowHeight(32);
-        tablaDescuentos.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(tablaDescuentos);
-        if (tablaDescuentos.getColumnModel().getColumnCount() > 0) {
-            tablaDescuentos.getColumnModel().getColumn(1).setResizable(false);
-            tablaDescuentos.getColumnModel().getColumn(2).setResizable(false);
-            tablaDescuentos.getColumnModel().getColumn(4).setResizable(false);
-        }
-        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
-        MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
-        MyHeaderRender.setForeground(Color.BLACK);
-        for(int i = 0; i < tablaDescuentos.getColumnCount();i++)
-        {
-            tablaDescuentos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
-        }
-        tablaDescuentos.setShowGrid(true);
-        tablaDescuentos.setGridColor(Color.BLACK);
 
         nuevoDescuento.setBackground(new java.awt.Color(189, 158, 76));
         nuevoDescuento.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
@@ -173,27 +208,127 @@ public class listaDescuentos extends javax.swing.JFrame {
             }
         });
 
+        tabPane.setForeground(new java.awt.Color(55, 53, 53));
+        tabPane.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabPaneMouseClicked(evt);
+            }
+        });
+
+        tablaDescuentos.setBackground(new java.awt.Color(30, 33, 34));
+        tablaDescuentos.setForeground(new java.awt.Color(255, 255, 255));
+        tablaDescuentos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID Descuento", "Tipo Descuento", "Fecha Inicio", "Fecha Final", "Valor"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaDescuentos.setRowHeight(32);
+        tablaDescuentos.getTableHeader().setReorderingAllowed(false);
+        tablaDescuentos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaDescuentosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablaDescuentos);
+        if (tablaDescuentos.getColumnModel().getColumnCount() > 0) {
+            tablaDescuentos.getColumnModel().getColumn(1).setResizable(false);
+            tablaDescuentos.getColumnModel().getColumn(2).setResizable(false);
+            tablaDescuentos.getColumnModel().getColumn(4).setResizable(false);
+        }
+        DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
+        MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
+        MyHeaderRender.setForeground(Color.BLACK);
+        for(int i = 0; i < tablaDescuentos.getColumnCount();i++)
+        {
+            tablaDescuentos.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender);
+        }
+        tablaDescuentos.setShowGrid(true);
+        tablaDescuentos.setGridColor(Color.BLACK);
+
+        tabPane.addTab("Descuentos", jScrollPane1);
+
+        tiposDescuento.setBackground(new java.awt.Color(30, 33, 34));
+        tiposDescuento.setForeground(new java.awt.Color(255, 255, 255));
+        tiposDescuento.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Id ", "Tipo de Descuento", "Activo"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tiposDescuento.getTableHeader().setReorderingAllowed(false);
+        tiposDescuento.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tiposDescuentoMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(tiposDescuento);
+        if (tiposDescuento.getColumnModel().getColumnCount() > 0) {
+            tiposDescuento.getColumnModel().getColumn(0).setResizable(false);
+            tiposDescuento.getColumnModel().getColumn(0).setPreferredWidth(15);
+            tiposDescuento.getColumnModel().getColumn(1).setResizable(false);
+            tiposDescuento.getColumnModel().getColumn(2).setResizable(false);
+        }
+        DefaultTableCellRenderer MyHeaderRender2 = new DefaultTableCellRenderer();
+        MyHeaderRender2.setBackground(Color.decode("#BD9E4C"));
+        MyHeaderRender2.setForeground(Color.BLACK);
+        for(int i = 0; i < tiposDescuento.getColumnCount();i++)
+        {
+            tiposDescuento.getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(MyHeaderRender2);
+        }
+        tiposDescuento.setShowGrid(true);
+        tiposDescuento.setGridColor(Color.BLACK);
+
+        tabPane.addTab("Tipos de Descuento", jScrollPane3);
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(0, 27, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(19, 19, 19)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(tabPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(nuevoDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(27, 27, 27)
                         .addComponent(nuevoDescuento1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(nuevoTipoDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nuevoTipoDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(tabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nuevoDescuento)
@@ -224,15 +359,14 @@ public class listaDescuentos extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(82, 82, 82)
-                        .addComponent(tituloPantalla))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 18, Short.MAX_VALUE))
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82)
+                .addComponent(tituloPantalla)
+                .addGap(0, 176, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -242,9 +376,9 @@ public class listaDescuentos extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(28, 28, 28)
                         .addComponent(tituloPantalla)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -290,43 +424,54 @@ public class listaDescuentos extends javax.swing.JFrame {
                         descuento.getIddescuento(),
                         tipoDescuento,
                         convertirDates(descuento.getFechaInicio().toString()),
-                        convertirDates(descuento.getFechaFinal().toString()),
+                        descuento.getFechaFinal() == null ? "             - " : convertirDates(descuento.getFechaFinal().toString()),
                         valor
                     }
                 );
             } 
     }
+    
+    private void cargarTablaTiposDescuento(){
+        DefaultTableModel modelo = (DefaultTableModel)tiposDescuento.getModel();
+        modelo.setRowCount(0);
+        tiposDescuento.setModel(modelo);
+        String activo = "";
+        List<tipodescuento> tipodescuentosBD = tiposDescuentoDAO.findtipodescuentoEntities();
+            for(tipodescuento tipodescuento : tipodescuentosBD){
+                if(tipodescuento.isActivo()){
+                    activo = "Sí";
+                }else{
+                    activo = "No";
+                }
+                    modelo.addRow(
+                    new Object[]{
+                        tipodescuento.getIdtipodescuento(),
+                        tipodescuento.getNomDescuento(),
+                        activo
+                    }
+                );
+            }
+    }
 
     
-    private void nuevoDescuentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoDescuentoMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nuevoDescuentoMouseClicked
-
-    private void nuevoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoDescuentoActionPerformed
-        // TODO add your handling code here:
-       // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new descuento().setVisible(true);
-            }
-        });
-        this.dispose();
-        descuentos.close();
-    }//GEN-LAST:event_nuevoDescuentoActionPerformed
-
     private void nuevoDescuento1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoDescuento1MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_nuevoDescuento1MouseClicked
 
     private void nuevoDescuento1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoDescuento1ActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new menuGerente().setVisible(true);
             }
         });
+        emf.close();
         this.dispose();
         descuentos.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_nuevoDescuento1ActionPerformed
 
     private void nuevoTipoDescMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoTipoDescMouseClicked
@@ -335,14 +480,146 @@ public class listaDescuentos extends javax.swing.JFrame {
 
     private void nuevoTipoDescActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoTipoDescActionPerformed
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        try{
+        if(nuevoTipoDesc.getText().equals("NUEVO TIPO")){
+          java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoTipoDescuento().setVisible(true);
             }
         });
         this.dispose();
-        descuentos.close();
+        descuentos.close();  
+        }else{
+            Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            log(e);
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            log(e);
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteTipoDescuento.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte de Tipos de Pago");
+            view.setVisible(true);
+        } catch (JRException ex) {
+            log(ex);
+            ex.printStackTrace();
+        }  
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
+        
+        
     }//GEN-LAST:event_nuevoTipoDescActionPerformed
+
+    private void nuevoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoDescuentoActionPerformed
+        // TODO add your handling code here:
+        try{
+        if(nuevoDescuento.getText().equals("NUEVO")){
+             java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new descuento().setVisible(true);
+            }
+        });
+        this.dispose();
+        descuentos.close();
+        }else{
+            descuentoModificar = tiposDescuentoDAO.findtipodescuento(Integer.parseInt(tiposDescuento.getValueAt(tiposDescuento.getSelectedRow(),0).toString()));
+             java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoTipoDescuento(descuentoModificar).setVisible(true);
+            }
+        });
+        emf.close();
+        this.dispose();
+        descuentos.close();   
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+    }//GEN-LAST:event_nuevoDescuentoActionPerformed
+
+    private void nuevoDescuentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevoDescuentoMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nuevoDescuentoMouseClicked
+
+    private void tabPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabPaneMouseClicked
+        // TODO add your handling code here:
+        try{
+        if(tabPane.getSelectedIndex() == 0){
+            if(permisosUsuario.isNuevo()){
+                nuevoDescuento.setEnabled(true);
+            }
+            nuevoDescuento.setText("NUEVO");
+            if(permisosUsuario.isLista()){
+                nuevoDescuento.setEnabled(true);
+            }
+            nuevoTipoDesc.setText("NUEVO TIPO");
+
+        }else{
+            if(!permisosUsuario.isModificar()){
+             nuevoDescuento.setEnabled(false);
+            }
+            nuevoDescuento.setText("MODIFICAR");
+            if(!permisosUsuario.isImprimir()){
+             nuevoTipoDesc.setEnabled(false);
+            }
+            nuevoTipoDesc.setText("IMPRIMIR");
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
+    }//GEN-LAST:event_tabPaneMouseClicked
+
+    private void tablaDescuentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaDescuentosMouseClicked
+        // TODO add your handling code here:
+        try{
+        if(tablaDescuentos.getSelectedRow() > -1){
+            nuevoDescuento.setEnabled(true);
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+    }//GEN-LAST:event_tablaDescuentosMouseClicked
+
+    private void tiposDescuentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tiposDescuentoMouseClicked
+        // TODO add your handling code here:
+        try{
+        if(tiposDescuento.getSelectedRow() > -1){
+            nuevoDescuento.setEnabled(true);
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
+    }//GEN-LAST:event_tiposDescuentoMouseClicked
 
     
     /**
@@ -388,7 +665,7 @@ public class listaDescuentos extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -405,17 +682,40 @@ public class listaDescuentos extends javax.swing.JFrame {
        
         return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel logo;
     private javax.swing.JButton nuevoDescuento;
     private javax.swing.JButton nuevoDescuento1;
     private javax.swing.JButton nuevoTipoDesc;
+    private javax.swing.JTabbedPane tabPane;
     private javax.swing.JTable tablaDescuentos;
+    private javax.swing.JTable tiposDescuento;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

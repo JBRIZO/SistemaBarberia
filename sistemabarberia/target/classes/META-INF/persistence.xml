@@ -29,6 +29,10 @@
     <class>com.mycompany.sistemabarberia.detalleservicio</class>
     <class>com.mycompany.sistemabarberia.facturaencabezado</class>
     <class>com.mycompany.sistemabarberia.planillas</class>
+    <class>com.mycompany.sistemabarberia.datosempresa</class>
+    <class>com.mycompany.sistemabarberia.facturasanuladas</class>
+    <class>com.mycompany.sistemabarberia.permisos</class>
+    <class>com.mycompany.sistemabarberia.permisosusuario</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

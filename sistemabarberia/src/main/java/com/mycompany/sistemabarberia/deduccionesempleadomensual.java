@@ -34,6 +34,17 @@ public class deduccionesempleadomensual implements Serializable {
     @Column 
     private boolean Activo;
 
+    public deduccionesempleadomensual(int numdeduccion, int IDEmpleado, int IDTipoDeduccion, double Valor, String Periodo, boolean Activo) {
+        this.numdeduccion = numdeduccion;
+        this.IDEmpleado = IDEmpleado;
+        this.IDTipoDeduccion = IDTipoDeduccion;
+        this.Valor = Valor;
+        this.Periodo = Periodo;
+        this.Activo = Activo;
+    }
+
+    public deduccionesempleadomensual(){}
+
     public int getNumdeduccion() {
         return numdeduccion;
     }

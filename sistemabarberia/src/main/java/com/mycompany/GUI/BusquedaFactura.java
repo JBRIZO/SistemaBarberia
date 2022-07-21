@@ -28,39 +28,40 @@ import com.mycompany.sistemabarberia.detalleservicio;
 import com.mycompany.sistemabarberia.estadofactura;
 import com.mycompany.sistemabarberia.facturaencabezado;
 import com.mycompany.sistemabarberia.facturasanuladas;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableRowSorter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -75,25 +76,27 @@ import net.sf.jasperreports.view.JasperViewer;
 public class BusquedaFactura extends javax.swing.JFrame {
     
 
+    private permisosusuario permisosUsuario;
     private facturaencabezado facturaSeleccionada;
     private Validaciones validar = new Validaciones();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private facturaencabezadoJpaController facturaDAO = new facturaencabezadoJpaController();
-    private productosJpaController productosDAO =  new productosJpaController();
-    private serviciosJpaController serviciosDAO = new serviciosJpaController();
-    private precioshistoricosproductosJpaController preciosDAO= new precioshistoricosproductosJpaController();
+    private facturaencabezadoJpaController facturaDAO = new facturaencabezadoJpaController(emf);
+    private productosJpaController productosDAO =  new productosJpaController(emf);
+    private serviciosJpaController serviciosDAO = new serviciosJpaController(emf);
+    private precioshistoricosproductosJpaController preciosDAO= new precioshistoricosproductosJpaController(emf);
     private List<precioshistoricosproductos> preciosBD = preciosDAO.findprecioshistoricosproductosEntities();
-    private clientesJpaController clientesDAO = new clientesJpaController();
-    private tipopagoJpaController tipopagoDAO = new tipopagoJpaController();
-    private tipodescuentoJpaController tipoDescuentosDAO = new tipodescuentoJpaController();
-    private estadofacturaJpaController estadoFacturaDAO = new estadofacturaJpaController();
+    private clientesJpaController clientesDAO = new clientesJpaController(emf);
+    private tipopagoJpaController tipopagoDAO = new tipopagoJpaController(emf);
+    private tipodescuentoJpaController tipoDescuentosDAO = new tipodescuentoJpaController(emf);
+    private estadofacturaJpaController estadoFacturaDAO = new estadofacturaJpaController(emf);
     private List<estadofactura> estadosFacturaBD = estadoFacturaDAO.findestadofacturaEntities();
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
-    private parametrosJpaController parametrosDAO = new parametrosJpaController();
-    private descuentosJpaController descuentosDAO = new descuentosJpaController();
-    private detalleproductoJpaController detallesProdDao = new detalleproductoJpaController();
-    private facturasanuladasJpaController facturaAnuladaDAO = new facturasanuladasJpaController();
-    private datosempresaJpaController datosDAO = new datosempresaJpaController();
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
+    private parametrosJpaController parametrosDAO = new parametrosJpaController(emf);
+    private descuentosJpaController descuentosDAO = new descuentosJpaController(emf);
+    private detalleproductoJpaController detallesProdDao = new detalleproductoJpaController(emf);
+    private facturasanuladasJpaController facturaAnuladaDAO = new facturasanuladasJpaController(emf);
+    private datosempresaJpaController datosDAO = new datosempresaJpaController(emf);
     
     private usuarios usuarios = new usuarios(); 
     private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
@@ -104,6 +107,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     String currentTime = sdf.format(dt);
+    private java.text.SimpleDateFormat fechaEspanol = new java.text.SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -111,8 +115,9 @@ public class BusquedaFactura extends javax.swing.JFrame {
     public BusquedaFactura() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoLogin.png");
         for(int i = 0 ; i <estadosFacturaBD.size() ; i++)
         {
             cbEstados.addItem(estadosFacturaBD.get(i).toString());
@@ -126,9 +131,20 @@ public class BusquedaFactura extends javax.swing.JFrame {
             cbParametros.addItem(tablaFactura.getColumnName(i));
         }
          motivo.setVisible(false);
+         permisosUsuario = verificarPermisos();
     }
     
-    public void imprimirFactura()
+    private permisosusuario verificarPermisos(){
+        EntityManager em = tipopagoDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",11);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
+    }
+    
+    private void imprimirFactura()
     {
         java.text.SimpleDateFormat formatoFecha = new java.text.SimpleDateFormat("dd/MM/yyyy");
         DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
@@ -146,7 +162,6 @@ public class BusquedaFactura extends javax.swing.JFrame {
         Query queryDetalleServ = em.createQuery(hqlDetalleServ);
         queryDetalleServ.setParameter("idFactura",factura.getIdfacturaencabezado());
         List<detalleservicio> detallesServ = queryDetalleServ.getResultList();
-        
         
         Object[][] arrayDetallesFactura;
         arrayDetallesFactura = new Object[detallesProd.size() + detallesServ.size()][3];
@@ -196,7 +211,9 @@ public class BusquedaFactura extends javax.swing.JFrame {
         query.setParameter("idFactura",factura.getIdfacturaencabezado());
         List<descuentofactura> descuento = query.getResultList();
     
+        //parametros de factura
         HashMap param = new HashMap();
+        param.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
         param.put("LimiteEmision", formatoFecha.format(parametrosDAO.findparametros(factura.getIDParametro()).getFechaFinal()));
         param.put("NoTarjeta", factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
         param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
@@ -211,9 +228,10 @@ public class BusquedaFactura extends javax.swing.JFrame {
         param.put("Cai", parametrosDAO.findparametros(factura.getIDParametro()).getLlave());
         param.put("Impuesto",0.15);
         param.put("Descuento",descuento.isEmpty() ? 0.00 : descuento.get(descuento.size()-1).getValor());
+        param.put("MontoTarjeta",factura.getMontoTarjeta());
         
         try {
-            JasperReport reporteFactura = JasperCompileManager.compileReport("src/main/resources/Reportes/report1.jrxml");
+           JasperReport reporteFactura = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/report1.jrxml"));
             JasperPrint print = JasperFillManager.fillReport(
                     reporteFactura,
                     param, 
@@ -233,7 +251,16 @@ public class BusquedaFactura extends javax.swing.JFrame {
         modelo.setRowCount(0);
         tablaFactura.setModel(modelo);
         List<facturaencabezado> facturasEnBd = facturaDAO.findfacturaencabezadoEntities();
-        //System.out.println(convertirDates(facturasEnBd.get(1).getFechaFactura()));
+//        for(int i=0 ; i < facturasEnBd.size() ; i++){
+//            System.out.println(facturasEnBd.get(i).getIdfacturaencabezado());
+//            System.out.println(empleadoDAO.findempleado(facturasEnBd.get(i).getIDVendedor()).getNomEmpleado());
+//            System.out.println(facturasEnBd.get(i).getIDBarbero() == null ? "No aplica" : empleadoDAO.findempleado(facturasEnBd.get(i).getIDBarbero()).getNomEmpleado());
+//            System.out.println(facturasEnBd.get(i).getIDCliente());
+//            System.out.println(facturasEnBd.get(i).getFechaFactura());
+//            System.out.println(facturasEnBd.get(i).getIDTipoPago());
+//            System.out.println(facturasEnBd.get(i).getIDEstado());
+//        }
+                
         facturasEnBd.forEach((factura) -> {
             modelo.addRow(
                     new Object[]{
@@ -606,6 +633,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
             tablaFactura.getColumnModel().getColumn(5).setResizable(false);
             tablaFactura.getColumnModel().getColumn(6).setResizable(false);
             tablaFactura.getColumnModel().getColumn(7).setResizable(false);
+            tablaFactura.getColumnModel().getColumn(7).setPreferredWidth(15);
         }
         DefaultTableCellRenderer MyHeaderRender = new DefaultTableCellRenderer();
         MyHeaderRender.setBackground(Color.decode("#BD9E4C"));
@@ -697,7 +725,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
                         .addComponent(listar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                        .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cbEstados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(imprimirReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -721,8 +749,8 @@ public class BusquedaFactura extends javax.swing.JFrame {
                     .addComponent(botonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(listar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(22, 22, 22)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -730,12 +758,12 @@ public class BusquedaFactura extends javax.swing.JFrame {
                             .addComponent(cbEstados, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(imprimirReporte)
-                        .addGap(16, 16, 16))
+                        .addGap(5, 5, 5))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(motivo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -765,27 +793,29 @@ public class BusquedaFactura extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(237, 237, 237)
+                .addGap(246, 246, 246)
                 .addComponent(tituloPantalla)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(39, 39, 39)
+                .addGap(33, 33, 33)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fechaLabel)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tituloPantalla))
-                .addGap(18, 18, 18)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(tituloPantalla)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fechaLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -811,6 +841,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
                 new PantallaFactura().setVisible(true);
             }
         });
+        emf.close();
         this.dispose();
     }//GEN-LAST:event_botonRegresarActionPerformed
 
@@ -821,7 +852,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
         // TODO add your handling code here:
-
+        try{
         switch(cbParametros.getSelectedItem().toString())
         {
             case "Número":
@@ -849,6 +880,23 @@ public class BusquedaFactura extends javax.swing.JFrame {
             case "Estado":
             cargarTablaBusquedaEstado(buscarTxt.getText());
             break;
+        }
+        }catch(Exception ex){
+            FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
         }
     }//GEN-LAST:event_botonBuscarActionPerformed
 
@@ -984,7 +1032,21 @@ public class BusquedaFactura extends javax.swing.JFrame {
             }
              
         } catch (Exception ex) {
-            Logger.getLogger(BusquedaFactura.class.getName()).log(Level.SEVERE, null, ex);
+            FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
         }  
     }//GEN-LAST:event_modificarEstadoActionPerformed
 
@@ -994,12 +1056,17 @@ public class BusquedaFactura extends javax.swing.JFrame {
 
     private void tablaFacturaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaFacturaMouseClicked
         // TODO add your handling code here:
+        try{
         if(tablaFactura.getSelectedRow() != -1)
         {
-           imprimirReporte.setEnabled(true);
+            if(permisosUsuario.isImprimir()){
+            imprimirReporte.setEnabled(true);
+            }
+           if(permisosUsuario.isModificar()){
            modificarEstado.setEnabled(true);
+           }
            //visualizar boton de motivo
-           if(tablaFactura.getValueAt(tablaFactura.getSelectedRow(),6).toString().equals("Devuelta"))
+           if(tablaFactura.getValueAt(tablaFactura.getSelectedRow(),6).toString().equals("Anulada"))
            {
                modificarEstado.setEnabled(false);
                motivo.setVisible(true);
@@ -1008,20 +1075,78 @@ public class BusquedaFactura extends javax.swing.JFrame {
                motivo.setVisible(false);
            }
         }
+        }catch(Exception ex){
+            FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+        }
+        
     }//GEN-LAST:event_tablaFacturaMouseClicked
 
     private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
         // TODO add your handling code here:
+        try{
         imprimirFactura();
+        }catch(Exception ex){
+            FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+        }
+        
     }//GEN-LAST:event_imprimirReporteActionPerformed
 
     private void listarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listarActionPerformed
         // TODO add your handling code here:
+        try{
         cargarTabla();
+        }catch(Exception ex){
+            FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+        }
     }//GEN-LAST:event_listarActionPerformed
 
     private void motivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_motivoActionPerformed
         // TODO add your handling code here:
+        
+        try{
+            
         DefaultTableModel modelo = (DefaultTableModel) tablaFactura.getModel();
         
         EntityManager em = descuentosDAO.getEntityManager();
@@ -1031,7 +1156,26 @@ public class BusquedaFactura extends javax.swing.JFrame {
         facturasanuladas facturaAnulada = (facturasanuladas) query.getSingleResult();
         em.close();
         JOptionPane.showMessageDialog(null,"Factura anulada por:" + empleadoDAO.findempleado(facturaAnulada.getIDEmpleado()).getNomEmpleado() + " " + empleadoDAO.findempleado(facturaAnulada.getIDEmpleado()).getApeEmpleado()  + 
-                "\nMotivo:" + facturaAnulada.getMotivo() + "\nFecha: " + convertirDates(facturaAnulada.getFechaAnulacion().toString()));
+                "\nMotivo:" + facturaAnulada.getMotivo() + "\nFecha: " + fechaEspanol.format(facturaAnulada.getFechaAnulacion()));
+        
+        }catch(Exception ex){
+            FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+        }
+        
     }//GEN-LAST:event_motivoActionPerformed
 
     
@@ -1079,7 +1223,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
     
    private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -1090,7 +1234,7 @@ public class BusquedaFactura extends javax.swing.JFrame {
         this.repaint();
     }
     
-    private String convertirDates(String Fecha)
+    public String convertirDates(String Fecha)
     {
         //convertir los dates de sql a formato espanol
         String[] palabras  = Fecha.split("-");
@@ -1098,26 +1242,22 @@ public class BusquedaFactura extends javax.swing.JFrame {
         return separarHora[0] + "/" + palabras[1] + "/" + palabras[0] + " " + separarHora[1];
     }
     
-    private boolean validarMotivo(String motivo)
+    public boolean validarMotivo(String motivo)
     {
         if(!validar.validacionCantidadMinima(motivo, 6))
         {
           return false;  
-        }
-        if(!validar.validacionCadenaPalabras(motivo))
-        {
-          return false;
-        }else
-        {
-            return true;
-        }
+        }else{return true;}
+//        if(!validar.validacionCadenaPalabras(motivo))
+//        {
+//          return false;
+//        }else
+//        {
+//            return true;
+//        }
     }
     
-     public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
-    return dateToConvert.toInstant()
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate();
-    }
+    
     
   
     

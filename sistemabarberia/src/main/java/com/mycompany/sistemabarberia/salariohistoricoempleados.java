@@ -30,6 +30,21 @@ public class salariohistoricoempleados implements Serializable {
     @Column
     private boolean Activo;
 
+    public salariohistoricoempleados(int idsalario, int IDEmpleado, Date FechaInicial, Date FechaFinal, double Salario, boolean Activo) {
+        this.idsalario = idsalario;
+        this.IDEmpleado = IDEmpleado;
+        this.FechaInicial = FechaInicial;
+        this.FechaFinal = FechaFinal;
+        this.Salario = Salario;
+        this.Activo = Activo;
+    }
+
+    public salariohistoricoempleados() {
+        
+    }
+
+    
+    
     public int getIdsalario() {
         return idsalario;
     }

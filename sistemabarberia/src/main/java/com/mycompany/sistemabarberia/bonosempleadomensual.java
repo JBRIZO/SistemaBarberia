@@ -29,6 +29,18 @@ public class bonosempleadomensual implements Serializable {
     private String Periodo;
     @Column
     private boolean Activo;
+    
+    public bonosempleadomensual(){}
+    
+    public bonosempleadomensual(int numBono, int IdEmpleado,int tipoBono, double valor, String periodo, boolean activo){
+        this.numbono = numBono;
+        this.IDEmpleado = IdEmpleado;
+        this.IDTipoBono = tipoBono;
+        this.Valor = valor;
+        this.Periodo = periodo;
+        this.Activo = activo;
+        
+    }
 
     public int getNumbono() {
         return numbono;

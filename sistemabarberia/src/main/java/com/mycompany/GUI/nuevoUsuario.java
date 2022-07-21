@@ -16,7 +16,16 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -31,12 +40,16 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 public class nuevoUsuario extends javax.swing.JFrame {
     
-    private usuariosJpaController usuariosDAO = new usuariosJpaController();
+    
+    private usuarios usuarioModificar;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private usuariosJpaController usuariosDAO = new usuariosJpaController(emf);
     private Validaciones validar = new Validaciones();
     private List<usuarios> usuariosEnBd = usuariosDAO.findusuariosEntities();
     private ImageIcon imagen;
     private Icon icono;
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
     private List<empleado> empleadoEnBd = empleadoDAO.findempleadoEntities();
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
@@ -53,14 +66,51 @@ public class nuevoUsuario extends javax.swing.JFrame {
         initComponents();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar();   
         for(int i = 0; i < empleadoEnBd.size();i++)
         {
             if(empleadoEnBd.get(i).isActivo())
             cbEmpleados.addItem(empleadoEnBd.get(i).toString());
         }
+        lblNomUsuario.setText("");
+    }
+    
+    public nuevoUsuario(usuarios usuario)
+    {
+         this.setVisible(false);
+        this.setUndecorated(true);
+        initComponents();
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("/Imagenes/logoBarberia.jpeg"));
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
+        Reiniciar();   
+        for(int i = 0; i < empleadoEnBd.size();i++)
+        {
+            if(empleadoEnBd.get(i).isActivo())
+            cbEmpleados.addItem(empleadoEnBd.get(i).toString());
+        }
+       this.usuarioModificar = usuario; 
+       cargarDatosUsuarioModif();
+       lblNomUsuario.setText("");
+    }
+    
+    public void cargarDatosUsuarioModif()
+    {
+        for(int i = 0 ; i < cbEmpleados.getItemCount() ; i++)
+        {
+            if(Character.getNumericValue(cbEmpleados.getItemAt(i).charAt(0)) == usuarioModificar.getIDEmpleado())
+            {
+               cbEmpleados.setSelectedIndex(i);
+            }
+        }
+        nombreUsuario.setText(usuarioModificar.getNomCuenta());
+        cbEmpleados.setEnabled(false);
+        tituloPantalla.setText("Modificar Usuario");
+
     }
     
     public void Reiniciar()
@@ -101,6 +151,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         mostrar = new javax.swing.JToggleButton();
+        lblNomUsuario = new javax.swing.JLabel();
         salir1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -211,6 +262,9 @@ public class nuevoUsuario extends javax.swing.JFrame {
             }
         });
 
+        lblNomUsuario.setForeground(new java.awt.Color(255, 255, 255));
+        lblNomUsuario.setText("Nombre de Usuario:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -218,6 +272,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblNomUsuario)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -241,7 +296,9 @@ public class nuevoUsuario extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addGap(9, 9, 9)
+                .addComponent(lblNomUsuario)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido1)
@@ -348,18 +405,33 @@ public class nuevoUsuario extends javax.swing.JFrame {
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
 
-         if(nombreUsuario.getText().equals("Nombre Usuario") || contrasena.getPassword().equals("") || contrasena .getPassword().equals(""))
+        try{
+        if(nombreUsuario.getText().equals("Nombre Usuario") || contrasena.getPassword().equals("") || contrasena .getPassword().equals(""))
         {
             JOptionPane.showMessageDialog(null,"Debes rellenar con datos todos los campos.","Datos Inválidos", JOptionPane.ERROR_MESSAGE);
             return;
         }
         for(int i = 0; i< usuariosEnBd.size();i++)
         {
-            if(usuariosEnBd.get(i).getNomCuenta().equals(nombreUsuario.getText()))
+            if(usuarioModificar == null)
             {
-            JOptionPane.showMessageDialog(null,"Ese usuario ya existe, intenta con otro nombre de usuario.","Usuario ya existente", JOptionPane.ERROR_MESSAGE);
-            nombreUsuario.setBorder(redBorder);
-            return;
+                if(usuariosEnBd.get(i).getNomCuenta().equals(nombreUsuario.getText()))
+                    {
+                    JOptionPane.showMessageDialog(null,"Ese nombre de usuario ya existe, intenta con otro nombre de usuario.","Usuario ya existente", JOptionPane.ERROR_MESSAGE);
+                    nombreUsuario.setBorder(redBorder);
+                    return;  
+                    }
+            }else
+            {
+               if(usuariosEnBd.get(i).getNomCuenta().equals(nombreUsuario.getText()))
+            {
+                if(!usuariosEnBd.get(i).getNomCuenta().equals(usuarioModificar.getNomCuenta()))
+                {
+                    JOptionPane.showMessageDialog(null,"Ese nombre de usuario ya existe, intenta con otro nombre de usuario.","Usuario ya existente", JOptionPane.ERROR_MESSAGE);
+                    nombreUsuario.setBorder(redBorder);
+                    return;   
+                }
+            }
             }
         }
         if(cbEmpleados.getSelectedIndex() == 0)
@@ -367,6 +439,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Debes de seleccionar un empleado.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
         List<usuarios> usuariosEnBd = usuariosDAO.findusuariosEntities();
         String pass = new String(contrasena.getPassword());
         String confirmPass = new String(confirmarContrasena.getPassword());
@@ -390,7 +463,21 @@ public class nuevoUsuario extends javax.swing.JFrame {
         usuarioNuevo.setIDEmpleado(Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
         usuarioNuevo.setActivo(true);
         
-        //anadir precio 1
+        if(validarContrasena(contrasena,formatoInvalido2) && validarContrasena(confirmarContrasena,formatoInvalido3) && validarUsuario(nombreUsuario,formatoInvalido1)){
+             if(usuarioModificar != null)
+            {
+                usuarioModificar.setNomCuenta(nombreUsuario.getText());
+                usuarioModificar.setContrasena(contraEncriptada);
+                 try {
+                     usuariosDAO.edit(usuarioModificar);
+                     JOptionPane.showMessageDialog(this,"El usuario ha sido modificado correctamente.");
+                     return;
+                 } catch (Exception ex) {
+                     Logger.getLogger(nuevoUsuario.class.getName()).log(Level.SEVERE, null, ex);
+                     return;
+                 }
+            }
+             //verificar que el empleado no se duplique
         for(int i=0; i < usuariosEnBd.size();i++)
         {
             if(usuarioNuevo.getIDEmpleado() == usuariosEnBd.get(i).getIDEmpleado())
@@ -401,9 +488,6 @@ public class nuevoUsuario extends javax.swing.JFrame {
             return;
             }
         }
-        
-        if(validarContrasena(contrasena,formatoInvalido2) && validarContrasena(confirmarContrasena,formatoInvalido3) && validarUsuario(nombreUsuario,formatoInvalido1)){
-            
             try {
             usuariosDAO.create(usuarioNuevo);
             JOptionPane.showMessageDialog(null,"Operacion Exitosa");
@@ -412,24 +496,33 @@ public class nuevoUsuario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el usuario, excepcion: " + ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
         }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
-    
-    
-    
     private void nombreUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusGained
         // TODO add your handling code here:
-        nombreUsuario.setText("");
+        if(nombreUsuario.getText().equals("Nombre Usuario"))
+        {
+            nombreUsuario.setText("");
+            lblNomUsuario.setText("Nombre de Usuario:");
+        }
     }//GEN-LAST:event_nombreUsuarioFocusGained
 
     private void nombreUsuarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreUsuarioFocusLost
+    try{
     if(nombreUsuario.getText().equals(""))
     {
         nombreUsuario.setText("Nombre Usuario");
+        lblNomUsuario.setText("");
     }else
     {
         validarUsuario(nombreUsuario,formatoInvalido1);
+    }
+    }catch(Exception ex){
+        log(ex);
     }
     }//GEN-LAST:event_nombreUsuarioFocusLost
 
@@ -448,14 +541,19 @@ public class nuevoUsuario extends javax.swing.JFrame {
 
     private void salir1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salir1MouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaUsuarios().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose();
         empleadoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_salir1MouseClicked
 
     private void contrasenaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_contrasenaFocusGained
@@ -464,12 +562,16 @@ public class nuevoUsuario extends javax.swing.JFrame {
 
     private void mostrarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mostrarStateChanged
         // TODO add your handling code here:
+        try{
         if(mostrar.isSelected())
         {
             contrasena.setEchoChar((char)0);
         }else
         {
             contrasena.setEchoChar('*');
+        }
+        }catch(Exception ex){
+            log(ex);
         }
     }//GEN-LAST:event_mostrarStateChanged
 
@@ -513,29 +615,6 @@ public class nuevoUsuario extends javax.swing.JFrame {
     
     private boolean validarUsuario(javax.swing.JTextField textField, JLabel label)
     {
-        
-        if(validar.validacionLetrasRepetidas(textField.getText()))
-        {
-            textField.setBorder(redBorder);
-            label.setVisible(true);
-            label.setText("No puedes repetir tantas letras.");
-            return false;
-        }
-        
-        if(validar.validacionCampoNumerico(textField.getText()))
-        {
-            textField.setBorder(redBorder);
-            label.setVisible(true);
-            label.setText("El nombre de usuario debe contener letras.");
-            return false;
-        }
-        if(!validar.validacionCantidadMinima(textField.getText(),3))
-        {
-            textField.setBorder(redBorder);
-            label.setVisible(true);
-            label.setText("El nombre de usuario debe ser de 5 caracteres mínimo.");
-            return false;
-        }
         if(validar.validarNomCuenta(textField.getText()))
         {
             textField.setBorder(greenBorder);
@@ -546,13 +625,12 @@ public class nuevoUsuario extends javax.swing.JFrame {
             textField.setBorder(redBorder);
             label.setVisible(true);
             label.setText("El nombre de usuario es inválido.");
-            JOptionPane.showMessageDialog(null, "Un nombre de usuario válido no lleva mayúsculas, solo se permiten lo signos '-' y '_', letras y números.\n"
-                    + " Debe contener al menos 5 caracteres.", 
+            JOptionPane.showMessageDialog(null, "Un nombre de usuario válido debe ser de al menos 5 caracteres, puede llevar letras mayusculas y minusculas, numeros,\n"
+                    + " y los caracteres especiales ('.' '_' '-').No puede empezar ni terminar con caracteres especiales.", 
                     "Nombre de Usuario Inválido", 
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
     }
     
     private boolean validarContrasena(javax.swing.JPasswordField contra, JLabel label)
@@ -575,7 +653,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -584,6 +662,24 @@ public class nuevoUsuario extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -601,6 +697,7 @@ public class nuevoUsuario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblNomUsuario;
     private javax.swing.JLabel logo;
     private javax.swing.JToggleButton mostrar;
     private javax.swing.JTextField nombreUsuario;

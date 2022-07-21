@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteInventario" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" >
+	<property name="template.type" value="columnar"/>
+	<property name="ireport.zoom" value="1.4641000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" forecolor="#000000" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="logo" class="java.io.InputStream"/>
+	<parameter name="usuario" class="java.lang.String"/>
+	<parameter name="empleado" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     puestohistoricoempleado.`numpuesto` AS puestohistoricoempleado_numpuesto,
+     puestohistoricoempleado.`FechaInicial` AS puestohistoricoempleado_FechaInicial,
+     puestohistoricoempleado.`FechaFinal` AS puestohistoricoempleado_FechaFinal,
+     puesto.`NomPuesto` AS puesto_NomPuesto,
+     empleado.`ApeEmpleado` AS empleado_ApeEmpleado,
+     empleado.`NomEmpleado` AS empleado_NomEmpleado
+FROM
+     `puesto` puesto INNER JOIN `puestohistoricoempleado` puestohistoricoempleado ON puesto.`idpuesto` = puestohistoricoempleado.`IDPuesto`
+     INNER JOIN `empleado` empleado ON puestohistoricoempleado.`IDEmpleado` = empleado.`idempleado`
+WHERE
+     puestohistoricoempleado.`IDEmpleado` = $P{empleado}]]>
+	</queryString>
+	<field name="puestohistoricoempleado_numpuesto" class="java.lang.Integer"/>
+	<field name="puestohistoricoempleado_FechaInicial" class="java.sql.Date"/>
+	<field name="puestohistoricoempleado_FechaFinal" class="java.sql.Date"/>
+	<field name="puesto_NomPuesto" class="java.lang.String"/>
+	<field name="empleado_ApeEmpleado" class="java.lang.String"/>
+	<field name="empleado_NomEmpleado" class="java.lang.String"/>
+	<group name="productos_idproducto">
+		<groupExpression><![CDATA[$F{puestohistoricoempleado_numpuesto}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<staticText>
+					<reportElement x="14" y="7" width="24" height="24" forecolor="#FFFFFF" />
+					<textElement>
+						<font fontName="Times New Roman" size="18"/>
+					</textElement>
+					<text><![CDATA[Id:]]></text>
+				</staticText>
+				<frame>
+					<reportElement mode="Opaque" x="0" y="7" width="555" height="24" forecolor="#B89F7D" backcolor="#000000" />
+					<staticText>
+						<reportElement x="2" y="1" width="133" height="23" forecolor="#FFFFFF" />
+						<textElement>
+							<font fontName="Times New Roman" size="18"/>
+						</textElement>
+						<text><![CDATA[Puesto Número:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="135" y="1" width="147" height="23" forecolor="#FFFFFF" />
+						<textElement verticalAlignment="Middle">
+							<font fontName="Times New Roman" size="14" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{REPORT_COUNT} + 1]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="6"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="158" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="137" y="28" width="416" height="61" />
+				<textElement textAlignment="Center">
+					<font size="40" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Reporte Puesto Historico]]></text>
+			</staticText>
+			<image onErrorType="Blank">
+				<reportElement x="0" y="0" width="135" height="149" />
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="147" y="89" width="90" height="20" forecolor="#000000" />
+				<textElement verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Impreso por:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement x="237" y="89" width="174" height="20" />
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="147" y="109" width="90" height="20" forecolor="#000000" />
+				<textElement verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="237" y="109" width="174" height="20" />
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("HH:mm").format(new Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="147" y="129" width="90" height="20" forecolor="#000000" />
+				<textElement verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[ID Empleado:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="237" y="129" width="47" height="20" />
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empleado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="282" y="129" width="56" height="20" forecolor="#000000" />
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Nombre:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="338" y="129" width="215" height="20" />
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empleado_NomEmpleado} + " " + $F{empleado_ApeEmpleado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="77" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="2" y="66" width="551" height="1" />
+			</line>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="2" y="1" width="159" height="20" forecolor="#000000" />
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha Inicial:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="2" y="21" width="159" height="20" forecolor="#000000" />
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha Final:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" positionType="Float" x="3" y="41" width="159" height="20" forecolor="#000000" />
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Puesto:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="162" y="41" width="310" height="20" />
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{puesto_NomPuesto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="161" y="1" width="310" height="20" />
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{puestohistoricoempleado_FechaInicial})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="161" y="21" width="310" height="20" />
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{puestohistoricoempleado_FechaFinal})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" />
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="13" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="0" width="555" height="13" forecolor="#D0B48E" backcolor="#000000" />
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="513" y="0" width="40" height="13" forecolor="#FFFFFF" />
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="0" width="197" height="13" forecolor="#FFFFFF" />
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="433" y="0" width="80" height="13" forecolor="#FFFFFF" />
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

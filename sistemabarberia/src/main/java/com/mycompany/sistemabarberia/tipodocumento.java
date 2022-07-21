@@ -28,6 +28,17 @@ public class tipodocumento implements Serializable {
     @Column
     private boolean Activo;
 
+    public tipodocumento(int idtipodocumento, String TipoDocumento, boolean Activo) {
+        this.idtipodocumento = idtipodocumento;
+        this.TipoDocumento = TipoDocumento;
+        this.Activo = Activo;
+    }
+
+    public tipodocumento() {
+    }
+
+    
+    
     public int getIdtipodocumento() {
         return idtipodocumento;
     }

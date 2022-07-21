@@ -13,14 +13,24 @@ import com.mycompany.sistemabarberia.tipodocumento;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -28,7 +38,10 @@ import javax.swing.border.Border;
  */
 public class tipoDocumento extends javax.swing.JFrame {
     
-    private tipodocumentoJpaController tipodocumentoDAO = new tipodocumentoJpaController();
+    private static JTable tabla;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+            
+    private tipodocumentoJpaController tipodocumentoDAO = new tipodocumentoJpaController(emf);
     private Validaciones validar = new Validaciones();
     private List<tipodocumento> tipodocumentoEnBd = tipodocumentoDAO.findtipodocumentoEntities();
     private ImageIcon imagen;
@@ -40,18 +53,21 @@ public class tipoDocumento extends javax.swing.JFrame {
 
     /**
      * Creates new form nuevoTipoDocumento
+     * @param tabla
      */
-    public tipoDocumento() {
+    public tipoDocumento(JTable tabla) {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");    
+        this.insertarImagen(this.salir,"/Imagenes/x.png");
+        this.tabla = tabla;
         
         Reiniciar();
     }
     
-    public void Reiniciar()
+    private void Reiniciar()
     {
         List<tipodocumento> tipodocumentoEnBd = tipodocumentoDAO.findtipodocumentoEntities();
         if (tipodocumentoEnBd.isEmpty())
@@ -264,11 +280,7 @@ public class tipoDocumento extends javax.swing.JFrame {
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new menuGerente().setVisible(true);
-            }
-        });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         tipodocumentoDAO.close();
@@ -285,7 +297,9 @@ public class tipoDocumento extends javax.swing.JFrame {
     }//GEN-LAST:event_TipoDocumentoFocusGained
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntities();
+        
+        try{
+        List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntities();
         tipodocumento tipoDocumentoNuevo = new tipodocumento();
         tipoDocumentoNuevo.setTipoDocumento(TipoDocumento.getText());
         tipoDocumentoNuevo.setActivo(true);
@@ -313,12 +327,30 @@ List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntit
             tipodocumentoDAO.create(tipoDocumentoNuevo);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
+                    anadirDoc();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
+     private void anadirDoc()
+    {
+        Query query = tipodocumentoDAO.getEntityManager().createQuery("FROM tipodocumento ORDER BY idtipodocumento DESC");
+        query.setMaxResults(1);
+        tipodocumento nuevoDoc = (tipodocumento) query.getSingleResult();
+        DefaultTableModel modelo = (DefaultTableModel)tabla.getModel();
+        tabla.setModel(modelo);
+                    modelo.addRow(
+                    new Object[]{
+                        nuevoDoc.getIdtipodocumento(),
+                        nuevoDoc.getTipoDocumento()
+                    }
+                );
+    }
     /**
      * @param args the command line arguments
      */
@@ -350,7 +382,7 @@ List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntit
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new tipoDocumento().setVisible(true);
+                new tipoDocumento(tabla).setVisible(true);
             }
         });
         
@@ -409,7 +441,7 @@ List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntit
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -418,6 +450,24 @@ List<tipodocumento> tipodocumentosEnBd = tipodocumentoDAO.findtipodocumentoEntit
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

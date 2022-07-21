@@ -6,19 +6,16 @@
 package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
-import com.mycompany.sistemabarberia.JPACOntrollers.productosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.serviciosJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.precioshistoricoservicios;
-import com.mycompany.sistemabarberia.precioshistoricosproductos;
-import com.mycompany.sistemabarberia.productos;
 import com.mycompany.sistemabarberia.servicios;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +23,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,10 +41,11 @@ import javax.swing.border.Border;
 public class nuevoPrecioServicio extends javax.swing.JFrame {
     
     private Validaciones validar = new Validaciones();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private serviciosJpaController serviciosDAO = new serviciosJpaController();
+    private serviciosJpaController serviciosDAO = new serviciosJpaController(emf);
     private List<servicios> serviciosBD = serviciosDAO.findserviciosEntities();
-    private precioshistoricoserviciosJpaController preciosDAO = new precioshistoricoserviciosJpaController();
+    private precioshistoricoserviciosJpaController preciosDAO = new precioshistoricoserviciosJpaController(emf);
     private List<precioshistoricoservicios> preciosBD = preciosDAO.findprecioshistoricoserviciosEntities();
     private ImageIcon imagen;
     private Icon icono;
@@ -51,8 +53,9 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     String currentTime = sdf.format(dt);
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border greenBorder = BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1, true);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+    private java.text.SimpleDateFormat formatoEspanol = new java.text.SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -60,8 +63,9 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
     public nuevoPrecioServicio() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+         Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar();   
         for(int i = 0; i < serviciosBD.size(); i++)
         {
@@ -70,6 +74,9 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
                 cbServicios.addItem(serviciosBD.get(i).toString());
             }
         }
+         fechaInicio.setText(formatoEspanol.format(dt));
+        fechaInicio.setEditable(false);
+        formatoInvalido1.setText(" ");
     }
     
     public void Reiniciar()
@@ -103,6 +110,7 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
         cbServicios = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         formatoInvalido3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -201,6 +209,9 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
         formatoInvalido3.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido3.setText("Formato no valido.");
 
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Fecha Inicio:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -208,6 +219,7 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
                     .addComponent(formatoInvalido3)
                     .addComponent(jLabel3)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -224,7 +236,9 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbServicios, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido1)
@@ -314,7 +328,7 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-
+        try{
         if(fechaInicio.getText().equals("Fecha Inicio") || precio.getText().equals("Precio"))
         {
            JOptionPane.showMessageDialog(null,"Debes llenar todos los campos.", "Datos Faltantes",JOptionPane.ERROR_MESSAGE); 
@@ -346,6 +360,7 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
         startDate = sdf.parse(convertirFecha(fechaInicio.getText()));  
         fechaIni = sdf.format(startDate);
     } catch (ParseException ex) {
+        log(ex);
        ex.printStackTrace();
     }
         precioshistoricoservicios precioAnterior = new precioshistoricoservicios();
@@ -353,8 +368,8 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
         
           //comparar fehca inicial de nuevo salario con el anterior
         java.util.Date utilDate = new java.util.Date(precioAnterior.getFechaInicial().getTime());
-        LocalDate date = convertToLocalDateViaInstant(startDate);
-        LocalDate date2 = convertToLocalDateViaInstant(utilDate);
+        LocalDate date = validar.convertToLocalDateViaInstant(startDate);
+        LocalDate date2 = validar.convertToLocalDateViaInstant(utilDate);
         if(date.isBefore(date2))
         {
            JOptionPane.showMessageDialog(null,"El nuevo precio no puede empezar antes del anterior.", "Precio Inválido",JOptionPane.ERROR_MESSAGE); 
@@ -403,19 +418,25 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el precio, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     //a;adir validaciones botonaceptar
     private void precioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioFocusLost
-       
-        if(precio.getText().equals(""))
+       try{
+       if(precio.getText().equals(""))
         {
             precio.setText("Precio");
         }else
         {
             validacionNumerica(); 
         }
+       }catch(Exception ex){
+           log(ex);
+       }
     }//GEN-LAST:event_precioFocusLost
 
     
@@ -438,34 +459,47 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaPreciosServicio().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         serviciosDAO.close();
-        preciosDAO.close();        
+        preciosDAO.close();      
+        }catch(Exception ex){
+            log(ex);
+        }
+          
     }//GEN-LAST:event_salirMouseClicked
 
     private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
         // TODO add your handling code here:
+        try{
         if(fechaInicio.getText().equals("Fecha Inicio"))
         {
             fechaInicio.setDocument(new JTextFieldLimit (10));
             fechaInicio.setText("");   
         }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_fechaInicioFocusGained
 
     private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
         // TODO add your handling code here:
-        if(fechaInicio.getText().equals(""))
+        try{
+            if(fechaInicio.getText().equals(""))
         {
             fechaInicio.setDocument(new JTextFieldLimit(12));
             fechaInicio.setText("Fecha Inicio");
         }else{validarFecha(fechaInicio,formatoInvalido1);}
-        
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_fechaInicioFocusLost
 
     private void fechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaInicioActionPerformed
@@ -565,7 +599,7 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
             return false;
             }
         
-        if(!isDateValid(fecha.getText()))
+        if(!validar.isDateValid(fecha.getText()))
         {
             fecha.setBorder(redBorder);
             label.setVisible(true);
@@ -594,7 +628,7 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -605,37 +639,47 @@ public class nuevoPrecioServicio extends javax.swing.JFrame {
         this.repaint();
     }
     
-    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
-    return dateToConvert.toInstant()
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate();
+    
+    public boolean validarCamposEnBlanco(){
+         if(fechaInicio.getText().equals("") || precio.getText().equals(""))
+        {
+           return false;
+        }else{return true;}
     }
     
-      public static boolean isDateValid(String date) 
-{
-        try {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            df.setLenient(false);
-            df.parse(date);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
-}
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
+   
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JComboBox<String> cbServicios;
-    private javax.swing.JTextField fechaInicio;
+    public javax.swing.JTextField fechaInicio;
     private javax.swing.JLabel formatoInvalido1;
     private javax.swing.JLabel formatoInvalido3;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField precio;
+    public javax.swing.JTextField precio;
     private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

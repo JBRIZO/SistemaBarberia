@@ -1,0 +1,6 @@
+nov 01, 2021 3:46:14 PM com.mycompany.sistemabarberia.MyLogger log
+INFORMACIÓN: Error while committing the transaction
+nov 01, 2021 3:48:07 PM com.mycompany.sistemabarberia.MyLogger log
+INFORMACIÓN: Error while committing the transaction
+nov 01, 2021 3:50:14 PM com.mycompany.GUI.AgregarEmpleado botonAgregarActionPerformed
+INFORMACIÓN: Error while committing the transaction

@@ -13,6 +13,7 @@ import com.mycompany.sistemabarberia.JPACOntrollers.detalleproductoJpaController
 import com.mycompany.sistemabarberia.JPACOntrollers.detalleservicioJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.facturaencabezadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.facturasanuladasJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.parametrosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricoserviciosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.precioshistoricosproductosJpaController;
@@ -31,7 +32,9 @@ import com.mycompany.sistemabarberia.detalleproducto;
 import com.mycompany.sistemabarberia.detalleservicio;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.facturaencabezado;
+import com.mycompany.sistemabarberia.facturasanuladas;
 import com.mycompany.sistemabarberia.parametros;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.precioshistoricoservicios;
 import com.mycompany.sistemabarberia.precioshistoricosproductos;
 import com.mycompany.sistemabarberia.productos;
@@ -41,22 +44,29 @@ import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.util.List;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableCellRenderer;
 import com.mycompany.sistemabarberia.tipopago;
 import com.mycompany.sistemabarberia.usuarios;
+import java.awt.Image;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
@@ -77,38 +87,39 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class PantallaFactura extends javax.swing.JFrame {
     
-
+    private permisosusuario permisosUsuario;
     private FacturaDataSource dataSource;
     private Validaciones validar = new Validaciones();
     
     private usuarios usuarios = new usuarios(); 
     private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private productosJpaController productosDAO =  new productosJpaController();
-    private serviciosJpaController serviciosDAO = new serviciosJpaController();
-    private descuentofacturaJpaController descuentosDAO = new descuentofacturaJpaController();
-    private datosempresaJpaController datosempresaDAO = new datosempresaJpaController();
+    private productosJpaController productosDAO =  new productosJpaController(emf);
+    private serviciosJpaController serviciosDAO = new serviciosJpaController(emf);
+    private descuentofacturaJpaController descuentosDAO = new descuentofacturaJpaController(emf);
+    private datosempresaJpaController datosempresaDAO = new datosempresaJpaController(emf);
    
-    private precioshistoricosproductosJpaController preciosProductosDAO= new precioshistoricosproductosJpaController();
+    private precioshistoricosproductosJpaController preciosProductosDAO= new precioshistoricosproductosJpaController(emf);
     private List<precioshistoricosproductos> preciosProductosBD = preciosProductosDAO.findprecioshistoricosproductosEntities();
-    private precioshistoricoserviciosJpaController preciosServiciosDAO = new precioshistoricoserviciosJpaController();
+    private precioshistoricoserviciosJpaController preciosServiciosDAO = new precioshistoricoserviciosJpaController(emf);
     
-    private empleadoJpaController empleadosDAO = new empleadoJpaController();
-    private clientesJpaController clientesDAO = new clientesJpaController();
-    private tipopagoJpaController tipopagoDAO = new tipopagoJpaController();
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
+    private clientesJpaController clientesDAO = new clientesJpaController(emf);
+    private tipopagoJpaController tipopagoDAO = new tipopagoJpaController(emf);
     private List<tipopago> tipospagoBD = tipopagoDAO.findtipopagoEntities();
-    private tipodescuentoJpaController tipoDescuentosDAO = new tipodescuentoJpaController();
+    private tipodescuentoJpaController tipoDescuentosDAO = new tipodescuentoJpaController(emf);
     private List<tipodescuento>  descuentosBD = tipoDescuentosDAO.findtipodescuentoEntities();
-    private parametrosJpaController parametrosDAO = new parametrosJpaController();
+    private parametrosJpaController parametrosDAO = new parametrosJpaController(emf);
     private parametros CAI = null;
-    private facturaencabezadoJpaController encabezadoDAO = new facturaencabezadoJpaController();
+    private facturaencabezadoJpaController encabezadoDAO = new facturaencabezadoJpaController(emf);
+    private facturasanuladasJpaController anuladasDAO = new facturasanuladasJpaController(emf);
 
     
     
     private descuentos descuentoFactura;
     
-    private ImageIcon imagen;
-    private Icon icono;
+
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private java.text.SimpleDateFormat formatoEspanol = new java.text.SimpleDateFormat("dd/MM/yyyy");
@@ -125,10 +136,12 @@ public class PantallaFactura extends javax.swing.JFrame {
     public PantallaFactura() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
         this.setTitle("Facturación");
         advertenciaCAI.setVisible(false);
         validarCAI();
+        cargarClientes();
         empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
         cajeroTxt.setText(empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
         cargarBarberos();
@@ -136,7 +149,6 @@ public class PantallaFactura extends javax.swing.JFrame {
         //ocultar columnas de servicio/producto
          TableColumnModel columnModel = tablaFactura.getColumnModel();
         columnModel.removeColumn(columnModel.getColumn(1));
-        cargarClientes();
         for(int i = 0; i < tipospagoBD.size() ; i++)
         {
             cbTipoPago.addItem(tipospagoBD.get(i).toString());
@@ -150,12 +162,24 @@ public class PantallaFactura extends javax.swing.JFrame {
         numFactura();
         isvTxt.setText("0.15");
         
-        if(puestoEmpleadoActual(singleton.getCuenta().getIDEmpleado()) != 1)
-        {
-            menuGerente.setEnabled(false);
-        }else
-        {
-            menuGerente.setEnabled(true);
+        
+        permisosUsuario = verificarPermisos();
+        botonBuscar.setEnabled(permisosUsuario.isActivo());
+    }
+    
+    private permisosusuario verificarPermisos(){
+        try{
+            EntityManager em = tipopagoDAO.getEntityManager();
+            String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+            Query queryPermisos = em.createQuery(hqlDetalleProd);
+            queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+            queryPermisos.setParameter("IDPermiso",11);
+            permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+            return permisos;
+        }catch(javax.persistence.NoResultException ex){
+            permisosusuario permisos = new permisosusuario();
+            permisos.setActivo(false);
+            return permisos;
         }
     }
     
@@ -181,7 +205,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         } catch (ParseException ex) {
             Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        //desactivar CAI que no cumplen con los requisitos
         for(int i = 0 ; i < parametrosBD.size() ; i++)
         {
             if(parametrosBD.get(i).getFechaFinal().before(fechaHoy) || parametrosBD.get(i).getRangoFinal() < numeroFactura)
@@ -200,45 +224,96 @@ public class PantallaFactura extends javax.swing.JFrame {
         queryParametrosActivos.setParameter("idEstado",true);
         List<parametros> parametrosActivos = (List<parametros>) queryParametrosActivos.getResultList();
         
+        if(parametrosActivos.isEmpty())
+        {
+            advertenciaCAI.setVisible(true);
+            CAI = null;
+            botonFacturar.setEnabled(false);
+            caiLabel.setText(CAI == null? "CAI INVÁLIDO": "CAI: " + CAI.getLlave());
+            return;
+        }
+        
         for(parametros parametro : parametrosActivos)
         {
-            if(fechaHoy.compareTo(parametro.getFechaInicio()) >= 0 && fechaHoy.compareTo(parametro.getFechaFinal()) <= 0  && 
-                    numeroFactura >= parametro.getRangoInicial() &&
+            if(fechaHoy.compareTo(parametro.getFechaInicio()) >= 0 && fechaHoy.compareTo(parametro.getFechaFinal()) <= 0  &&
                     numeroFactura <= parametro.getRangoFinal())
             {
                 CAI = parametro;
                 botonFacturar.setEnabled(true);
             }else
             {
+                CAI = null;
                 botonFacturar.setEnabled(false);
             }
         }
             
+        //advertir al usuario que no hay ningun CAI valido o que esta
+        //a punto de vencer
         if(CAI == null)
         {
             JOptionPane.showMessageDialog(this,"No has añadido un CAI válido con el que puedas facturar.\n"
-                    + "Agrega uno en parametros en el menu de configuracion de factura.",
+                    + "Agrega uno en parametros en el menú de configuracion de factura.",
                     "CAI vencido",JOptionPane.ERROR_MESSAGE);
             botonFacturar.setEnabled(false);
             advertenciaCAI.setVisible(true);
             return;
         }else
         {
-         LocalDate fechaFinal = convertToLocalDateViaInstant(CAI.getFechaFinal());
+        LocalDate fechaFinal = validar.convertToLocalDateViaInstant(CAI.getFechaFinal());
         Period periodo = Period.between(LocalDate.now(),fechaFinal);
-        System.out.println(periodo.getDays());
         if(periodo.getDays() < 3 )
         {
-           JOptionPane.showMessageDialog(null,"El CAI actual esta a punto de vencer, por favor ingresa uno nuevo.", 
+//           JOptionPane.showMessageDialog(null,"El CAI actual esta a punto de vencer, por favor ingresa uno nuevo.", 
+//                   "CAI Próximo a Vencer",
+//                   JOptionPane.WARNING_MESSAGE); 
+//           advertenciaCAI.setVisible(true);
+           return;
+        }   
+        if(CAI.getRangoFinal() - numeroFactura <= 5)
+        {
+            JOptionPane.showMessageDialog(null,"Estas a punto de llegar al rango final para este CAI, por favor ingresa uno nuevo.", 
                    "CAI Próximo a Vencer",
                    JOptionPane.WARNING_MESSAGE); 
            advertenciaCAI.setVisible(true);
-        }     
-        }    
+        }
+        }
+        //
+        if(CAI.getRangoInicial() > numeroFactura + 1){
+            for(int i = numeroFactura ; i < CAI.getRangoInicial() ; i++){
+                //crear factura para anular
+                facturaencabezado facturaAnular = new facturaencabezado();
+                 facturaAnular.setFechaFactura(currentTimeSql);
+                facturaAnular.setIDVendedor(singleton.getCuenta().getIDEmpleado());
+                facturaAnular.setIDBarbero(null);
+                facturaAnular.setIDCliente(0);
+                facturaAnular.setIDTipoPago(1);
+                facturaAnular.setIDParametro(CAI.getIdparametro());
+                facturaAnular.setIDEstado(3);
+                facturaAnular.setNumTarjeta(null);
+                facturaAnular.setTotalFactura(0);
+                try{
+                    encabezadoDAO.create(facturaAnular);
+                }catch(Exception Ex){
+                System.out.println("error en encabezado");
+                Ex.printStackTrace();}
+                //agregar a la tabla de facturas anuladas
+                facturasanuladas anuladas = new facturasanuladas();
+                anuladas.setMotivo("Anuladas por vencimiento de CAI");
+                anuladas.setFechaAnulacion(fechaHoy);
+                anuladas.setIDFacturaEncabezado(i);
+                anuladas.setIDEmpleado(singleton.getCuenta().getIDEmpleado());
+                try{
+                    anuladasDAO.create(anuladas);
+                }catch(Exception Ex){System.out.println("error en anuladas");
+                Ex.printStackTrace();
+                }  
+            }
+            JOptionPane.showMessageDialog(null,"Se han anulado las facturas del N°" + numeroFactura + " al " + (CAI.getRangoInicial()-1) + " por vencimiento del CAI anterior.");
+        }
 }
     
     
-    private int puestoEmpleadoActual(int idEmpleados)
+    public int puestoEmpleadoActual(int idEmpleados)
     {
         EntityManager em = empleadosDAO.getEntityManager();
         String hql = "SELECT IDPuesto FROM puestohistoricoempleado E WHERE E.IDEmpleado = :idEmpleado AND E.Activo = 1";
@@ -259,9 +334,14 @@ public class PantallaFactura extends javax.swing.JFrame {
             :numFacturaBD.getValor() + String.format("%0" + 8 + "d", listaFacturasBD.get(listaFacturasBD.size()-1).getIdfacturaencabezado() + 1));
     }
     
-    private void cargarClientes()
+    public void cargarClientes()
     {
         List<clientes> clientesBD = clientesDAO.findclientesEntities();
+        
+         for(int i = cbCliente.getItemCount() - 1; i > 0 ; i--)
+        {
+           cbCliente.removeItemAt(i);
+        }
         
         for(int i = 0; i < clientesBD.size() ; i++)
         {
@@ -272,7 +352,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         }  
     }
    
-    public void calcularTotal()
+    private void calcularTotal()
     {
         double total = 0.00;
         total = Double.parseDouble(subTotal.getText()) + (Double.parseDouble(subTotal.getText()) * Double.parseDouble(isvTxt.getText()));
@@ -291,81 +371,9 @@ public class PantallaFactura extends javax.swing.JFrame {
         }
     }
     
-//    public void imprimirFactura()
-//    {
-//        //llenar los detalles en la factura
-//      HashMap param = new HashMap();
-//      Object[][] arrayDetallesFactura;
-//      arrayDetallesFactura = new Object[tablaFactura.getRowCount()][3];
-//      
-//    for(int i = 0; i < tablaFactura.getRowCount();i++)
-//    {
-//        for(int j = 0; j < 3 ; j++)
-//        {
-//            switch(j)
-//            {
-//                case 0:
-//                arrayDetallesFactura[i][0] = tablaFactura.getValueAt(i,0);
-//                break;
-//                case 1:
-//                arrayDetallesFactura[i][1] = tablaFactura.getValueAt(i,2);
-//                break;
-//                case 2:
-//                arrayDetallesFactura[i][2] = tablaFactura.getValueAt(i,3);
-//                break;
-//            }
-//            
-//        }
-//    }
-//     //descuento de factura
-//     if(cbDescuento.getSelectedIndex() != 0) 
-//     {
-//          EntityManager em = productosDAO.getEntityManager();
-//        String hql = "FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDescuento AND E.Activo = 1";
-//        Query query = em.createQuery(hql);
-//        query.setParameter("idTipoDescuento",Character.getNumericValue(cbDescuento.getSelectedItem().toString().charAt(0)));
-//        descuentos descuentoValor = (descuentos)query.getSingleResult();
-//         param.put("Descuento",cbDescuento.getSelectedIndex()==0?0:descuentoValor.getValor());
-//     }else
-//     {
-//         param.put("Descuento",0.00);
-//     }
-//        //para ponerles valor a los parametros
-//        param.put("IDFactura",  numFactura.getText());
-//        param.put("NombreCliente", cbCliente.getSelectedIndex()==0 ? 
-//                clientesDAO.findclientes(0).getNomCliente(): 
-//                clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNomCliente());
-//        param.put("ApellidoCliente",cbCliente.getSelectedIndex()==0 ?
-//                clientesDAO.findclientes(0).getApeCliente() :
-//                clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getApeCliente());
-//        param.put("NumDocumento",cbCliente.getSelectedIndex()==0 ?
-//                clientesDAO.findclientes(0).getNumDocumento() :
-//                clientesDAO.findclientes(Character.getNumericValue(cbCliente.getSelectedItem().toString().charAt(0))).getNumDocumento());
-//        param.put("FechaFactura",fecha.getText());
-//        param.put("NomVendedor",empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado()).getNomEmpleado());
-//        param.put("NomBarbero",cbBarbero.getSelectedIndex() == 0 ? "No Aplica" :
-//                empleadosDAO.findempleado(Character.getNumericValue(cbBarbero.getSelectedItem().toString().charAt(0))).getNomEmpleado());
-//        param.put("Cai",CAI.getLlave());
-//        param.put("Impuesto",0.15);
-//       
-//        try {
-//            //compilar reporte
-//            JasperReport reporteFactura = JasperCompileManager.compileReport("src/main/resources/Reportes/report1.jrxml");
-//            JasperPrint print = JasperFillManager.fillReport(
-//                    reporteFactura,
-//                    param, 
-//                    dataSource.getDataSource(arrayDetallesFactura));
-//            //view es un jframe dondes e muestra la factura
-//            JasperViewer view = new JasperViewer(print,false);
-//            view.setVisible(true);
-//            view.setTitle( "Factura " + numFactura.getText());
-//            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-//        } catch (JRException ex) {
-//            Logger.getLogger(PantallaFactura.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+
     
-    public void imprimirFactura()
+    private void imprimirFactura()
     {
         List<facturaencabezado> listaFacturasBD = encabezadoDAO.findfacturaencabezadoEntities();
         java.text.SimpleDateFormat formatoFecha = new java.text.SimpleDateFormat("dd/MM/yyyy");
@@ -434,6 +442,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         List<descuentofactura> descuento = query.getResultList();
     
         HashMap param = new HashMap();
+        param.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
         param.put("LimiteEmision",formatoFecha.format(parametrosDAO.findparametros(CAI.getIdparametro()).getFechaFinal()));
         param.put("NoTarjeta",factura.getNumTarjeta() == null ? "No Aplica" : factura.getNumTarjeta());
         param.put("MotivoDescuento", descuento.isEmpty() ? "No Aplica" : tipoDescuentosDAO.findtipodescuento(descuento.get(descuento.size()-1).getIDDescuento()).getNomDescuento());
@@ -448,9 +457,10 @@ public class PantallaFactura extends javax.swing.JFrame {
         param.put("Cai", parametrosDAO.findparametros(factura.getIDParametro()).getLlave());
         param.put("Impuesto",0.15);
         param.put("Descuento",descuento.isEmpty() ? 0.00 : descuento.get(descuento.size()-1).getValor());
+        param.put("MontoTarjeta",factura.getMontoTarjeta());
         
         try {
-            JasperReport reporteFactura = JasperCompileManager.compileReport("src/main/resources/Reportes/report1.jrxml");
+            JasperReport reporteFactura = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/report1.jrxml"));
             JasperPrint print = JasperFillManager.fillReport(
                     reporteFactura,
                     param, 
@@ -546,6 +556,74 @@ public class PantallaFactura extends javax.swing.JFrame {
             //busquedaTabla();
     }
     
+    public void cargarProductosBusqueda(String buscar)
+    {       
+        double precioActual = 0;
+        tablaProductosServicios.setModel(new javax.swing.table.DefaultTableModel(
+                new Object [][] {
+                },
+                new String [] {
+                    "ID Producto", "Nombre", "Precio", "Stock Actual"
+                }
+            ) {
+                boolean[] canEdit = new boolean [] {
+                    false, false, false, false
+                };
+
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit [columnIndex];
+                }
+            });
+        DefaultTableModel modelo = (DefaultTableModel) tablaProductosServicios.getModel();
+        List<productos> productosEnBD = productosDAO.findproductosEntities();
+        List<productos> productosFiltrados = new ArrayList();
+        
+        for(int i = 0 ; i < productosEnBD.size() ; i++)
+        {
+            try{
+                if(productosEnBD.get(i).getIdproducto() == Integer.parseInt(buscar))
+            {
+                productosFiltrados.add(productosEnBD.get(i));
+            }
+            }catch(NumberFormatException ex)
+            {
+                if(productosEnBD.get(i).getNomProducto().equalsIgnoreCase(buscar))
+                {
+                   productosFiltrados.add(productosEnBD.get(i)); 
+                }
+            }
+            
+        }
+        if(productosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(tablaProductosServicios,"No se encontro un producto.","Producto no encontrado",JOptionPane.ERROR_MESSAGE);
+            cargarProductos();
+            return;
+        }
+            for(productos producto : productosFiltrados){
+                if(producto.isActivo())
+                {
+                    for(int i = 0; i < preciosProductosBD.size() ; i++)
+                    {
+                        //precio actual del producto
+                        if(preciosProductosBD.get(i).getIDProducto() == producto.getIdproducto() && preciosProductosBD.get(i).isActivo())
+                        {
+                            precioActual = preciosProductosBD.get(i).getPrecio();
+                        }
+                    }
+                    modelo.addRow(
+                    new Object[]{
+                        producto.getIdproducto(),
+                        producto.getNomProducto(),
+                        precioActual,
+                        producto.getStockActual(),
+                    }
+                );
+                }
+            }
+            //busquedaTabla();
+    }
+    
     public void cargarServicios()
     {
         
@@ -572,6 +650,79 @@ public class PantallaFactura extends javax.swing.JFrame {
         List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
         
             for(servicios servicio : serviciosEnBd){
+                if(servicio.isActivo())
+                {
+                    for(int i = 0; i < preciosServicioBD.size() ; i++)
+                    {
+                        //precio actual del producto
+                        if(preciosServicioBD.get(i).getIDServicio() == servicio.getIdservicio() && preciosServicioBD.get(i).isActivo())
+                        {
+                            precioActual = preciosServicioBD.get(i).getPrecio();
+                        }
+                    }
+                
+                    modelo.addRow(
+                    new Object[]{
+                        servicio.getIdservicio(),
+                        servicio.getNomServicio(),
+                        precioActual
+                    }
+                );
+                }  
+            }  
+         //busquedaTabla();    
+    }
+    
+    public void cargarServiciosBusqueda(String buscar)
+    {
+        
+        List<precioshistoricoservicios> preciosServicioBD = preciosServiciosDAO.findprecioshistoricoserviciosEntities();
+        double precioActual = 0;
+        tablaProductosServicios.setModel(new javax.swing.table.DefaultTableModel(
+                new Object [][] {
+                },
+                new String [] {
+                    "ID Servicio", "Nombre", "Precio"
+                }
+            ) {
+                boolean[] canEdit = new boolean [] {
+                    false, false, false
+                };
+
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit [columnIndex];
+                }
+            });
+        
+        DefaultTableModel modelo = (DefaultTableModel) tablaProductosServicios.getModel();
+        tablaProductosServicios.setModel(modelo);
+        List<servicios> serviciosEnBd = serviciosDAO.findserviciosEntities();
+         List<servicios> serviciosFiltrados = new ArrayList();
+        
+        for(int i = 0 ; i < serviciosEnBd.size() ; i++)
+        {
+            try{
+                if(serviciosEnBd.get(i).getIdservicio() == Integer.parseInt(buscar))
+            {
+                serviciosFiltrados.add(serviciosEnBd.get(i));
+            }
+            }catch(NumberFormatException ex)
+            {
+                if(serviciosEnBd.get(i).getNomServicio().equalsIgnoreCase(buscar))
+                {
+                   serviciosFiltrados.add(serviciosEnBd.get(i)); 
+                }
+            }
+            
+        }
+        if(serviciosFiltrados.isEmpty())
+        {
+            JOptionPane.showMessageDialog(tablaProductosServicios,"No se encontro un servicio.","Servicio no encontrado",JOptionPane.ERROR_MESSAGE);
+            cargarServicios();
+            return;
+        }
+        
+            for(servicios servicio : serviciosFiltrados){
                 if(servicio.isActivo())
                 {
                     for(int i = 0; i < preciosServicioBD.size() ; i++)
@@ -971,6 +1122,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         buscarTxt.setDocument(new JTextFieldLimit(25));
         buscarTxt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         buscarTxt.setForeground(new java.awt.Color(255, 255, 255));
+        buscarTxt.setToolTipText("Busca por Id o por Nombre.");
         buscarTxt.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         buscarTxt.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -1184,101 +1336,102 @@ public class PantallaFactura extends javax.swing.JFrame {
                                 .addComponent(botonAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botonReiniciar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel10))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(botonCantidad)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(advertenciaCAI, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jLabel10))
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(botonCantidad)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(ISV)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(isvTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jLabel9)))
+                                .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(ISV)
                                 .addGap(18, 18, 18)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(totalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(subTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                .addComponent(isvTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel9)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(totalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(subTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(numFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1)
-                        .addComponent(jLabel3)
-                        .addComponent(cbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(botonAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(registrarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbOpciones, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbTipoPago, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel6)
-                            .addComponent(fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel7)
-                            .addComponent(cajeroTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel2)
+                                .addComponent(numFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel3)
+                                .addComponent(cbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(buscarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(botonAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(registrarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbOpciones, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbBarbero, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(noTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel8))
-                        .addGap(18, 18, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(montoTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12)
-                            .addComponent(caiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(cbTipoPago, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel6)
+                                    .addComponent(fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(cbDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel7)
+                                    .addComponent(cajeroTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(cbBarbero, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(noTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11)
+                                    .addComponent(jLabel8))
+                                .addGap(18, 18, Short.MAX_VALUE)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(montoTarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel12)
+                                    .addComponent(caiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(ISV)
+                                .addComponent(isvTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel9)
+                                .addComponent(subTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(botonCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(advertenciaCAI, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(ISV)
-                        .addComponent(isvTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel10)
+                        .addComponent(totalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel9)
-                        .addComponent(subTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(botonQuitar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(botonCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(totalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(botonFacturar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(botonReiniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(advertenciaCAI, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16))
+                        .addComponent(botonReiniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(13, 13, 13))
         );
 
         titulo.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -1381,10 +1534,10 @@ public class PantallaFactura extends javax.swing.JFrame {
          if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 2)
         {
         //validar que el numero de tarjeta ingresado sae valido
-        if(!validarTarjetaCredito(noTarjeta))
+        if(!validarTarjetaCredito(noTarjeta.getText()))
         {
             JOptionPane.showMessageDialog(null,"Ese es un número de tarjeta inválido, por favor ingresa un número de tarjeta válido. \n"
-                    + "Ejemplo: 5390700823285988",
+                    + "Ejemplo: 5390700823285988. Tarjetas Admitidas: Visa, Master Card, American Express.",
                     "Tarjeta Inválida",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -1393,14 +1546,14 @@ public class PantallaFactura extends javax.swing.JFrame {
          
         if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 3)
         {
-            if(!validarMontoTarjeta(montoTarjeta))
+            if(!validarMontoTarjeta(montoTarjeta.getText()))
         {
             JOptionPane.showMessageDialog(null,"El formato del monto es inválido, recuerda que el monto es la cantidad de dinero que se pagará con la tarjeta. \n "
                     + "Debe ser mayor a 0, con el formato 0000.00. No puedes pagar la totalidad de la factura con tarjeta en el tipo de pago mixto, \n para eso elige el tipo de pago con tarjeta.","Monto Inválido",JOptionPane.ERROR_MESSAGE);
             return;
         }
         //validar que el numero de tarjeta ingresado sae valido
-        if(!validarTarjetaCredito(noTarjeta))
+        if(!validarTarjetaCredito(noTarjeta.getText()))
         {
             JOptionPane.showMessageDialog(null,"Ese es un número de tarjeta inválido, por favor ingresa un número de tarjeta válido. \n"
                     + "Ejemplo: 5390700823285988",
@@ -1429,8 +1582,8 @@ public class PantallaFactura extends javax.swing.JFrame {
             }
         
         
-   detalleproductoJpaController detalleProdDAO = new detalleproductoJpaController();
-   detalleservicioJpaController detalleServicioDAO = new detalleservicioJpaController();
+   detalleproductoJpaController detalleProdDAO = new detalleproductoJpaController(emf);
+   detalleservicioJpaController detalleServicioDAO = new detalleservicioJpaController(emf);
    boolean procesoConExito = true;
    
     //encabezado de la factura
@@ -1558,6 +1711,7 @@ public class PantallaFactura extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null,"Proceso realizado con Exito");
     }
         imprimirFactura();
+        validarCAI();
         botonReiniciarActionPerformed(evt);
     }//GEN-LAST:event_botonFacturarActionPerformed
 
@@ -1602,9 +1756,10 @@ public class PantallaFactura extends javax.swing.JFrame {
    
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new registrarClientes().setVisible(true);
+                new registrarClientes(true).setVisible(true);
             }
         });
+        cargarClientes();
     }//GEN-LAST:event_registrarClienteActionPerformed
 
     private void totalTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_totalTxtFocusGained
@@ -1643,6 +1798,7 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void botonReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonReiniciarActionPerformed
         // TODO add your handling code here:
+      
         cargarClientes();
         cbBarbero.setSelectedIndex(0);
         cbCliente.setSelectedIndex(0);
@@ -1675,6 +1831,15 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void buscarTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarTxtActionPerformed
         // TODO add your handling code here:
+        switch(cbOpciones.getSelectedIndex())
+        {
+            case 0:
+                cargarProductosBusqueda(buscarTxt.getText());
+                break;
+            case 1:
+                cargarServiciosBusqueda(buscarTxt.getText());
+                break;
+        }
     }//GEN-LAST:event_buscarTxtActionPerformed
 
     private void botonQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonQuitarActionPerformed
@@ -1917,6 +2082,7 @@ public class PantallaFactura extends javax.swing.JFrame {
                 new menuGerente().setVisible(true);
             }
         });
+        emf.close();
         this.dispose();
     }//GEN-LAST:event_menuGerenteActionPerformed
 
@@ -1927,6 +2093,7 @@ public class PantallaFactura extends javax.swing.JFrame {
                 new PantallaLogin().setVisible(true);
             }
         });
+         emf.close();
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -1936,7 +2103,12 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void noTarjetaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_noTarjetaFocusLost
         // TODO add your handling code here:
-        validarTarjetaCredito(noTarjeta);
+        try{
+        validarTarjetaCredito(noTarjeta.getText());
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_noTarjetaFocusLost
 
     private void noTarjetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noTarjetaActionPerformed
@@ -1945,6 +2117,7 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void cbTipoPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoPagoActionPerformed
         // TODO add your handling code here:
+        try{
         if(Character.getNumericValue(cbTipoPago.getSelectedItem().toString().charAt(0)) == 2)
         {
             noTarjeta.setEnabled(true);
@@ -1961,6 +2134,10 @@ public class PantallaFactura extends javax.swing.JFrame {
             noTarjeta.setEnabled(false);
             montoTarjeta.setEnabled(false);
         }
+        }catch(Exception ex){
+        log(ex);
+        }
+        
     }//GEN-LAST:event_cbTipoPagoActionPerformed
 
     private void montoTarjetaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_montoTarjetaFocusGained
@@ -1969,7 +2146,11 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void montoTarjetaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_montoTarjetaFocusLost
         // TODO add your handling code here:
-        validarMontoTarjeta(montoTarjeta);
+        try{
+        validarMontoTarjeta(montoTarjeta.getText());
+        }catch(Exception ex){
+            log(ex);
+        } 
     }//GEN-LAST:event_montoTarjetaFocusLost
 
     private void montoTarjetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_montoTarjetaActionPerformed
@@ -1978,6 +2159,7 @@ public class PantallaFactura extends javax.swing.JFrame {
 
     private void cbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbClienteActionPerformed
         // TODO add your handling code here:
+        try{
         if(cbCliente.getSelectedIndex() != 0)
         {
            List<precioshistoricoservicios> preciosServicioBD = preciosServiciosDAO.findprecioshistoricoserviciosEntities();
@@ -2019,19 +2201,23 @@ public class PantallaFactura extends javax.swing.JFrame {
                         cbDescuento.getSelectedIndex() == 0 ? 0.00 : results.get(results.size()-1).getValor(),
                         1 * precioActual
                     });
+       calcularTotalFila();
+       calcularSubtotal();
         }else
         {
               JOptionPane.showMessageDialog(null,"El servicio favorito del cliente ha sido desactivado","Sevicio favorito desactivado",JOptionPane.WARNING_MESSAGE);
         } 
-        }else
-        {
-            
         } 
+        }catch(Exception ex){
+            log(ex);
+        }
+        
+        
     }//GEN-LAST:event_cbClienteActionPerformed
 
     private void advertenciaCAIMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_advertenciaCAIMouseClicked
         // TODO add your handling code here:
-        
+        try{
         if(botonFacturar.isEnabled())
         {
             JOptionPane.showMessageDialog(null,"El CAI vence el " + formatoEspanol.format(CAI.getFechaFinal()) + ",se recomienda ingresar otro, al pasar de la fecha no se le dejará facturar.",
@@ -2039,8 +2225,13 @@ public class PantallaFactura extends javax.swing.JFrame {
             JOptionPane.WARNING_MESSAGE);
         }else
         {
-            JOptionPane.showMessageDialog(null,"EL CAI ha vencido, si quieres seguir facturando, deberas ingresar otro desde el menu de gerente.","El CAI ha vencido",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,"EL CAI ha vencido, si quieres seguir facturando, deberas ingresar otro desde el menú de gerente.",
+                    "El CAI ha vencido",JOptionPane.ERROR_MESSAGE);
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_advertenciaCAIMouseClicked
 
     
@@ -2093,59 +2284,61 @@ public class PantallaFactura extends javax.swing.JFrame {
 }
     
 //metodo para claidar el campo de numero de tarjeta
-    private boolean validarTarjetaCredito(javax.swing.JTextField jText)
+    public boolean validarTarjetaCredito(String jText)
     {        
-        if(validar.validarNoTarjeta(jText.getText()))
+        if(validar.validarNoTarjeta(jText))
         {
-            jText.setBorder(greenBorder);
+            noTarjeta.setBorder(greenBorder);
             return true;
         }else
         {
-            jText.setBorder(redBorder);
+            noTarjeta.setBorder(redBorder);
             return false;
         }
     }
     
-    private boolean validarMontoTarjeta(javax.swing.JTextField jText)
+    public boolean validarMontoTarjeta(String jText)
     {
        double monto = 0 ;
         try{
-            monto = Double.parseDouble(jText.getText());
+            monto = Double.parseDouble(jText);
         }catch(NumberFormatException ex)
         {
-            jText.setBorder(redBorder);
+            montoTarjeta.setBorder(redBorder);
             return false;
         }
-       
         if(monto <= 0)
         {
-            jText.setBorder(redBorder);
+            montoTarjeta.setBorder(redBorder);
             return false;
         }
         
-        if(monto > Double.parseDouble(totalTxt.getText()))
+        if(monto >= Double.parseDouble(totalTxt.getText()))
         {
-            jText.setBorder(redBorder);
+            montoTarjeta.setBorder(redBorder);
             return false;
         }
-         jText.setBorder(greenBorder);
+         montoTarjeta.setBorder(greenBorder);
          return true;
     }
     
-     public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
-    return dateToConvert.toInstant()
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate();
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
-     
-     private String convertirDates(String Fecha)
-    {
-        String[] palabras  = Fecha.split("-");
-       
-        return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
-    }
-    
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ISV;

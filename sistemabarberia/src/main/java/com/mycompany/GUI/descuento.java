@@ -5,7 +5,6 @@
  */
 package com.mycompany.GUI;
 
-import static com.mycompany.GUI.registrarClientes.isDateValid;
 import com.mycompany.sistemabarberia.JPACOntrollers.descuentosJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodescuentoJpaController;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
@@ -16,13 +15,21 @@ import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -35,17 +42,21 @@ import javax.swing.border.Border;
  * @author flore
  */
 public class descuento extends javax.swing.JFrame {
-    private descuentosJpaController descuentosDAO = new descuentosJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private descuentosJpaController descuentosDAO = new descuentosJpaController(emf);
     private List<descuentos> descuentosBD = descuentosDAO.finddescuentosEntities();
-    private tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController();
+    private tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController(emf);
     private List<tipodescuento> tipodescuentoBD = tipodescuentoDAO.findtipodescuentoEntities();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
     private Icon icono;
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
-    Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
+    Border greenBorder = BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1, true);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+     private java.util.Date dt = new java.util.Date();
+    private java.text.SimpleDateFormat formatoEspanol = new java.text.SimpleDateFormat("dd/MM/yyyy");
 
 
     /**
@@ -54,20 +65,23 @@ public class descuento extends javax.swing.JFrame {
     public descuento() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+       Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar();
         for(int i = 0; i < tipodescuentoBD.size(); i++)
         {
             cbTiposDescuentos.addItem(tipodescuentoBD.get(i).toString());
         }
+        fechaInicio.setText(formatoEspanol.format(dt));
+        fechaInicio.setEditable(false);
     }
     
     public void Reiniciar()
     {
         formatoInvalidoFechaIni.setText("");
-        formatoInvalidoFechaFin.setText("");
         formatoInvalidoValor.setText("");
+        valorLbl.setText(" ");
     }
 
     /**
@@ -87,11 +101,11 @@ public class descuento extends javax.swing.JFrame {
         cbTiposDescuentos = new javax.swing.JComboBox<>();
         fechaInicio = new javax.swing.JTextField();
         formatoInvalidoFechaIni = new javax.swing.JLabel();
-        fechaFinal = new javax.swing.JTextField();
-        formatoInvalidoFechaFin = new javax.swing.JLabel();
         Valor = new javax.swing.JTextField();
         formatoInvalidoValor = new javax.swing.JLabel();
         porcentaje = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        valorLbl = new javax.swing.JLabel();
         Aceptar = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
         salir = new javax.swing.JLabel();
@@ -105,7 +119,7 @@ public class descuento extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Gadugi", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("DESCUENTO");
+        jLabel1.setText("VALOR DESCUENTO");
         jLabel1.setMaximumSize(new java.awt.Dimension(197, 32));
         jLabel1.setMinimumSize(new java.awt.Dimension(197, 32));
         jLabel1.setPreferredSize(new java.awt.Dimension(197, 32));
@@ -151,30 +165,6 @@ public class descuento extends javax.swing.JFrame {
         formatoInvalidoFechaIni.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoFechaIni.setText("Formato Invalido.");
 
-        fechaFinal.setBackground(new java.awt.Color(30, 33, 34));
-        fechaFinal.setDocument(new JTextFieldLimit(25));
-        fechaFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        fechaFinal.setForeground(new java.awt.Color(255, 255, 255));
-        fechaFinal.setText("Fecha Final");
-        fechaFinal.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        fechaFinal.setSelectionColor(new java.awt.Color(55, 53, 53));
-        fechaFinal.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                fechaFinalFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                fechaFinalFocusLost(evt);
-            }
-        });
-        fechaFinal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fechaFinalActionPerformed(evt);
-            }
-        });
-
-        formatoInvalidoFechaFin.setForeground(new java.awt.Color(255, 255, 255));
-        formatoInvalidoFechaFin.setText("Formato Invalido.");
-
         Valor.setBackground(new java.awt.Color(30, 33, 34));
         Valor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         Valor.setForeground(new java.awt.Color(255, 255, 255));
@@ -205,13 +195,22 @@ public class descuento extends javax.swing.JFrame {
 
         porcentaje.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         porcentaje.setForeground(new java.awt.Color(255, 255, 255));
+        porcentaje.setSelected(true);
         porcentaje.setText("%");
         porcentaje.setContentAreaFilled(false);
+        porcentaje.setEnabled(false);
+        porcentaje.setFocusable(false);
         porcentaje.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 porcentajeActionPerformed(evt);
             }
         });
+
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Fecha Inicial:");
+
+        valorLbl.setForeground(new java.awt.Color(255, 255, 255));
+        valorLbl.setText("Valor:");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -219,18 +218,19 @@ public class descuento extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(cbTiposDescuentos, 0, 313, Short.MAX_VALUE)
-                    .addComponent(fechaInicio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatoInvalidoFechaIni, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatoInvalidoFechaFin, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatoInvalidoValor, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(porcentaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(fechaFinal, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(cbTiposDescuentos, 0, 313, Short.MAX_VALUE)
+                        .addComponent(fechaInicio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(formatoInvalidoFechaIni, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(formatoInvalidoValor, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                            .addComponent(Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(porcentaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jLabel3)
+                    .addComponent(valorLbl))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -240,21 +240,21 @@ public class descuento extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbTiposDescuentos, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(formatoInvalidoFechaIni)
-                .addGap(18, 18, 18)
-                .addComponent(fechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(formatoInvalidoFechaFin)
-                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(5, 5, 5)
+                .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(formatoInvalidoFechaIni)
+                .addGap(3, 3, 3)
+                .addComponent(valorLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(porcentaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Valor, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
+                    .addComponent(Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(formatoInvalidoValor)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -271,7 +271,7 @@ public class descuento extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         Aceptar.setBackground(new java.awt.Color(189, 158, 76));
@@ -306,17 +306,17 @@ public class descuento extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(65, 65, 65)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(19, 19, 19)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(41, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(93, 93, 93)
+                .addGap(90, 90, 90)
                 .addComponent(Aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -330,11 +330,11 @@ public class descuento extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(Aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addGap(113, 113, 113))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -347,9 +347,7 @@ public class descuento extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 629, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -362,68 +360,91 @@ public class descuento extends javax.swing.JFrame {
                 new listaDescuentos().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose();
-        descuentosDAO.close();
-        tipodescuentoDAO.close();
     }//GEN-LAST:event_salirMouseClicked
 
     private void AceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarActionPerformed
         // TODO add your handling code here:
-        if(fechaInicio.getText().equals("Fecha Inicial") || fechaInicio.getText().equals("") || fechaFinal.getText().equals("Fecha Final") || fechaFinal.getText().equals("") || Valor.getText().equals("Valor") || Valor.getText().isEmpty())
+        if(fechaInicio.getText().equals("Fecha Inicial") || fechaInicio.getText().equals("")|| Valor.getText().equals("Valor") || Valor.getText().isEmpty())
         {
             JOptionPane.showMessageDialog(null," Debes rellenar todos los campos.", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if(cbTiposDescuentos.getSelectedIndex()==0)
+        {
+            JOptionPane.showMessageDialog(null,"Debes seleccionar un tipo de descuento.", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         java.util.Date startDate = new Date(0000000000);
-        java.util.Date endDate = new Date(0000000000);
         String fechaIni = "00-00-0000";
-        String fechaFin = "00-00-0000";
         try {
             startDate = sdf.parse(convertirFecha(fechaInicio.getText()));
             fechaIni = sdf.format(startDate);
-            endDate = sdf.parse(convertirFecha(fechaFinal.getText()));
-            fechaFin = sdf.format(endDate);
         } catch (ParseException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Debes ingresar una fecha válida","Fecha inválida",JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        //ultimo descuento
+        EntityManager em = descuentosDAO.getEntityManager();
+        Query query = em.createQuery("FROM descuentos E WHERE E.IDTipoDescuento = :idTipoDesc ORDER BY iddescuento DESC ");
+        query.setParameter("idTipoDesc", Character.getNumericValue(cbTiposDescuentos.getSelectedItem().toString().charAt(0)));
+        query.setMaxResults(1);
+        
+        descuentos ultimoDescuento = (descuentos)query.getSingleResult();
+        
         //creacion de objeto
         descuentos descuentoNuevo = new descuentos();
         descuentoNuevo.setIDTipoDescuento(Character.getNumericValue(cbTiposDescuentos.getSelectedItem().toString().charAt(0)));
         descuentoNuevo.setFechaInicio(Date.valueOf(fechaIni));
-        descuentoNuevo.setFechaFinal(Date.valueOf(fechaFin));
+        descuentoNuevo.setFechaFinal(null);
         
-
-        //coherencia de fechas
-        LocalDate date1 = convertToLocalDateViaInstant(startDate);
-        LocalDate date2 = convertToLocalDateViaInstant(endDate);
-        if(date1.isAfter(date2))
+        java.util.Date utilDate = new java.util.Date(ultimoDescuento.getFechaInicio().getTime());
+        LocalDate date = validar.convertToLocalDateViaInstant(startDate);
+        LocalDate date2 = validar.convertToLocalDateViaInstant(utilDate);
+        if(date2.isAfter(date))
         {
-            JOptionPane.showMessageDialog(null, "La fecha final no puede ser menor a la fecha inicial.", "Fecha inválida",JOptionPane.ERROR_MESSAGE);
-            fechaFinal.setBorder(redBorder);
-            return;
+           JOptionPane.showMessageDialog(null,"El nuevo descuento debe empezar despues del anterior", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
+           fechaInicio.setBorder(redBorder);
+           return;
         }
+        date = date.minusDays(1);
+        ultimoDescuento.setFechaFinal(Date.valueOf(date));
+        ultimoDescuento.setActivo(false);
 
-        if(validarFecha(fechaInicio,formatoInvalidoFechaIni) && validacionCampoValor() &&
-            validarFecha(fechaFinal,formatoInvalidoFechaFin))
-        {
+        if(validarFecha(fechaInicio,formatoInvalidoFechaIni) && validacionCampoValor()){
             try {
                 //porcentaje o valor
                 if(porcentaje.isSelected())
                 {
                     descuentoNuevo.setValor(Double.parseDouble(Valor.getText())/100);
+                     //validar que no intriduzca el mismo valor al anterior
+                if(ultimoDescuento.getValor() == Double.parseDouble(Valor.getText())/100)
+                {
+                    JOptionPane.showMessageDialog(this,"El nuevo valor no puede ser igual al anterior.","Nuevo valor inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 }else
                 {
                     descuentoNuevo.setValor(Double.parseDouble(Valor.getText()));
+                    if(ultimoDescuento.getValor() == Double.parseDouble(Valor.getText()))
+                {
+                    JOptionPane.showMessageDialog(this,"El nuevo valor no puede ser igual al anterior.","Nuevo valor inválido",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 }
                 descuentoNuevo.setActivo(true);
                 descuentosDAO.create(descuentoNuevo);
+                descuentosDAO.edit(ultimoDescuento);
                 JOptionPane.showMessageDialog(null,"Operación Exitosa.");
                 Reiniciar();
             } catch (Exception ex) {
+                log(ex);
                 JOptionPane.showMessageDialog(null,"No se pudo guardar el descuento, excepción: " + ex.getMessage());
+                System.out.println(ex.toString());
             }
         }else{ JOptionPane.showMessageDialog(null,"Por favor, introduzca datos válidos.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
         }
@@ -439,6 +460,7 @@ public class descuento extends javax.swing.JFrame {
 
     private void ValorFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ValorFocusLost
         // TODO add your handling code here:
+        try{
         if(Valor.getText().equals(""))
         {
             Valor.setDocument(new JTextFieldLimit(10));
@@ -447,13 +469,18 @@ public class descuento extends javax.swing.JFrame {
         {
             validacionCampoValor();
         }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_ValorFocusLost
 
     private void ValorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ValorFocusGained
         // TODO add your handling code here:
+        try{
         if(Valor.getText().equals("Valor"))
         {
             Valor.setText("");
+            valorLbl.setText("Valor:");
             if(porcentaje.isSelected())
             {
              Valor.setDocument(new JTextFieldLimit(3));   
@@ -462,32 +489,11 @@ public class descuento extends javax.swing.JFrame {
                 Valor.setDocument(new JTextFieldLimit(8));
             }
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_ValorFocusGained
-
-    private void fechaFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaFinalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fechaFinalActionPerformed
-
-    private void fechaFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaFinalFocusLost
-        // TODO add your handling code here:
-        if(fechaFinal.getText().equals(""))
-        {
-            fechaFinal.setDocument(new JTextFieldLimit(20));
-            fechaFinal.setText("Fecha Final");
-        }else
-        {
-            validarFecha(fechaFinal, formatoInvalidoFechaFin);
-        }
-    }//GEN-LAST:event_fechaFinalFocusLost
-
-    private void fechaFinalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaFinalFocusGained
-        // TODO add your handling code here:
-        if(fechaFinal.getText().equals("Fecha Final"))
-        {
-            fechaFinal.setDocument(new JTextFieldLimit(10));
-            fechaFinal.setText("");
-        }
-    }//GEN-LAST:event_fechaFinalFocusGained
 
     private void fechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaInicioActionPerformed
         // TODO add your handling code here:
@@ -495,6 +501,7 @@ public class descuento extends javax.swing.JFrame {
 
     private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
         // TODO add your handling code here:
+        try{
         if(fechaInicio.getText().equals(""))
         {
             fechaInicio.setDocument(new JTextFieldLimit(20));
@@ -503,6 +510,10 @@ public class descuento extends javax.swing.JFrame {
         {
             validarFecha(fechaInicio,formatoInvalidoFechaIni);
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_fechaInicioFocusLost
 
     private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
@@ -564,7 +575,7 @@ public class descuento extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -600,7 +611,7 @@ public class descuento extends javax.swing.JFrame {
             return false;
             }
         
-        if(!isDateValid(fecha.getText()))
+        if(!validar.isDateValid(fecha.getText()))
         {
             fecha.setBorder(redBorder);
             label.setVisible(true);
@@ -618,9 +629,9 @@ public class descuento extends javax.swing.JFrame {
         
     }
     
-    private boolean validarPorcentaje()
+    public boolean validarPorcentaje(String porcentaje)
     {
-        if(!validar.validacionEntero(Valor.getText()))
+        if(!validar.validacionEntero(porcentaje))
     {
       Valor.setBorder(redBorder);
       formatoInvalidoValor.setVisible(true);
@@ -628,7 +639,7 @@ public class descuento extends javax.swing.JFrame {
       return false;
      }
         
-       if(Integer.parseInt(Valor.getText())>100)
+       if(Integer.parseInt(porcentaje)>100)
        {
            Valor.setBorder(redBorder);
            formatoInvalidoValor.setVisible(true);
@@ -636,7 +647,7 @@ public class descuento extends javax.swing.JFrame {
            return false;
        }else
            
-           if(Integer.parseInt(Valor.getText())<=0)
+           if(Integer.parseInt(porcentaje)<=0)
        {
            Valor.setBorder(redBorder);
            formatoInvalidoValor.setVisible(true);
@@ -652,7 +663,7 @@ public class descuento extends javax.swing.JFrame {
     {
         if(porcentaje.isSelected())
         {
-            if(validarPorcentaje())
+            if(validarPorcentaje(Valor.getText()))
             {
                 return true;
             }else
@@ -686,23 +697,24 @@ public class descuento extends javax.swing.JFrame {
         }
     }
     
-    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
-    return dateToConvert.toInstant()
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate();
-}
-    
-     public static boolean isDateValid(String date) 
-{
-        try {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            df.setLenient(false);
-            df.parse(date);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
-}
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
+   
  
      
     
@@ -711,21 +723,21 @@ public class descuento extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Aceptar;
-    private javax.swing.JTextField Valor;
+    public javax.swing.JTextField Valor;
     private javax.swing.JComboBox<String> cbTiposDescuentos;
-    private javax.swing.JTextField fechaFinal;
-    private javax.swing.JTextField fechaInicio;
-    private javax.swing.JLabel formatoInvalidoFechaFin;
+    public javax.swing.JTextField fechaInicio;
     private javax.swing.JLabel formatoInvalidoFechaIni;
     private javax.swing.JLabel formatoInvalidoValor;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel logo;
     private javax.swing.JCheckBox porcentaje;
     private javax.swing.JLabel salir;
+    private javax.swing.JLabel valorLbl;
     // End of variables declaration//GEN-END:variables
 
     

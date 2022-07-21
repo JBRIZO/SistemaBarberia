@@ -9,19 +9,35 @@ import com.mycompany.sistemabarberia.JPACOntrollers.deduccionesempleadomensualJp
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.bonosempleadomensual;
 import com.mycompany.sistemabarberia.deduccionesempleadomensual;
+import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.tipodeduccion;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -30,6 +46,11 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
@@ -37,15 +58,20 @@ import javax.swing.table.TableColumnModel;
  */
 public class listaDeducciones extends javax.swing.JFrame {
     
+    private permisosusuario permisosUsuario;
     private String periodoActual;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController();
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
+    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController(emf);
     private List<deduccionesempleadomensual> deduccionesBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
-    private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController();
+    private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController(emf);
     private List<tipodeduccion> tipodeduccionBD = tipodeduccionDAO.findtipodeduccionEntities();
     private ImageIcon imagen;
     private Icon icono;
     private java.util.Date dt = new java.util.Date();
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
 
     /**
      * Creates new form listaDeducciones
@@ -53,9 +79,9 @@ public class listaDeducciones extends javax.swing.JFrame {
     public listaDeducciones() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-        cargarPeriodosCb();
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(dt);
@@ -64,9 +90,83 @@ public class listaDeducciones extends javax.swing.JFrame {
         periodoActual = mes<10? anio+"0"+mes: Integer.toString(anio)+mes;
          TableColumnModel model = tablaDeducciones.getColumnModel();
         model.removeColumn(model.getColumn(0));
-        cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
+        
+        cargarTabla();
+        cargarPeriodosCb();
+         if(deduccionesDAO.getdeduccionesempleadomensualCount()>0)
+        {
+           if(!periodoActual.equals(ultimoPeriodo()))
+        {
+            JOptionPane.showMessageDialog(this,"No has otorgado deducciones este periodo.");
+        }  
+        }   
+         permisosUsuario = verificarPermisos();
+         desactivarBotonesPermisos();
+    }
+    
+    private void desactivarBotonesPermisos(){
+        if(permisosUsuario.isNuevo()){
+            nuevaDeduccion.setEnabled(true);
+        }else{
+            nuevaDeduccion.setEnabled(false);
+        }
+        if(permisosUsuario.isModificar()){
+            nuevoTipo.setEnabled(true);
+        }else{
+            nuevoTipo.setEnabled(false);
+        }
+        if(permisosUsuario.isImprimir()){
+            imprimirReporteBonos.setEnabled(true);
+        }else{
+            imprimirReporteBonos.setEnabled(false);
+        }
+        if(permisosUsuario.isLista()){
+            limpiar.setEnabled(true);
+            eliminar.setEnabled(true);
+        }else{
+            limpiar.setEnabled(false);
+            limpiar.setEnabled(false);
+        }
+    }
+    
+    private permisosusuario verificarPermisos(){
+        EntityManager em = empleadosDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",3);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
+    }
+    
+     private String ultimoPeriodo()
+    {
+        EntityManager em = deduccionesDAO.getEntityManager();
+        Query query = em.createQuery("FROM deduccionesempleadomensual E where E.numdeduccion = (select max(numdeduccion) from deduccionesempleadomensual)");
+        deduccionesempleadomensual deduccion = (deduccionesempleadomensual)query.getSingleResult();
+        em.close();
 
         
+        return deduccion.getPeriodo();
+    }
+    
+     private void cargarTabla() {
+        DefaultTableModel modelo = (DefaultTableModel) tablaDeducciones.getModel();
+        modelo.setRowCount(0);
+        tablaDeducciones.setModel(modelo);
+        List<deduccionesempleadomensual> deduccionesempleadomes = deduccionesDAO.finddeduccionesempleadomensualEntities();
+        deduccionesempleadomes.forEach((deduccionActual) -> {
+            modelo.addRow(
+                    new Object[]{
+                        deduccionActual.getNumdeduccion(),
+                        deduccionActual.getIDEmpleado(),
+                        empleadosDAO.findempleado(deduccionActual.getIDEmpleado()).getNomEmpleado(),
+                        tipodeduccionDAO.findtipodeduccion(deduccionActual.getIDTipoDeduccion()).getNombre(),
+                        deduccionActual.getValor(),
+                        deduccionActual.getPeriodo()
+                    }
+            );
+        });
     }
 
     private void cargarPeriodosCb()
@@ -109,6 +209,7 @@ public class listaDeducciones extends javax.swing.JFrame {
         cbPeriodos = new javax.swing.JComboBox<>();
         limpiar = new javax.swing.JButton();
         eliminar = new javax.swing.JButton();
+        imprimirReporteBonos = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
 
@@ -131,6 +232,12 @@ public class listaDeducciones extends javax.swing.JFrame {
             }
         });
 
+        jScrollpane.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jScrollpaneMouseClicked(evt);
+            }
+        });
+
         tablaDeducciones.setBackground(new java.awt.Color(30, 33, 34));
         tablaDeducciones.setForeground(new java.awt.Color(255, 255, 255));
         tablaDeducciones.setModel(new javax.swing.table.DefaultTableModel(
@@ -138,7 +245,7 @@ public class listaDeducciones extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID deduccion", "ID Empleado", "Nombre Empleado", "Tipo ", "Periodo", "Valor"
+                "ID deduccion", "ID Empleado", "Nombre Empleado", "Tipo ", "Valor", "Periodo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -217,6 +324,15 @@ public class listaDeducciones extends javax.swing.JFrame {
             }
         });
 
+        imprimirReporteBonos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/printIcon.png"))); // NOI18N
+        imprimirReporteBonos.setBorderPainted(false);
+        imprimirReporteBonos.setContentAreaFilled(false);
+        imprimirReporteBonos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteBonosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -230,7 +346,9 @@ public class listaDeducciones extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cbPeriodos, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(imprimirReporteBonos, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(limpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -257,7 +375,10 @@ public class listaDeducciones extends javax.swing.JFrame {
                                     .addComponent(cbPeriodos))))
                         .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(eliminar)
+                        .addGap(7, 7, 7)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(eliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(imprimirReporteBonos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(24, 24, 24)))
                 .addComponent(jScrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
@@ -308,7 +429,7 @@ public class listaDeducciones extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -325,9 +446,7 @@ public class listaDeducciones extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -341,7 +460,7 @@ public class listaDeducciones extends javax.swing.JFrame {
     
     private void cargarTablaPeriodo(String periodo)
     {
-        empleadoJpaController empleadoDAO = new empleadoJpaController();
+        empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
         DefaultTableModel modelo = (DefaultTableModel)tablaDeducciones.getModel();
         modelo.setRowCount(0);
         tablaDeducciones.setModel(modelo);
@@ -360,30 +479,37 @@ public class listaDeducciones extends javax.swing.JFrame {
                         deduccionActual.getIDEmpleado(),
                         empleadoDAO.findempleado(deduccionActual.getIDEmpleado()).getNomEmpleado(),
                         tipodeduccionDAO.findtipodeduccion(deduccionActual.getIDTipoDeduccion()).getNombre(),
-                        deduccionActual.getPeriodo(),
-                        deduccionActual.getValor()
+                        deduccionActual.getValor(),
+                        deduccionActual.getPeriodo()
                     }
             );
         });
         eliminar.setEnabled(false);
-        empleadoDAO.close();
+        //empleadoDAO.close();
     }
     
     private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new menuGerente().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         deduccionesDAO.close();
         tipodeduccionDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonCancelarMouseClicked
 
     private void nuevaDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevaDeduccionActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevaDeduccion().setVisible(true);
@@ -393,10 +519,14 @@ public class listaDeducciones extends javax.swing.JFrame {
         this.dispose(); 
         deduccionesDAO.close();
         tipodeduccionDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_nuevaDeduccionActionPerformed
 
     private void nuevoTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoTipoActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new tipoDeduccion().setVisible(true);
@@ -405,16 +535,25 @@ public class listaDeducciones extends javax.swing.JFrame {
         deduccionesDAO.close();
         tipodeduccionDAO.close();
         this.dispose();
+        }catch(Exception ex){
+        log(ex);
+        }
+        
     }//GEN-LAST:event_nuevoTipoActionPerformed
 
     private void cbPeriodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPeriodosActionPerformed
         // TODO add your handling code here:
+        try{
         cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_cbPeriodosActionPerformed
 
     private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
         // TODO add your handling code here:
-        
+        try{
         DefaultTableModel modelo = (DefaultTableModel) tablaDeducciones.getModel();
         if(!cbPeriodos.getSelectedItem().toString().equals(periodoActual))
         {
@@ -442,10 +581,20 @@ public class listaDeducciones extends javax.swing.JFrame {
         });
         modelo.setRowCount(0);
         }
+        
+         if(tablaDeducciones.getRowCount() == 0){
+            cbPeriodos.setSelectedIndex(cbPeriodos.getSelectedIndex()+1);
+            cbPeriodos.removeItemAt(cbPeriodos.getSelectedIndex()-1);            
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_limpiarActionPerformed
 
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
         // TODO add your handling code here:
+        try{
         DefaultTableModel modelo = (DefaultTableModel) tablaDeducciones.getModel();        
         int confirmacion = JOptionPane.showConfirmDialog(null,"¿Seguro que deseas eliminar esta deducción?","Confirmación",JOptionPane.YES_NO_OPTION);
         if(confirmacion == 0)
@@ -458,18 +607,76 @@ public class listaDeducciones extends javax.swing.JFrame {
                 Logger.getLogger(listaDeducciones.class.getName()).log(Level.SEVERE, null, ex);
             } 
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_eliminarActionPerformed
 
     private void tablaDeduccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaDeduccionesMouseClicked
         // TODO add your handling code here:
+        try{
         if(tablaDeducciones.getSelectedRow() != -1 && cbPeriodos.getSelectedItem().equals(periodoActual))
         {
+            if(permisosUsuario.isLista()){
             eliminar.setEnabled(true);
+            }
         }else
         {
             eliminar.setEnabled(false);
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_tablaDeduccionesMouseClicked
+
+    private void imprimirReporteBonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteBonosActionPerformed
+        // TODO add your handling code here:
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            log(e);
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+        logo.put("periodo",cbPeriodos.getSelectedItem().toString());
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteDeducciones.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte de Tipos de Pago");
+            view.setVisible(true);
+        } catch (JRException ex) {
+            log(ex);
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_imprimirReporteBonosActionPerformed
+
+    private void jScrollpaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollpaneMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollpaneMouseClicked
 
     /**
      * @param args the command line arguments
@@ -508,7 +715,7 @@ public class listaDeducciones extends javax.swing.JFrame {
     
      private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -519,12 +726,30 @@ public class listaDeducciones extends javax.swing.JFrame {
         this.repaint();
     }
     
+     private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonCancelar;
     private javax.swing.JComboBox<String> cbPeriodos;
     private javax.swing.JButton eliminar;
+    private javax.swing.JButton imprimirReporteBonos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

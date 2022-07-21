@@ -27,6 +27,19 @@ public class planillas implements Serializable{
     @Column
     private boolean Activo;
 
+    public planillas(int idplanilla, int IDEmpleado, String Periodo, double TotalPagar, boolean Activo) {
+        this.idplanilla = idplanilla;
+        this.IDEmpleado = IDEmpleado;
+        this.Periodo = Periodo;
+        this.TotalPagar = TotalPagar;
+        this.Activo = Activo;
+    }
+
+    public planillas() {
+    }
+
+    
+    
     public int getIdplanilla() {
         return idplanilla;
     }

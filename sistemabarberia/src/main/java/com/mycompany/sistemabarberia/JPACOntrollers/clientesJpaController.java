@@ -24,8 +24,8 @@ import javax.persistence.criteria.Root;
  */
 public class clientesJpaController implements Serializable {
 
-    public clientesJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("servidorbd");
+    public clientesJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
     private EntityManagerFactory emf = null;
 

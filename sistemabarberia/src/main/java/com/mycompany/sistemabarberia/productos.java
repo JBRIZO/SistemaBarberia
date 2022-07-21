@@ -29,6 +29,20 @@ public class productos implements Serializable{
     @Column
     private boolean Activo;
 
+    public productos(int idproducto, String NomProducto, int StockActual, int StockMinimo, int StockMaximo, boolean Activo) {
+        this.idproducto = idproducto;
+        this.NomProducto = NomProducto;
+        this.StockActual = StockActual;
+        this.StockMinimo = StockMinimo;
+        this.StockMaximo = StockMaximo;
+        this.Activo = Activo;
+    }
+
+    public productos() {
+    }
+
+    
+    
     public int getIdproducto() {
         return idproducto;
     }

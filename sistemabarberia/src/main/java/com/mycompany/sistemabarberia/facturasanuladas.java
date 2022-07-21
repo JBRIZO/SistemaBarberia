@@ -28,6 +28,19 @@ public class facturasanuladas implements Serializable{
     @Column
     private Date FechaAnulacion;
 
+    public facturasanuladas(int idfacturaanulada, int IDFacturaEncabezado, int IDEmpleado, String Motivo, Date FechaAnulacion) {
+        this.idfacturaanulada = idfacturaanulada;
+        this.IDFacturaEncabezado = IDFacturaEncabezado;
+        this.IDEmpleado = IDEmpleado;
+        this.Motivo = Motivo;
+        this.FechaAnulacion = FechaAnulacion;
+    }
+
+    public facturasanuladas() {
+    }
+    
+    
+
     public int getIdfacturaanulada() {
         return idfacturaanulada;
     }

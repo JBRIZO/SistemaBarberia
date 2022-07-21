@@ -1,0 +1,2 @@
+nov 17, 2021 12:49:42 PM com.mycompany.GUI.pantallaProductos log
+INFORMACIÓN: class java.lang.NumberFormatException : null

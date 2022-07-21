@@ -14,7 +14,9 @@ import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +24,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -34,11 +40,11 @@ import javax.swing.border.Border;
  * @author Jonathan Laux
  */
 public class nuevoSalario extends javax.swing.JFrame {
-    
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     private Validaciones validar = new Validaciones();
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
     private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
-    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
+    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController(emf);
     private List<salariohistoricoempleados> salariosBD = salarioDAO.findsalariohistoricoempleadosEntities();
     private ImageIcon imagen;
     private Icon icono;
@@ -48,6 +54,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     Border redBorder = BorderFactory.createLineBorder(Color.RED,1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN,1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
+    private java.text.SimpleDateFormat formatoEspanol = new java.text.SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -55,8 +62,9 @@ public class nuevoSalario extends javax.swing.JFrame {
     public nuevoSalario() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+       Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar();   
         for(int i = 0; i < empleadosBD.size(); i++)
         {
@@ -65,6 +73,9 @@ public class nuevoSalario extends javax.swing.JFrame {
                 cbEmpleados.addItem(empleadosBD.get(i).toString());
             }
         }
+        fechaInicio.setText(formatoEspanol.format(dt));
+        fechaInicio.setEditable(false);
+        salrioLbl.setText(" ");
     }
     
     public void Reiniciar()
@@ -98,6 +109,8 @@ public class nuevoSalario extends javax.swing.JFrame {
         cbEmpleados = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         formatoInvalido3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        salrioLbl = new javax.swing.JLabel();
         salir = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -197,6 +210,12 @@ public class nuevoSalario extends javax.swing.JFrame {
         formatoInvalido3.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalido3.setText("Formato no valido.");
 
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Fecha Inicio:");
+
+        salrioLbl.setForeground(new java.awt.Color(255, 255, 255));
+        salrioLbl.setText("Salario:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -204,6 +223,8 @@ public class nuevoSalario extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(salrioLbl)
+                    .addComponent(jLabel1)
                     .addComponent(formatoInvalido3)
                     .addComponent(jLabel3)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -220,11 +241,15 @@ public class nuevoSalario extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
+                .addGap(11, 11, 11)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido1)
-                .addGap(18, 18, 18)
+                .addGap(2, 2, 2)
+                .addComponent(salrioLbl)
+                .addGap(2, 2, 2)
                 .addComponent(salario, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(formatoInvalido3)
@@ -310,7 +335,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        
+        try{
         if(salario.getText().equals("Salario") || fechaInicio.getText().equals("Fecha Inicio"))
         {
         JOptionPane.showMessageDialog(null,"Debes rellenar topos los campos.", "Datos Incompletos",JOptionPane.ERROR_MESSAGE);
@@ -323,13 +348,13 @@ public class nuevoSalario extends javax.swing.JFrame {
            return;
         }
         
-        List<salariohistoricoempleados> salariosBD = salarioDAO.findsalariohistoricoempleadosEntities();
-        List<salariohistoricoempleados> salariosAnteriores = new ArrayList<salariohistoricoempleados>();
-        for(int i = 0; i < salariosBD.size();i++)
+        List<salariohistoricoempleados> salariosBd = salarioDAO.findsalariohistoricoempleadosEntities();
+        List<salariohistoricoempleados> salariosAnteriores = new ArrayList<>();
+        for(int i = 0; i < salariosBd.size();i++)
         {
-            if(salariosBD.get(i).getIDEmpleado() == Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)))
+            if(salariosBd.get(i).getIDEmpleado() == Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)))
             {
-                salariosAnteriores.add(salariosBD.get(i));
+                salariosAnteriores.add(salariosBd.get(i));
             }
         }
         java.util.Date startDate = new Date(0000000000);
@@ -357,8 +382,8 @@ public class nuevoSalario extends javax.swing.JFrame {
         
         //comparar fehca inicial de nuevo salario con el anterior
         java.util.Date utilDate = new java.util.Date(salarioAnterior.getFechaInicial().getTime());
-        LocalDate date = convertToLocalDateViaInstant(startDate);
-        LocalDate date2 = convertToLocalDateViaInstant(utilDate);
+        LocalDate date = validar.convertToLocalDateViaInstant(startDate);
+        LocalDate date2 = validar.convertToLocalDateViaInstant(utilDate);
         if(date.isBefore(date2))
         {
            JOptionPane.showMessageDialog(null,"El nuevo salario no puede empezar antes del anterior.", "Fecha Inválida",JOptionPane.ERROR_MESSAGE); 
@@ -387,19 +412,27 @@ public class nuevoSalario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
     //a;adir validaciones botonaceptar
     private void salarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioFocusLost
-       
-        if(salario.getText().equals(""))
+       try{
+       if(salario.getText().equals(""))
         {
             salario.setText("Salario");
+            salrioLbl.setText("");
         }else
         {
             validacionNumerica(); 
         }
+       }catch(Exception ex){
+           log(ex);
+       }
     }//GEN-LAST:event_salarioFocusLost
 
     
@@ -414,34 +447,53 @@ public class nuevoSalario extends javax.swing.JFrame {
 
     private void salarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salarioFocusGained
         // TODO add your handling code here:
-        salario.setText("");
+        try{
+        if(salario.getText().equals("Salario"))
+        {
+            salario.setText("");
+            salrioLbl.setText("Salario:");
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_salarioFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaSalarios().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         empleadoDAO.close();
-        salarioDAO.close();        
+        salarioDAO.close();  
+        }catch(Exception ex){
+            log(ex);
+        }     
     }//GEN-LAST:event_salirMouseClicked
 
     private void fechaInicioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusGained
         // TODO add your handling code here:
-        fechaInicio.setText("");
+
+       // fechaInicio.setText("");
     }//GEN-LAST:event_fechaInicioFocusGained
 
     private void fechaInicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fechaInicioFocusLost
         // TODO add your handling code here:
+        try{
         if(fechaInicio.getText().equals(""))
         {
             fechaInicio.setDocument(new JTextFieldLimit(12));
             fechaInicio.setText("Fecha Inicio");
         }else{validarFecha(fechaInicio,formatoInvalido1);}
+        }catch(Exception ex){
+            log(ex);
+        }
+        
         
     }//GEN-LAST:event_fechaInicioFocusLost
 
@@ -454,9 +506,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     }//GEN-LAST:event_fechaInicioKeyTyped
 
     private void fechaInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fechaInicioMouseClicked
-        // TODO add your handling code here:
-        fechaInicio.setDocument(new JTextFieldLimit (10));
-        
+        // TODO add your handling code here:        
     }//GEN-LAST:event_fechaInicioMouseClicked
 
     /**
@@ -540,7 +590,7 @@ public class nuevoSalario extends javax.swing.JFrame {
             return false;
             }
         
-        if(!isDateValid(fecha.getText()))
+        if(!validar.isDateValid(fecha.getText()))
         {
             fecha.setBorder(redBorder);
             label.setVisible(true);
@@ -569,7 +619,7 @@ public class nuevoSalario extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -580,37 +630,47 @@ public class nuevoSalario extends javax.swing.JFrame {
         this.repaint();
     }
     
-    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
-    return dateToConvert.toInstant()
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate();
+    public boolean validarCamposVacios(){
+        if(salario.getText().equals("") || fechaInicio.getText().equals(""))
+        {
+           return false;
+        }else{return true;}
+        
     }
     
-    public static boolean isDateValid(String date) 
-{
-        try {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            df.setLenient(false);
-            df.parse(date);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
-}
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JComboBox<String> cbEmpleados;
-    private javax.swing.JTextField fechaInicio;
+    public javax.swing.JTextField fechaInicio;
     private javax.swing.JLabel formatoInvalido1;
     private javax.swing.JLabel formatoInvalido3;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField salario;
+    public javax.swing.JTextField salario;
     private javax.swing.JLabel salir;
+    private javax.swing.JLabel salrioLbl;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables
 }

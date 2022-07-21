@@ -5,6 +5,12 @@
  */
 package com.mycompany.sistemabarberia;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,27 +195,13 @@ public class Validaciones {
         }  
     }
     
-    //Compara el resultado de dos validaciones, y devuelve TRUE si ambas son ciertas, sino FALSE.
-    public boolean validar(boolean validacion1, boolean validacion2)
-    {
-        if(validacion1 && validacion2)
-        {
-            return true;
-        }else
-        {
-            return false;
-        }
-        
-    }
+   
     
     //Valida si una oracion tiene mayuscula inicial y las palabras son validas.
     public boolean validacionCadenaPalabras(String cadena)
     {
           String[] palabras  = cadena.split("\\s+");
           boolean palabraValida = false;
-          
-          
-        
           for (int i = 0; i < palabras.length; i++)
           {
               if(!validacionLetrasRepetidas(palabras[i]) && 
@@ -263,7 +255,7 @@ public class Validaciones {
     
     public boolean validarNomCuenta(String cadena)
     {
-        String patron = "^[a-z0-9_-]{5,16}$";
+        String patron = "^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){5,18}[a-zA-Z0-9]$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(cadena);
         if(comparador.matches()){
@@ -290,7 +282,7 @@ public class Validaciones {
     // validacion para el numero de tarjeta de credito o debito
     public boolean validarNoTarjeta(String tarjeta)
     {
-        String patron = "^(?:4[0-9]{12}(?:[0-9]{3})?|(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\\d{3})\\d{11})$";
+        String patron = "^(?:4[0-9]{12}(?:[0-9]{3})?|(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\\d{3})\\d{11}|3[47][0-9]{13})$";
         Pattern patt = Pattern.compile(patron);
         Matcher comparador = patt.matcher(tarjeta);
         if(comparador.matches()){
@@ -368,4 +360,31 @@ public class Validaciones {
         }
         return false;
     }
+    
+    public LocalDate convertToLocalDateViaInstant(java.util.Date dateToConvert) {
+    return dateToConvert.toInstant()
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate();
+    }
+    
+    //validar anio bisiesto
+    public static boolean isDateValid(String date) 
+{
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+}
+    
+     private static boolean isLeapYear(int year) {
+      Calendar cal = Calendar.getInstance();
+      cal.set(Calendar.YEAR, year);
+      return cal.getActualMaximum(Calendar.DAY_OF_YEAR) > 365;
+    }
+    
+    
 }

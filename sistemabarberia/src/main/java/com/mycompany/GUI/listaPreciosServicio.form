@@ -181,11 +181,13 @@
                                   <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
                                   <Component id="nuevoPrecio" min="-2" pref="196" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="cbServicios" max="32767" attributes="0"/>
+                                      <Component id="cbServicios" min="-2" pref="338" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="imprimirReporteSalarios" min="-2" pref="40" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -198,9 +200,12 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="cbServicios" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
-                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="cbServicios" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="imprimirReporteSalarios" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jScrollPane1" min="-2" pref="278" max="-2" attributes="0"/>
@@ -322,6 +327,18 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Servicio:"/>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="imprimirReporteSalarios">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/Imagenes/printIcon.png"/>
+                    </Property>
+                    <Property name="borderPainted" type="boolean" value="false"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="imprimirReporteSalariosActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

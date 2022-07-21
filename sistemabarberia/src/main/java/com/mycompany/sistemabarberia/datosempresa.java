@@ -23,6 +23,15 @@ public class datosempresa implements Serializable {
     @Column
     private String Valor;
 
+
+    public datosempresa(){}
+    
+    public datosempresa(int iddato, String Nombre, String Valor) {
+        this.iddato = iddato;
+        this.Nombre = Nombre;
+        this.Valor = Valor;
+    }
+    
     public int getIddato() {
         return iddato;
     }

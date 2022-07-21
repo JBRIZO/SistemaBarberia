@@ -20,6 +20,9 @@ public class facturaencabezado implements Serializable{
     private int idfacturaencabezado;
     @Column
     private int IDCliente;
+    @Column(nullable=true)
+    private String NumFactura;
+    
     @Column
     private int IDVendedor;
     
@@ -43,6 +46,23 @@ public class facturaencabezado implements Serializable{
     @Column(nullable=true)
     private String NumTarjeta;
 
+    public facturaencabezado(int idfacturaencabezado, int IDCliente, String NumFactura, int IDVendedor, Integer IDBarbero, int IDTipoPago, int IDParametro, int IDEstado, String FechaFactura, double MontoTarjeta, double TotalFactura, String NumTarjeta) {
+        this.idfacturaencabezado = idfacturaencabezado;
+        this.IDCliente = IDCliente;
+        this.NumFactura = NumFactura;
+        this.IDVendedor = IDVendedor;
+        this.IDBarbero = IDBarbero;
+        this.IDTipoPago = IDTipoPago;
+        this.IDParametro = IDParametro;
+        this.IDEstado = IDEstado;
+        this.FechaFactura = FechaFactura;
+        this.MontoTarjeta = MontoTarjeta;
+        this.TotalFactura = TotalFactura;
+        this.NumTarjeta = NumTarjeta;
+    }
+
+    public facturaencabezado(){}
+    
     public String getNumTarjeta() {
         return NumTarjeta;
     }
@@ -130,6 +150,15 @@ public class facturaencabezado implements Serializable{
     public void setTotalFactura(double TotalFactura) {
         this.TotalFactura = TotalFactura;
     }
+
+    public String getNumFactura() {
+        return NumFactura;
+    }
+
+    public void setNumFactura(String NumFactura) {
+        this.NumFactura = NumFactura;
+    }
+    
     
     
 }

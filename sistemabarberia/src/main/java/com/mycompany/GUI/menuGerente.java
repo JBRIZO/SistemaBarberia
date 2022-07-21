@@ -8,10 +8,21 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -21,7 +32,9 @@ import javax.swing.JLabel;
  * @author Jonathan Laux
  */
 public class menuGerente extends javax.swing.JFrame {
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
     private usuarios usuarios = new usuarios(); 
     private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
     private ImageIcon imagen;
@@ -32,9 +45,10 @@ public class menuGerente extends javax.swing.JFrame {
      */
     public menuGerente() {
         initComponents();
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
         for(int i =0 ; i<empleadosBD.size();i++)
         {
             if(singleton.getCuenta().getIDEmpleado() == empleadosBD.get(i).getIdempleado())
@@ -47,11 +61,42 @@ public class menuGerente extends javax.swing.JFrame {
                     bienvenido.setText("Bienvenida, " + empleadosBD.get(i).getNomEmpleado() + " " + empleadosBD.get(i).getApeEmpleado());
                 }
             }
-        }        
+        }
+        Reiniciar();
+        verificarPermisos();
+    }
+    
+    private void verificarPermisos(){
+        EntityManager em = empleadoDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        List<permisosusuario> permisos = (List<permisosusuario>)queryPermisos.getResultList();
+        List<javax.swing.JButton> botones = Arrays.asList(botonPlanilla,botonProductos,botonAtributosFactura,botonServicios,botonDeducciones,
+                botonEmpleados,botonBonos,botonDescuentos,botonUsuarios,botonClientes,botonSeguridad);
+        for(int i = 0; i < permisos.size() ; i++){
+            for(int j = 0; j < botones.size() ; j++){
+                if(botones.get(j).getAccessibleContext().getAccessibleName().equalsIgnoreCase(Integer.toString(permisos.get(i).getIDPermiso())) && 
+                    permisos.get(i).isActivo()){
+                    botones.get(j).setEnabled(true);
+                }
+            }
+        }
     }
     
     public void Reiniciar()
     {
+        botonPlanilla.setEnabled(false);
+        botonProductos.setEnabled(false);
+        botonAtributosFactura.setEnabled(false);
+        botonServicios.setEnabled(false);
+        botonDeducciones.setEnabled(false);
+        botonEmpleados.setEnabled(false);
+        botonBonos.setEnabled(false);
+        botonDescuentos.setEnabled(false);
+        botonUsuarios.setEnabled(false);
+        botonClientes.setEnabled(false);
+        botonSeguridad.setEnabled(false);
     }
 
     /**
@@ -78,6 +123,7 @@ public class menuGerente extends javax.swing.JFrame {
         botonDescuentos = new javax.swing.JButton();
         botonUsuarios = new javax.swing.JButton();
         botonClientes = new javax.swing.JButton();
+        botonSeguridad = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
         bienvenido = new javax.swing.JLabel();
 
@@ -203,6 +249,7 @@ public class menuGerente extends javax.swing.JFrame {
         botonBonos.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         botonBonos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/bonos.png"))); // NOI18N
         botonBonos.setText("BONOS");
+        botonBonos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         botonBonos.setRequestFocusEnabled(false);
         botonBonos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -263,6 +310,22 @@ public class menuGerente extends javax.swing.JFrame {
             }
         });
 
+        botonSeguridad.setBackground(new java.awt.Color(189, 158, 76));
+        botonSeguridad.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        botonSeguridad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/seguridad.png"))); // NOI18N
+        botonSeguridad.setText("SEGURIDAD");
+        botonSeguridad.setRequestFocusEnabled(false);
+        botonSeguridad.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                botonSeguridadMouseClicked(evt);
+            }
+        });
+        botonSeguridad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonSeguridadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -276,17 +339,18 @@ public class menuGerente extends javax.swing.JFrame {
                     .addComponent(botonPlanilla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(118, 118, 118)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(botonServicios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(botonProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE))
-                        .addGap(86, 86, 86)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(botonUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                            .addComponent(botonClientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(botonServicios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(botonEmpleados, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(botonDescuentos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
+                .addGap(86, 86, 86)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(botonSeguridad, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(botonUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                        .addComponent(botonClientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -299,7 +363,9 @@ public class menuGerente extends javax.swing.JFrame {
                         .addGap(41, 41, 41)
                         .addComponent(botonServicios, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(42, 42, 42)
-                        .addComponent(botonEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(botonEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(botonSeguridad, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -317,6 +383,18 @@ public class menuGerente extends javax.swing.JFrame {
                             .addComponent(botonDescuentos, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(26, 26, 26))))
         );
+
+        botonPlanilla.getAccessibleContext().setAccessibleName("1");
+        botonProductos.getAccessibleContext().setAccessibleName("5");
+        botonAtributosFactura.getAccessibleContext().setAccessibleName("4");
+        botonServicios.getAccessibleContext().setAccessibleName("6");
+        botonDeducciones.getAccessibleContext().setAccessibleName("3");
+        botonEmpleados.getAccessibleContext().setAccessibleName("7");
+        botonBonos.getAccessibleContext().setAccessibleName("2");
+        botonDescuentos.getAccessibleContext().setAccessibleName("8");
+        botonUsuarios.getAccessibleContext().setAccessibleName("9");
+        botonClientes.getAccessibleContext().setAccessibleName("10");
+        botonSeguridad.getAccessibleContext().setAccessibleName("12");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -359,38 +437,41 @@ public class menuGerente extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(108, 108, 108)
-                .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(365, 365, 365)
-                        .addComponent(tituloPantalla)))
-                .addGap(0, 42, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bienvenido, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(64, 64, 64))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(333, 333, 333)
+                        .addComponent(tituloPantalla)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bienvenido, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(bienvenido)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(bienvenido)
+                        .addGap(18, 18, 18)
+                        .addComponent(tituloPantalla)))
                 .addGap(18, 18, 18)
-                .addComponent(tituloPantalla)
-                .addGap(26, 26, 26)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -414,75 +495,131 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new PantallaFactura().setVisible(true);
             }
         });
+        emf.close();
         this.dispose(); 
         this.setVisible(false);
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonRegresarActionPerformed
 
     private void botonProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonProductosActionPerformed
         // TODO add your handling code here:
-         java.awt.EventQueue.invokeLater(new Runnable() {
+        try{
+        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaProductos().setVisible(true);
             }
         });
+         emf.close();
         this.dispose(); 
         this.setVisible(false);
+        }catch(Exception ex){
+            log(ex);
+        }
+         
     }//GEN-LAST:event_botonProductosActionPerformed
 
     private void botonAtributosFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAtributosFacturaActionPerformed
         // TODO add your handling code here:
+        try{
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new atributosFactura().setVisible(true);
+            }
+        });
+        emf.close();
+        this.setVisible(false);
+        this.dispose(); 
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonAtributosFacturaActionPerformed
 
     private void botonServiciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonServiciosActionPerformed
         // TODO add your handling code here:
-         java.awt.EventQueue.invokeLater(new Runnable() {
+        try{
+        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaServicios().setVisible(true);
             }
         });
+         emf.close();
         this.setVisible(false);
         this.dispose(); 
         empleadoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
+         
     }//GEN-LAST:event_botonServiciosActionPerformed
 
     private void botonDeduccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDeduccionesActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaDeducciones().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         empleadoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonDeduccionesActionPerformed
 
     private void botonEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEmpleadosActionPerformed
-        // TODO add your handling code here:\
+        // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaEmpleados().setVisible(true);
             }
         });
+        emf.close();
         this.dispose(); 
         this.setVisible(false);
         empleadoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        } 
     }//GEN-LAST:event_botonEmpleadosActionPerformed
 
     private void botonBonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBonosActionPerformed
+        try{
         Bono pantallabono = new Bono();
         pantallabono.setVisible(true);
+        emf.close();
         this.dispose();
-        
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonBonosActionPerformed
 
     private void botonDescuentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDescuentosActionPerformed
         // TODO add your handling code here:
+        try{
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new listaDescuentos().setVisible(true);
+            }
+        });
+        emf.close();
+        this.setVisible(false);
+        this.dispose(); 
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonDescuentosActionPerformed
 
     private void botonServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonServiciosMouseClicked
@@ -492,35 +629,19 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonDescuentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDescuentosMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new listaDescuentos().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
+        
+        
     }//GEN-LAST:event_botonDescuentosMouseClicked
 
     private void botonDeduccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonDeduccionesMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new tipoDeduccion().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
+       
     }//GEN-LAST:event_botonDeduccionesMouseClicked
 
     private void botonAtributosFacturaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAtributosFacturaMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new atributosFactura().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
+        
+        
         
     }//GEN-LAST:event_botonAtributosFacturaMouseClicked
 
@@ -531,13 +652,19 @@ public class menuGerente extends javax.swing.JFrame {
 
     private void botonProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonProductosMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaProductos().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonProductosMouseClicked
 
     private void botonBonosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonBonosMouseClicked
@@ -545,75 +672,117 @@ public class menuGerente extends javax.swing.JFrame {
     }//GEN-LAST:event_botonBonosMouseClicked
 
     private void botonUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonUsuariosMouseClicked
-           java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new listaUsuarios().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
+        
+        
     }//GEN-LAST:event_botonUsuariosMouseClicked
 
     private void botonUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonUsuariosActionPerformed
         // TODO add your handling code here:
+        try{
+        java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            new listaUsuarios().setVisible(true);
+        }
+        });
+        emf.close();
+        this.setVisible(false);
+        this.dispose(); 
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonUsuariosActionPerformed
 
     private void botonClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonClientesMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new registrarClientes().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
+        
     }//GEN-LAST:event_botonClientesMouseClicked
 
     private void botonClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonClientesActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaClientes().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonClientesActionPerformed
 
     private void botonRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonRegresarMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new PantallaLogin().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
-        
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonRegresarMouseClicked
 
     private void botonPlanillaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonPlanillaActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Planilla().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonPlanillaActionPerformed
 
     private void botonPlanillaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonPlanillaMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoTipoPuesto().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose();
         empleadoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonPlanillaMouseClicked
+
+    private void botonSeguridadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSeguridadMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botonSeguridadMouseClicked
+
+    private void botonSeguridadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSeguridadActionPerformed
+        // TODO add your handling code here:
+         try{
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new PermisosUsuario().setVisible(true);
+            }
+        });
+        emf.close();
+        this.setVisible(false);
+        this.dispose();
+        empleadoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
+    }//GEN-LAST:event_botonSeguridadActionPerformed
 
     
     /**
@@ -658,7 +827,7 @@ public class menuGerente extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -667,6 +836,24 @@ public class menuGerente extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -680,6 +867,7 @@ public class menuGerente extends javax.swing.JFrame {
     private javax.swing.JButton botonPlanilla;
     private javax.swing.JButton botonProductos;
     private javax.swing.JButton botonRegresar;
+    private javax.swing.JButton botonSeguridad;
     private javax.swing.JButton botonServicios;
     private javax.swing.JButton botonUsuarios;
     private javax.swing.JPanel jPanel1;

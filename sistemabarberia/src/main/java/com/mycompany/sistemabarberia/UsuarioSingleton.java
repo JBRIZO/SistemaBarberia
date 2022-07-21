@@ -14,7 +14,7 @@ public class UsuarioSingleton {
 private usuarios Usuario;
 private static UsuarioSingleton usuario;
  
- public  static UsuarioSingleton getUsuario(usuarios nombreUsuario) {
+ public static UsuarioSingleton getUsuario(usuarios nombreUsuario) {
  
  if (usuario==null) {
  usuario = new UsuarioSingleton(nombreUsuario);

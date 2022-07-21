@@ -8,19 +8,43 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.puestoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.puestohistoricoempleadoJpaController;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.puesto;
 import com.mycompany.sistemabarberia.puestohistoricoempleado;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
@@ -28,12 +52,17 @@ import javax.swing.table.DefaultTableModel;
  */
 public class listaPuestos extends javax.swing.JFrame {
 
-    private puestoJpaController puestoDAO = new puestoJpaController();
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    private permisosusuario permisosUsuario;
+    
+    private puestoJpaController puestoDAO = new puestoJpaController(emf);
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
     private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
     private ImageIcon imagen;
     private Icon icono;
-    private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController();
+    private puestohistoricoempleadoJpaController puestoHistoricoDAO = new puestohistoricoempleadoJpaController(emf);
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
 
 
     /**
@@ -42,14 +71,30 @@ public class listaPuestos extends javax.swing.JFrame {
     public listaPuestos() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");for(int i = 0; i < empleadosBD.size(); i++)
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
+        for(int i = 0; i < empleadosBD.size(); i++)
         {
             if(empleadosBD.get(i).isActivo())
             {
                 cbEmpleados.addItem(empleadosBD.get(i).toString());
             }
         }
+        permisosUsuario = verificarPermisos();
+        botonNuevo.setEnabled(permisosUsuario.isNuevoPuesto());
+        imprimirReportePuestos.setEnabled(permisosUsuario.isImprimir());
+        
+    }
+    
+    private permisosusuario verificarPermisos(){
+        EntityManager em = puestoDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",7);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
     }
 
 
@@ -74,6 +119,7 @@ public class listaPuestos extends javax.swing.JFrame {
         tablapuesto = new javax.swing.JTable();
         cbEmpleados = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
+        imprimirReportePuestos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -173,12 +219,22 @@ public class listaPuestos extends javax.swing.JFrame {
                 cbEmpleadosActionPerformed(evt);
             }
         });
-        jPanel3.add(cbEmpleados, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 20, 330, 34));
+        jPanel3.add(cbEmpleados, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 20, 330, 34));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Empleado:");
-        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, -1, -1));
+        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, -1));
+
+        imprimirReportePuestos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/printIcon.png"))); // NOI18N
+        imprimirReportePuestos.setBorderPainted(false);
+        imprimirReportePuestos.setContentAreaFilled(false);
+        imprimirReportePuestos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReportePuestosActionPerformed(evt);
+            }
+        });
+        jPanel3.add(imprimirReportePuestos, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 20, 40, -1));
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 32, 500, 420));
 
@@ -192,7 +248,7 @@ public class listaPuestos extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 625, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -200,6 +256,12 @@ public class listaPuestos extends javax.swing.JFrame {
 
     private void botonNuevoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoMouseClicked
         // TODO add your handling code here:
+        
+    }//GEN-LAST:event_botonNuevoMouseClicked
+
+    private void botonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoActionPerformed
+        // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new nuevoPuesto().setVisible(true);
@@ -208,30 +270,34 @@ public class listaPuestos extends javax.swing.JFrame {
         this.dispose();
         empleadoDAO.close();
         puestoHistoricoDAO.close();
-    }//GEN-LAST:event_botonNuevoMouseClicked
-
-    private void botonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoActionPerformed
-        // TODO add your handling code here:
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonNuevoActionPerformed
 
     private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
+        
+    }//GEN-LAST:event_botonCancelarMouseClicked
+
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaEmpleados().setVisible(true);
             }
         });
+        emf.close();
         this.dispose();
-        empleadoDAO.close();
-        puestoHistoricoDAO.close();
-    }//GEN-LAST:event_botonCancelarMouseClicked
-
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
-        // TODO add your handling code here:
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     private void cbEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmpleadosActionPerformed
 
+        try{
         List<puestohistoricoempleado> puestosHistoricosBD = puestoHistoricoDAO.findpuestohistoricoempleadoEntities();
         List<puesto> tiposPuestoBD = puestoDAO.findpuestoEntities();
 
@@ -278,7 +344,57 @@ public class listaPuestos extends javax.swing.JFrame {
                     }
             );
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_cbEmpleadosActionPerformed
+
+    private void imprimirReportePuestosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReportePuestosActionPerformed
+        // TODO add your handling code here:
+        try{
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadoDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+        logo.put("empleado",Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteListaPuestos.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte Lista de Puestos");
+            view.setVisible(true);
+        } catch (JRException ex) {
+            Logger.getLogger(pantallaProductos.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+    }//GEN-LAST:event_imprimirReportePuestosActionPerformed
 
     
     /**
@@ -320,7 +436,7 @@ public class listaPuestos extends javax.swing.JFrame {
     }
 
     private void insertarImagen(JLabel lbl, String ruta) {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(),
@@ -336,11 +452,30 @@ public class listaPuestos extends javax.swing.JFrame {
 
         return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonCancelar;
     private javax.swing.JButton botonNuevo;
     private javax.swing.JComboBox<String> cbEmpleados;
+    private javax.swing.JButton imprimirReportePuestos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

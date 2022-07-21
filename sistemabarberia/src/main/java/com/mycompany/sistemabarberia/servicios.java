@@ -26,6 +26,17 @@ public class servicios implements Serializable {
     @Column
     private boolean Activo;
 
+    public servicios(int idservicio, String NomServicio, boolean Activo) {
+        this.idservicio = idservicio;
+        this.NomServicio = NomServicio;
+        this.Activo = Activo;
+    }
+
+    public servicios() {
+    }
+
+    
+    
     public int getIdservicio() {
         return idservicio;
     }

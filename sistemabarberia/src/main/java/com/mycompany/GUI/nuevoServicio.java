@@ -14,9 +14,18 @@ import com.mycompany.sistemabarberia.servicios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -31,9 +40,10 @@ import javax.swing.border.Border;
 public class nuevoServicio extends javax.swing.JFrame {
     
     private servicios servicioModificar;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private precioshistoricoserviciosJpaController preciosDAO = new precioshistoricoserviciosJpaController();
-    private serviciosJpaController servicioDAO = new serviciosJpaController();
+    private precioshistoricoserviciosJpaController preciosDAO = new precioshistoricoserviciosJpaController(emf);
+    private serviciosJpaController servicioDAO = new serviciosJpaController(emf);
     private Validaciones validar = new Validaciones();
     private List<servicios> serviciosEnBd = servicioDAO.findserviciosEntities();
     private ImageIcon imagen;
@@ -52,8 +62,9 @@ public class nuevoServicio extends javax.swing.JFrame {
     public nuevoServicio() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar();    
     }
     
@@ -62,9 +73,9 @@ public class nuevoServicio extends javax.swing.JFrame {
        this.servicioModificar = servicioModificar;
        initComponents();
        this.setLocationRelativeTo(null);
-       this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-       this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
-       this.insertarImagen(this.salir,"src/main/resources/Imagenes/x.png");
+       Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
        precioInicial.setEnabled(false);
        tituloPantalla.setText("MODIFICAR SERVICIO");
        idServicio.setText("Id de Servicio: " + servicioModificar.getIdservicio());
@@ -326,14 +337,33 @@ public class nuevoServicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        
-        if(nombreServicio.getText().equals("")||nombreServicio.getText().equals("Nombre Servicio")||
+        try{
+        if(servicioModificar != null)
+        {
+            if(nombreServicio.getText().equals("")||nombreServicio.getText().equals("Nombre Servicio"))
+        {
+           JOptionPane.showMessageDialog(this,"Debes de rellenar todos los campos","Campos incompletos",JOptionPane.ERROR_MESSAGE);
+           return;
+        }
+          servicioModificar.setNomServicio(nombreServicio.getText());
+          if(validacionCamposTexto())
+          {
+            try {
+                servicioDAO.edit(servicioModificar);
+                JOptionPane.showMessageDialog(this,"¡Servicio Modificado!");
+            } catch (Exception ex) {
+                Logger.getLogger(nuevoServicio.class.getName()).log(Level.SEVERE, null, ex);
+            }  
+          }else{JOptionPane.showMessageDialog(this, "Por favor corrige el nombre del servicio.","Nombre Inválido",JOptionPane.ERROR_MESSAGE);}  
+        }else
+        {
+             if(nombreServicio.getText().equals("")||nombreServicio.getText().equals("Nombre Servicio")||
                 precioInicial.getText().equals("Precio")||precioInicial.getText().equals(""))
         {
            JOptionPane.showMessageDialog(this,"Debes de rellenar todos los campos","Campos incompletos",JOptionPane.ERROR_MESSAGE);
            return;
         }
-        //anadir servicio
+            //anadir servicio
         List<servicios> serviciosEnBd = servicioDAO.findserviciosEntities();
         String txt = nombreServicio.getText();
         servicios servicioNuevo = new servicios();
@@ -371,6 +401,11 @@ public class nuevoServicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar el servicio, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -380,7 +415,11 @@ public class nuevoServicio extends javax.swing.JFrame {
     }//GEN-LAST:event_idServicioActionPerformed
 //a;adir validaciones botonaceptar
     private void precioInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_precioInicialFocusLost
+        try{
         validacionNumerica();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_precioInicialFocusLost
 
     
@@ -405,7 +444,11 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     private void nombreServicioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreServicioFocusLost
         // TODO add your handling code here
-        validacionCamposTexto();    
+        try{
+        validacionCamposTexto(); 
+        }catch(Exception ex){
+            log(ex);
+        } 
     }//GEN-LAST:event_nombreServicioFocusLost
 
     private void nombreServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreServicioActionPerformed
@@ -418,15 +461,20 @@ public class nuevoServicio extends javax.swing.JFrame {
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaServicios().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         preciosDAO.close();
-        servicioDAO.close();        
+        servicioDAO.close(); 
+        }catch(Exception ex){
+            log(ex);
+        }      
     }//GEN-LAST:event_salirMouseClicked
 
     /**
@@ -549,7 +597,7 @@ public class nuevoServicio extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -558,6 +606,31 @@ public class nuevoServicio extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    public boolean validarCamposEnBlanco(){
+        if(nombreServicio.getText().equals("")||precioInicial.getText().equals(""))
+        {
+           return false;
+        }else{return true;}
+    }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -569,8 +642,8 @@ public class nuevoServicio extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField nombreServicio;
-    private javax.swing.JTextField precioInicial;
+    public javax.swing.JTextField nombreServicio;
+    public javax.swing.JTextField precioInicial;
     private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

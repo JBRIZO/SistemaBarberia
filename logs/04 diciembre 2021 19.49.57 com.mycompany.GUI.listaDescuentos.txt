@@ -1,0 +1,4 @@
+dic 04, 2021 7:49:57 PM com.mycompany.GUI.listaDescuentos log
+INFORMACIÓN: class java.lang.ArrayIndexOutOfBoundsException : -1
+dic 04, 2021 7:49:59 PM com.mycompany.GUI.listaDescuentos log
+INFORMACIÓN: class java.lang.ArrayIndexOutOfBoundsException : -1

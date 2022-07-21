@@ -30,6 +30,18 @@ public class puestohistoricoempleado implements Serializable{
     @Column 
     private boolean Activo;
 
+    public puestohistoricoempleado(int numpuesto, int IDEmpleado, int IDPuesto, Date FechaInicial, Date FechaFinal, boolean Activo) {
+        this.numpuesto = numpuesto;
+        this.IDEmpleado = IDEmpleado;
+        this.IDPuesto = IDPuesto;
+        this.FechaInicial = FechaInicial;
+        this.FechaFinal = FechaFinal;
+        this.Activo = Activo;
+    }
+
+    public puestohistoricoempleado() {
+    }
+    
     public int getNumpuesto() {
         return numpuesto;
     }

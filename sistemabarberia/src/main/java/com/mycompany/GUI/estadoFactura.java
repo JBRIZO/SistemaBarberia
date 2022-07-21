@@ -12,13 +12,23 @@ import com.mycompany.sistemabarberia.estadofactura;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -26,7 +36,11 @@ import javax.swing.border.Border;
  */
 public class estadoFactura extends javax.swing.JFrame {
     
-    private estadofacturaJpaController estadofacturaDAO = new estadofacturaJpaController();
+    private static JTable tabla;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    
+    private estadofacturaJpaController estadofacturaDAO = new estadofacturaJpaController(emf);
     private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
     private Icon icono;
@@ -39,13 +53,16 @@ public class estadoFactura extends javax.swing.JFrame {
 
     /**
      * Creates new form nuevoestadofactura
+     * @param tabla
      */
-    public estadoFactura() {
+    public estadoFactura(JTable tabla) {
         initComponents();
         this.setLocationRelativeTo(null);
         formatoInvalido.setVisible(false);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
+        this.tabla = tabla;
         Reiniciar();  
     }
     
@@ -63,7 +80,6 @@ public class estadoFactura extends javax.swing.JFrame {
         NombreEstado.setText("Estado Factura");
         NombreEstado.setBorder(defaultBorder);
         formatoInvalido.setVisible(false);
-
     }
 
     /**
@@ -99,6 +115,7 @@ public class estadoFactura extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(20, 17, 17));
         jPanel1.setMaximumSize(new java.awt.Dimension(334, 279));
@@ -226,15 +243,17 @@ public class estadoFactura extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(325, 325, 325)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(325, 325, 325))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(tituloPantalla)
+                                .addGap(18, 18, 18)))
                         .addComponent(salir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addComponent(tituloPantalla))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(98, 98, 98)
                         .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -246,9 +265,9 @@ public class estadoFactura extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tituloPantalla)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(salir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -274,8 +293,8 @@ public class estadoFactura extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-
-        if(NombreEstado.getText().equals("Estado Factura"))
+        try{
+            if(NombreEstado.getText().equals("Estado Factura"))
         {
             JOptionPane.showMessageDialog(this,"Debes ingresar un estado de factura","Ingresa un nombre de estado",JOptionPane.ERROR_MESSAGE);
             NombreEstado.setBorder(redBorder);
@@ -302,20 +321,45 @@ public class estadoFactura extends javax.swing.JFrame {
             estadofacturaDAO.create(estadoFacturaNuevo);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
                     Reiniciar();
+                    anadirEstado();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor corrige los campos necesarios", "Error",JOptionPane.ERROR_MESSAGE);}
+        }catch(Exception ex){
+            log(ex);
+        }
+        
+        
     }//GEN-LAST:event_botonAceptarActionPerformed
 
-    
+    private void anadirEstado()
+    {
+        Query query = estadofacturaDAO.getEntityManager().createQuery("FROM estadofactura ORDER BY idestado DESC");
+        query.setMaxResults(1);
+        estadofactura nuevoEstado = (estadofactura) query.getSingleResult();
+        DefaultTableModel modelo = (DefaultTableModel)tabla.getModel();
+        String activo = nuevoEstado.isActivo()?"Sí":"No";
+        tabla.setModel(modelo);
+                    modelo.addRow(
+                    new Object[]{
+                        nuevoEstado.getIdestado(),
+                        nuevoEstado.getNombreEstado(), 
+                        activo
+                    }
+                );
+    }
     
     private void idestadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idestadoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_idestadoActionPerformed
 //a;adir validaciones botonaceptar
     private void NombreEstadoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_NombreEstadoFocusLost
-           validacionCampos();
+        try{
+        validacionCampos();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_NombreEstadoFocusLost
 
     private void NombreEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NombreEstadoActionPerformed
@@ -323,10 +367,7 @@ public class estadoFactura extends javax.swing.JFrame {
     }//GEN-LAST:event_NombreEstadoActionPerformed
 
     private void NombreEstadoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_NombreEstadoKeyTyped
-        // TODO add your handling code here:
-        if ((NombreEstado.getText() + evt.getKeyChar()).length() > 15) {
-        evt.consume();
-    }
+        // TODO add your handling code he
     }//GEN-LAST:event_NombreEstadoKeyTyped
 
     private void NombreEstadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_NombreEstadoFocusGained
@@ -336,14 +377,20 @@ public class estadoFactura extends javax.swing.JFrame {
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new atributosFactura().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new atributosFactura().setVisible(true);
+//            }
+//        });
+        try{
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         estadofacturaDAO.close();
+        }catch(Exception ex){
+        log(ex);
+        }
+        
     }//GEN-LAST:event_salirMouseClicked
 
     /**
@@ -377,7 +424,7 @@ public class estadoFactura extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new estadoFactura().setVisible(true);
+                new estadoFactura(tabla).setVisible(true);
             }
         });
         
@@ -386,7 +433,7 @@ public class estadoFactura extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -397,7 +444,7 @@ public class estadoFactura extends javax.swing.JFrame {
         this.repaint();
     }
     
-    public boolean validacionCampos()
+    private boolean validacionCampos()
     {
          if(NombreEstado.getText().equals(""))
         {
@@ -446,12 +493,31 @@ public class estadoFactura extends javax.swing.JFrame {
         return true;
         
     }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField NombreEstado;
+    public javax.swing.JTextField NombreEstado;
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
-    private javax.swing.JTextField idestado;
+    javax.swing.JTextField idestado;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

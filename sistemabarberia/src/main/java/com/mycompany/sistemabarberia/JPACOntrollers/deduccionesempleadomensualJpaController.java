@@ -24,8 +24,8 @@ import javax.persistence.criteria.Root;
  */
 public class deduccionesempleadomensualJpaController implements Serializable {
 
-    public deduccionesempleadomensualJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("servidorbd");
+    public deduccionesempleadomensualJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
     private EntityManagerFactory emf = null;
 

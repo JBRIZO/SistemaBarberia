@@ -25,6 +25,17 @@ public class tipopago implements Serializable {
     @Column
     private Boolean Activo;
 
+    public tipopago() {
+    }
+
+    public tipopago(int idtipopago, String TipoPago, Boolean Activo) {
+        this.idtipopago = idtipopago;
+        this.TipoPago = TipoPago;
+        this.Activo = Activo;
+    }
+
+    
+    
     public int getIdtipopago() {
         return idtipopago;
     }

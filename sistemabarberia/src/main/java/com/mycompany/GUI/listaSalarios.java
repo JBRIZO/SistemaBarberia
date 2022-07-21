@@ -7,27 +7,56 @@ package com.mycompany.GUI;
 
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
  * @author kesil
  */
 public class listaSalarios extends javax.swing.JFrame {
-    private empleadoJpaController empleadoDAO = new empleadoJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private permisosusuario permisosUsuario;
+    private empleadoJpaController empleadoDAO = new empleadoJpaController(emf);
     private List<empleado> empleadosBD = empleadoDAO.findempleadoEntities();
-    private salariohistoricoempleadosJpaController salariosDAO = new salariohistoricoempleadosJpaController();
+    private salariohistoricoempleadosJpaController salariosDAO = new salariohistoricoempleadosJpaController(emf);
     private ImageIcon imagen;
     private Icon icono;
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -35,9 +64,9 @@ public class listaSalarios extends javax.swing.JFrame {
     public listaSalarios() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.setLocationRelativeTo(null);
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         for(int i = 0; i<empleadosBD.size();i++)
         {
             if(empleadosBD.get(i).isActivo())
@@ -45,6 +74,19 @@ public class listaSalarios extends javax.swing.JFrame {
                 cbEmpleados.addItem(empleadosBD.get(i).toString());
             }
         }
+        permisosUsuario = verificarPermisos();
+        botonNuevo.setEnabled(permisosUsuario.isNuevoPrecio());
+        imprimirReporteSalarios.setEnabled(permisosUsuario.isImprimir());
+    }
+    
+    private permisosusuario verificarPermisos(){
+        EntityManager em = empleadoDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",7);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
     }
     
    
@@ -70,6 +112,7 @@ public class listaSalarios extends javax.swing.JFrame {
         listaSalarios = new javax.swing.JTable();
         cbEmpleados = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
+        imprimirReporteSalarios = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -163,6 +206,15 @@ public class listaSalarios extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Empleado:");
 
+        imprimirReporteSalarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/printIcon.png"))); // NOI18N
+        imprimirReporteSalarios.setBorderPainted(false);
+        imprimirReporteSalarios.setContentAreaFilled(false);
+        imprimirReporteSalarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteSalariosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -178,7 +230,9 @@ public class listaSalarios extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel2)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(cbEmpleados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(imprimirReporteSalarios, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
@@ -186,9 +240,11 @@ public class listaSalarios extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cbEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2))
+                    .addComponent(imprimirReporteSalarios))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
@@ -267,38 +323,53 @@ public class listaSalarios extends javax.swing.JFrame {
 
     private void botonNuevoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonNuevoMouseClicked
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new nuevoSalario().setVisible(true);
-            }
-        });
-        this.setVisible(false);
-        this.dispose(); 
-        empleadoDAO.close();
+       
         
     }//GEN-LAST:event_botonNuevoMouseClicked
 
     private void botonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoActionPerformed
         // TODO add your handling code here:
+        try{
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new nuevoSalario().setVisible(true);
+            }
+        });
+         emf.close();
+        this.setVisible(false);
+        this.dispose(); 
+        empleadoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonNuevoActionPerformed
 
     private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
         // TODO add your handling code here:
+        
+    }//GEN-LAST:event_botonCancelarMouseClicked
+
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+        // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new pantallaEmpleados().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         empleadoDAO.close();
-    }//GEN-LAST:event_botonCancelarMouseClicked
-
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
-        // TODO add your handling code here:
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     private void cbEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmpleadosActionPerformed
+        try{
         List<salariohistoricoempleados> salariosBD = salariosDAO.findsalariohistoricoempleadosEntities();
         
         //lista en blanco
@@ -334,7 +405,61 @@ public class listaSalarios extends javax.swing.JFrame {
                     }
                 );
             } 
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_cbEmpleadosActionPerformed
+
+    private void imprimirReporteSalariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteSalariosActionPerformed
+        // TODO add your handling code here:
+        try{
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            log(e);
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            log(e);
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadoDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+        logo.put("empleado",Character.getNumericValue(cbEmpleados.getSelectedItem().toString().charAt(0)));
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteListaSalarios.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte de Lista de Salarios");
+            view.setVisible(true);
+        } catch (JRException ex) {
+            log(ex);
+            ex.printStackTrace();
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+       
+
+    }//GEN-LAST:event_imprimirReporteSalariosActionPerformed
 
     
     /**
@@ -377,7 +502,7 @@ public class listaSalarios extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -394,11 +519,30 @@ public class listaSalarios extends javax.swing.JFrame {
        
         return palabras[2] + "/" + palabras[1] + "/" + palabras[0];
     }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonCancelar;
     private javax.swing.JButton botonNuevo;
     private javax.swing.JComboBox<String> cbEmpleados;
+    private javax.swing.JButton imprimirReporteSalarios;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

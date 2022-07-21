@@ -9,28 +9,47 @@ import com.mycompany.sistemabarberia.JPACOntrollers.bonosempleadomensualJpaContr
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.tiposbonoJpaController;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.bonosempleadomensual;
-import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.empleado;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.tiposbono;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
@@ -38,13 +57,18 @@ import javax.swing.table.TableColumnModel;
  */
 public class Bono extends javax.swing.JFrame {
 
+    private permisosusuario permisosUsuario;
     private String periodoActual;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController();
-    private empleadoJpaController empleado = new empleadoJpaController();
-    private tiposbonoJpaController tipoBono = new tiposbonoJpaController();
+    private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController(emf);
+    private empleadoJpaController empleado = new empleadoJpaController(emf);
+    private tiposbonoJpaController tipoBono = new tiposbonoJpaController(emf);
     private ImageIcon imagen;
     private Icon icono;
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
     
      private java.util.Date dt = new java.util.Date();
 
@@ -54,7 +78,9 @@ public class Bono extends javax.swing.JFrame {
     public Bono() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
+        this.insertarImagen(this.logo, "/Imagenes/logoLogin.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
        //periodo actual
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(dt);
@@ -64,22 +90,39 @@ public class Bono extends javax.swing.JFrame {
          //ocultar column con numero del bono
         TableColumnModel model = tablaBonos.getColumnModel();
         model.removeColumn(model.getColumn(0));
-        
+        cargarTabla();
         cargarPeriodosCb();
-        cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
-          if(!periodoActual.equals(ultimoPeriodo()))
+        
+        if(bonosDAO.getbonosempleadomensualCount() >0)
+        {
+           if(!periodoActual.equals(ultimoPeriodo()))
         {
             JOptionPane.showMessageDialog(this,"No has otorgado bonos este periodo.");
-        }
+        }  
+        }   
+        permisosUsuario = verificarPermisos();
+        btnNuevoBono.setEnabled(permisosUsuario.isNuevo());
+        btnNuevoTipo.setEnabled(permisosUsuario.isModificar());
+        limpiar.setEnabled(permisosUsuario.isLista());
+        imprimirReporteBonos.setEnabled(permisosUsuario.isImprimir());
     }
     
-    private String ultimoPeriodo()
+    private permisosusuario verificarPermisos(){
+        EntityManager em = bonosDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",2);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
+    }
+    
+    public String ultimoPeriodo()
     {
         EntityManager em = bonosDAO.getEntityManager();
         Query query = em.createQuery("FROM bonosempleadomensual E where E.numbono = (select max(numbono) from bonosempleadomensual)");
         bonosempleadomensual bono = (bonosempleadomensual)query.getSingleResult();
         em.close();
-
         return bono.getPeriodo();
     }
     private void cargarPeriodosCb()
@@ -135,6 +178,26 @@ public class Bono extends javax.swing.JFrame {
                 });
          eliminar.setEnabled(false);
     }
+      
+      private void cargarTabla() {
+        DefaultTableModel modelo = (DefaultTableModel) tablaBonos.getModel();
+        modelo.setRowCount(0);
+        tablaBonos.setModel(modelo);
+        List<bonosempleadomensual> bonosempleadomensual = bonosDAO.findbonosempleadomensualEntities();
+        bonosempleadomensual.forEach((bonoActual) -> {
+            modelo.addRow(
+                    new Object[]{
+                        bonoActual.getNumbono(),
+                        bonoActual.getIdEmpleado(),
+                        empleado.findempleado(bonoActual.getIdEmpleado()).getNomEmpleado(),
+                        tipoBono.findtiposbono(bonoActual.getIDTipoBono()).getNomBono(),
+                        bonoActual.getValor(),
+                        bonoActual.getPeriodo()
+                        
+                    }
+            );
+        });
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -159,6 +222,7 @@ public class Bono extends javax.swing.JFrame {
         cbPeriodos = new javax.swing.JComboBox<>();
         limpiar = new javax.swing.JButton();
         eliminar = new javax.swing.JButton();
+        imprimirReporteBonos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -308,6 +372,16 @@ public class Bono extends javax.swing.JFrame {
         });
         jPanel3.add(eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 10, 30, 40));
 
+        imprimirReporteBonos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/printIcon.png"))); // NOI18N
+        imprimirReporteBonos.setBorderPainted(false);
+        imprimirReporteBonos.setContentAreaFilled(false);
+        imprimirReporteBonos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteBonosActionPerformed(evt);
+            }
+        });
+        jPanel3.add(imprimirReporteBonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 10, -1, 40));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -369,42 +443,70 @@ public class Bono extends javax.swing.JFrame {
 
     private void tablaBonosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaBonosMouseClicked
         // TODO add your handling code here:
-         if(tablaBonos.getSelectedRow() != -1 && cbPeriodos.getSelectedItem().equals(periodoActual))
+        try{
+        if(tablaBonos.getSelectedRow() != -1 && cbPeriodos.getSelectedItem().equals(periodoActual))
         {
+            if(limpiar.isEnabled()){
             eliminar.setEnabled(true);
+            }
         }else
         {
             eliminar.setEnabled(false);
         }
+        }catch(Exception ex){
+            log(ex);
+            
+        }
+         
     }//GEN-LAST:event_tablaBonosMouseClicked
 
     private void btnNuevoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoBonoActionPerformed
-        NuevoBono nv = new NuevoBono();
-        nv.setVisible(true);
-        this.dispose();
+        try{
+            NuevoBono nv = new NuevoBono();
+            nv.setVisible(true);
+            this.dispose();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_btnNuevoBonoActionPerformed
 
     private void AceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarActionPerformed
-        menuGerente menu = new menuGerente();
+       try{
+           menuGerente menu = new menuGerente();
         menu.setVisible(true);
+        emf.close();
         this.dispose();
+       }catch(Exception ex){
+           log(ex);
+       }
+        
     }//GEN-LAST:event_AceptarActionPerformed
 
     private void btnNuevoTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoTipoActionPerformed
-        nuevoTipoBono ntb = new nuevoTipoBono();
-        ntb.setVisible(true);
-        this.dispose();
+        try{
+            nuevoTipoBono ntb = new nuevoTipoBono();
+            ntb.setVisible(true);
+            this.dispose();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_btnNuevoTipoActionPerformed
 
     private void cbPeriodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPeriodosActionPerformed
         // TODO add your handling code here:
-        cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
+        try{
+            cargarTablaPeriodo(cbPeriodos.getSelectedItem().toString());
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_cbPeriodosActionPerformed
 
     private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
         // TODO add your handling code here:
-
-        DefaultTableModel modelo = (DefaultTableModel) tablaBonos.getModel();
+        try{
+            DefaultTableModel modelo = (DefaultTableModel) tablaBonos.getModel();
         if(!cbPeriodos.getSelectedItem().toString().equals(periodoActual))
         {
             JOptionPane.showMessageDialog(null,"Esos bonos pertenecen a otro periodo, solo puedes borrar los bonos del periodo actual ("+periodoActual+").","Bonos ya aplicados.",JOptionPane.ERROR_MESSAGE);
@@ -431,10 +533,21 @@ public class Bono extends javax.swing.JFrame {
             });
             modelo.setRowCount(0);
         }
+        
+        if(tablaBonos.getRowCount() == 0){
+            cbPeriodos.setSelectedIndex(cbPeriodos.getSelectedIndex()+1);
+            cbPeriodos.removeItemAt(cbPeriodos.getSelectedIndex()-1);            
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
+        
     }//GEN-LAST:event_limpiarActionPerformed
 
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
         // TODO add your handling code here:
+        try{
         DefaultTableModel modelo = (DefaultTableModel) tablaBonos.getModel();
         int confirmacion = JOptionPane.showConfirmDialog(null,"¿Seguro que deseas eliminar este bono?","Confirmación",JOptionPane.YES_NO_OPTION);
         if(confirmacion == 0)
@@ -447,7 +560,52 @@ public class Bono extends javax.swing.JFrame {
                 Logger.getLogger(listaDeducciones.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_eliminarActionPerformed
+
+    private void imprimirReporteBonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteBonosActionPerformed
+        // TODO add your handling code here:
+       Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+        logo.put("periodo",cbPeriodos.getSelectedItem().toString());
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteBonos.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte de Tipos de Pago");
+            view.setVisible(true);
+        } catch (Exception ex) {
+            log(ex);
+        }
+    }//GEN-LAST:event_imprimirReporteBonosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -490,7 +648,7 @@ public class Bono extends javax.swing.JFrame {
     }
 
     private void insertarImagen(JLabel lbl, String ruta) {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(),
@@ -500,18 +658,25 @@ public class Bono extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
-
-    private void insertarImagen(JButton checkBox, String ruta) {
-        this.imagen = new ImageIcon(ruta);
-        this.icono = new ImageIcon(
-                this.imagen.getImage().getScaledInstance(
-                        checkBox.getWidth(),
-                        checkBox.getHeight(),
-                        Image.SCALE_DEFAULT)
-        );
-        checkBox.setIcon(this.icono);
-        this.repaint();
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
+
+ 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Aceptar;
@@ -519,6 +684,7 @@ public class Bono extends javax.swing.JFrame {
     private javax.swing.JButton btnNuevoTipo;
     private javax.swing.JComboBox<String> cbPeriodos;
     private javax.swing.JButton eliminar;
+    private javax.swing.JButton imprimirReporteBonos;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

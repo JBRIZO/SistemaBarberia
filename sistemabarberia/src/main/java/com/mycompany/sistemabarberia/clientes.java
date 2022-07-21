@@ -6,7 +6,7 @@
 package com.mycompany.sistemabarberia;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,6 +35,22 @@ public class clientes implements Serializable {
     private String NumTelefono;
     @Column
     private boolean Activo;
+    
+    public clientes(){}
+
+    public clientes(int idcliente, String NomCliente, String ApeCliente, int IDTipoDocumento, String NumDocumento, int IDServicio, Date FechaNacimiento, String NumTelefono, boolean Activo) {
+        this.idcliente = idcliente;
+        this.NomCliente = NomCliente;
+        this.ApeCliente = ApeCliente;
+        this.IDTipoDocumento = IDTipoDocumento;
+        this.NumDocumento = NumDocumento;
+        this.IDServicio = IDServicio;
+        this.FechaNacimiento = FechaNacimiento;
+        this.NumTelefono = NumTelefono;
+        this.Activo = Activo;
+    }
+    
+    
 
     public int getIdcliente() {
         return idcliente;
@@ -111,7 +127,7 @@ public class clientes implements Serializable {
     @Override
     public String toString()
     {
-        return idcliente + ". " +  NomCliente;
+        return idcliente + ". " +  NomCliente + " " + ApeCliente;
     }
     
 }

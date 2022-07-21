@@ -1,0 +1,2 @@
+nov 03, 2021 8:52:58 PM com.mycompany.GUI.tipoPago log
+INFORMACIÓN: class javax.persistence.PersistenceException : org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection

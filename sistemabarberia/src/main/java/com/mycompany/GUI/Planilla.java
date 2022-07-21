@@ -8,27 +8,35 @@ package com.mycompany.GUI;
 import com.mycompany.sistemabarberia.JPACOntrollers.bonosempleadomensualJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.deduccionesempleadomensualJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
+import com.mycompany.sistemabarberia.JPACOntrollers.exceptions.NonexistentEntityException;
 import com.mycompany.sistemabarberia.JPACOntrollers.planillasJpaController;
 import com.mycompany.sistemabarberia.deduccionesempleadomensual;
 import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.salariohistoricoempleados;
 import com.mycompany.sistemabarberia.JPACOntrollers.salariohistoricoempleadosJpaController;
 import com.mycompany.sistemabarberia.PlanillaDataSource;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
 import com.mycompany.sistemabarberia.bonosempleadomensual;
+import com.mycompany.sistemabarberia.permisosusuario;
 import com.mycompany.sistemabarberia.planillas;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -50,15 +58,19 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class Planilla extends javax.swing.JFrame {
     
+    private permisosusuario permisosUsuario;
     private String periodoActual;
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
     
-    private empleadoJpaController empleadoDAO =  new empleadoJpaController();
+    private empleadoJpaController empleadoDAO =  new empleadoJpaController(emf);
     private List<empleado> empleadosBD =  empleadoDAO.findempleadoEntities();
-    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController();
-    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController();
-    private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController();
-    private planillasJpaController planillaDAO = new planillasJpaController();
+    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController(emf);
+    private salariohistoricoempleadosJpaController salarioDAO = new salariohistoricoempleadosJpaController(emf);
+    private bonosempleadomensualJpaController bonosDAO = new bonosempleadomensualJpaController(emf);
+    private planillasJpaController planillaDAO = new planillasJpaController(emf);
     private EntityManager em = empleadoDAO.getEntityManager();
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
     
     private PlanillaDataSource dataSource;
     private java.util.Date dt = new java.util.Date();
@@ -66,6 +78,8 @@ public class Planilla extends javax.swing.JFrame {
     String currentTime = sdf.format(dt);
     private ImageIcon imagen;
     private Icon icono;
+    private boolean existePlanilla = false;
+    private boolean planillaGuardada = false;
 
     /**
      * Creates new form nuevoTipoDescuento
@@ -73,8 +87,9 @@ public class Planilla extends javax.swing.JFrame {
     public Planilla() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(dt);
@@ -84,9 +99,61 @@ public class Planilla extends javax.swing.JFrame {
         periodoActual = mes<10? anio+"0"+mes: Integer.toString(anio)+mes;
         fechaLabel.setText("Fecha: " + currentTime);
         periodo.setText("Periodo: " + periodoActual);
+        
+        limpiar.setEnabled(false);
+        
+        if(verificarUltimaPlanillaGenerada())
+        {
+            generar.setEnabled(false);
+            guardar.setEnabled(false);
+            imprimirReporte.setEnabled(true);
+            limpiar.setEnabled(true);
+        }
+        
+        if(tablaPlanilla.getRowCount() > 0)
+        {
+            generar.setEnabled(false);
+        }
+        permisosUsuario = verificarPermisos();
+        desactivarBotonesPermisos();
     }
     
-    public void verificarUltimaPlanillaGenerada()
+    
+    private void desactivarBotonesPermisos(){
+        if(permisosUsuario.isNuevo()){
+            guardar.setEnabled(true);
+        }else{
+            guardar.setEnabled(false);
+        }
+        if(permisosUsuario.isModificar()){
+            generar.setEnabled(true);
+        }else{
+            generar.setEnabled(false);
+        }
+        if(permisosUsuario.isImprimir()){
+            imprimirReporte.setEnabled(true);
+        }else{
+            imprimirReporte.setEnabled(false);
+        }
+        if(permisosUsuario.isLista()){
+            limpiar.setEnabled(true);
+        }else{
+            limpiar.setEnabled(false);
+        }
+    }
+    
+    private permisosusuario verificarPermisos(){
+        EntityManager em = empleadoDAO.getEntityManager();
+        String hqlDetalleProd = "FROM permisosusuario E WHERE E.IDUsuario = :IDUsuario AND E.IDPermiso = :IDPermiso";
+        Query queryPermisos = em.createQuery(hqlDetalleProd);
+        queryPermisos.setParameter("IDUsuario",singleton.getCuenta().getIdusuario());
+        queryPermisos.setParameter("IDPermiso",1);
+        permisosusuario permisos = (permisosusuario)queryPermisos.getSingleResult();
+        return permisos;
+    }
+    
+    
+    public boolean verificarUltimaPlanillaGenerada()
     {
         String hql = "FROM planillas E WHERE E.Periodo = :periodo";
         Query query = em.createQuery(hql);
@@ -95,13 +162,17 @@ public class Planilla extends javax.swing.JFrame {
         
         if(planillasPeriodo.isEmpty())
         {
-            return;
+            return false;
         }else
         {
+            existePlanilla = true;
+            planillaGuardada = true;
             cargarTablaPlanilla();
+            return true;
         }
     }
-     public void imprimirPlanilla()
+    
+     private void imprimirPlanilla()
     {
         //filtrar la planilla por periodo
         String hql = "FROM planillas E WHERE E.Periodo = :periodo";
@@ -119,12 +190,23 @@ public class Planilla extends javax.swing.JFrame {
         Query queryBonos =  em.createNativeQuery("CALL sumaBonos(:idEmpleado,:periodo)");
         queryBonos.setParameter("idEmpleado",planillasPeriodo.get(i).getIDEmpleado());
         queryBonos.setParameter("periodo", periodoActual);
-        double sumabonos = (double)queryBonos.getSingleResult();
+        System.out.println(planillasPeriodo.get(i).getIDEmpleado());
+        double sumabonos = 0;
+        try{
+            sumabonos = (double)queryBonos.getSingleResult();
+        }
+        catch(NullPointerException Ex)
+        {
+        }
         //llamar procedimiento almacendao para obtenre la suma delas deducciones para un empleado
          Query queryDeducciones =  em.createNativeQuery("CALL sumaDeducciones(:idEmpleado,:periodo)");
         queryDeducciones.setParameter("idEmpleado",planillasPeriodo.get(i).getIDEmpleado());
         queryDeducciones.setParameter("periodo", periodoActual);
-        double sumadeducciones = (double)queryDeducciones.getSingleResult();
+        double sumadeducciones = 0;
+        try{
+            sumadeducciones =(double)queryDeducciones.getSingleResult();
+        }catch(NullPointerException Ex)
+        {}
         
         for(int j = 0; j < 7 ; j++)
         {
@@ -156,8 +238,10 @@ public class Planilla extends javax.swing.JFrame {
     }     
         //para ponerles valor a los parametros
         HashMap param = new HashMap();
-        
+        empleado empleadoActual = empleadoDAO.findempleado(singleton.getCuenta().getIDEmpleado());
         param.put("periodo",  periodoActual);
+        param.put("logo", getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        param.put("empleado",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
        
         try {
             //compilar reporte
@@ -248,7 +332,13 @@ public class Planilla extends javax.swing.JFrame {
                     totalDeducciones = 0.00;
                     totalBonos = 0.00;
             }
-            guardar.setEnabled(true);
+            if(tablaPlanilla.getRowCount() > 0)
+            {
+                guardar.setEnabled(true);
+                limpiar.setEnabled(true);
+                generar.setEnabled(false);
+                imprimirReporte.setEnabled(true);
+            }
     }
     
     private boolean verificarDeduccionesPeriodo()
@@ -553,50 +643,114 @@ public class Planilla extends javax.swing.JFrame {
 
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         // TODO add your handling code here:
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        try{
+        if(!planillaGuardada)
+        {
+            int confirmacion = JOptionPane.showConfirmDialog(this,"¿Deseas salir sin haber guardado la planilla?",
+                    "Confirmación",JOptionPane.YES_NO_CANCEL_OPTION);
+            if(confirmacion == 0 )
+            {
+                 java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new menuGerente().setVisible(true);
             }
-        });
-        this.dispose();
+            });
+            this.dispose();
+            }else{return;}
+        }else
+        {
+          java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new menuGerente().setVisible(true);
+            }
+            });
+          emf.close();
+            this.dispose();  
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonRegresarActionPerformed
 
     private void generarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarActionPerformed
         // TODO add your handling code here:
+        try{
+        if(existePlanilla)
+        {
+            JOptionPane.showMessageDialog(this,"Ya ha sido generada y guardada una planilla para este periodo, no puedes generar otra vez la planilla.",
+                    "Planilla ya generada.",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         int confirmacion = JOptionPane.showConfirmDialog(null,"¿Seguro que deseas generar la planilla para el periodo "+periodoActual+ "?",
                 "Generación de planilla",
                 JOptionPane.YES_NO_OPTION);
         if(confirmacion == 0)
         {
             cargarTablaPlanilla();
-            if(tablaPlanilla.getRowCount() > 0 )
-            {
-                imprimirReporte.setEnabled(true);
-            }
         }
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_generarActionPerformed
 
     private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
         // TODO add your handling code here:
-         DefaultTableModel modelo = (DefaultTableModel)tablaPlanilla.getModel();
-        modelo.setRowCount(0);
-        tablaPlanilla.setModel(modelo);
+        try{int confirmacion = JOptionPane.showConfirmDialog(this, "¿De verdad quieres eliminar la plantilla generada anteriormente para este periodo?",
+                "Confirmación",JOptionPane.YES_NO_OPTION);
+        if(confirmacion == 0 )
+        {
+            //Deducciones para el perido actual
+            String hql = "FROM planillas E WHERE E.Periodo =:periodo";
+            Query query = em.createQuery(hql);
+            query.setParameter("periodo",periodoActual);
+            List<planillas> planillas = (List<planillas>) query.getResultList();
+            
+            planillas.forEach((planilla) -> {
+                try {
+                    planillaDAO.destroy(planilla.getIdplanilla());
+                } catch (NonexistentEntityException ex) {
+                    Logger.getLogger(Planilla.class.getName()).log(Level.SEVERE, null, ex);
+                    return;
+                }
+            });
+        }else{return;}
+        JOptionPane.showMessageDialog(this,"Planilla eliminada con éxito.");
+        imprimirReporte.setEnabled(false);
+        guardar.setEnabled(true);
+        generar.setEnabled(true);
+        DefaultTableModel modelo = (DefaultTableModel) tablaPlanilla.getModel();
+        modelo.setRowCount(0);}catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_limpiarActionPerformed
 
     private void imprimirReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteActionPerformed
         // TODO add your handling code here:
-        int confirmacion = JOptionPane.showConfirmDialog(this,"¿Seguro que deseas imprimir la planilla? \nAl imprimirla se guardara automaticamente y no podras generar mas planillas para este periodo.",
-               "Confirmacion",JOptionPane.YES_NO_OPTION);
-       if(confirmacion == 0)
-       {
-          imprimirPlanilla(); 
-       }
+        try{
+        if(!existePlanilla)
+        {
+            if(!planillaGuardada)
+            {
+                JOptionPane.showMessageDialog(this,"Debes de guardar la planilla antes de imprimirla.","Planilla sin guardar",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+          imprimirPlanilla();
+        }else
+        {
+            imprimirPlanilla();
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_imprimirReporteActionPerformed
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         // TODO add your handling code here:
-       
-         for(int i = 0 ; i < tablaPlanilla.getRowCount() ; i++)
+       try{
+       for(int i = 0 ; i < tablaPlanilla.getRowCount() ; i++)
             {
                 planillas planilla = new planillas();
                 planilla.setIDEmpleado(Integer.parseInt(tablaPlanilla.getValueAt(i,0).toString()));
@@ -607,8 +761,20 @@ public class Planilla extends javax.swing.JFrame {
                     planillaDAO.create(planilla);
                 } catch (Exception ex) {
                     Logger.getLogger(Planilla.class.getName()).log(Level.SEVERE, null, ex);
+                    return;
                 }
             }
+         JOptionPane.showMessageDialog(this,"Planilla guardada con éxito");
+          if(tablaPlanilla.getRowCount() > 0 )
+            {
+                imprimirReporte.setEnabled(true);
+                limpiar.setEnabled(true);
+            }
+          guardar.setEnabled(false);
+         planillaGuardada = true;
+       }catch(Exception ex){
+           log(ex);
+       }
     }//GEN-LAST:event_guardarActionPerformed
 
     
@@ -653,7 +819,7 @@ public class Planilla extends javax.swing.JFrame {
     
    private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -663,17 +829,23 @@ public class Planilla extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
-    private void insertarImagen(JButton checkBox,String ruta)
-    {
-        this.imagen = new ImageIcon(ruta);
-        this.icono = new ImageIcon(
-                this.imagen.getImage().getScaledInstance(
-                        checkBox.getWidth(), 
-                        checkBox.getHeight(),
-                        Image.SCALE_DEFAULT)
-        );
-        checkBox.setIcon(this.icono);
-        this.repaint();
+    
+   private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
     
    

@@ -201,7 +201,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="cbTipoPuesto" min="-2" pref="230" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="agregar" min="-2" pref="28" max="-2" attributes="0"/>
+                                  <Component id="agregar" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace pref="44" max="32767" attributes="0"/>
@@ -325,9 +325,6 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="agregar">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="jLabel2"/>
-                  </Properties>
                   <Events>
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="agregarMouseClicked"/>
                   </Events>

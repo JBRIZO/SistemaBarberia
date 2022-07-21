@@ -26,6 +26,15 @@ public class puesto implements Serializable{
     @Column
     private boolean Activo;
 
+    public puesto(int idpuesto, String NomPuesto, boolean Activo) {
+        this.idpuesto = idpuesto;
+        this.NomPuesto = NomPuesto;
+        this.Activo = Activo;
+    }
+
+    public puesto() {
+    }
+
     public int getIdpuesto() {
         return idpuesto;
     }

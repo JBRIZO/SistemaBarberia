@@ -16,12 +16,21 @@ import com.mycompany.sistemabarberia.tipodeduccion;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -36,11 +45,13 @@ import javax.swing.border.Border;
  */
 public class nuevaDeduccion extends javax.swing.JFrame {
     
-    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private deduccionesempleadomensualJpaController deduccionesDAO = new deduccionesempleadomensualJpaController(emf);
     private List<deduccionesempleadomensual> deduccionesempleadomensualBD = deduccionesDAO.finddeduccionesempleadomensualEntities();
-    private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController();
+    private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController(emf);
     private List<tipodeduccion> tipodeduccionBD = tipodeduccionDAO.findtipodeduccionEntities();
-    private empleadoJpaController empleadosDAO = new empleadoJpaController();
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
     private List<empleado> empleadosBD = empleadosDAO.findempleadoEntities();
     private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
@@ -57,8 +68,9 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     public nuevaDeduccion() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar(); 
         cantidadLbl.setText(" ");
         for(int i = 0; i < empleadosBD.size(); i++)
@@ -160,7 +172,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
         cantidad.setEditable(true);
         cantidad.setBackground(new java.awt.Color(30, 33, 34));
-        cantidad.setDocument(new JTextFieldLimit(7));
+        cantidad.setDocument(new JTextFieldLimit(10));
         cantidad.setForeground(new java.awt.Color(255, 255, 255));
         cantidad.setText("Cantidad");
         cantidad.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -362,6 +374,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
     private void cantidadFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cantidadFocusLost
         // TODO add your handling code here:
+        try{
         if(cantidad.getText().equals(""))
         {
             cantidad.setText("Cantidad");
@@ -370,7 +383,9 @@ public class nuevaDeduccion extends javax.swing.JFrame {
         {
          validarDecimal();   
         }
-        
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_cantidadFocusLost
 
     private void botonCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonCancelarMouseClicked
@@ -385,7 +400,11 @@ public class nuevaDeduccion extends javax.swing.JFrame {
 
     private void periodoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_periodoFocusLost
         // TODO add your handling code here:
+        try{
         validacionPeriodo(periodo,formatoInvalidoPeriodo);
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_periodoFocusLost
 
     private void tipoDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoDeduccionActionPerformed
@@ -393,6 +412,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoDeduccionActionPerformed
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        try{
         //Filtrar empleados activos
         List<empleado> empleadosActivos = new ArrayList();
         
@@ -404,50 +424,6 @@ public class nuevaDeduccion extends javax.swing.JFrame {
             }
         }
         
-        //para todos los empleados
-       if(idEmpleado.getSelectedIndex() == 1)
-       {
-           if(periodo.getText().equals("") || cantidad.getText().equals("") || cantidad.getText().equals("Cantidad"))
-        {
-            JOptionPane.showMessageDialog(null, "Debes rellenar todos los campos.",
-                    "Campos Incompletos",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-           int contador = 0;
-           for(empleado empleado:empleadosBD)
-           {
-               deduccionesempleadomensual deduccionEmpleado = new deduccionesempleadomensual();
-               deduccionEmpleado.setIDEmpleado(empleado.getIdempleado());
-               deduccionEmpleado.setIDTipoDeduccion(Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
-               deduccionEmpleado.setPeriodo(periodo.getText());
-               deduccionEmpleado.setValor(Double.parseDouble(cantidad.getText()));
-               deduccionEmpleado.setActivo(true);
-               if(validarDecimal() && validacionPeriodo(periodo,formatoInvalidoPeriodo))
-                {
-                    try {
-                        deduccionesDAO.create(deduccionEmpleado);
-                        contador++;
-                    } catch (Exception ex) {
-                        //empleado con error
-                        contador = empleado.getIdempleado();
-                        Logger.getLogger(nuevaDeduccion.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }else
-                {
-                    JOptionPane.showMessageDialog(null,"Por favor corrige campos en rojo.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
-                }
-           }
-           if(contador == empleadosActivos.size())
-           {
-             JOptionPane.showMessageDialog(null,"Operacion Exitosa.");  
-           }else
-           {
-              JOptionPane.showMessageDialog(null,"Error al aplicar deducción al empleado con Id número " + contador); 
-           }
-           return;
-           
-       }
         if(idEmpleado.getSelectedIndex() == 0)
         {
             JOptionPane.showMessageDialog(null,"Debes seleccionar un empleado.",
@@ -469,42 +445,124 @@ public class nuevaDeduccion extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
+         if(!validarDecimal() || !validacionPeriodo(periodo,formatoInvalidoPeriodo))
+        {
+           JOptionPane.showMessageDialog(this,"Por favor corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
+         
+        //evitar deducciones duplicadas
+         EntityManager em = deduccionesDAO.getEntityManager();
+        Query query = em.createQuery("FROM deduccionesempleadomensual E where E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado AND E.IDTipoDeduccion = :tipoBono");
+        query.setParameter("periodo",periodo.getText());
+        query.setParameter("tipoBono",Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
+        //para todos los empleados
+       if(idEmpleado.getSelectedIndex() == 1)
+       {
+           deduccionesempleadomensual deduccionEmpleado = new deduccionesempleadomensual();
+           deduccionesempleadomensual deduccionEditar = new deduccionesempleadomensual();
+           boolean edit = false;
+           int contador = 0;
+           for(empleado empleado:empleadosBD)
+           {
+               query.setParameter("idEmpleado",empleado.getIdempleado());
+               try{
+                   deduccionesempleadomensual deduccionesEmp = (deduccionesempleadomensual)query.getSingleResult();
+                   deduccionEditar = deduccionesEmp;
+                   deduccionEditar.setValor(Double.parseDouble(cantidad.getText()));
+                   deduccionEditar.setIDEmpleado(empleado.getIdempleado());
+                   deduccionEditar.setIDTipoDeduccion(Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
+                   deduccionEditar.setPeriodo(periodo.getText());
+                   deduccionEditar.setValor(Double.parseDouble(cantidad.getText()));
+                   deduccionEditar.setActivo(true);
+                   edit = true;
+               }catch(javax.persistence.NoResultException Ex)
+               {
+                   edit = false;
+               }
+               if(edit)
+               {
+                   try {
+                       deduccionesDAO.edit(deduccionEditar);
+                   } catch (Exception ex) {
+                       Logger.getLogger(NuevoBono.class.getName()).log(Level.SEVERE, null, ex);
+                   }
+                 contador++;
+               }else
+               {
+               deduccionEmpleado.setIDEmpleado(empleado.getIdempleado());
+               deduccionEmpleado.setIDTipoDeduccion(Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
+               deduccionEmpleado.setPeriodo(periodo.getText());
+               deduccionEmpleado.setValor(Double.parseDouble(cantidad.getText()));
+               deduccionEmpleado.setActivo(true);
+               if(validarDecimal() && validacionPeriodo(periodo,formatoInvalidoPeriodo))
+                {
+                    try {
+                        deduccionesDAO.create(deduccionEmpleado);
+                        contador++;
+                    } catch (Exception ex) {
+                        //empleado con error
+                        contador = empleado.getIdempleado();
+                        Logger.getLogger(nuevaDeduccion.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+               }
+               
+           }
+           if(contador == empleadosActivos.size())
+           {
+             JOptionPane.showMessageDialog(null,"Operacion Exitosa.");  
+           }else
+           {
+              JOptionPane.showMessageDialog(null,"Error al aplicar deducción al empleado con Id número " + contador); 
+           }
+           return;   
+       }
         deduccionesempleadomensual nuevaDeduccion = new deduccionesempleadomensual();
+        Query query2 = em.createQuery("FROM deduccionesempleadomensual E where E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado AND E.IDTipoDeduccion = :tipoBono");
+        query2.setParameter("periodo",periodo.getText());
+        query2.setParameter("tipoBono",Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
+        query2.setParameter("idEmpleado",Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
+        try{
+            deduccionesempleadomensual bonoBd = (deduccionesempleadomensual) query2.getSingleResult();
+                JOptionPane.showMessageDialog(this,"Ese tipo de deducción ya ha sido aplicado a este empleado en este periodo","Deducción ya aplicada",JOptionPane.ERROR_MESSAGE);
+                return;
+        }catch(javax.persistence.NoResultException Ex)
+        {
         nuevaDeduccion.setIDEmpleado(Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
         nuevaDeduccion.setIDTipoDeduccion(Character.getNumericValue(tipoDeduccion.getSelectedItem().toString().charAt(0)));
         nuevaDeduccion.setPeriodo(periodo.getText());
-        try{
-            nuevaDeduccion.setValor(Double.parseDouble(cantidad.getText()));
-        }catch(NumberFormatException Ex)
-        {
-            return;
-        }
+        nuevaDeduccion.setValor(Double.parseDouble(cantidad.getText()));
         nuevaDeduccion.setActivo(true);
-        
-        if(validarDecimal() && validacionPeriodo(periodo,formatoInvalidoPeriodo))
-        {
-            try {
+         try {
                 deduccionesDAO.create(nuevaDeduccion);
                 JOptionPane.showMessageDialog(null,"Operacion Exitosa.");
             } catch (Exception ex) {
+                log(ex);
                 Logger.getLogger(nuevaDeduccion.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else
-        {
-            JOptionPane.showMessageDialog(null,"Por favor corrige campos en rojo.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
+        } 
+        }catch(Exception ex){
+            log(ex);
         }
+        
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaDeducciones().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         deduccionesDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     /**
@@ -544,7 +602,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     
      private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -581,19 +639,27 @@ public class nuevaDeduccion extends javax.swing.JFrame {
          return true;
      }
      
-     private boolean validacionPeriodo(javax.swing.JTextField jText, JLabel label)
+     public boolean validacionPeriodo(javax.swing.JTextField jText, JLabel label)
      {
-         Calendar calendar = new GregorianCalendar();
+        Calendar calendar = new GregorianCalendar();
         calendar.setTime(dt);
         int mes = calendar.get(Calendar.MONTH) + 1;
-        
-         String mesCampo = Character.toString(jText.getText().charAt(4)) + jText.getText().charAt(5);
+        String mesCampo = "";
+        try
+        {
+            mesCampo = Character.toString(jText.getText().charAt(4)) + jText.getText().charAt(5);
+        }catch(StringIndexOutOfBoundsException Ex)
+                {
+                periodo.setBorder(redBorder);
+                label.setText("Un periodo debe tener 6 caracteres.");
+                return false;
+                }
          
          try{
              if(Integer.parseInt(mesCampo) > mes || Integer.parseInt(mesCampo) < mes)
          {
              jText.setBorder(redBorder);
-             formatoInvalidoPeriodo.setText("El mes del periodo debe concordar con el mes actual.");
+             label.setText("El mes del periodo debe concordar con el mes actual.");
            return false; 
          } 
          }catch(NumberFormatException Ex)
@@ -624,6 +690,30 @@ public class nuevaDeduccion extends javax.swing.JFrame {
        }  
      }
      
+     public boolean validarCamposEnBlanco(){
+         if(periodo.getText().equals("") || cantidad.getText().equals(""))
+        {
+            return false;
+        }else{return true;}
+     }
+     
+     private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
          
      
 
@@ -634,7 +724,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
-    private javax.swing.JTextField cantidad;
+    public javax.swing.JTextField cantidad;
     private javax.swing.JLabel cantidadLbl;
     private javax.swing.JLabel formatoInvalidoCantidad;
     private javax.swing.JLabel formatoInvalidoPeriodo;
@@ -646,7 +736,7 @@ public class nuevaDeduccion extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField periodo;
+    public javax.swing.JTextField periodo;
     private javax.swing.JComboBox<String> tipoDeduccion;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

@@ -23,8 +23,8 @@ import javax.persistence.criteria.Root;
  */
 public class bonosempleadomensualJpaController implements Serializable {
 
-    public bonosempleadomensualJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("servidorbd");
+    public bonosempleadomensualJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
     private EntityManagerFactory emf = null;
 

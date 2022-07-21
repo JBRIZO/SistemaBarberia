@@ -27,6 +27,16 @@ public class detalleproducto implements Serializable{
     @Column
     private double Precio;
 
+    public detalleproducto(int numdetalle, int IDFacturaEncabezado, int IDProducto, int Cantidad, double Precio) {
+        this.numdetalle = numdetalle;
+        this.IDFacturaEncabezado = IDFacturaEncabezado;
+        this.IDProducto = IDProducto;
+        this.Cantidad = Cantidad;
+        this.Precio = Precio;
+    }
+
+    public detalleproducto(){}
+    
     public int getNumdetalle() {
         return numdetalle;
     }

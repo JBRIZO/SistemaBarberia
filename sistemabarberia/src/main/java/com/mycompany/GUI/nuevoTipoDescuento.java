@@ -12,7 +12,14 @@ import com.mycompany.sistemabarberia.tipodescuento;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -25,8 +32,10 @@ import javax.swing.border.Border;
  * @author Jonathan Laux
  */
 public class nuevoTipoDescuento extends javax.swing.JFrame {
-    
-    private tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    private tipodescuento descuentoModificar = new tipodescuento();
+    private boolean modificar = false;
+    private tipodescuentoJpaController tipodescuentoDAO = new tipodescuentoJpaController(emf);
     private Validaciones validar = new Validaciones();
     private List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
     private ImageIcon imagen;
@@ -42,9 +51,24 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     public nuevoTipoDescuento() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
         Reiniciar();    
+    }
+    
+    public nuevoTipoDescuento(tipodescuento descuentoModificar){
+        this.descuentoModificar = descuentoModificar;
+        this.modificar = true;
+        initComponents();
+        this.setLocationRelativeTo(null);
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");
+        tituloPantalla.setText("MODIFICAR TIPO DESCUENTO");
+        idTipoDescuento.setText("ID tipo de Descuento: " + descuentoModificar.getIdtipodescuento());
+        tipoDescuento.setText(descuentoModificar.getNomDescuento());
+        formatoInvalido.setText(" ");
     }
     
     public void Reiniciar()
@@ -261,6 +285,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        try{
         List<tipodescuento> descuentosEnBd = tipodescuentoDAO.findtipodescuentoEntities();
         tipodescuento tipoDescuentoNuevo = new tipodescuento();
         tipoDescuentoNuevo.setNomDescuento(tipoDescuento.getText());
@@ -284,6 +309,20 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         }
        
         if(validacionCampos()){
+            //modificar
+            if(modificar)
+            {
+                try {
+                    tipoDescuentoNuevo.setIdtipodescuento(descuentoModificar.getIdtipodescuento());
+                    tipoDescuentoNuevo.setActivo(true);
+                    tipodescuentoDAO.edit(tipoDescuentoNuevo);
+                    JOptionPane.showMessageDialog(null,"Operación Exitosa");
+                    return;
+                    } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
+                            return;
+                    }
+            }
             try {
             tipodescuentoDAO.create(tipoDescuentoNuevo);
             JOptionPane.showMessageDialog(null,"Operación Exitosa");
@@ -292,6 +331,9 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -301,7 +343,11 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     }//GEN-LAST:event_idTipoDescuentoActionPerformed
 //a;adir validaciones botonaceptar
     private void tipoDescuentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tipoDescuentoFocusLost
+        try{
         validacionCampos();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_tipoDescuentoFocusLost
 
     private void tipoDescuentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoDescuentoActionPerformed
@@ -319,14 +365,19 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaDescuentos().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         tipodescuentoDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_salirMouseClicked
 
     /**
@@ -418,7 +469,7 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -427,6 +478,24 @@ public class nuevoTipoDescuento extends javax.swing.JFrame {
         );
         lbl.setIcon(this.icono);
         this.repaint();
+    }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -23,6 +23,17 @@ public class tiposbono implements Serializable{
     @Column
     private boolean Activo;
 
+    public tiposbono(int idtipobono, String NomBono, boolean Activo) {
+        this.idtipobono = idtipobono;
+        this.NomBono = NomBono;
+        this.Activo = Activo;
+    }
+
+    public tiposbono() {
+    }
+
+    
+    
     public int getIdtipobono() {
         return idtipobono;
     }

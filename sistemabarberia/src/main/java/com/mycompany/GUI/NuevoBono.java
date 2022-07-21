@@ -16,10 +16,21 @@ import com.mycompany.sistemabarberia.tiposbono;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -33,10 +44,12 @@ import javax.swing.border.Border;
  */
 public class NuevoBono extends javax.swing.JFrame {
 
-    private empleadoJpaController nombreEmpleado = new empleadoJpaController();
-    private tiposbonoJpaController bonos = new tiposbonoJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private empleadoJpaController nombreEmpleado = new empleadoJpaController(emf);
+    private tiposbonoJpaController bonos = new tiposbonoJpaController(emf);
     private List<empleado> empleadosBD = nombreEmpleado.findempleadoEntities();
-    private bonosempleadomensualJpaController bonosEmp = new bonosempleadomensualJpaController();
+    private bonosempleadomensualJpaController bonosEmp = new bonosempleadomensualJpaController(emf);
     private java.util.Date dt = new java.util.Date();
     private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
     
@@ -54,11 +67,13 @@ public class NuevoBono extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         formatoInvalidoPeriodo.setText("");
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo, "src/main/resources/Imagenes/logoBarberia.png");
+       Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoLogin.png");
         obtenerEmpleados();
         obtenerTipoBono();
         formatoInvalidoCantidad.setText("");
+        cantidadLbl.setText(" ");
     }
 
     /**
@@ -87,7 +102,7 @@ public class NuevoBono extends javax.swing.JFrame {
         jLabel = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        cantidadLbl = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         salir = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
@@ -132,7 +147,7 @@ public class NuevoBono extends javax.swing.JFrame {
         formatoInvalidoPeriodo.setForeground(new java.awt.Color(255, 255, 255));
         formatoInvalidoPeriodo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         formatoInvalidoPeriodo.setText("Formato no valido.");
-        jPanel3.add(formatoInvalidoPeriodo, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 160, 270, 10));
+        jPanel3.add(formatoInvalidoPeriodo, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 160, 300, 10));
 
         periodo.setBackground(new java.awt.Color(30, 33, 34));
         periodo.setDocument(new JTextFieldLimit(6));
@@ -174,7 +189,6 @@ public class NuevoBono extends javax.swing.JFrame {
         cantidad.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cantidad.setForeground(new java.awt.Color(255, 255, 255));
         cantidad.setText("Cantidad");
-        cantidad.setToolTipText("Ingrese un nuevo Estado de Factura.");
         cantidad.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         cantidad.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -244,9 +258,9 @@ public class NuevoBono extends javax.swing.JFrame {
         jLabel4.setText("Periodo:");
         jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, -1, -1));
 
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Cantidad:");
-        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, -1, -1));
+        cantidadLbl.setForeground(new java.awt.Color(255, 255, 255));
+        cantidadLbl.setText("Cantidad:");
+        jPanel3.add(cantidadLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, -1, -1));
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(31, 28, 460, 340));
 
@@ -276,7 +290,7 @@ public class NuevoBono extends javax.swing.JFrame {
         jPanel1.add(salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 20, 33, 28));
 
         logo.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel1.add(logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 92, 98));
+        jPanel1.add(logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 98));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -311,8 +325,11 @@ public class NuevoBono extends javax.swing.JFrame {
 
 
     private void periodoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_periodoFocusLost
-        Validaciones validar = new Validaciones();
+        try{
         validacionPeriodo(periodo,formatoInvalidoPeriodo);
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_periodoFocusLost
 
     private void periodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_periodoActionPerformed
@@ -325,7 +342,12 @@ public class NuevoBono extends javax.swing.JFrame {
 
     private void periodoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_periodoFocusGained
         // TODO add your handling code here:
-        periodo.selectAll();
+        try{
+            periodo.selectAll();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
     }//GEN-LAST:event_periodoFocusGained
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
@@ -339,7 +361,7 @@ public class NuevoBono extends javax.swing.JFrame {
         if(cantidad.getText().equals("Cantidad"))
         {
             cantidad.setText("");
-            jLabel2.setText("Cantidad:");
+            cantidadLbl.setText("Cantidad:");
         }
     }//GEN-LAST:event_cantidadFocusGained
 
@@ -348,7 +370,7 @@ public class NuevoBono extends javax.swing.JFrame {
         if(cantidad.getText().equals(""))
         {
             cantidad.setText("Cantidad");
-            jLabel2.setText("");
+            cantidadLbl.setText("");
         }else
         {
             validarDecimal();
@@ -368,24 +390,24 @@ public class NuevoBono extends javax.swing.JFrame {
     }//GEN-LAST:event_idEmpleadoActionPerformed
 
     private void CancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarActionPerformed
-        idEmpleado.setSelectedIndex(0);
-        periodo.setText("Periodo");
-        cbTipoBono.setSelectedIndex(0);
-        cantidad.setText("Cantidad");
-        formatoInvalidoCantidad.setText("");
-        formatoInvalidoPeriodo.setText("");
-        periodo.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-        cantidad.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Bono().setVisible(true);
             }
         });
+        emf.close();
         this.dispose();
+        }catch(Exception ex){
+            log(ex);
+        }
+        
         
     }//GEN-LAST:event_CancelarActionPerformed
 
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
+       try{
        List<empleado> empleadosActivos = new ArrayList();
         
         if ( periodo.getText().equals("") || periodo.getText().equals("") || cbTipoBono.getSelectedIndex() == 0 || cantidad.getText().isEmpty()) {
@@ -403,6 +425,12 @@ public class NuevoBono extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this,"Debes seleccionar un tipo de bono.","Selecciona un tipo de bono",JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        if(!validarDecimal() || !validacionPeriodo(periodo,formatoInvalidoPeriodo))
+        {
+           JOptionPane.showMessageDialog(this,"Por favor corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
         for(int i=0 ; i < empleadosBD.size();i++)
         {
             if(empleadosBD.get(i).isActivo())
@@ -410,13 +438,45 @@ public class NuevoBono extends javax.swing.JFrame {
                 empleadosActivos.add(empleadosBD.get(i));
             }
         }
-        
+        //evitar bonos repetidos
+        EntityManager em = bonos.getEntityManager();
+        Query query = em.createQuery("FROM bonosempleadomensual E where E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado AND E.IDTipoBono = :tipoBono");
+        query.setParameter("periodo",periodo.getText());
+        query.setParameter("tipoBono",Character.getNumericValue(cbTipoBono.getSelectedItem().toString().charAt(0)));
        if(idEmpleado.getSelectedIndex() == 1)
        {
+           bonosempleadomensual bonosEmpleadoMensual = new bonosempleadomensual();
+           bonosempleadomensual bonoEditar = new bonosempleadomensual();
+           boolean edit = false;
            int contador = 0;
            for(empleado empleado:empleadosBD)
            {
-               bonosempleadomensual bonosEmpleadoMensual = new bonosempleadomensual();
+               query.setParameter("idEmpleado",empleado.getIdempleado());
+               try{
+                   bonosempleadomensual bonosEmpleado = (bonosempleadomensual)query.getSingleResult();
+                   bonoEditar = bonosEmpleado;
+                   bonoEditar.setValor(Double.parseDouble(cantidad.getText()));
+                   bonoEditar.setIdEmpleado(empleado.getIdempleado());
+                   bonoEditar.setIDTipoBono(Character.getNumericValue(cbTipoBono.getSelectedItem().toString().charAt(0)));
+                   bonoEditar.setPeriodo(periodo.getText());
+                   bonoEditar.setValor(Double.parseDouble(cantidad.getText()));
+                   bonoEditar.setActivo(true);
+                   edit = true;
+               }catch(javax.persistence.NoResultException Ex)
+               {
+                   System.out.println("No tiene bono");
+                   edit = false;
+               }
+               if(edit)
+               {
+                   try {
+                       bonosEmp.edit(bonoEditar);
+                   } catch (Exception ex) {
+                       Logger.getLogger(NuevoBono.class.getName()).log(Level.SEVERE, null, ex);
+                   }
+                 contador++;
+               }else
+               {
                bonosEmpleadoMensual.setIdEmpleado(empleado.getIdempleado());
                bonosEmpleadoMensual.setIDTipoBono(Character.getNumericValue(cbTipoBono.getSelectedItem().toString().charAt(0)));
                bonosEmpleadoMensual.setPeriodo(periodo.getText());
@@ -425,39 +485,53 @@ public class NuevoBono extends javax.swing.JFrame {
                if(validarDecimal() && validacionPeriodo(periodo,formatoInvalidoPeriodo))
                 {
                     try {
-                        bonosEmp.create(bonosEmpleadoMensual);
-                        contador++;
+                          bonosEmp.create(bonosEmpleadoMensual);
+                          contador++;
                     } catch (Exception ex) {
                         //empleado con error
                         contador = empleado.getIdempleado();
                     }
-                }else
-                {
-                    JOptionPane.showMessageDialog(null,"Por favor corrige los campos en rojo.","Datos Inválidos",JOptionPane.ERROR_MESSAGE);
                 }
+               }
            }
            if(contador == empleadosActivos.size())
            {
              JOptionPane.showMessageDialog(null,"Operacion Exitosa.");  
            }else
            {
-              JOptionPane.showMessageDialog(null,"Error al aplicar deducción al empleado con Id número " + contador); 
+              JOptionPane.showMessageDialog(null,"Error al aplicar bono al empleado con Id número " + contador); 
            }
            
        }else
        {
-            bonosempleadomensual bonos = new bonosempleadomensual();
-            bonos.setIdEmpleado(Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
-            bonos.setPeriodo(periodo.getText());
-            bonos.setIDTipoBono(Character.getNumericValue(cbTipoBono.getSelectedItem().toString().charAt(0)));
-            bonos.setValor(Double.parseDouble(cantidad.getText()));
+           bonosempleadomensual bonos = new bonosempleadomensual();
+            Query query2 = em.createQuery("FROM bonosempleadomensual E where E.Periodo =:periodo AND E.IDEmpleado = :idEmpleado AND E.IDTipoBono = :tipoBono");
+            query2.setParameter("periodo",periodo.getText());
+            query2.setParameter("tipoBono",Character.getNumericValue(cbTipoBono.getSelectedItem().toString().charAt(0)));
+            query2.setParameter("idEmpleado",Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
+            try{
+                bonosempleadomensual bonoBd = (bonosempleadomensual) query2.getSingleResult();
+                JOptionPane.showMessageDialog(this,"Ese tipo de bono ya ha sido aplicado a este empleado en este periodo","Bono ya aplicado",JOptionPane.ERROR_MESSAGE);
+                return;
+            }catch(javax.persistence.NoResultException Ex)
+                    {
+                        bonos.setIdEmpleado(Character.getNumericValue(idEmpleado.getSelectedItem().toString().charAt(0)));
+                        bonos.setPeriodo(periodo.getText());
+                        bonos.setIDTipoBono(Character.getNumericValue(cbTipoBono.getSelectedItem().toString().charAt(0)));
+                        bonos.setValor(Double.parseDouble(cantidad.getText()));
             try {
                 bonosEmp.create(bonos);
                 JOptionPane.showMessageDialog(null, "El registro se ha almacenado satisfactoriamente", "Confirmación", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 
             }
+                    }
        } 
+       }catch(Exception ex){
+           log(ex);
+       }
+        
+        
     }//GEN-LAST:event_aceptarActionPerformed
 
     private void cbTipoBonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoBonoActionPerformed
@@ -504,7 +578,7 @@ public class NuevoBono extends javax.swing.JFrame {
     }
 
     private void insertarImagen(JLabel lbl, String ruta) {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(),
@@ -591,18 +665,42 @@ public class NuevoBono extends javax.swing.JFrame {
            return false; 
        }  
      }
+    
+    public boolean validarCamposEnBlanco(){
+        if ( periodo.getText().equals("")  || cantidad.getText().isEmpty()) {
+            return false;
+        }else{return true;}
+    }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Cancelar;
     private javax.swing.JButton aceptar;
-    private javax.swing.JTextField cantidad;
+    public javax.swing.JTextField cantidad;
+    private javax.swing.JLabel cantidadLbl;
     private javax.swing.JComboBox<String> cbTipoBono;
     private javax.swing.JLabel formatoInvalidoCantidad;
     private javax.swing.JLabel formatoInvalidoPeriodo;
     private javax.swing.JComboBox<String> idEmpleado;
     private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
@@ -611,7 +709,7 @@ public class NuevoBono extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField periodo;
+    public javax.swing.JTextField periodo;
     private javax.swing.JLabel salir;
     private javax.swing.JLabel tituloPantalla;
     // End of variables declaration//GEN-END:variables

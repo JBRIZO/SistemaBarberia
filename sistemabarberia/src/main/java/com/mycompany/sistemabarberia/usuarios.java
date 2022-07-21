@@ -34,6 +34,17 @@ public class usuarios implements Serializable {
    @Column
    private int Intentos;
    
+   public usuarios(){}
+   
+   public usuarios(int idUsuario, int idEmpleado, String nomCuenta, String password, Boolean activo, int intentos){
+       this.idusuario = idUsuario;
+       this.IDEmpleado = idEmpleado;
+       this.NomCuenta = nomCuenta;
+       this.Contrasena = password;
+       this.Activo = activo;
+       this.Intentos = intentos;
+   }
+   
    
     public int getIdusuario() {
         return idusuario;

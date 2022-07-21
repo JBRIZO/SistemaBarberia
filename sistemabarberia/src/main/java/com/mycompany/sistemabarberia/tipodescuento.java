@@ -26,6 +26,17 @@ public class tipodescuento implements Serializable{
     @Column
     private boolean Activo;
 
+    public tipodescuento() {
+    }
+
+    public tipodescuento(int idtipodescuento, String NomDescuento, boolean Activo) {
+        this.idtipodescuento = idtipodescuento;
+        this.NomDescuento = NomDescuento;
+        this.Activo = Activo;
+    }
+
+    
+    
     public int getIdtipodescuento() {
         return idtipodescuento;
     }

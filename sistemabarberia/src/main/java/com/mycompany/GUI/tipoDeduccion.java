@@ -5,20 +5,43 @@
  */
 package com.mycompany.GUI;
 
+import com.mycompany.sistemabarberia.JPACOntrollers.empleadoJpaController;
 import com.mycompany.sistemabarberia.JPACOntrollers.tipodeduccionJpaController;
 import com.mycompany.sistemabarberia.Validaciones;
 import com.mycompany.sistemabarberia.JTextFieldLimit;
+import com.mycompany.sistemabarberia.MyJasperViewer;
+import com.mycompany.sistemabarberia.UsuarioSingleton;
+import com.mycompany.sistemabarberia.empleado;
 import com.mycompany.sistemabarberia.tipodeduccion;
+import com.mycompany.sistemabarberia.usuarios;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
@@ -26,10 +49,15 @@ import javax.swing.border.Border;
  */
 public class tipoDeduccion extends javax.swing.JFrame {
     
-    private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController();
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("servidorbd");
+    
+    private tipodeduccionJpaController tipodeduccionDAO = new tipodeduccionJpaController(emf);
+    private empleadoJpaController empleadosDAO = new empleadoJpaController(emf);
     private Validaciones validar = new Validaciones();
     private ImageIcon imagen;
     private Icon icono;
+    private usuarios usuarios = new usuarios(); 
+    private UsuarioSingleton singleton = UsuarioSingleton.getUsuario(usuarios);
     Border redBorder = BorderFactory.createLineBorder(Color.RED, 1);
     Border greenBorder = BorderFactory.createLineBorder(Color.GREEN, 1);
     Border defaultBorder = new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true);
@@ -41,8 +69,9 @@ public class tipoDeduccion extends javax.swing.JFrame {
     public tipoDeduccion() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
-        this.insertarImagen(this.logo,"src/main/resources/Imagenes/logoBarberia.png");        
+        Image icon = new ImageIcon(getClass().getResource("/Imagenes/logoBarberia.jpeg")).getImage();
+        setIconImage(icon);
+        this.insertarImagen(this.logo,"/Imagenes/logoBarberia.png");    
         Reiniciar();  
     }
     
@@ -81,6 +110,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
         formatoInvalido = new javax.swing.JLabel();
         nombreDeduccion = new javax.swing.JTextField();
         salir = new javax.swing.JLabel();
+        imprimirReporteTipoDeduccion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -192,6 +222,15 @@ public class tipoDeduccion extends javax.swing.JFrame {
             }
         });
 
+        imprimirReporteTipoDeduccion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/printIcon.png"))); // NOI18N
+        imprimirReporteTipoDeduccion.setBorderPainted(false);
+        imprimirReporteTipoDeduccion.setContentAreaFilled(false);
+        imprimirReporteTipoDeduccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirReporteTipoDeduccionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -213,7 +252,9 @@ public class tipoDeduccion extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(35, 35, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(104, 104, 104)
+                .addContainerGap()
+                .addComponent(imprimirReporteTipoDeduccion)
+                .addGap(21, 21, 21)
                 .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -230,7 +271,9 @@ public class tipoDeduccion extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(botonAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                    .addComponent(imprimirReporteTipoDeduccion, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
 
@@ -249,8 +292,8 @@ public class tipoDeduccion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-       
-        List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
+       try{
+       List<tipodeduccion> tipodeduccionEnBd = tipodeduccionDAO.findtipodeduccionEntities();
         tipodeduccion tipoDeduccion = new tipodeduccion();
         tipoDeduccion.setNombre(nombreDeduccion.getText());
         tipoDeduccion.setActivo(true);
@@ -282,6 +325,9 @@ public class tipoDeduccion extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"No se pudo guardar, excepción: " + ex.getMessage());
         }
         }else{JOptionPane.showMessageDialog(null, "Por favor, corrige los campos en rojo.","Datos inválidos",JOptionPane.ERROR_MESSAGE);}
+       }catch(Exception ex){
+           log(ex);
+       }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     
@@ -292,14 +338,19 @@ public class tipoDeduccion extends javax.swing.JFrame {
 
     private void salirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salirMouseClicked
         // TODO add your handling code here:
+        try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new listaDeducciones().setVisible(true);
             }
         });
+        emf.close();
         this.setVisible(false);
         this.dispose(); 
         tipodeduccionDAO.close();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_salirMouseClicked
 
     private void nombreDeduccionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDeduccionFocusGained
@@ -309,8 +360,59 @@ public class tipoDeduccion extends javax.swing.JFrame {
 
     private void nombreDeduccionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombreDeduccionFocusLost
         // TODO add your handling code here:
+        try{
         validarCampos();
+        }catch(Exception ex){
+            log(ex);
+        }
     }//GEN-LAST:event_nombreDeduccionFocusLost
+
+    private void imprimirReporteTipoDeduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirReporteTipoDeduccionActionPerformed
+        // TODO add your handling code here:
+        try{
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            log(e);
+            System.out.println("MySQL JDBC Driver not found.");
+            System.exit(1);
+        }
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mqw9x0qo2x?zeroDateTimeBehavior=convertToNull","root","");
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e) {
+            log(e);
+            System.out.println("Error de conexión: " + e.getMessage());
+            System.exit(4);
+        }
+
+        empleado empleadoActual = empleadosDAO.findempleado(singleton.getCuenta().getIDEmpleado());
+        HashMap logo = new HashMap();
+        logo.put("logo",getClass().getResourceAsStream("/Imagenes/logoBarberia.jpeg"));
+        logo.put("usuario",empleadoActual.getNomEmpleado() + " " + empleadoActual.getApeEmpleado());
+
+        try {
+            JasperReport reporte = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Reportes/reporteTipoDeduccion.jrxml"));
+            JasperPrint print = JasperFillManager.fillReport(
+                reporte,
+                logo,
+                conn);
+
+            MyJasperViewer view = new MyJasperViewer(print,false);
+            view.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/Imagenes/logoBarberia.jpeg"));
+            view.setTitle("Reporte de Tipos de Pago");
+            view.setVisible(true);
+        } catch (JRException ex) {
+            Logger.getLogger(pantallaProductos.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
+        }catch(Exception ex){
+            log(ex);
+        }
+    }//GEN-LAST:event_imprimirReporteTipoDeduccionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -403,7 +505,7 @@ public class tipoDeduccion extends javax.swing.JFrame {
     
     private void insertarImagen(JLabel lbl,String ruta)
     {
-        this.imagen = new ImageIcon(ruta);
+        this.imagen = new ImageIcon(getClass().getResource(ruta));
         this.icono = new ImageIcon(
                 this.imagen.getImage().getScaledInstance(
                         lbl.getWidth(), 
@@ -413,11 +515,30 @@ public class tipoDeduccion extends javax.swing.JFrame {
         lbl.setIcon(this.icono);
         this.repaint();
     }
+    
+    private void log(Exception ex){
+        FileHandler fh;                              
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Log");  
+            try {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                String ts = new SimpleDateFormat("dd MMMM yyyy HH.mm.ss").format(timestamp);
+                fh = new FileHandler("../logs/"+ ts + " " + this.getClass().getName()+".txt" );
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.info(ex.getClass().toString() + " : " +ex.getMessage());
+            } catch (SecurityException e) {  
+                e.printStackTrace();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            } 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JLabel formatoInvalido;
     private javax.swing.JTextField idDeduccion;
+    private javax.swing.JButton imprimirReporteTipoDeduccion;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

@@ -15,8 +15,8 @@ import net.sf.jasperreports.engine.JRField;
  */
 public class PlanillaDataSource implements JRDataSource{
 
-    private final Object[][] planilla;
-    private int index;
+    public final Object[][] planilla;
+    public int index;
     
      public PlanillaDataSource(Object[][] planilla)
     {
